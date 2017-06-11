@@ -6,20 +6,22 @@ namespace Common.Dto
     {
         private const string TAG = "TemperatureDto";
 
-        enum TemperatureType { DUMMY, RASPBERRY, CITY };
+        public enum TemperatureType { DUMMY, RASPBERRY, CITY };
 
         private double _temperature;
         private string _area;
         private DateTime _lastUpdate;
         private string _sensorPath;
+        private TemperatureType _temperatureType;
         private string _graphPath;
 
-        public TemperatureDto(double temperature, string area, DateTime lastUpdate, string sensorPath, string graphPath)
+        public TemperatureDto(double temperature, string area, DateTime lastUpdate, string sensorPath, TemperatureType temperatureType, string graphPath)
         {
             _temperature = temperature;
             _area = area;
             _lastUpdate = lastUpdate;
             _sensorPath = sensorPath;
+            _temperatureType = temperatureType;
             _graphPath = graphPath;
         }
 
@@ -67,6 +69,14 @@ namespace Common.Dto
             }
         }
 
+        public TemperatureType GetTemperatureType
+        {
+            get
+            {
+                return _temperatureType;
+            }
+        }
+
         public string GraphPath
         {
             get
@@ -77,7 +87,7 @@ namespace Common.Dto
 
         public override string ToString()
         {
-            return string.Format("{{0}: {Temperature: {1}};{Area: {2}};{LastUpdate: {3}};{SensorPath: {4}};{GraphPath: {5}}}", TAG, TemperatureString, _area, _lastUpdate, _sensorPath, _graphPath);
+            return string.Format("{{0}: {Temperature: {1}};{Area: {2}};{LastUpdate: {3}};{SensorPath: {4}};{TemperatureType: {5}};{GraphPath: {6}}}", TAG, TemperatureString, _area, _lastUpdate, _sensorPath, _temperatureType, _graphPath);
         }
     }
 }

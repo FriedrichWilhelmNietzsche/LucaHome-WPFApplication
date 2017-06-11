@@ -67,8 +67,11 @@ namespace Common.Converter
         {
             if (data.Length == 5)
             {
-                if (data[0].Contains("{id:") && data[1].Contains("{name:") && data[2].Contains("{day:")
-                        && data[3].Contains("{month:") && data[4].Contains("{year:"))
+                if (data[0].Contains("{id:") 
+                    && data[1].Contains("{name:") 
+                    && data[2].Contains("{day:")
+                    && data[3].Contains("{month:") 
+                    && data[4].Contains("{year:"))
                 {
 
                     string idString = data[0].Replace("{id:", "").Replace("};", "");
@@ -110,7 +113,7 @@ namespace Common.Converter
 
                     DateTime birthday = new DateTime(year, month, day);
                     
-                    return new BirthdayDto(name, birthday);
+                    return new BirthdayDto(id, name, birthday);
                 }
                 else
                 {

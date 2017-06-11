@@ -1,8 +1,8 @@
 ﻿using Common.Dto;
+using Common.Enums;
 using Common.Tools;
 using System;
 using System.Collections.Generic;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Common.Converter
 {
@@ -83,7 +83,15 @@ namespace Common.Converter
                     string name = data[1].Replace("{name:", "").Replace("};", "");
 
                     string groupString = data[2].Replace("{group:", "").Replace("};", "");
-                    BitmapImage icon = parseIconFromString(groupString);
+                    ShoppingEntryGroup shoppingEntryGroup = ShoppingEntryGroup.OTHER;
+                    foreach(ShoppingEntryGroup entry in ShoppingEntryGroup.Values)
+                    {
+                        if (entry.Description.Contains(groupString))
+                        {
+                            shoppingEntryGroup = entry;
+                            break;
+                        }
+                    }
 
                     string quantityString = data[3].Replace("{quantity:", "").Replace("};", "");
                     int quantity = -1;
@@ -93,7 +101,7 @@ namespace Common.Converter
                         _logger.Warning("Failed to parse quantity from data!");
                     }
 
-                    ShoppingEntryDto newValue = new ShoppingEntryDto(id, name, quantity, icon);
+                    ShoppingEntryDto newValue = new ShoppingEntryDto(id, name, shoppingEntryGroup, quantity);
                     return newValue;
                 }
                 else
@@ -109,46 +117,6 @@ namespace Common.Converter
             _logger.Error(string.Format("{0} has an error!", data));
 
             return null;
-        }
-
-        private static BitmapImage parseIconFromString(string groupString)
-        {
-            switch (groupString)
-            {
-                case "Fruit":
-                    return new BitmapImage(new Uri(new Uri("ms:appx"), "/Assets/Icons/fruits.png"));
-                case "Vegetable":
-                    return new BitmapImage(new Uri(new Uri("ms:appx"), "/Assets/Icons/vegetables.png"));
-                case "Salat":
-                    return new BitmapImage(new Uri(new Uri("ms:appx"), "/Assets/Icons/salad.png"));
-                case "Drinks":
-                    return new BitmapImage(new Uri(new Uri("ms:appx"), "/Assets/Icons/drinks.png"));
-                case "Oil_and_vinegar":
-                    return new BitmapImage(new Uri(new Uri("ms:appx"), "/Assets/Icons/oil_vinegar.png"));
-                case "Noodles":
-                    return new BitmapImage(new Uri(new Uri("ms:appx"), "/Assets/Icons/noodles.png"));
-                case "Bread":
-                    return new BitmapImage(new Uri(new Uri("ms:appx"), "/Assets/Icons/bread.png"));
-                case "Spread":
-                    return new BitmapImage(new Uri(new Uri("ms:appx"), "/Assets/Icons/spread.png"));
-                case "Milk_product":
-                    return new BitmapImage(new Uri(new Uri("ms:appx"), "/Assets/Icons/milk.png"));
-                case "Candy":
-                    return new BitmapImage(new Uri(new Uri("ms:appx"), "/Assets/Icons/candy.png"));
-                case "Cleaning_material":
-                    return new BitmapImage(new Uri(new Uri("ms:appx"), "/Assets/Icons/cleaning.png"));
-                case "Bath_utility":
-                    return new BitmapImage(new Uri(new Uri("ms:appx"), "/Assets/Icons/bath.png"));
-                case "Leisure":
-                    return new BitmapImage(new Uri(new Uri("ms:appx"), "/Assets/Icons/leisure.png"));
-                case "Baking":
-                    return new BitmapImage(new Uri(new Uri("ms:appx"), "/Assets/Icons/baking.png"));
-                case "Cereals":
-                    return new BitmapImage(new Uri(new Uri("ms:appx"), "/Assets/Icons/cereals.png"));
-                case "Other":
-                default:
-                    return new BitmapImage(new Uri(new Uri("ms:appx"), "/Assets/Icons/shopping.png"));
-            }
         }
     }
 }

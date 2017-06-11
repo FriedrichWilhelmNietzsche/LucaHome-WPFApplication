@@ -2,7 +2,7 @@
 using Common.Tools;
 using System;
 using System.Collections.Generic;
-using Windows.UI.Xaml.Media.Imaging;
+using static Common.Dto.TemperatureDto;
 
 namespace Common.Converter
 {
@@ -12,7 +12,7 @@ namespace Common.Converter
         private static string _searchParameter = "{temperature:";
 
         private static Logger _logger;
-        
+
         public JsonDataToTemperatureConverter()
         {
             _logger = new Logger(TAG);
@@ -40,7 +40,7 @@ namespace Common.Converter
                     if (value.Contains(_searchParameter))
                     {
                         IList<TemperatureDto> list = new List<TemperatureDto>();
-                        
+
                         string[] entries = value.Split(new string[] { "\\" + _searchParameter }, StringSplitOptions.RemoveEmptyEntries);
                         foreach (string entry in entries)
                         {
@@ -86,7 +86,7 @@ namespace Common.Converter
 
                     DateTime lastUpdate = DateTime.Now;
 
-                    return new TemperatureDto(temperature, area, lastUpdate, sensorPath, graphPath);
+                    return new TemperatureDto(temperature, area, lastUpdate, sensorPath, TemperatureType.RASPBERRY, graphPath);
                 }
                 else
                 {

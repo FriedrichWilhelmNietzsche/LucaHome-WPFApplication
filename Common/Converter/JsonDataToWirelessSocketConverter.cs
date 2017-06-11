@@ -2,7 +2,6 @@
 using Common.Tools;
 using System;
 using System.Collections.Generic;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Common.Converter
 {
@@ -12,7 +11,7 @@ namespace Common.Converter
         private static string _searchParameter = "{socket:";
 
         private static Logger _logger;
-        
+
         public JsonDataToWirelessSocketConverter()
         {
             _logger = new Logger(TAG);
@@ -40,14 +39,15 @@ namespace Common.Converter
                     if (value.Contains(_searchParameter))
                     {
                         IList<WirelessSocketDto> list = new List<WirelessSocketDto>();
-                        
+
                         string[] entries = value.Split(new string[] { "\\" + _searchParameter }, StringSplitOptions.RemoveEmptyEntries);
-                        foreach (string entry in entries)
+                        for (int index = 0; index < entries.Length; index++)
                         {
+                            string entry = entries[index];
                             string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
                             string[] data = replacedEntry.Split(new string[] { "\\};" }, StringSplitOptions.RemoveEmptyEntries);
-                            WirelessSocketDto newValue = ParseStringToValue(data);
+                            WirelessSocketDto newValue = ParseStringToValue(index, data);
                             if (newValue != null)
                             {
                                 list.Add(newValue);
@@ -64,12 +64,14 @@ namespace Common.Converter
             return null;
         }
 
-        private static WirelessSocketDto ParseStringToValue(string[] data)
+        private static WirelessSocketDto ParseStringToValue(int id, string[] data)
         {
             if (data.Length == 4)
             {
-                if (data[0].Contains("{Name:") && data[1].Contains("{Area:") && data[2].Contains("{Code:")
-                        && data[3].Contains("{State:"))
+                if (data[0].Contains("{Name:")
+                    && data[1].Contains("{Area:")
+                    && data[2].Contains("{Code:")
+                    && data[3].Contains("{State:"))
                 {
                     string name = data[0].Replace("{Name:", "").Replace("};", "");
                     string area = data[1].Replace("{Area:", "").Replace("};", "");
@@ -78,7 +80,7 @@ namespace Common.Converter
                     string isActivatedString = data[3].Replace("{State:", "").Replace("};", "");
                     bool isActivated = isActivatedString.Contains("1");
 
-                    return new WirelessSocketDto(name, area, code, isActivated);
+                    return new WirelessSocketDto(id, name, area, code, isActivated);
                 }
                 else
                 {

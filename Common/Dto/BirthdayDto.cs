@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Enums;
+using System;
 
 namespace Common.Dto
 {
@@ -8,13 +9,24 @@ namespace Common.Dto
 
         enum BirthdayType { PREVIOUS, TODAY, UPCOMING};
 
+        private int _id;
+
         private string _name;
         private DateTime _birthday;
 
-        public BirthdayDto(string name, DateTime birthday)
+        public BirthdayDto(int id, string name, DateTime birthday)
         {
+            _id = id;
             _name = name;
             _birthday = birthday;
+        }
+        
+        public int Id
+        {
+            get
+            {
+                return _id;
+            }
         }
 
         public string Name
@@ -30,6 +42,10 @@ namespace Common.Dto
             get
             {
                 return _birthday;
+            }
+            set
+            {
+                _birthday = value;
             }
         }
 
@@ -98,6 +114,30 @@ namespace Common.Dto
                         return (int)BirthdayType.UPCOMING;
                     }
                 }
+            }
+        }
+
+        public string CommandAdd
+        {
+            get
+            {
+                return string.Format("{0}{1}&name={2}&day={3}&month={4}&year={5}", LucaServerAction.ADD_BIRTHDAY.Action, _id, _name, _birthday.Day, _birthday.Month, _birthday.Year);
+            }
+        }
+
+        public string CommandUpdate
+        {
+            get
+            {
+                return string.Format("{0}{1}&name={2}&day={3}&month={4}&year={5}", LucaServerAction.UPDATE_BIRTHDAY.Action, _id, _name, _birthday.Day, _birthday.Month, _birthday.Year);
+            }
+        }
+
+        public string CommandDelete
+        {
+            get
+            {
+                return string.Format("{0}{1}", LucaServerAction.DELETE_BIRTHDAY.Action, _id);
             }
         }
 

@@ -4,20 +4,20 @@
     {
         private const string TAG = "UserDto";
 
-        private string _user;
+        private string _name;
         private string _passphrase;
 
-        public UserDto(string user, string passphrase)
+        public UserDto(string name, string passphrase)
         {
-            _user = user;
+            _name = name;
             _passphrase = passphrase;
         }
 
-        public string User
+        public string Name
         {
             get
             {
-                return _user;
+                return _name;
             }
         }
 
@@ -31,7 +31,7 @@
 
         public override string ToString()
         {
-            return string.Format("{{0}: {User: {1}};{Passphrase: {2}}}", TAG, _user, "-/-");
+            return string.Format("{{0}: {Name: {1}};{Passphrase: {2}}}", TAG, _name, "-/-");
         }
     }
 }

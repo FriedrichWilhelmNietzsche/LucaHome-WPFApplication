@@ -4,14 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C3C736BD-34FA-423A-B4D0-2B9876237E30}</ProjectGuid>
+    <ProjectGuid>{675FCBA2-7E1F-4BD2-99CF-AECBDA1C36EC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Common</RootNamespace>
     <AssemblyName>Common</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.14393.0</TargetPlatformVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.15063.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -102,50 +102,91 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
+  <PropertyGroup>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+  </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <None Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Constants\Constants.cs" />
-    <Compile Include="Constants\Enables.cs" />
-    <Compile Include="Constants\Keys.cs" />
-    <Compile Include="Converter\JsonDataToWirelessSocketConverter.cs" />
-    <Compile Include="Converter\JsonDataToTemperatureConverter.cs" />
-    <Compile Include="Converter\JsonDataToShoppingConverter.cs" />
-    <Compile Include="Converter\JsonDataToMovieConverter.cs" />
-    <Compile Include="Converter\JsonDataToMenuConverter.cs" />
+    <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\Enables.cs" />
+    <Compile Include="Common\Timeouts.cs" />
+    <Compile Include="Common\Keys.cs" />
     <Compile Include="Converter\JsonDataToBirthdayConverter.cs" />
-    <Compile Include="Dto\ShoppingEntryDto.cs" />
-    <Compile Include="Dto\MovieDto.cs" />
-    <Compile Include="Dto\MenuDto.cs" />
+    <Compile Include="Converter\JsonDataToListedMenuConverter.cs" />
+    <Compile Include="Converter\JsonDataToChangeConverter.cs" />
+    <Compile Include="Converter\JsonDataToMenuConverter.cs" />
+    <Compile Include="Converter\JsonDataToMovieConverter.cs" />
+    <Compile Include="Converter\JsonDataToTimerConverter.cs" />
+    <Compile Include="Converter\JsonDataToShoppingConverter.cs" />
+    <Compile Include="Converter\JsonDataToTemperatureConverter.cs" />
+    <Compile Include="Converter\JsonDataToScheduleConverter.cs" />
+    <Compile Include="Converter\JsonDataToWirelessSocketConverter.cs" />
+    <Compile Include="Dto\ChangeDto.cs" />
     <Compile Include="Dto\BirthdayDto.cs" />
+    <Compile Include="Dto\ListedMenuDto.cs" />
+    <Compile Include="Dto\MenuDto.cs" />
+    <Compile Include="Dto\MovieDto.cs" />
+    <Compile Include="Dto\ScheduleDto.cs" />
+    <Compile Include="Dto\ShoppingEntryDto.cs" />
     <Compile Include="Dto\TemperatureDto.cs" />
+    <Compile Include="Dto\TimerDto.cs" />
     <Compile Include="Dto\UserDto.cs" />
     <Compile Include="Dto\WirelessSocketDto.cs" />
+    <Compile Include="Enums\ShoppingEntryGroup.cs" />
+    <Compile Include="Enums\LucaServerAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\Logger.cs" />
     <Compile Include="Tools\StringHelper.cs" />
     <EmbeddedResource Include="Properties\Common.rd.xml" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Content Include="Assets\Icons\baking.png" />
-    <Content Include="Assets\Icons\bath.png" />
-    <Content Include="Assets\Icons\bread.png" />
-    <Content Include="Assets\Icons\candy.png" />
-    <Content Include="Assets\Icons\cereals.png" />
-    <Content Include="Assets\Icons\cleaning.png" />
-    <Content Include="Assets\Icons\drinks.png" />
-    <Content Include="Assets\Icons\fruits.png" />
-    <Content Include="Assets\Icons\leisure.png" />
-    <Content Include="Assets\Icons\milk.png" />
-    <Content Include="Assets\Icons\noodles.png" />
-    <Content Include="Assets\Icons\oil_vinegar.png" />
-    <Content Include="Assets\Icons\salad.png" />
-    <Content Include="Assets\Icons\shopping.png" />
-    <Content Include="Assets\Icons\spread.png" />
-    <Content Include="Assets\Icons\vegetables.png" />
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
+      <Version>5.2.3</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\Icons\Movie\imdb_icon.png" />
+    <Content Include="Assets\Icons\Movie\wikipedia_icon.png" />
+    <Content Include="Assets\Icons\Movie\youtube_icon.png" />
+    <Content Include="Assets\Icons\Shopping\baking.png" />
+    <Content Include="Assets\Icons\Shopping\bath.png" />
+    <Content Include="Assets\Icons\Shopping\bread.png" />
+    <Content Include="Assets\Icons\Shopping\candy.png" />
+    <Content Include="Assets\Icons\Shopping\cereals.png" />
+    <Content Include="Assets\Icons\Shopping\cleaning.png" />
+    <Content Include="Assets\Icons\Shopping\drinks.png" />
+    <Content Include="Assets\Icons\Shopping\fruits.png" />
+    <Content Include="Assets\Icons\Shopping\leisure.png" />
+    <Content Include="Assets\Icons\Shopping\milk.png" />
+    <Content Include="Assets\Icons\Shopping\noodles.png" />
+    <Content Include="Assets\Icons\Shopping\oil_vinegar.png" />
+    <Content Include="Assets\Icons\Shopping\salad.png" />
+    <Content Include="Assets\Icons\Shopping\shopping.png" />
+    <Content Include="Assets\Icons\Shopping\spread.png" />
+    <Content Include="Assets\Icons\Shopping\vegetables.png" />
+    <Content Include="Assets\Icons\Sockets\all_power_off.png" />
+    <Content Include="Assets\Icons\Sockets\bed_heating_off.png" />
+    <Content Include="Assets\Icons\Sockets\bed_heating_on.png" />
+    <Content Include="Assets\Icons\Sockets\bed_light_off.png" />
+    <Content Include="Assets\Icons\Sockets\bed_light_on.png" />
+    <Content Include="Assets\Icons\Sockets\bed_sound_off.png" />
+    <Content Include="Assets\Icons\Sockets\bed_sound_on.png" />
+    <Content Include="Assets\Icons\Sockets\gameconsole_off.png" />
+    <Content Include="Assets\Icons\Sockets\gameconsole_on.png" />
+    <Content Include="Assets\Icons\Sockets\laptop_off.png" />
+    <Content Include="Assets\Icons\Sockets\laptop_on.png" />
+    <Content Include="Assets\Icons\Sockets\mediamirror_off.png" />
+    <Content Include="Assets\Icons\Sockets\mediamirror_on.png" />
+    <Content Include="Assets\Icons\Sockets\printer_off.png" />
+    <Content Include="Assets\Icons\Sockets\printer_on.png" />
+    <Content Include="Assets\Icons\Sockets\socket.png" />
+    <Content Include="Assets\Icons\Sockets\sound_off.png" />
+    <Content Include="Assets\Icons\Sockets\sound_on.png" />
+    <Content Include="Assets\Icons\Sockets\storage_off.png" />
+    <Content Include="Assets\Icons\Sockets\storage_on.png" />
+    <Content Include="Assets\Icons\Sockets\tv_off.png" />
+    <Content Include="Assets\Icons\Sockets\tv_on.png" />
+    <Content Include="Assets\Icons\Sockets\watering_off.png" />
+    <Content Include="Assets\Icons\Sockets\watering_on.png" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

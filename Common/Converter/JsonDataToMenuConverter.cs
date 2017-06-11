@@ -11,7 +11,7 @@ namespace Common.Converter
         private static string _searchParameter = "{menu:";
 
         private static Logger _logger;
-        
+
         public JsonDataToMenuConverter()
         {
             _logger = new Logger(TAG);
@@ -39,14 +39,15 @@ namespace Common.Converter
                     if (value.Contains(_searchParameter))
                     {
                         IList<MenuDto> list = new List<MenuDto>();
-                        
+
                         string[] entries = value.Split(new string[] { "\\" + _searchParameter }, StringSplitOptions.RemoveEmptyEntries);
-                        foreach (string entry in entries)
+                        for (int index = 0; index < entries.Length; index++)
                         {
+                            string entry = entries[index];
                             string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
                             string[] data = replacedEntry.Split(new string[] { "\\};" }, StringSplitOptions.RemoveEmptyEntries);
-                            MenuDto newValue = ParseStringToValue(data);
+                            MenuDto newValue = ParseStringToValue(index, data);
                             if (newValue != null)
                             {
                                 list.Add(newValue);
@@ -63,12 +64,16 @@ namespace Common.Converter
             return null;
         }
 
-        private static MenuDto ParseStringToValue(string[] data)
+        private static MenuDto ParseStringToValue(int id, string[] data)
         {
             if (data.Length == 6)
             {
-                if (data[0].Contains("{weekday:") && data[1].Contains("{day:") && data[2].Contains("{month:")
-                        && data[3].Contains("{year:") && data[4].Contains("{title:") && data[5].Contains("{description:"))
+                if (data[0].Contains("{weekday:")
+                    && data[1].Contains("{day:")
+                    && data[2].Contains("{month:")
+                    && data[3].Contains("{year:")
+                    && data[4].Contains("{title:")
+                    && data[5].Contains("{description:"))
                 {
 
                     string weekday = data[0].Replace("{weekday:", "").Replace("};", "");
@@ -110,7 +115,7 @@ namespace Common.Converter
                         description = " ";
                     }
 
-                    return new MenuDto(title, description, date);
+                    return new MenuDto(id, title, description, date);
                 }
                 else
                 {

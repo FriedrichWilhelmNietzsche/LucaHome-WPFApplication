@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Enums;
+using System;
 
 namespace Common.Dto
 {
@@ -6,17 +7,27 @@ namespace Common.Dto
     {
         private const string TAG = "MenuDto";
 
+        private int _id;
         private string _title;
         private string _description;
         private DateTime _date;
 
         private bool _needsUpdate;
 
-        public MenuDto(string title, string description, DateTime date)
+        public MenuDto(int id, string title, string description, DateTime date)
         {
+            _id = id;
             _title = title;
             _description = description;
             _date = date;
+        }
+
+        public int Id
+        {
+            get
+            {
+                return _id;
+            }
         }
 
         public string Title
@@ -55,9 +66,25 @@ namespace Common.Dto
             }
         }
 
+        public string CommandUpdate
+        {
+            get
+            {
+                return string.Format("{0}{1}&day={2}&month={3}&year={4}&title={5}&description={6}", LucaServerAction.UPDATE_MENU.Action, _date.DayOfWeek, _date.Day, _date.Month, _date.Year, _title, _description);
+            }
+        }
+
+        public string CommandClear
+        {
+            get
+            {
+                return string.Format("{0}{1}", LucaServerAction.UPDATE_MENU.Action, _date.DayOfWeek);
+            }
+        }
+
         public override string ToString()
         {
-            return string.Format("{{0}: {Title: {1}};{Description: {2}};{Date: {3}}}", TAG, _title, _description, _date);
+            return string.Format("{{0}: {Id: {1}};{Title: {2}};{Description: {3}};{Date: {4}}}", TAG, _id, _title, _description, _date);
         }
     }
 }
