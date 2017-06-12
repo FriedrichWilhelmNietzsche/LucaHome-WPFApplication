@@ -6,7 +6,7 @@
 
 [![Build](https://img.shields.io/badge/build-WIP-yellow.svg)](https://github.com/Gu3pardo/LucaHome-UWPApplication)
 [![Version](https://img.shields.io/badge/version-WIP-yellow.svg)](https://github.com/Gu3pardo/LucaHome-UWPApplication)
-[![TestCoverage](https://img.shields.io/badge/testcoverage-<10%-red.svg)](https://github.com/Gu3pardo/LucaHome-UWPApplication)
+[![TestCoverage](https://img.shields.io/badge/testcoverage-less10%-red.svg)](https://github.com/Gu3pardo/LucaHome-UWPApplication)
 
 Part of the LucaHome-Project
 
