@@ -2,10 +2,6 @@
 using System.Net.Sockets;
 using System.Text;
 
-/* Reference Help
- * http://csharp.net-informations.com/communications/csharp-client-socket.htm
- */
-
 namespace Data.Services
 {
     public class SocketService
@@ -25,7 +21,7 @@ namespace Data.Services
         public void ConnectToServer(string ip, int port)
         {
             _logger.Debug(string.Format("Connecting to server with ip {0} at port {1}", ip, port));
-            _tcpClient.ConnectAsync(ip, port);
+            _tcpClient.Connect(ip, port);
         }
 
         public string SendCommand(string command)
@@ -61,7 +57,10 @@ namespace Data.Services
         public void Dispose()
         {
             _logger.Debug("Dispose");
-            _tcpClient.Dispose();
+            if (_tcpClient.Connected)
+            {
+                _tcpClient.Close();
+            }
         }
     }
 }

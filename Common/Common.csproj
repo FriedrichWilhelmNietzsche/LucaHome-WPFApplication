@@ -1,21 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{675FCBA2-7E1F-4BD2-99CF-AECBDA1C36EC}</ProjectGuid>
+    <ProjectGuid>{A93889AC-DDDB-477C-8F4A-12EDC56CDFFE}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Common</RootNamespace>
     <AssemblyName>Common</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
-    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.15063.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
-    <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -23,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -32,96 +29,46 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
-    <PlatformTarget>ARM</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\ARM\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>ARM</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
-    <PlatformTarget>ARM</PlatformTarget>
-    <OutputPath>bin\ARM\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>ARM</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <PlatformTarget>x64</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <PlatformTarget>x64</PlatformTarget>
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
   <PropertyGroup>
-    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <StartupObject />
   </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\Enables.cs" />
-    <Compile Include="Common\Timeouts.cs" />
     <Compile Include="Common\Keys.cs" />
+    <Compile Include="Common\Timeouts.cs" />
     <Compile Include="Converter\JsonDataToBirthdayConverter.cs" />
-    <Compile Include="Converter\JsonDataToListedMenuConverter.cs" />
     <Compile Include="Converter\JsonDataToChangeConverter.cs" />
+    <Compile Include="Converter\JsonDataToListedMenuConverter.cs" />
     <Compile Include="Converter\JsonDataToMenuConverter.cs" />
     <Compile Include="Converter\JsonDataToMovieConverter.cs" />
-    <Compile Include="Converter\JsonDataToTimerConverter.cs" />
+    <Compile Include="Converter\JsonDataToScheduleConverter.cs" />
     <Compile Include="Converter\JsonDataToShoppingConverter.cs" />
     <Compile Include="Converter\JsonDataToTemperatureConverter.cs" />
-    <Compile Include="Converter\JsonDataToScheduleConverter.cs" />
+    <Compile Include="Converter\JsonDataToTimerConverter.cs" />
     <Compile Include="Converter\JsonDataToWirelessSocketConverter.cs" />
-    <Compile Include="Dto\ChangeDto.cs" />
     <Compile Include="Dto\BirthdayDto.cs" />
+    <Compile Include="Dto\ChangeDto.cs" />
     <Compile Include="Dto\ListedMenuDto.cs" />
     <Compile Include="Dto\MenuDto.cs" />
     <Compile Include="Dto\MovieDto.cs" />
@@ -131,72 +78,81 @@
     <Compile Include="Dto\TimerDto.cs" />
     <Compile Include="Dto\UserDto.cs" />
     <Compile Include="Dto\WirelessSocketDto.cs" />
-    <Compile Include="Enums\ShoppingEntryGroup.cs" />
-    <Compile Include="Enums\LucaServerAction.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\Logger.cs" />
     <Compile Include="Tools\StringHelper.cs" />
-    <EmbeddedResource Include="Properties\Common.rd.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>5.2.3</Version>
-    </PackageReference>
+    <Compile Include="Enums\LucaServerAction.cs" />
+    <Compile Include="Enums\ShoppingEntryGroup.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Icons\Movie\imdb_icon.png" />
-    <Content Include="Assets\Icons\Movie\wikipedia_icon.png" />
-    <Content Include="Assets\Icons\Movie\youtube_icon.png" />
-    <Content Include="Assets\Icons\Shopping\baking.png" />
-    <Content Include="Assets\Icons\Shopping\bath.png" />
-    <Content Include="Assets\Icons\Shopping\bread.png" />
-    <Content Include="Assets\Icons\Shopping\candy.png" />
-    <Content Include="Assets\Icons\Shopping\cereals.png" />
-    <Content Include="Assets\Icons\Shopping\cleaning.png" />
-    <Content Include="Assets\Icons\Shopping\drinks.png" />
-    <Content Include="Assets\Icons\Shopping\fruits.png" />
-    <Content Include="Assets\Icons\Shopping\leisure.png" />
-    <Content Include="Assets\Icons\Shopping\milk.png" />
-    <Content Include="Assets\Icons\Shopping\noodles.png" />
-    <Content Include="Assets\Icons\Shopping\oil_vinegar.png" />
-    <Content Include="Assets\Icons\Shopping\salad.png" />
-    <Content Include="Assets\Icons\Shopping\shopping.png" />
-    <Content Include="Assets\Icons\Shopping\spread.png" />
-    <Content Include="Assets\Icons\Shopping\vegetables.png" />
-    <Content Include="Assets\Icons\Sockets\all_power_off.png" />
-    <Content Include="Assets\Icons\Sockets\bed_heating_off.png" />
-    <Content Include="Assets\Icons\Sockets\bed_heating_on.png" />
-    <Content Include="Assets\Icons\Sockets\bed_light_off.png" />
-    <Content Include="Assets\Icons\Sockets\bed_light_on.png" />
-    <Content Include="Assets\Icons\Sockets\bed_sound_off.png" />
-    <Content Include="Assets\Icons\Sockets\bed_sound_on.png" />
-    <Content Include="Assets\Icons\Sockets\gameconsole_off.png" />
-    <Content Include="Assets\Icons\Sockets\gameconsole_on.png" />
-    <Content Include="Assets\Icons\Sockets\laptop_off.png" />
-    <Content Include="Assets\Icons\Sockets\laptop_on.png" />
-    <Content Include="Assets\Icons\Sockets\mediamirror_off.png" />
-    <Content Include="Assets\Icons\Sockets\mediamirror_on.png" />
-    <Content Include="Assets\Icons\Sockets\printer_off.png" />
-    <Content Include="Assets\Icons\Sockets\printer_on.png" />
-    <Content Include="Assets\Icons\Sockets\socket.png" />
-    <Content Include="Assets\Icons\Sockets\sound_off.png" />
-    <Content Include="Assets\Icons\Sockets\sound_on.png" />
-    <Content Include="Assets\Icons\Sockets\storage_off.png" />
-    <Content Include="Assets\Icons\Sockets\storage_on.png" />
-    <Content Include="Assets\Icons\Sockets\tv_off.png" />
-    <Content Include="Assets\Icons\Sockets\tv_on.png" />
-    <Content Include="Assets\Icons\Sockets\watering_off.png" />
-    <Content Include="Assets\Icons\Sockets\watering_on.png" />
+    <None Include="App.config" />
   </ItemGroup>
-  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
-    <VisualStudioVersion>14.0</VisualStudioVersion>
-  </PropertyGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <ItemGroup>
+    <Resource Include="Assets\Icons\Movie\imdb_icon.png" />
+    <Resource Include="Assets\Icons\Movie\wikipedia_icon.png" />
+    <Resource Include="Assets\Icons\Movie\youtube_icon.png" />
+    <Resource Include="Assets\Icons\Shopping\baking.png" />
+    <Resource Include="Assets\Icons\Shopping\bath.png" />
+    <Resource Include="Assets\Icons\Shopping\bread.png" />
+    <Resource Include="Assets\Icons\Shopping\candy.png" />
+    <Resource Include="Assets\Icons\Shopping\cereals.png" />
+    <Resource Include="Assets\Icons\Shopping\cleaning.png" />
+    <Resource Include="Assets\Icons\Shopping\drinks.png" />
+    <Resource Include="Assets\Icons\Shopping\fruits.png" />
+    <Resource Include="Assets\Icons\Shopping\leisure.png" />
+    <Resource Include="Assets\Icons\Shopping\milk.png" />
+    <Resource Include="Assets\Icons\Shopping\noodles.png" />
+    <Resource Include="Assets\Icons\Shopping\oil_vinegar.png" />
+    <Resource Include="Assets\Icons\Shopping\salad.png" />
+    <Resource Include="Assets\Icons\Shopping\shopping.png" />
+    <Resource Include="Assets\Icons\Shopping\spread.png" />
+    <Resource Include="Assets\Icons\Shopping\vegetables.png" />
+    <Resource Include="Assets\Icons\Sockets\all_power_off.png" />
+    <Resource Include="Assets\Icons\Sockets\bed_heating_off.png" />
+    <Resource Include="Assets\Icons\Sockets\bed_heating_on.png" />
+    <Resource Include="Assets\Icons\Sockets\bed_light_off.png" />
+    <Resource Include="Assets\Icons\Sockets\bed_light_on.png" />
+    <Resource Include="Assets\Icons\Sockets\bed_sound_off.png" />
+    <Resource Include="Assets\Icons\Sockets\bed_sound_on.png" />
+    <Resource Include="Assets\Icons\Sockets\gameconsole_off.png" />
+    <Resource Include="Assets\Icons\Sockets\gameconsole_on.png" />
+    <Resource Include="Assets\Icons\Sockets\laptop_off.png" />
+    <Resource Include="Assets\Icons\Sockets\laptop_on.png" />
+    <Resource Include="Assets\Icons\Sockets\mediamirror_off.png" />
+    <Resource Include="Assets\Icons\Sockets\mediamirror_on.png" />
+    <Resource Include="Assets\Icons\Sockets\printer_off.png" />
+    <Resource Include="Assets\Icons\Sockets\printer_on.png" />
+    <Resource Include="Assets\Icons\Sockets\socket.png" />
+    <Resource Include="Assets\Icons\Sockets\sound_off.png" />
+    <Resource Include="Assets\Icons\Sockets\sound_on.png" />
+    <Resource Include="Assets\Icons\Sockets\storage_off.png" />
+    <Resource Include="Assets\Icons\Sockets\storage_on.png" />
+    <Resource Include="Assets\Icons\Sockets\tv_off.png" />
+    <Resource Include="Assets\Icons\Sockets\tv_on.png" />
+    <Resource Include="Assets\Icons\Sockets\watering_off.png" />
+    <Resource Include="Assets\Icons\Sockets\watering_on.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
