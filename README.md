@@ -16,8 +16,8 @@ Only perfect with https://github.com/Gu3pardo/LucaHome-RaspberryServer
 
 # Screenshots
 
-![alt tag](https://github.com/Gu3pardo/LucaHome-LucaHome-WPFApplication/blob/master/screenshots/img001.png)
+![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img001.png)
 ___________
-![alt tag](https://github.com/Gu3pardo/LucaHome-LucaHome-WPFApplication/blob/master/screenshots/img002.png)
+![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img002.png)
 ___________
-![alt tag](https://github.com/Gu3pardo/LucaHome-LucaHome-WPFApplication/blob/master/screenshots/img003.png)
+![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img003.png)
