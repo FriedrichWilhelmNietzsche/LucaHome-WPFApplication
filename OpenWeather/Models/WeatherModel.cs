@@ -26,7 +26,17 @@ namespace OpenWeather.Models
 
         private WeatherCondition _condition;
 
-        public WeatherModel(string city, string country, string description, double temperature, double humidity, double pressure, DateTime sunrise, DateTime sunset, DateTime lastUpdate, WeatherCondition condition)
+        public WeatherModel(
+            string city, 
+            string country, 
+            string description, 
+            double temperature, 
+            double humidity, 
+            double pressure, 
+            DateTime sunrise, 
+            DateTime sunset, 
+            DateTime lastUpdate, 
+            WeatherCondition condition)
         {
             _logger = new Logger(TAG, OWEnables.LOGGING);
 

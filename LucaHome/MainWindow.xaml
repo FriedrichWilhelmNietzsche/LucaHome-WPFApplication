@@ -5,8 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LucaHome"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="LucaHome" 
+        Height="475" Width="725"
+        MinHeight="475" MinWidth="725"
+        MaxHeight="475" MaxWidth="725"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
@@ -14,9 +16,11 @@
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}">
-    <Grid>
-        <materialDesign:Card Padding="32" Margin="16">
-            <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}">My First Material Design App</TextBlock>
-        </materialDesign:Card>
-    </Grid>
+    
+    <DockPanel>
+        <Frame 
+            x:Name="_mainFrame" 
+            NavigationUIVisibility="Hidden" />
+    </DockPanel>
+    
 </Window>

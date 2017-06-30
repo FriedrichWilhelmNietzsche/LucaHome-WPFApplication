@@ -8,8 +8,8 @@ namespace Common.Enums
         public static readonly WeatherCondition NULL = new WeatherCondition(
             0,
             "Null",
-            new Uri("Assets/Images/wallpaper_dummy.png", UriKind.Relative),
-            new Uri("Assets/Images/weather_dummy.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/wallpaper_dummy.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/weather_dummy.png", UriKind.Relative),
             "Null",
             "Null",
             "Null");
@@ -17,8 +17,8 @@ namespace Common.Enums
         public static readonly WeatherCondition CLEAR = new WeatherCondition(
             1,
             "Clear",
-            new Uri("Assets/Images/wallpaper_clear.png", UriKind.Relative),
-            new Uri("Assets/Images/weather_clear.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/wallpaper_clear.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/weather_clear.png", UriKind.Relative),
             "Go to the park or river and enjoy the clear weather today!",
             "Today will be clear! Get out for lunch!",
             "Enjoy your day after work! Today will be clear!");
@@ -26,8 +26,8 @@ namespace Common.Enums
         public static readonly WeatherCondition CLOUD = new WeatherCondition(
             2,
             "Cloud",
-            new Uri("Assets/Images/wallpaper_cloud.png", UriKind.Relative),
-            new Uri("Assets/Images/weather_cloud.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/wallpaper_cloud.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/weather_cloud.png", UriKind.Relative),
             "Sun is hiding today.",
             "No sun today. Not bad to work...",
             "No sun after work today, cloudy!");
@@ -35,8 +35,8 @@ namespace Common.Enums
         public static readonly WeatherCondition DRIZZLE = new WeatherCondition(
             3,
             "Drizzle",
-            new Uri("Assets/Images/wallpaper_drizzle.png", UriKind.Relative),
-            new Uri("Assets/Images/weather_drizzle.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/wallpaper_drizzle.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/weather_drizzle.png", UriKind.Relative),
             "It's a cold and rainy day!",
             "There will be drizzle today!",
             "There will be drizzle after work today!");
@@ -44,8 +44,8 @@ namespace Common.Enums
         public static readonly WeatherCondition FOG = new WeatherCondition(
             4,
             "Fog",
-            new Uri("Assets/Images/wallpaper_fog.png", UriKind.Relative),
-            new Uri("Assets/Images/weather_fog.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/wallpaper_fog.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/weather_fog.png", UriKind.Relative),
             "You're not gonna see your hand today! :P",
             "Find your way to work today :P",
             "Find your way to home from work today :P");
@@ -53,8 +53,8 @@ namespace Common.Enums
         public static readonly WeatherCondition HAZE = new WeatherCondition(
             5,
             "Haze",
-            new Uri("Assets/Images/wallpaper_haze.png", UriKind.Relative),
-            new Uri("Assets/Images/weather_haze.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/wallpaper_haze.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/weather_haze.png", UriKind.Relative),
             "Will be haze today!",
             "Search your way, master!",
             "Haze on your way from work today!");
@@ -62,8 +62,8 @@ namespace Common.Enums
         public static readonly WeatherCondition MIST = new WeatherCondition(
             6,
             "Mist",
-            new Uri("Assets/Images/wallpaper_mist.png", UriKind.Relative),
-            new Uri("Assets/Images/weather_fog.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/wallpaper_mist.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/weather_fog.png", UriKind.Relative),
             "Will be misty today!",
             "Watch out today!",
             "Mist on your way from work today!");
@@ -71,8 +71,8 @@ namespace Common.Enums
         public static readonly WeatherCondition RAIN = new WeatherCondition(
             7,
             "Rain",
-            new Uri("Assets/Images/wallpaper_rain.png", UriKind.Relative),
-            new Uri("Assets/Images/weather_rain.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/wallpaper_rain.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/weather_rain.png", UriKind.Relative),
             "It's a rainy day! Chill at home ;)",
             "It will rain today! Take an umbrella or take your car to work.",
             "It will rain after work today!");
@@ -80,8 +80,8 @@ namespace Common.Enums
         public static readonly WeatherCondition SLEET = new WeatherCondition(
             8,
             "Sleet",
-            new Uri("Assets/Images/wallpaper_sleet.png", UriKind.Relative),
-            new Uri("Assets/Images/weather_sleet.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/wallpaper_sleet.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/weather_sleet.png", UriKind.Relative),
             "Today will be a freezy and slittering day!",
             "Take care outside today!",
             "Slittering way home from work today!");
@@ -89,8 +89,8 @@ namespace Common.Enums
         public static readonly WeatherCondition SNOW = new WeatherCondition(
             9,
             "Snow",
-            new Uri("Assets/Images/wallpaper_snow.png", UriKind.Relative),
-            new Uri("Assets/Images/weather_snow.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/wallpaper_snow.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/weather_snow.png", UriKind.Relative),
             "Today will be a snowy day!",
             "Snow today. Think twice taking your bike!",
             "Today will be a snowy way back from work!");
@@ -98,8 +98,8 @@ namespace Common.Enums
         public static readonly WeatherCondition SUN = new WeatherCondition(
             10,
             "Sun",
-            new Uri("Assets/Images/wallpaper_sun.png", UriKind.Relative),
-            new Uri("Assets/Images/weather_clear.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/wallpaper_sun.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/weather_clear.png", UriKind.Relative),
             "Enjoy the sunny weather today and chill!",
             "Today will be sunny! Get out for lunch!",
             "Enjoy your afterwork today! Will be sunny!");
@@ -107,8 +107,8 @@ namespace Common.Enums
         public static readonly WeatherCondition THUNDERSTORM = new WeatherCondition(
             11,
             "Thunderstorm",
-            new Uri("Assets/Images/wallpaper_thunderstorm.png", UriKind.Relative),
-            new Uri("Assets/Images/weather_thunderstorm.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/wallpaper_thunderstorm.png", UriKind.Relative),
+            new Uri("/OpenWeather;component/Assets/Images/weather_thunderstorm.png", UriKind.Relative),
             "Thunder is coming today!",
             "Prepare for a thunderstorm today!",
             "Today afternoon will be a thunderstorm!");
@@ -207,6 +207,39 @@ namespace Common.Enums
             {
                 return _workdayAfterWorkTip;
             }
+        }
+
+        public static WeatherCondition GetById(int id)
+        {
+            foreach (WeatherCondition entry in Values)
+            {
+                if (entry.Id == id)
+                {
+                    return entry;
+                }
+            }
+
+            return NULL;
+        }
+
+        public static WeatherCondition GetByDescription(string description)
+        {
+            foreach (WeatherCondition entry in Values)
+            {
+                if (entry.Description.ToLower().Equals(description.ToLower())
+                    || entry.Description.ToLower().Contains(description.ToLower())
+                    || description.ToLower().Equals(entry.Description.ToLower())
+                    || description.ToLower().Contains(entry.Description.ToLower())
+                    || entry.Description.ToUpper().Equals(description.ToUpper())
+                    || entry.Description.ToUpper().Contains(description.ToUpper())
+                    || description.ToUpper().Equals(entry.Description.ToUpper())
+                    || description.ToUpper().Contains(entry.Description.ToUpper()))
+                {
+                    return entry;
+                }
+            }
+
+            return NULL;
         }
 
         public override string ToString()

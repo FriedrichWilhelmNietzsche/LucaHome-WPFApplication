@@ -1,0 +1,88 @@
+﻿<Page x:Class="LucaHome.Pages.WeatherPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:LucaHome.Pages"
+      mc:Ignorable="d" 
+      Height="425" Width="700"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+      TextElement.FontWeight="Regular"
+      TextElement.FontSize="13"
+      TextOptions.TextFormattingMode="Ideal" 
+      TextOptions.TextRenderingMode="Auto"   
+      Background="{DynamicResource MaterialDesignPaper}"
+      FontFamily="{DynamicResource MaterialDesignFont}"
+      Title="LucaHome - Weather"
+      Loaded="WeatherPage_Loaded">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Image 
+            Height="100"
+            Stretch="UniformToFill"
+            Grid.Column="0"
+            Grid.Row="0"
+            Source="C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\OpenWeather\Assets\Images\wallpaper_dummy.png"/>
+
+        <ListView 
+            Grid.Column="0"
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            Height="300"
+            Margin="5"
+            VerticalAlignment="Center"
+            Width="680"
+            Name="WeatherList">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn 
+                        Width="55" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Center">
+                                    <Ellipse
+                                        Width="40" 
+                                        Height="40"
+                                        Fill="Purple"
+                                        HorizontalAlignment="Center"/>
+                                    <Ellipse
+                                        Width="38" 
+                                        Height="38"
+                                        HorizontalAlignment="Center">
+                                        <Ellipse.Fill>
+                                            <ImageBrush ImageSource="{Binding WeatherConditionImageSource, UpdateSourceTrigger=PropertyChanged}" />
+                                        </Ellipse.Fill>
+                                    </Ellipse>
+                                </Grid>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="DateAndTime"
+                                    DisplayMemberBinding="{Binding DateTimeString, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="135"/>
+                    <GridViewColumn Header="Condition"
+                                    DisplayMemberBinding="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="125"/>
+                    <GridViewColumn Header="Temperature"
+                                    DisplayMemberBinding="{Binding TemperatureString, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="120"/>
+                    <GridViewColumn Header="Humidity"
+                                    DisplayMemberBinding="{Binding HumidityString, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="90"/>
+                    <GridViewColumn Header="Pressure"
+                                    DisplayMemberBinding="{Binding PressureString, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="120"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</Page>

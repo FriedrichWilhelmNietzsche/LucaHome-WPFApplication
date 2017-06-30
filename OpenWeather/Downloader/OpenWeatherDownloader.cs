@@ -46,7 +46,7 @@ namespace OpenWeather.Downloader
         {
             if (_city == null || _city.Length == 0)
             {
-                _logger.Warning("You have to set the city berfore calling the weather!");
+                _logger.Warning("You have to set the city before calling the weather!");
                 return string.Empty;
             }
 
@@ -60,7 +60,7 @@ namespace OpenWeather.Downloader
         {
             if (_city == null || _city.Length == 0)
             {
-                _logger.Warning("You have to set the city berfore calling the weather!");
+                _logger.Warning("You have to set the city before calling the weather!");
                 return string.Empty;
             }
 

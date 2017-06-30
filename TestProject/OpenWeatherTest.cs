@@ -45,5 +45,19 @@ namespace TestProject
 
             Assert.AreNotEqual(currentWeather, null);
         }
+
+        [TestMethod]
+        public void TestConvertJsonToForecastWeather()
+        {
+            string city = "Munich, DE";
+
+            OpenWeatherDownloader downloader = new OpenWeatherDownloader(city);
+            string forecastWeatherJson = downloader.DownloadForecastWeatherJson();
+
+            JsonToWeatherConverter jsonToWeatherConverter = new JsonToWeatherConverter();
+            ForecastModel forecastWeather = jsonToWeatherConverter.ConvertFromJsonToForecastWeather(forecastWeatherJson);
+
+            Assert.AreNotEqual(forecastWeather, null);
+        }
     }
 }

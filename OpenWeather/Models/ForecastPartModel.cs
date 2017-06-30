@@ -21,7 +21,14 @@ namespace OpenWeather.Models
 
         private WeatherCondition _condition;
 
-        public ForecastPartModel(string description, double tempMin, double tempMax, double pressure, double humidity, DateTime dateTime, WeatherCondition condition)
+        public ForecastPartModel(
+            string description, 
+            double tempMin, 
+            double tempMax, 
+            double pressure, 
+            double humidity, 
+            DateTime dateTime, 
+            WeatherCondition condition)
         {
             _logger = new Logger(TAG, OWEnables.LOGGING);
             
@@ -61,11 +68,27 @@ namespace OpenWeather.Models
             }
         }
 
+        public string TemperatureString
+        {
+            get
+            {
+                return string.Format("{0}°C - {1}°C", _tempMin, _tempMax);
+            }
+        }
+
         public double Humidity
         {
             get
             {
                 return _humidity;
+            }
+        }
+
+        public string HumidityString
+        {
+            get
+            {
+                return string.Format("{0}%", _humidity);
             }
         }
 
@@ -77,6 +100,14 @@ namespace OpenWeather.Models
             }
         }
 
+        public string PressureString
+        {
+            get
+            {
+                return string.Format("{0}mBar", _pressure);
+            }
+        }
+
         public DateTime Datetime
         {
             get
@@ -85,11 +116,27 @@ namespace OpenWeather.Models
             }
         }
 
+        public string DateTimeString
+        {
+            get
+            {
+                return string.Format("{0}", _dateTime);
+            }
+        }
+
         public WeatherCondition Condition
         {
             get
             {
                 return _condition;
+            }
+        }
+
+        public Uri WeatherConditionImageSource
+        {
+            get
+            {
+                return _condition.Icon;
             }
         }
     }

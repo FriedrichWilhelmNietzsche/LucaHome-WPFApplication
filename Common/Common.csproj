@@ -67,6 +67,7 @@
     <Compile Include="Converter\JsonDataToTemperatureConverter.cs" />
     <Compile Include="Converter\JsonDataToTimerConverter.cs" />
     <Compile Include="Converter\JsonDataToWirelessSocketConverter.cs" />
+    <Compile Include="Converter\UnixToDateTimeConverter.cs" />
     <Compile Include="Dto\BirthdayDto.cs" />
     <Compile Include="Dto\ChangeDto.cs" />
     <Compile Include="Dto\ListedMenuDto.cs" />
@@ -153,6 +154,22 @@
     <Resource Include="Assets\Icons\Sockets\tv_on.png" />
     <Resource Include="Assets\Icons\Sockets\watering_off.png" />
     <Resource Include="Assets\Icons\Sockets\watering_on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Icons\Others\birthday_hd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Icons\Others\map.png" />
+    <Resource Include="Assets\Icons\Others\movie_hd.png" />
+    <Resource Include="Assets\Icons\Others\scheduler_hd.png" />
+    <Resource Include="Assets\Icons\Others\settings_hd.png" />
+    <Resource Include="Assets\Icons\Others\socket_hd.png" />
+    <Resource Include="Assets\Icons\Others\temperature_hd.png" />
+    <Resource Include="Assets\Icons\Others\timer_hd.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Assets\Images\main_image_informations.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

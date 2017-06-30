@@ -13,7 +13,10 @@ namespace OpenWeather.Models
         private string _country;
         private IList<ForecastPartModel> _list = new List<ForecastPartModel>();
 
-        public ForecastModel(string city, string country, IList<ForecastPartModel> list)
+        public ForecastModel(
+            string city, 
+            string country, 
+            IList<ForecastPartModel> list)
         {
             _logger = new Logger(TAG, OWEnables.LOGGING);
 
