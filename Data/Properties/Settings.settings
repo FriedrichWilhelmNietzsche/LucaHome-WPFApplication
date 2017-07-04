@@ -11,5 +11,8 @@
     <Setting Name="HomeSSID" Type="System.String" Scope="User">
       <Value Profile="(Default)">BellaPeca</Value>
     </Setting>
+    <Setting Name="OpenWeatherCity" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Munich, DE</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

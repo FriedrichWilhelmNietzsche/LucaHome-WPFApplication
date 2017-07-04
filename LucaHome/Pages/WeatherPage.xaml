@@ -15,7 +15,8 @@
       Background="{DynamicResource MaterialDesignPaper}"
       FontFamily="{DynamicResource MaterialDesignFont}"
       Title="LucaHome - Weather"
-      Loaded="WeatherPage_Loaded">
+      Loaded="Page_Loaded"
+      Unloaded="Page_Unloaded">
 
     <Grid>
         <Grid.RowDefinitions>

@@ -17,16 +17,32 @@ namespace Data.Services
             _logger = new Logger(TAG);
         }
 
+        public bool EnteredUserData
+        {
+            get
+            {
+                string userName = Properties.Settings.Default.UserName;
+                string passPhrase = Properties.Settings.Default.PassPhrase;
+
+                if (userName.Equals("NA") || passPhrase.Equals("NA"))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
         public UserDto User
         {
             get
             {
-                string userName = Properties.Settings.Default.PassPhrase;
+                string userName = Properties.Settings.Default.UserName;
                 string passPhrase = Properties.Settings.Default.PassPhrase;
 
                 if (userName != null && passPhrase != null)
                 {
-                    UserDto user = new UserDto((string)userName, (string)passPhrase);
+                    UserDto user = new UserDto(userName, passPhrase);
                     _logger.Debug(string.Format("Returning user {0} from localSettings!", user));
                     return user;
                 }
@@ -73,5 +89,25 @@ namespace Data.Services
             }
         }
 
+        public string OpenWeatherCity
+        {
+            get
+            {
+                return Properties.Settings.Default.OpenWeatherCity;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    _logger.Error("Cannot add null value for OpenWeatherCity!");
+                    return;
+                }
+
+                Properties.Settings.Default.OpenWeatherCity = value;
+                _logger.Debug(string.Format("Received new OpenWeatherCity {0} to save to settings!", value));
+
+                Properties.Settings.Default.Save();
+            }
+        }
     }
 }

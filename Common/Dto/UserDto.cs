@@ -31,7 +31,7 @@
 
         public override string ToString()
         {
-            return string.Format("{{0}: {Name: {1}};{Passphrase: {2}}}", TAG, _name, "-/-");
+            return string.Format("[ {0} : [Name : {1} ];[Passphrase : -/- ] ]", TAG, _name);
         }
     }
 }

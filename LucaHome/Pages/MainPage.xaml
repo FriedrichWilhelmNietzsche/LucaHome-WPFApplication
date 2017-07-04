@@ -14,7 +14,8 @@
       TextOptions.TextRenderingMode="Auto"   
       Background="{DynamicResource MaterialDesignPaper}"
       FontFamily="{DynamicResource MaterialDesignFont}"
-      Title="LucaHome">
+      Title="LucaHome"
+      Loaded="Page_Loaded">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -68,7 +69,7 @@
             Grid.Column="1"
             Margin="5 5 5 5" 
             Width="200"
-            ToolTip="Display current weather and forecast weather"
+            ToolTip="Display forecast weather"
             Click="OpenWeather_Click">
             Open Weather
         </Button>

@@ -1,9 +1,0 @@
-C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\bin\Debug\Common.dll.config
-C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\bin\Debug\Common.dll
-C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\bin\Debug\Common.pdb
-C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\obj\Debug\Common.csprojResolveAssemblyReference.cache
-C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\obj\Debug\Common.g.resources
-C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\obj\Debug\Common.Properties.Resources.resources
-C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\obj\Debug\Common.csproj.GenerateResource.Cache
-C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\obj\Debug\Common.dll
-C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\obj\Debug\Common.pdb

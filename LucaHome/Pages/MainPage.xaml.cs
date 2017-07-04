@@ -25,6 +25,11 @@ namespace LucaHome.Pages
             InitializeComponent();
         }
 
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            _navigationService.RemoveBackEntry();
+        }
+
         private void OpenWeather_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Received click of sender {0} with arguments {1}", sender, routedEventArgs));

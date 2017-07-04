@@ -58,5 +58,17 @@ namespace Data.Properties {
                 this["HomeSSID"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Munich, DE")]
+        public string OpenWeatherCity {
+            get {
+                return ((string)(this["OpenWeatherCity"]));
+            }
+            set {
+                this["OpenWeatherCity"] = value;
+            }
+        }
     }
 }

@@ -10,7 +10,7 @@
 
 Part of the LucaHome-Project
 
-UWP client to remotely control sockets, view temperature and more of your home.
+WPF client to remotely control sockets, view temperature and more of your home.
 
 Only perfect with https://github.com/Gu3pardo/LucaHome-RaspberryServer
 

@@ -7,7 +7,9 @@
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-      Title="BootPage">
+      Title="BootPage"
+      Loaded="Page_Loaded"
+      Unloaded="Page_Unloaded">
 
     <Page.Resources>
         <ResourceDictionary>
