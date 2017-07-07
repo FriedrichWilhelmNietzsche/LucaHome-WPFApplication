@@ -32,7 +32,7 @@
             Stretch="UniformToFill"
             Grid.Column="0"
             Grid.Row="0"
-            Source="C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\OpenWeather\Assets\Images\wallpaper_dummy.png"/>
+            Source="/OpenWeather;component/Assets/Images/wallpaper_dummy.png"/>
 
         <ListView 
             Grid.Column="0"

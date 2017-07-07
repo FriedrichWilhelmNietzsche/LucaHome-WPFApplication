@@ -12,9 +12,28 @@ namespace Data.Services
         private const string TAG = "AppSettingsService";
         private Logger _logger;
 
-        public AppSettingsService()
+        private static AppSettingsService _instance = null;
+        private static readonly object _padlock = new object();
+
+        AppSettingsService()
         {
             _logger = new Logger(TAG);
+        }
+
+        public static AppSettingsService Instance
+        {
+            get
+            {
+                lock (_padlock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new AppSettingsService();
+                    }
+
+                    return _instance;
+                }
+            }
         }
 
         public bool EnteredUserData
@@ -40,7 +59,8 @@ namespace Data.Services
                 string userName = Properties.Settings.Default.UserName;
                 string passPhrase = Properties.Settings.Default.PassPhrase;
 
-                if (userName != null && passPhrase != null)
+                if (userName != null && passPhrase != null 
+                    && userName != "NA" && passPhrase != "NA")
                 {
                     UserDto user = new UserDto(userName, passPhrase);
                     _logger.Debug(string.Format("Returning user {0} from localSettings!", user));
@@ -105,6 +125,42 @@ namespace Data.Services
 
                 Properties.Settings.Default.OpenWeatherCity = value;
                 _logger.Debug(string.Format("Received new OpenWeatherCity {0} to save to settings!", value));
+
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        public string ServerIpAddress
+        {
+            get
+            {
+                return Properties.Settings.Default.ServerIpAddress;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    _logger.Error("Cannot add null value for ServerIpAddress!");
+                    return;
+                }
+
+                Properties.Settings.Default.ServerIpAddress = value;
+                _logger.Debug(string.Format("Received new ServerIpAddress {0} to save to settings!", value));
+
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        public int ServerPort
+        {
+            get
+            {
+                return Properties.Settings.Default.ServerPort;
+            }
+            set
+            {
+                Properties.Settings.Default.ServerPort = value;
+                _logger.Debug(string.Format("Received new ServerPort {0} to save to settings!", value));
 
                 Properties.Settings.Default.Save();
             }

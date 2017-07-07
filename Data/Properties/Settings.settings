@@ -14,5 +14,11 @@
     <Setting Name="OpenWeatherCity" Type="System.String" Scope="User">
       <Value Profile="(Default)">Munich, DE</Value>
     </Setting>
+    <Setting Name="ServerIpAddress" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.178.22</Value>
+    </Setting>
+    <Setting Name="ServerPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">6677</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

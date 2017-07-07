@@ -3,6 +3,7 @@ using Common.Enums;
 using Common.Tools;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Common.Converter
 {
@@ -40,13 +41,13 @@ namespace Common.Converter
                     if (value.Contains(_searchParameter))
                     {
                         IList<ShoppingEntryDto> list = new List<ShoppingEntryDto>();
-                        
-                        string[] entries = value.Split(new string[] { "\\" + _searchParameter }, StringSplitOptions.RemoveEmptyEntries);
+
+                        string[] entries = Regex.Split(value, "\\" + _searchParameter);
                         foreach (string entry in entries)
                         {
                             string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
-                            string[] data = replacedEntry.Split(new string[] { "\\};" }, StringSplitOptions.RemoveEmptyEntries);
+                            string[] data = Regex.Split(replacedEntry, "\\};");
                             ShoppingEntryDto newValue = ParseStringToValue(data);
                             if (newValue != null)
                             {

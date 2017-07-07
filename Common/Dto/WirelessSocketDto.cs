@@ -1,10 +1,11 @@
 ﻿using System;
 using Common.Common;
 using Common.Enums;
+using System.ComponentModel;
 
 namespace Common.Dto
 {
-    public class WirelessSocketDto
+    public class WirelessSocketDto : INotifyPropertyChanged
     {
         private const string TAG = "WirelessSocketDto";
 
@@ -27,6 +28,12 @@ namespace Common.Dto
             _isActivated = isActivated;
 
             _shortName = createShortName(_name);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public int Id
@@ -70,7 +77,18 @@ namespace Common.Dto
             set
             {
                 _isActivated = value;
-                // TODO handle de/activation
+
+                OnPropertyChanged("IsActivated");
+                OnPropertyChanged("ActivationString");
+                OnPropertyChanged("Drawable");
+            }
+        }
+
+        public string ActivationString
+        {
+            get
+            {
+                return _isActivated ? "On" : "Off";
             }
         }
 
@@ -122,11 +140,11 @@ namespace Common.Dto
                 {
                     if (_isActivated)
                     {
-                        return new Uri("Assets/Icons/Sockets/tv_on.png", UriKind.Relative);
+                        return new Uri("/Common;component/Assets/Icons/Sockets/tv_on.png", UriKind.Relative);
                     }
                     else
                     {
-                        return new Uri("Assets/Icons/Sockets/tv_off.png", UriKind.Relative);
+                        return new Uri("/Common;component/Assets/Icons/Sockets/tv_off.png", UriKind.Relative);
                     }
                 }
                 else if (_name.Contains("Light"))
@@ -135,22 +153,22 @@ namespace Common.Dto
                     {
                         if (_isActivated)
                         {
-                            return new Uri("Assets/Icons/Sockets/bed_light_on.png", UriKind.Relative);
+                            return new Uri("/Common;component/Assets/Icons/Sockets/bed_light_on.png", UriKind.Relative);
                         }
                         else
                         {
-                            return new Uri("Assets/Icons/Sockets/bed_light_off.png", UriKind.Relative);
+                            return new Uri("/Common;component/Assets/Icons/Sockets/bed_light_off.png", UriKind.Relative);
                         }
                     }
                     else
                     {
                         if (_isActivated)
                         {
-                            return new Uri("Assets/Icons/Sockets/light_on.png", UriKind.Relative);
+                            return new Uri("/Common;component/Assets/Icons/Sockets/light_on.png", UriKind.Relative);
                         }
                         else
                         {
-                            return new Uri("Assets/Icons/Sockets/light_off.png", UriKind.Relative);
+                            return new Uri("/Common;component/Assets/Icons/Sockets/light_off.png", UriKind.Relative);
                         }
                     }
                 }
@@ -160,22 +178,22 @@ namespace Common.Dto
                     {
                         if (_isActivated)
                         {
-                            return new Uri("Assets/Icons/Sockets/bed_sound_on.png", UriKind.Relative);
+                            return new Uri("/Common;component/Assets/Icons/Sockets/bed_sound_on.png", UriKind.Relative);
                         }
                         else
                         {
-                            return new Uri("Assets/Icons/Sockets/bed_sound_off.png", UriKind.Relative);
+                            return new Uri("/Common;component/Assets/Icons/Sockets/bed_sound_off.png", UriKind.Relative);
                         }
                     }
                     else if (_name.Contains("Living"))
                     {
                         if (_isActivated)
                         {
-                            return new Uri("Assets/Icons/Sockets/sound_on.png", UriKind.Relative);
+                            return new Uri("/Common;component/Assets/Icons/Sockets/sound_on.png", UriKind.Relative);
                         }
                         else
                         {
-                            return new Uri("Assets/Icons/Sockets/sound_off.png", UriKind.Relative);
+                            return new Uri("/Common;component/Assets/Icons/Sockets/sound_off.png", UriKind.Relative);
                         }
                     }
                 }
@@ -183,33 +201,33 @@ namespace Common.Dto
                 {
                     if (_isActivated)
                     {
-                        return new Uri("Assets/Icons/Sockets/laptop_on.png", UriKind.Relative);
+                        return new Uri("/Common;component/Assets/Icons/Sockets/laptop_on.png", UriKind.Relative);
                     }
                     else
                     {
-                        return new Uri("Assets/Icons/Sockets/laptop_off.png", UriKind.Relative);
+                        return new Uri("/Common;component/Assets/Icons/Sockets/laptop_off.png", UriKind.Relative);
                     }
                 }
                 else if (_name.Contains("Printer"))
                 {
                     if (_isActivated)
                     {
-                        return new Uri("Assets/Icons/Sockets/printer_on.png", UriKind.Relative);
+                        return new Uri("/Common;component/Assets/Icons/Sockets/printer_on.png", UriKind.Relative);
                     }
                     else
                     {
-                        return new Uri("Assets/Icons/Sockets/printer_off.png", UriKind.Relative);
+                        return new Uri("/Common;component/Assets/Icons/Sockets/printer_off.png", UriKind.Relative);
                     }
                 }
                 else if (_name.Contains("Storage"))
                 {
                     if (_isActivated)
                     {
-                        return new Uri("Assets/Icons/Sockets/storage_on.png", UriKind.Relative);
+                        return new Uri("/Common;component/Assets/Icons/Sockets/storage_on.png", UriKind.Relative);
                     }
                     else
                     {
-                        return new Uri("Assets/Icons/Sockets/storage_off.png", UriKind.Relative);
+                        return new Uri("/Common;component/Assets/Icons/Sockets/storage_off.png", UriKind.Relative);
                     }
                 }
                 else if (_name.Contains("Heating"))
@@ -218,11 +236,11 @@ namespace Common.Dto
                     {
                         if (_isActivated)
                         {
-                            return new Uri("Assets/Icons/Sockets/bed_heating_on.png", UriKind.Relative);
+                            return new Uri("/Common;component/Assets/Icons/Sockets/bed_heating_on.png", UriKind.Relative);
                         }
                         else
                         {
-                            return new Uri("Assets/Icons/Sockets/bed_heating_off.png", UriKind.Relative);
+                            return new Uri("/Common;component/Assets/Icons/Sockets/bed_heating_off.png", UriKind.Relative);
                         }
                     }
                 }
@@ -230,37 +248,37 @@ namespace Common.Dto
                 {
                     if (_isActivated)
                     {
-                        return new Uri("Assets/Icons/Sockets/watering_on.png", UriKind.Relative);
+                        return new Uri("/Common;component/Assets/Icons/Sockets/watering_on.png", UriKind.Relative);
                     }
                     else
                     {
-                        return new Uri("Assets/Icons/Sockets/watering_off.png", UriKind.Relative);
+                        return new Uri("/Common;component/Assets/Icons/Sockets/watering_off.png", UriKind.Relative);
                     }
                 }
                 else if (_name.Contains("MediaMirror"))
                 {
                     if (_isActivated)
                     {
-                        return new Uri("Assets/Icons/Sockets/mediamirror_on.png", UriKind.Relative);
+                        return new Uri("/Common;component/Assets/Icons/Sockets/mediamirror_on.png", UriKind.Relative);
                     }
                     else
                     {
-                        return new Uri("Assets/Icons/Sockets/mediamirror_off.png", UriKind.Relative);
+                        return new Uri("/Common;component/Assets/Icons/Sockets/mediamirror_off.png", UriKind.Relative);
                     }
                 }
                 else if (_name.Contains("GameConsole"))
                 {
                     if (_isActivated)
                     {
-                        return new Uri("Assets/Icons/Sockets/gameconsole_on.png", UriKind.Relative);
+                        return new Uri("/Common;component/Assets/Icons/Sockets/gameconsole_on.png", UriKind.Relative);
                     }
                     else
                     {
-                        return new Uri("Assets/Icons/Sockets/gameconsole_off.png", UriKind.Relative);
+                        return new Uri("/Common;component/Assets/Icons/Sockets/gameconsole_off.png", UriKind.Relative);
                     }
                 }
 
-                return new Uri("Assets/Icons/Sockets/socket.png", UriKind.Relative);
+                return new Uri("/Common;component/Assets/Icons/Sockets/socket.png", UriKind.Relative);
             }
         }
 

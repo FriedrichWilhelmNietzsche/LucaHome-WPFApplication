@@ -49,6 +49,14 @@ namespace Common.Dto
             }
         }
 
+        public Uri Icon
+        {
+            get
+            {
+                return new Uri("/Common;component/Assets/Icons/Others/birthday_hd.png", UriKind.Relative);
+            }
+        }
+
         public int Age
         {
             get

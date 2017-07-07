@@ -21,3 +21,14 @@ ___________
 ![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img002.png)
 ___________
 ![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img003.png)
+___________
+![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img004.png)
+___________
+![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img005.png)
+
+# Libraries
+
+## Material Design In XAML Toolkit
+https://github.com/ButchersBoy/MaterialDesignInXamlToolkit
+## ToastNotifications v2
+https://github.com/raflop/ToastNotifications

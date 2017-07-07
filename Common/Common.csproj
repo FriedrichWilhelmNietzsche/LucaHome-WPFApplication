@@ -167,9 +167,26 @@
     <Resource Include="Assets\Icons\Others\temperature_hd.png" />
     <Resource Include="Assets\Icons\Others\timer_hd.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Assets\Wallpaper\main_image_airpressure.png" />
+    <Resource Include="Assets\Wallpaper\main_image_birthday.png" />
+    <Resource Include="Assets\Wallpaper\main_image_changes.png" />
+    <Resource Include="Assets\Wallpaper\main_image_humidity.png" />
+    <Resource Include="Assets\Wallpaper\main_image_informations.png" />
+    <Resource Include="Assets\Wallpaper\main_image_menu.png" />
+    <Resource Include="Assets\Wallpaper\main_image_movies.png" />
+    <Resource Include="Assets\Wallpaper\main_image_schedule.png" />
+    <Resource Include="Assets\Wallpaper\main_image_shopping.png" />
+    <Resource Include="Assets\Wallpaper\main_image_sockets.png" />
+    <Resource Include="Assets\Wallpaper\main_image_timer.png" />
+    <Resource Include="Assets\Wallpaper\wallpaper.jpg" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Images\main_image_informations.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Icons\Sockets\light_off.png" />
+    <Resource Include="Assets\Icons\Sockets\light_on.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

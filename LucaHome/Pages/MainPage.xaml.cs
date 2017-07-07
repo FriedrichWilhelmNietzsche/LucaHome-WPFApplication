@@ -9,18 +9,22 @@ namespace LucaHome.Pages
     public partial class MainPage : Page
     {
         private const string TAG = "MainPage";
-        private Logger _logger;
+        private readonly Logger _logger;
 
-        private NavigationService _navigationService;
+        private readonly NavigationService _navigationService;
 
-        private WeatherPage _weatherPage;
+        private readonly BirthdayPage _birthdayPage;
+        private readonly WeatherPage _weatherPage;
+        private readonly WirelessSocketPage _wirelessSocketPage;
 
         public MainPage(NavigationService navigationService)
         {
             _logger = new Logger(TAG, Enables.LOGGING);
             _navigationService = navigationService;
 
+            _birthdayPage = new BirthdayPage(_navigationService);
             _weatherPage = new WeatherPage(_navigationService);
+            _wirelessSocketPage = new WirelessSocketPage(_navigationService);
 
             InitializeComponent();
         }
@@ -39,11 +43,13 @@ namespace LucaHome.Pages
         private void Socket_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Received click of sender {0} with arguments {1}", sender, routedEventArgs));
+            _navigationService.Navigate(_wirelessSocketPage);
         }
 
         private void Birthday_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Received click of sender {0} with arguments {1}", sender, routedEventArgs));
+            _navigationService.Navigate(_birthdayPage);
         }
 
         private void Movie_Click(object sender, RoutedEventArgs routedEventArgs)

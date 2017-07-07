@@ -2,6 +2,7 @@
 using Common.Tools;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Common.Converter
 {
@@ -40,13 +41,13 @@ namespace Common.Converter
                     {
                         IList<MovieDto> list = new List<MovieDto>();
 
-                        string[] entries = value.Split(new string[] { "\\" + _searchParameter }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] entries = Regex.Split(value, "\\" + _searchParameter);
                         for (int index = 0; index < entries.Length; index++)
                         {
                             string entry = entries[index];
                             string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
-                            string[] data = replacedEntry.Split(new string[] { "\\};" }, StringSplitOptions.RemoveEmptyEntries);
+                            string[] data = Regex.Split(replacedEntry, "\\};");
                             MovieDto newValue = ParseStringToValue(index, data, allSockets);
                             if (newValue != null)
                             {

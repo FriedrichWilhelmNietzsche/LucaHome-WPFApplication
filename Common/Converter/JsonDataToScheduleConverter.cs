@@ -2,6 +2,7 @@
 using Common.Tools;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using static Common.Dto.ScheduleDto;
 
 namespace Common.Converter
@@ -41,13 +42,13 @@ namespace Common.Converter
                     {
                         IList<ScheduleDto> list = new List<ScheduleDto>();
 
-                        string[] entries = value.Split(new string[] { "\\" + _searchParameter }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] entries = Regex.Split(value, "\\" + _searchParameter);
                         for (int index = 0; index < entries.Length; index++)
                         {
                             string entry = entries[index];
                             string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
-                            string[] data = replacedEntry.Split(new string[] { "\\};" }, StringSplitOptions.RemoveEmptyEntries);
+                            string[] data = Regex.Split(replacedEntry, "\\};");
                             ScheduleDto newValue = ParseStringToValue(index, data, socketList);
                             if (newValue != null)
                             {

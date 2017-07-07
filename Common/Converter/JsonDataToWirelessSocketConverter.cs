@@ -2,6 +2,7 @@
 using Common.Tools;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Common.Converter
 {
@@ -17,36 +18,52 @@ namespace Common.Converter
             _logger = new Logger(TAG);
         }
 
-        public static IList<WirelessSocketDto> GetList(string[] stringArray)
+        public IList<WirelessSocketDto> GetList(string[] jsonStringArray)
         {
-            if (StringHelper.StringsAreEqual(stringArray))
+            if (StringHelper.StringsAreEqual(jsonStringArray))
             {
-                return ParseStringToList(stringArray[0]);
+                return ParseStringToList(jsonStringArray[0]);
             }
             else
             {
-                string usedEntry = StringHelper.SelectString(stringArray, _searchParameter);
+                string usedEntry = StringHelper.SelectString(jsonStringArray, _searchParameter);
                 return ParseStringToList(usedEntry);
             }
         }
 
-        private static IList<WirelessSocketDto> ParseStringToList(string value)
+        public IList<WirelessSocketDto> GetList(string jsonString)
         {
+            _logger.Debug(string.Format("GetList with jsonString {0}", jsonString));
+
+            return ParseStringToList(jsonString);
+        }
+
+        private IList<WirelessSocketDto> ParseStringToList(string value)
+        {
+            _logger.Debug(string.Format("ParseStringToList with value {0}", value));
+
             if (!value.Contains("Error"))
             {
-                if (StringHelper.GetStringCount(value, _searchParameter) > 1)
+                _logger.Debug("ParseStringToList value has no Error!");
+
+                int stringCount = StringHelper.GetStringCount(value, _searchParameter);
+                if (stringCount > 1)
                 {
+                    _logger.Debug("ParseStringToList stringCount is larger then 1!");
+
                     if (value.Contains(_searchParameter))
                     {
+                        _logger.Debug(string.Format("ParseStringToList value Contains _searchParameter {0}", _searchParameter));
+
                         IList<WirelessSocketDto> list = new List<WirelessSocketDto>();
 
-                        string[] entries = value.Split(new string[] { "\\" + _searchParameter }, StringSplitOptions.RemoveEmptyEntries);
-                        for (int index = 0; index < entries.Length; index++)
+                        string[] entries = Regex.Split(value, "\\" + _searchParameter);
+                        for (int index = 1; index < entries.Length; index++)
                         {
                             string entry = entries[index];
                             string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
-                            string[] data = replacedEntry.Split(new string[] { "\\};" }, StringSplitOptions.RemoveEmptyEntries);
+                            string[] data = Regex.Split(replacedEntry, "\\};");
                             WirelessSocketDto newValue = ParseStringToValue(index, data);
                             if (newValue != null)
                             {
@@ -56,6 +73,14 @@ namespace Common.Converter
 
                         return list;
                     }
+                    else
+                    {
+                        _logger.Error(string.Format("Value {0} doesnot contain searchparameter {1}", value, _searchParameter));
+                    }
+                }
+                else
+                {
+                    _logger.Error(string.Format("Value {0} has invalid stringCount {1}", value, stringCount));
                 }
             }
 
@@ -64,7 +89,7 @@ namespace Common.Converter
             return null;
         }
 
-        private static WirelessSocketDto ParseStringToValue(int id, string[] data)
+        private WirelessSocketDto ParseStringToValue(int id, string[] data)
         {
             if (data.Length == 4)
             {

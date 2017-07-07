@@ -16,10 +16,10 @@ namespace LucaHome.Pages
     public partial class WeatherPage : Page
     {
         private const string TAG = "WeatherPage";
-        private Logger _logger;
+        private readonly Logger _logger;
 
-        private NavigationService _navigationService;
-        private OpenWeatherService _openWeatherService;
+        private readonly NavigationService _navigationService;
+        private readonly OpenWeatherService _openWeatherService;
 
         public WeatherPage(NavigationService navigationService)
         {
@@ -35,7 +35,7 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             
-            _openWeatherService.ForecastWeatherDownloadFinished += _forecastWeatherDownloadFinished;
+            _openWeatherService.OnForecastWeatherDownloadFinished += _forecastWeatherDownloadFinished;
 
             if (_openWeatherService.ForecastWeather == null)
             {
@@ -50,7 +50,7 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             
-            _openWeatherService.ForecastWeatherDownloadFinished -= _forecastWeatherDownloadFinished;
+            _openWeatherService.OnForecastWeatherDownloadFinished -= _forecastWeatherDownloadFinished;
         }
 
         private void setList()
@@ -63,11 +63,10 @@ namespace LucaHome.Pages
             }
         }
 
-        private string _forecastWeatherDownloadFinished(ForecastModel forecastWeather, bool success)
+        private void _forecastWeatherDownloadFinished(ForecastModel forecastWeather, bool success)
         {
             _logger.Debug(string.Format("_forecastWeatherDownloadFinished with model {0} was successful: {1}", forecastWeather, success));
             setList();
-            return success ? "1" : "0";
         }
     }
 }

@@ -46,12 +46,14 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommonConverterTest.cs" />
     <Compile Include="DataServiceTest.cs" />
     <Compile Include="OpenWeatherTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnitTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

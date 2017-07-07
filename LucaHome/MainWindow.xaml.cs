@@ -24,11 +24,10 @@ namespace LucaHome
             _logger = new Logger(TAG, Enables.LOGGING);
 
             InitializeComponent();
-
-            _appSettingsService = new AppSettingsService();
-
+            
             _navigationService = _mainFrame.NavigationService;
 
+            _appSettingsService = AppSettingsService.Instance;
             _openWeatherService = OpenWeatherService.Instance;
             _openWeatherService.City = _appSettingsService.OpenWeatherCity;
 

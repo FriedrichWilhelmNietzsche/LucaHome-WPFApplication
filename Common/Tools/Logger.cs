@@ -76,7 +76,7 @@ namespace Common.Tools
             }
 
             // TODO add write to file, colored output, etc.
-            System.Diagnostics.Debug.WriteLine(message);
+            System.Diagnostics.Debug.WriteLine(string.Format("TAG: {0} | Message: {1}", _tag, message));
         }
 
         public void Information(string message)
@@ -92,7 +92,7 @@ namespace Common.Tools
             }
 
             // TODO add write to file, colored output, etc.
-            System.Diagnostics.Debug.WriteLine(message);
+            System.Diagnostics.Debug.WriteLine(string.Format("TAG: {0} | Message: {1}", _tag, message));
         }
 
         public void Warning(string message)
@@ -108,7 +108,7 @@ namespace Common.Tools
             }
 
             // TODO add write to file, colored output, etc.
-            System.Diagnostics.Debug.WriteLine(message);
+            System.Diagnostics.Debug.WriteLine(string.Format("TAG: {0} | Message: {1}", _tag, message));
         }
 
         public void Error(string message)
@@ -124,7 +124,7 @@ namespace Common.Tools
             }
 
             // TODO add write to file, colored output, etc.
-            System.Diagnostics.Debug.WriteLine(message);
+            System.Diagnostics.Debug.WriteLine(string.Format("TAG: {0} | Message: {1}", _tag, message));
         }
     }
 }

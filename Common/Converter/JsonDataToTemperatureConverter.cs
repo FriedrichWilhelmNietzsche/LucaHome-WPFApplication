@@ -2,6 +2,7 @@
 using Common.Tools;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using static Common.Dto.TemperatureDto;
 
 namespace Common.Converter
@@ -41,12 +42,12 @@ namespace Common.Converter
                     {
                         IList<TemperatureDto> list = new List<TemperatureDto>();
 
-                        string[] entries = value.Split(new string[] { "\\" + _searchParameter }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] entries = Regex.Split(value, "\\" + _searchParameter);
                         foreach (string entry in entries)
                         {
                             string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
-                            string[] data = replacedEntry.Split(new string[] { "\\};" }, StringSplitOptions.RemoveEmptyEntries);
+                            string[] data = Regex.Split(replacedEntry, "\\};");
                             TemperatureDto newValue = ParseStringToValue(data);
                             if (newValue != null)
                             {

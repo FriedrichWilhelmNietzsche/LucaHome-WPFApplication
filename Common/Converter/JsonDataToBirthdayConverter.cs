@@ -2,6 +2,7 @@
 using Common.Tools;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Common.Converter
 {
@@ -17,7 +18,7 @@ namespace Common.Converter
             _logger = new Logger(TAG);
         }
 
-        public static IList<BirthdayDto> GetList(string[] stringArray)
+        public IList<BirthdayDto> GetList(string[] stringArray)
         {
             if (StringHelper.StringsAreEqual(stringArray))
             {
@@ -30,7 +31,12 @@ namespace Common.Converter
             }
         }
 
-        private static IList<BirthdayDto> ParseStringToList(string value)
+        public IList<BirthdayDto> GetList(string responseString)
+        {
+            return ParseStringToList(responseString);
+        }
+
+        private IList<BirthdayDto> ParseStringToList(string value)
         {
             if (!value.Contains("Error"))
             {
@@ -39,13 +45,14 @@ namespace Common.Converter
                     if (value.Contains(_searchParameter))
                     {
                         IList<BirthdayDto> list = new List<BirthdayDto>();
-                        
-                        string[] entries = value.Split(new string[] { "\\" + _searchParameter }, StringSplitOptions.RemoveEmptyEntries);
-                        foreach (string entry in entries)
+
+                        string[] entries = Regex.Split(value, "\\" + _searchParameter);
+                        for (int index = 1; index < entries.Length; index++)
                         {
+                            string entry = entries[index];
                             string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
-                            string[] data = replacedEntry.Split(new string[] { "\\};" }, StringSplitOptions.RemoveEmptyEntries);
+                            string[] data = Regex.Split(replacedEntry, "\\};");
                             BirthdayDto newValue = ParseStringToValue(data);
                             if (newValue != null)
                             {
@@ -63,7 +70,7 @@ namespace Common.Converter
             return null;
         }
 
-        private static BirthdayDto ParseStringToValue(string[] data)
+        private BirthdayDto ParseStringToValue(string[] data)
         {
             if (data.Length == 5)
             {
@@ -95,7 +102,7 @@ namespace Common.Converter
 
                     string monthString = data[3].Replace("{month:", "").Replace("};", "");
                     int month = -1;
-                    bool parseSuccessMonth = int.TryParse(dayString, out month);
+                    bool parseSuccessMonth = int.TryParse(monthString, out month);
                     if (!parseSuccessMonth)
                     {
                         _logger.Error("Failed to parse month from data!");
@@ -104,7 +111,7 @@ namespace Common.Converter
 
                     string yearString = data[4].Replace("{year:", "").Replace("};", "");
                     int year = -1;
-                    bool parseSuccessYear = int.TryParse(dayString, out year);
+                    bool parseSuccessYear = int.TryParse(yearString, out year);
                     if (!parseSuccessYear)
                     {
                         _logger.Error("Failed to parse year from data!");

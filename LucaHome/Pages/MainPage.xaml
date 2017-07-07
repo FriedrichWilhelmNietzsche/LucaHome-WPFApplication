@@ -183,7 +183,7 @@
             Width="200"
             ToolTip="Monitor temperatures"
             Click="Temperature_Click">
-            Temperatur
+            Temperature
         </Button>
 
         <Ellipse

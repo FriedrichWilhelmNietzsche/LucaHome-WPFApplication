@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace OpenWeather.Service
 {
-    public delegate string CurrentWeatherDownloadEventHandler(WeatherModel currentWeather, bool success);
-    public delegate string ForecastWeatherDownloadEventHandler(ForecastModel forecastWeather, bool success);
+    public delegate void CurrentWeatherDownloadEventHandler(WeatherModel currentWeather, bool success);
+    public delegate void ForecastWeatherDownloadEventHandler(ForecastModel forecastWeather, bool success);
 
     public class OpenWeatherService
     {
@@ -34,8 +34,8 @@ namespace OpenWeather.Service
             _jsonToWeatherConverter = new JsonToWeatherConverter();
         }
 
-        public event CurrentWeatherDownloadEventHandler CurrentWeatherDownloadFinished;
-        public event ForecastWeatherDownloadEventHandler ForecastWeatherDownloadFinished;
+        public event CurrentWeatherDownloadEventHandler OnCurrentWeatherDownloadFinished;
+        public event ForecastWeatherDownloadEventHandler OnForecastWeatherDownloadFinished;
 
         public static OpenWeatherService Instance
         {
@@ -134,7 +134,7 @@ namespace OpenWeather.Service
                 _currentWeather = newWeatherModel;
             }
 
-            CurrentWeatherDownloadFinished(_currentWeather, (newWeatherModel != null));
+            OnCurrentWeatherDownloadFinished(_currentWeather, (newWeatherModel != null));
         }
 
         private void loadForecastModel()
@@ -152,7 +152,7 @@ namespace OpenWeather.Service
                 _forecastWeather = newForecastModel;
             }
 
-            ForecastWeatherDownloadFinished(_forecastWeather, (newForecastModel != null));
+            OnForecastWeatherDownloadFinished(_forecastWeather, (newForecastModel != null));
         }
     }
 }
