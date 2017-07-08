@@ -11,14 +11,14 @@ namespace Common.Converter
         private const string TAG = "JsonDataToMovieConverter";
         private static string _searchParameter = "{movie:";
 
-        private static Logger _logger;
+        private Logger _logger;
 
         public JsonDataToMovieConverter()
         {
             _logger = new Logger(TAG);
         }
 
-        public static IList<MovieDto> GetList(string[] stringArray, WirelessSocketDto[] allSockets)
+        public IList<MovieDto> GetList(string[] stringArray, IList<WirelessSocketDto> allSockets)
         {
             if (StringHelper.StringsAreEqual(stringArray))
             {
@@ -31,7 +31,12 @@ namespace Common.Converter
             }
         }
 
-        private static IList<MovieDto> ParseStringToList(string value, WirelessSocketDto[] allSockets)
+        public IList<MovieDto> GetList(string jsonString, IList<WirelessSocketDto> allSockets)
+        {
+            return ParseStringToList(jsonString, allSockets);
+        }
+
+        private IList<MovieDto> ParseStringToList(string value, IList<WirelessSocketDto> allSockets)
         {
             if (!value.Contains("Error"))
             {
@@ -65,7 +70,7 @@ namespace Common.Converter
             return null;
         }
 
-        private static MovieDto ParseStringToValue(int id, string[] data, WirelessSocketDto[] allSockets)
+        private MovieDto ParseStringToValue(int id, string[] data, IList<WirelessSocketDto> allSockets)
         {
             if (data.Length == 6)
             {
@@ -100,17 +105,24 @@ namespace Common.Converter
                     string socketString = data[5].Replace("{Sockets:", "").Replace("};", "");
                     string[] socketStringArray = socketString.Split(new string[] { "\\|" }, StringSplitOptions.RemoveEmptyEntries);
                     WirelessSocketDto[] sockets = new WirelessSocketDto[socketStringArray.Length];
-                    for (int index = 0; index < socketStringArray.Length; index++)
+                    if (allSockets != null)
                     {
-                        string searchedSocket = socketStringArray[index].Replace("|", "");
-                        foreach (WirelessSocketDto socket in allSockets)
+                        for (int index = 0; index < socketStringArray.Length; index++)
                         {
-                            if (socket.Name.Contains(searchedSocket))
+                            string searchedSocket = socketStringArray[index].Replace("|", "");
+                            foreach (WirelessSocketDto socket in allSockets)
                             {
-                                sockets[index] = socket;
-                                continue;
+                                if (socket.Name.Contains(searchedSocket))
+                                {
+                                    sockets[index] = socket;
+                                    continue;
+                                }
                             }
                         }
+                    }
+                    else
+                    {
+                        _logger.Warning("SocketList is null!");
                     }
 
                     MovieDto newValue = new MovieDto(id, title, genre, description, rating, watched, sockets);

@@ -1,5 +1,5 @@
-﻿using System;
-using Common.Enums;
+﻿using Common.Enums;
+using System;
 
 namespace Common.Dto
 {
@@ -74,6 +74,14 @@ namespace Common.Dto
             }
         }
 
+        public string RatingString
+        {
+            get
+            {
+                return string.Format("{0}/5", _rating);
+            }
+        }
+
         public int Watched
         {
             get
@@ -91,6 +99,14 @@ namespace Common.Dto
             set
             {
                 _sockets = value;
+            }
+        }
+
+        public Uri Icon
+        {
+            get
+            {
+                return new Uri("/Common;component/Assets/Icons/Others/movie_hd.png", UriKind.Relative);
             }
         }
 

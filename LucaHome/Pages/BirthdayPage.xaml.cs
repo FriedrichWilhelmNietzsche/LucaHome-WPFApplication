@@ -58,6 +58,8 @@ namespace LucaHome.Pages
         {
             _logger.Debug("setList");
 
+            BirthdayList.Items.Clear();
+
             foreach (BirthdayDto entry in _birthdayService.BirthdayList)
             {
                 BirthdayList.Items.Add(entry);
@@ -68,6 +70,13 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("_birthdayListDownloadFinished with model {0} was successful: {1}", birthdayList, success));
             setList();
+        }
+
+        private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
+        {
+            _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+
+            _birthdayService.LoadBirthdayList();
         }
     }
 }

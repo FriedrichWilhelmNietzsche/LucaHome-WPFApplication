@@ -1,8 +1,8 @@
 ﻿using Common.Common;
+using Common.Dto;
 using Common.Tools;
-using OpenWeather.Models;
-using OpenWeather.Service;
-using System;
+using Data.Services;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -14,20 +14,20 @@ using System.Windows.Navigation;
 
 namespace LucaHome.Pages
 {
-    public partial class WeatherPage : Page
+    public partial class TemperaturePage : Page
     {
-        private const string TAG = "WeatherPage";
+        private const string TAG = "TemperaturePage";
         private readonly Logger _logger;
 
         private readonly NavigationService _navigationService;
-        private readonly OpenWeatherService _openWeatherService;
+        private readonly TemperatureService _temperatureService;
 
-        public WeatherPage(NavigationService navigationService)
+        public TemperaturePage(NavigationService navigationService)
         {
             _logger = new Logger(TAG, Enables.LOGGING);
 
             _navigationService = navigationService;
-            _openWeatherService = OpenWeatherService.Instance;
+            _temperatureService = TemperatureService.Instance;
 
             InitializeComponent();
         }
@@ -35,12 +35,12 @@ namespace LucaHome.Pages
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            
-            _openWeatherService.OnForecastWeatherDownloadFinished += _forecastWeatherDownloadFinished;
 
-            if (_openWeatherService.ForecastWeather == null)
+            _temperatureService.OnTemperatureDownloadFinished += _temperatureDownloadFinished;
+
+            if (_temperatureService.TemperatureList == null)
             {
-                _openWeatherService.LoadForecastModel();
+                _temperatureService.LoadTemperatureList();
                 return;
             }
 
@@ -50,33 +50,33 @@ namespace LucaHome.Pages
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            
-            _openWeatherService.OnForecastWeatherDownloadFinished -= _forecastWeatherDownloadFinished;
+
+            _temperatureService.OnTemperatureDownloadFinished -= _temperatureDownloadFinished;
         }
 
         private void setList()
         {
             _logger.Debug("setList");
 
-            WeatherList.Items.Clear();
+            TemperatureList.Items.Clear();
 
-            foreach (ForecastPartModel entry in _openWeatherService.ForecastWeather.List)
+            foreach (TemperatureDto entry in _temperatureService.TemperatureList)
             {
-                WeatherList.Items.Add(entry);
+                TemperatureList.Items.Add(entry);
             }
         }
 
-        private void _forecastWeatherDownloadFinished(ForecastModel forecastWeather, bool success)
+        private void _temperatureDownloadFinished(IList<TemperatureDto> temperatureList, bool success)
         {
-            _logger.Debug(string.Format("_forecastWeatherDownloadFinished with model {0} was successful: {1}", forecastWeather, success));
-            Application.Current.Dispatcher.Invoke(new Action(() => { setList(); }));
+            _logger.Debug(string.Format("_temperatureDownloadFinished with model {0} was successful: {1}", temperatureList, success));
+            setList();
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
 
-            _openWeatherService.LoadForecastModel();
+            _temperatureService.LoadTemperatureList();
         }
     }
 }

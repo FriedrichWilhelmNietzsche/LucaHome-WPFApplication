@@ -12,14 +12,14 @@ namespace Common.Converter
         private const string TAG = "JsonDataToTemperatureConverter";
         private static string _searchParameter = "{temperature:";
 
-        private static Logger _logger;
+        private Logger _logger;
 
         public JsonDataToTemperatureConverter()
         {
             _logger = new Logger(TAG);
         }
 
-        public static IList<TemperatureDto> GetList(string[] stringArray)
+        public IList<TemperatureDto> GetList(string[] stringArray)
         {
             if (StringHelper.StringsAreEqual(stringArray))
             {
@@ -32,11 +32,16 @@ namespace Common.Converter
             }
         }
 
-        private static IList<TemperatureDto> ParseStringToList(string value)
+        public IList<TemperatureDto> GetList(string jsonString)
+        {
+            return ParseStringToList(jsonString);
+        }
+
+        private IList<TemperatureDto> ParseStringToList(string value)
         {
             if (!value.Contains("Error"))
             {
-                if (StringHelper.GetStringCount(value, _searchParameter) > 1)
+                if (StringHelper.GetStringCount(value, _searchParameter) > 0)
                 {
                     if (value.Contains(_searchParameter))
                     {
@@ -57,6 +62,14 @@ namespace Common.Converter
 
                         return list;
                     }
+                    else
+                    {
+                        _logger.Error(string.Format("Found no _searchParameter {0} in value {1}", _searchParameter, value));
+                    }
+                }
+                else
+                {
+                    _logger.Error(string.Format("Count for _searchParameter {0} in value {1} is {2}", _searchParameter, value, StringHelper.GetStringCount(value, _searchParameter)));
                 }
             }
 
@@ -65,15 +78,16 @@ namespace Common.Converter
             return null;
         }
 
-        private static TemperatureDto ParseStringToValue(string[] data)
+        private TemperatureDto ParseStringToValue(string[] data)
         {
             if (data.Length == 4)
             {
-                if (data[0].Contains("{value:") && data[1].Contains("{area:") && data[2].Contains("{sensorPath:")
-                        && data[3].Contains("{graphPath:"))
+                if (data[0].Contains("{value:")
+                    && data[1].Contains("{area:")
+                    && data[2].Contains("{sensorPath:")
+                    && data[3].Contains("{graphPath:"))
                 {
-
-                    string temperatureString = data[0].Replace("{value:", "").Replace("};", "");
+                    string temperatureString = data[0].Replace("{value:", "").Replace("};", "").Replace(".", ",");
                     double temperature = -1;
                     bool parseSuccessTemperature = double.TryParse(temperatureString, out temperature);
                     if (!parseSuccessTemperature)

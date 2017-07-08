@@ -85,7 +85,7 @@ namespace Data.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("6677")]
+        [global::System.Configuration.DefaultSettingValueAttribute("8080")]
         public int ServerPort {
             get {
                 return ((int)(this["ServerPort"]));

@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace Data.Controller
 {
-    public enum DownloadType { Birthday, WirelessSocket};
+    public enum DownloadType { Birthday, Movie, Temperature, User, WirelessSocket};
 
     public delegate void DownloadFinishedEventHandler(string response, bool success, DownloadType downloadType);
 
     public class DownloadController
     {
         private const string TAG = "DownloadController";
-        private Logger _logger;
+        private readonly Logger _logger;
 
         private const int RECEIVE_BUFFER_SIZE = 16777216;
 
-        private TcpClient _tcpClient = new TcpClient();
+        private readonly TcpClient _tcpClient = new TcpClient();
 
         public DownloadController()
         {

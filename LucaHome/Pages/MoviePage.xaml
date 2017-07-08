@@ -1,4 +1,4 @@
-﻿<Page x:Class="LucaHome.Pages.BirthdayPage"
+﻿<Page x:Class="LucaHome.Pages.MoviePage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -14,7 +14,7 @@
       TextOptions.TextRenderingMode="Auto"   
       Background="{DynamicResource MaterialDesignPaper}"
       FontFamily="{DynamicResource MaterialDesignFont}"
-      Title="LucaHome - WirelessSockets"
+      Title="LucaHome - Movies"
       Loaded="Page_Loaded"
       Unloaded="Page_Unloaded">
     
@@ -33,7 +33,7 @@
             Stretch="UniformToFill"
             Grid.Column="0"
             Grid.Row="0"
-            Source="/Common;component/Assets/Wallpaper/main_image_birthday.png" >
+            Source="/Common;component/Assets/Wallpaper/main_image_movies.png" >
         </Image>
 
         <ListView 
@@ -43,8 +43,8 @@
             Height="300"
             Margin="5"
             VerticalAlignment="Center"
-            Width="825"
-            Name="BirthdayList">
+            Width="820"
+            Name="MovieList">
             <ListView.View>
                 <GridView>
                     <GridViewColumn 
@@ -69,15 +69,39 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Name"
-                                    DisplayMemberBinding="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="150"/>
-                    <GridViewColumn Header="Birthday"
-                                    DisplayMemberBinding="{Binding Birthday, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="175"/>
-                    <GridViewColumn Header="Age"
-                                    DisplayMemberBinding="{Binding Age, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="150"/>
+                    <GridViewColumn Header="Title"
+                                    DisplayMemberBinding="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="225"/>
+                    <GridViewColumn Header="Genre"
+                                    DisplayMemberBinding="{Binding Genre, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="95"/>
+                    <GridViewColumn Header="Description"
+                                    DisplayMemberBinding="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="100"/>
+                    <GridViewColumn Header="Rating"
+                                    DisplayMemberBinding="{Binding RatingString, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="85"/>
+                    <GridViewColumn Header="Watched"
+                                    DisplayMemberBinding="{Binding Watched, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="85"/>
+                    <GridViewColumn 
+                        Width="140" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Center">
+                                    <Button
+                                        Style="{DynamicResource MaterialDesignRaisedButton}"
+                                        Margin="5 5 5 5" 
+                                        Width="120"
+                                        ToolTip="Start movie on your PC"
+                                        Tag="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                                        Click="Button_Click">
+                                        Watch
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>

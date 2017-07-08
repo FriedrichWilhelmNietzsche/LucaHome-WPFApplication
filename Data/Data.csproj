@@ -54,6 +54,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controller\LocalDriveController.cs" />
     <Compile Include="Services\AppSettingsService.cs" />
     <Compile Include="Controller\DownloadController.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -61,6 +62,8 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Services\TemperatureService.cs" />
+    <Compile Include="Services\MovieService.cs" />
     <Compile Include="Services\BirthdayService.cs" />
     <Compile Include="Services\WirelessSocketService.cs" />
   </ItemGroup>
@@ -89,6 +92,10 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{a93889ac-dddb-477c-8f4a-12edc56cdffe}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWeather\OpenWeather.csproj">
+      <Project>{f3fbe316-920f-4e14-9e32-6befa3c7f88e}</Project>
+      <Name>OpenWeather</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

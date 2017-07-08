@@ -14,16 +14,13 @@ namespace OpenWeather.Service
     public class OpenWeatherService
     {
         private const String TAG = "OpenWeatherService";
-        private Logger _logger;
+        private readonly Logger _logger;
 
         private static OpenWeatherService _instance = null;
         private static readonly object _padlock = new object();
 
-        private string _city;
-        private bool _initialized;
-
-        private OpenWeatherDownloader _openWeatherDownloader;
-        private JsonToWeatherConverter _jsonToWeatherConverter;
+        private readonly OpenWeatherDownloader _openWeatherDownloader;
+        private readonly JsonToWeatherConverter _jsonToWeatherConverter;
 
         private WeatherModel _currentWeather = null;
         private ForecastModel _forecastWeather = null;
@@ -31,11 +28,23 @@ namespace OpenWeather.Service
         OpenWeatherService()
         {
             _logger = new Logger(TAG, OWEnables.LOGGING);
+            _logger.Information("Created new instance");
+
             _jsonToWeatherConverter = new JsonToWeatherConverter();
+            _openWeatherDownloader = new OpenWeatherDownloader();
         }
 
         public event CurrentWeatherDownloadEventHandler OnCurrentWeatherDownloadFinished;
+        private void OnCurrentWeatherDownloadFinishedHandler(WeatherModel currentWeather, bool success)
+        {
+            OnCurrentWeatherDownloadFinished?.Invoke(currentWeather, success);
+        }
+
         public event ForecastWeatherDownloadEventHandler OnForecastWeatherDownloadFinished;
+        private void OnForecastWeatherDownloadFinishedHandler(ForecastModel forecastWeather, bool success)
+        {
+            OnForecastWeatherDownloadFinished?.Invoke(forecastWeather, success);
+        }
 
         public static OpenWeatherService Instance
         {
@@ -57,21 +66,17 @@ namespace OpenWeather.Service
         {
             get
             {
-                return _city;
+                return _openWeatherDownloader.City;
             }
             set
             {
-                if (value == null)
+                if (value == null || value == string.Empty)
                 {
-                    _logger.Error("Cannot add null value for City!");
+                    _logger.Error("Cannot set null value for City!");
                     return;
                 }
 
-                _city = value;
-
-                _openWeatherDownloader = new OpenWeatherDownloader(_city);
-
-                _initialized = true;
+                _openWeatherDownloader.City = value;
             }
         }
 
@@ -95,9 +100,9 @@ namespace OpenWeather.Service
         {
             _logger.Debug("LoadCurrentWeather");
 
-            if (!_initialized)
+            if (!_openWeatherDownloader.Initialized)
             {
-                _logger.Error("Not initialized!");
+                _logger.Error("OpenWeatherDownloader not initialized!");
                 return;
             }
 
@@ -109,9 +114,9 @@ namespace OpenWeather.Service
         {
             _logger.Debug("LoadForecastModel");
 
-            if (!_initialized)
+            if (!_openWeatherDownloader.Initialized)
             {
-                _logger.Error("Not initialized!");
+                _logger.Error("OpenWeatherDownloader not initialized!");
                 return;
             }
 
@@ -134,7 +139,7 @@ namespace OpenWeather.Service
                 _currentWeather = newWeatherModel;
             }
 
-            OnCurrentWeatherDownloadFinished(_currentWeather, (newWeatherModel != null));
+            OnCurrentWeatherDownloadFinishedHandler(_currentWeather, (newWeatherModel != null));
         }
 
         private void loadForecastModel()
@@ -147,12 +152,12 @@ namespace OpenWeather.Service
             ForecastModel newForecastModel = _jsonToWeatherConverter.ConvertFromJsonToForecastWeather(jsonString);
             _logger.Debug(string.Format("New ForecastModel is {0}", newForecastModel));
 
-            if(newForecastModel != null)
+            if (newForecastModel != null)
             {
                 _forecastWeather = newForecastModel;
             }
 
-            OnForecastWeatherDownloadFinished(_forecastWeather, (newForecastModel != null));
+            OnForecastWeatherDownloadFinishedHandler(_forecastWeather, (newForecastModel != null));
         }
     }
 }

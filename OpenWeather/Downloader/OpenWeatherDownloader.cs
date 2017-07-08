@@ -13,15 +13,14 @@ namespace OpenWeather.Downloader
     public class OpenWeatherDownloader
     {
         private const String TAG = "OpenWeatherDownloader";
-        private Logger _logger;
+        private readonly Logger _logger;
 
         private String _city;
+        private bool _initialized;
 
-        public OpenWeatherDownloader(string city)
+        public OpenWeatherDownloader()
         {
             _logger = new Logger(TAG, OWEnables.LOGGING);
-
-            _city = city;
         }
 
         public string City
@@ -32,19 +31,28 @@ namespace OpenWeather.Downloader
             }
             set
             {
-                if (value == null)
+                if (value == null || value == string.Empty)
                 {
                     _logger.Error("Cannot set null value to City!");
                     return;
                 }
 
                 _city = value;
+                _initialized = true;
+            }
+        }
+
+        public bool Initialized
+        {
+            get
+            {
+                return _initialized;
             }
         }
 
         public string DownloadCurrentWeatherJson()
         {
-            if (_city == null || _city.Length == 0)
+            if (!_initialized || _city == null || _city.Length == 0)
             {
                 _logger.Warning("You have to set the city before calling the weather!");
                 return string.Empty;
@@ -58,7 +66,7 @@ namespace OpenWeather.Downloader
 
         public string DownloadForecastWeatherJson()
         {
-            if (_city == null || _city.Length == 0)
+            if (!_initialized || _city == null || _city.Length == 0)
             {
                 _logger.Warning("You have to set the city before calling the weather!");
                 return string.Empty;

@@ -14,11 +14,11 @@ namespace Data.Services
     public class WirelessSocketService
     {
         private const string TAG = "WirelessSocketService";
-        private Logger _logger;
+        private readonly Logger _logger;
 
-        private AppSettingsService _appSettingsService;
-        private DownloadController _downloadController;
-        private JsonDataToWirelessSocketConverter _jsonDataToWirelessSocketConverter;
+        private readonly AppSettingsService _appSettingsService;
+        private readonly DownloadController _downloadController;
+        private readonly JsonDataToWirelessSocketConverter _jsonDataToWirelessSocketConverter;
 
         private static WirelessSocketService _instance = null;
         private static readonly object _padlock = new object();
@@ -238,6 +238,8 @@ namespace Data.Services
         public void Dispose()
         {
             _logger.Debug("Dispose");
+
+            _downloadController.OnDownloadFinished -= _setWirelessSocketFinished;
 
             _downloadController.Dispose();
         }

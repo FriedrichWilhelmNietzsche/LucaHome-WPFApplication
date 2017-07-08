@@ -11,13 +11,13 @@ namespace LucaHome
     public partial class MainWindow : Window
     {
         private const string TAG = "MainWindow";
-        private Logger _logger;
+        private readonly Logger _logger;
 
-        private AppSettingsService _appSettingsService;
-        private NavigationService _navigationService;
-        private OpenWeatherService _openWeatherService;
+        private readonly AppSettingsService _appSettingsService;
+        private readonly NavigationService _navigationService;
+        private readonly OpenWeatherService _openWeatherService;
 
-        private BootPage _bootPage;
+        private readonly BootPage _bootPage;
 
         public MainWindow()
         {

@@ -15,29 +15,26 @@ using ToastNotifications.Position;
 /*
  * Really helpful link
  * https://www.dotnetperls.com/listview-wpf
- * 
- * Toasts
- * https://github.com/raflop/ToastNotifications
  */
 
 namespace LucaHome.Pages
 {
-    public partial class WirelessSocketPage : Page
+    public partial class MoviePage : Page
     {
-        private const string TAG = "WirelessSocketPage";
+        private const string TAG = "MoviePage";
         private readonly Logger _logger;
 
         private readonly NavigationService _navigationService;
-        private readonly WirelessSocketService _wirelessSocketService;
+        private readonly MovieService _movieService;
 
         private readonly Notifier _notifier;
 
-        public WirelessSocketPage(NavigationService navigationService)
+        public MoviePage(NavigationService navigationService)
         {
             _logger = new Logger(TAG, Enables.LOGGING);
 
             _navigationService = navigationService;
-            _wirelessSocketService = WirelessSocketService.Instance;
+            _movieService = MovieService.Instance;
 
             InitializeComponent();
 
@@ -66,12 +63,12 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
 
-            _wirelessSocketService.OnWirelessSocketDownloadFinished += _wirelessSocketListDownloadFinished;
-            _wirelessSocketService.OnSetWirelessSocketFinished += _setWirelessSocketFinished;
-
-            if (_wirelessSocketService.WirelessSocketList == null)
+            _movieService.OnMovieDownloadFinished += _movieListDownloadFinished;
+            _movieService.OnMovieStartFinished += _movieStartFinished;
+            
+            if (_movieService.MovieList == null)
             {
-                _wirelessSocketService.LoadWirelessSocketList();
+                _movieService.LoadMovieList();
                 return;
             }
 
@@ -82,44 +79,42 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
 
-            _wirelessSocketService.OnWirelessSocketDownloadFinished -= _wirelessSocketListDownloadFinished;
-            _wirelessSocketService.OnSetWirelessSocketFinished -= _setWirelessSocketFinished;
-
-            _notifier.Dispose();
+            _movieService.OnMovieDownloadFinished -= _movieListDownloadFinished;
+            _movieService.OnMovieStartFinished -= _movieStartFinished;
         }
 
         private void setList()
         {
             _logger.Debug("setList");
 
-            WirelessSocketList.Items.Clear();
+            MovieList.Items.Clear();
 
-            foreach (WirelessSocketDto entry in _wirelessSocketService.WirelessSocketList)
+            foreach (MovieDto entry in _movieService.MovieList)
             {
-                WirelessSocketList.Items.Add(entry);
+                MovieList.Items.Add(entry);
             }
         }
 
-        private void _wirelessSocketListDownloadFinished(IList<WirelessSocketDto> wirelessSocketList, bool success)
+        private void _movieListDownloadFinished(IList<MovieDto> movieList, bool success)
         {
-            _logger.Debug(string.Format("_wirelessSocketListDownloadFinished with model {0} was successful: {1}", wirelessSocketList, success));
+            _logger.Debug(string.Format("_movieListDownloadFinished with model {0} was successful: {1}", movieList, success));
             setList();
         }
 
-        private void _setWirelessSocketFinished(IList<WirelessSocketDto> wirelessSocketList, bool success)
+        private void _movieStartFinished(bool success)
         {
-            _logger.Debug(string.Format("_setWirelessSocketFinished was successful: {0}", success));
+            _logger.Debug(string.Format("_movieStartFinished was successful: {0}", success));
             if (success)
             {
-                _notifier.ShowSuccess("Successfully set socket");
+                _notifier.ShowSuccess("Successfully started movie");
             }
             else
             {
-                _notifier.ShowError("Failed to set socket");
+                _notifier.ShowError("Failed to start movie");
             }
         }
 
-        private void WirelessSocketButton_Click(object sender, RoutedEventArgs routedEventArgs)
+        private void Button_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Received click of sender {0} with arguments {1}", sender, routedEventArgs));
             if (sender is Button)
@@ -127,8 +122,8 @@ namespace LucaHome.Pages
                 Button senderButton = (Button)sender;
                 _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
 
-                string socketName = (String)senderButton.Tag;
-                _wirelessSocketService.ChangeWirelessSocketState(socketName);
+                string movieTitle = (String)senderButton.Tag;
+                _movieService.StartMovieOnPc(movieTitle);
             }
         }
 
@@ -136,7 +131,7 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
 
-            _wirelessSocketService.LoadWirelessSocketList();
+            _movieService.LoadMovieList();
         }
     }
 }

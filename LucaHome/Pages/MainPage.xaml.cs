@@ -14,6 +14,9 @@ namespace LucaHome.Pages
         private readonly NavigationService _navigationService;
 
         private readonly BirthdayPage _birthdayPage;
+        private readonly MoviePage _moviePage;
+        private readonly SettingsPage _settingsPage;
+        private readonly TemperaturePage _temperaturePage;
         private readonly WeatherPage _weatherPage;
         private readonly WirelessSocketPage _wirelessSocketPage;
 
@@ -23,6 +26,9 @@ namespace LucaHome.Pages
             _navigationService = navigationService;
 
             _birthdayPage = new BirthdayPage(_navigationService);
+            _moviePage = new MoviePage(_navigationService);
+            _settingsPage = new SettingsPage(_navigationService);
+            _temperaturePage = new TemperaturePage(_navigationService);
             _weatherPage = new WeatherPage(_navigationService);
             _wirelessSocketPage = new WirelessSocketPage(_navigationService);
 
@@ -55,16 +61,19 @@ namespace LucaHome.Pages
         private void Movie_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Received click of sender {0} with arguments {1}", sender, routedEventArgs));
+            _navigationService.Navigate(_moviePage);
         }
 
         private void Temperature_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Received click of sender {0} with arguments {1}", sender, routedEventArgs));
+            _navigationService.Navigate(_temperaturePage);
         }
 
         private void Settings_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Received click of sender {0} with arguments {1}", sender, routedEventArgs));
+            _navigationService.Navigate(_settingsPage);
         }
     }
 }

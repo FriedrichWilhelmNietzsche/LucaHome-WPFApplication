@@ -6,16 +6,17 @@
         xmlns:local="clr-namespace:LucaHome"
         mc:Ignorable="d"
         Title="LucaHome" 
-        Height="475" Width="725"
-        MinHeight="475" MinWidth="725"
-        MaxHeight="475" MaxWidth="725"
+        Height="475" Width="850"
+        MinHeight="475" MinWidth="850"
+        MaxHeight="475" MaxWidth="850"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="{DynamicResource MaterialDesignFont}">
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        Icon="/Common;component/Assets/Icons/Others/ic_launcher.png">
     
     <DockPanel>
         <Frame 

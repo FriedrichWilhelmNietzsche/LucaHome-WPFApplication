@@ -1,5 +1,9 @@
-﻿using Common.Dto;
+﻿using Common.Common;
+using Common.Dto;
+using Common.Enums;
 using Common.Tools;
+using Data.Controller;
+using System.Threading.Tasks;
 
 /* Reference Help
  * https://docs.microsoft.com/en-us/dotnet/framework/winforms/advanced/using-application-settings-and-user-settings
@@ -7,10 +11,14 @@ using Common.Tools;
 
 namespace Data.Services
 {
+    public delegate void UserCheckedEventHandler(string response, bool success);
+
     public class AppSettingsService
     {
         private const string TAG = "AppSettingsService";
-        private Logger _logger;
+        private readonly Logger _logger;
+
+        private readonly DownloadController _downloadController;
 
         private static AppSettingsService _instance = null;
         private static readonly object _padlock = new object();
@@ -18,7 +26,11 @@ namespace Data.Services
         AppSettingsService()
         {
             _logger = new Logger(TAG);
+
+            _downloadController = new DownloadController();
         }
+
+        public event UserCheckedEventHandler OnUserCheckedFinished;
 
         public static AppSettingsService Instance
         {
@@ -85,6 +97,11 @@ namespace Data.Services
                 Properties.Settings.Default.PassPhrase = newUser.Passphrase;
 
                 Properties.Settings.Default.Save();
+
+                if(newUser.Name != "NA" && newUser.Passphrase != "NA")
+                {
+                    validateUserAsync(newUser);
+                }
             }
         }
 
@@ -164,6 +181,63 @@ namespace Data.Services
 
                 Properties.Settings.Default.Save();
             }
+        }
+
+        private async Task validateUserAsync(UserDto user)
+        {
+            _logger.Debug("validateUserAsync");
+
+            string requestUrl = "http://" + ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.VALIDATE_USER.Action;
+            
+            _downloadController.OnDownloadFinished += _validateUserFinished;
+
+            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.User);
+        }
+
+        private void _validateUserFinished(string response, bool success, DownloadType downloadType)
+        {
+            _logger.Debug("_validateUserFinished");
+
+            if (downloadType != DownloadType.User)
+            {
+                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
+                return;
+            }
+
+            _downloadController.OnDownloadFinished -= _validateUserFinished;
+
+            if (response.Contains("Error"))
+            {
+                _logger.Error(response);
+
+                User = new UserDto("NA", "NA");
+
+                OnUserCheckedFinished(response, false);
+                return;
+            }
+
+            _logger.Debug(string.Format("response: {0}", response));
+
+            if (!success)
+            {
+                _logger.Error("Validation was not successful!");
+
+                User = new UserDto("NA", "NA");
+
+                OnUserCheckedFinished(response, false);
+                return;
+            }
+
+            OnUserCheckedFinished(response, true);
+        }
+
+        public void Dispose()
+        {
+            _logger.Debug("Dispose");
+
+            _downloadController.OnDownloadFinished -= _validateUserFinished;
+
+            _downloadController.Dispose();
         }
     }
 }

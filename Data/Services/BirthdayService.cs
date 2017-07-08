@@ -14,11 +14,11 @@ namespace Data.Services
     public class BirthdayService
     {
         private const string TAG = "BirthdayService";
-        private Logger _logger;
+        private readonly Logger _logger;
 
-        private AppSettingsService _appSettingsService;
-        private DownloadController _downloadController;
-        private JsonDataToBirthdayConverter _jsonDataToBirthdayConverter;
+        private readonly AppSettingsService _appSettingsService;
+        private readonly DownloadController _downloadController;
+        private readonly JsonDataToBirthdayConverter _jsonDataToBirthdayConverter;
 
         private static BirthdayService _instance = null;
         private static readonly object _padlock = new object();
@@ -131,6 +131,8 @@ namespace Data.Services
         public void Dispose()
         {
             _logger.Debug("Dispose");
+
+            _downloadController.OnDownloadFinished -= _birthdayDownloadFinished;
 
             _downloadController.Dispose();
         }
