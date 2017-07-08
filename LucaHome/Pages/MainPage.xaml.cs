@@ -35,8 +35,9 @@ namespace LucaHome.Pages
             InitializeComponent();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
+            _logger.Debug(string.Format("Page_Loaded with sender {0} with arguments {1}", sender, routedEventArgs));
             _navigationService.RemoveBackEntry();
         }
 

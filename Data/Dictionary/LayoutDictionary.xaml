@@ -1,0 +1,16 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:System="clr-namespace:System;assembly=mscorlib">
+
+    <System:Double x:Key="PageHeight">425</System:Double>
+    <System:Double x:Key="PageWidth">825</System:Double>
+
+    <System:Double x:Key="ListHeight">300</System:Double>
+    <System:Double x:Key="ListWidth">815</System:Double>
+
+    <System:Double x:Key="TopWallpaperHeight">100</System:Double>
+
+    <System:Double x:Key="ScrollableImageWidth">960</System:Double>
+    <System:Double x:Key="ScrollableImageHeight">540</System:Double>
+
+</ResourceDictionary>

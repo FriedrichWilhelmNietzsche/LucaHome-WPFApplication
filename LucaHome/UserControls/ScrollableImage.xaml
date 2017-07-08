@@ -1,0 +1,31 @@
+﻿<UserControl 
+    Name="LucaHomeScrollableImage"
+    x:Class="LucaHome.UserControls.ScrollableImage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:LucaHome.UserControls"
+    mc:Ignorable="d" 
+    d:DesignHeight="{DynamicResource TopWallpaperHeight}" 
+    d:DesignWidth="{DynamicResource PageWidth}">
+
+    <ScrollViewer 
+        x:Name="ImageScrollViewer"
+        Height="{DynamicResource TopWallpaperHeight}"
+        Width="{DynamicResource PageWidth}"
+        VerticalScrollBarVisibility="Hidden" 
+        HorizontalScrollBarVisibility="Hidden"
+        CanContentScroll="False">
+        <Image 
+            Name="ImageWallpaper"
+            Width="{DynamicResource ScrollableImageWidth}"
+            Height="{DynamicResource ScrollableImageHeight}"
+            Stretch="UniformToFill"
+            Source="{Binding 
+            RelativeSource={RelativeSource AncestorType=UserControl},
+            Path=ImageWallpaperSource, 
+            Mode=OneWay}" />
+    </ScrollViewer>
+
+</UserControl>

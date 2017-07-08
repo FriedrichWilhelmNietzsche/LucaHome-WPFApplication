@@ -15,7 +15,8 @@ namespace TestProject
         {
             string city = "Munich, DE";
 
-            OpenWeatherDownloader downloader = new OpenWeatherDownloader(city);
+            OpenWeatherDownloader downloader = new OpenWeatherDownloader();
+            downloader.City = city;
             string currentWeatherJson = downloader.DownloadCurrentWeatherJson();
 
             Assert.AreNotEqual(currentWeatherJson, string.Empty);
@@ -26,7 +27,8 @@ namespace TestProject
         {
             string city = "Munich, DE";
 
-            OpenWeatherDownloader downloader = new OpenWeatherDownloader(city);
+            OpenWeatherDownloader downloader = new OpenWeatherDownloader();
+            downloader.City = city;
             string forecastWeatherJson = downloader.DownloadForecastWeatherJson();
 
             Assert.AreNotEqual(forecastWeatherJson, string.Empty);
@@ -37,7 +39,8 @@ namespace TestProject
         {
             string city = "Munich, DE";
 
-            OpenWeatherDownloader downloader = new OpenWeatherDownloader(city);
+            OpenWeatherDownloader downloader = new OpenWeatherDownloader();
+            downloader.City = city;
             string forecastWeatherJson = downloader.DownloadCurrentWeatherJson();
 
             JsonToWeatherConverter jsonToWeatherConverter = new JsonToWeatherConverter();
@@ -51,7 +54,8 @@ namespace TestProject
         {
             string city = "Munich, DE";
 
-            OpenWeatherDownloader downloader = new OpenWeatherDownloader(city);
+            OpenWeatherDownloader downloader = new OpenWeatherDownloader();
+            downloader.City = city;
             string forecastWeatherJson = downloader.DownloadForecastWeatherJson();
 
             JsonToWeatherConverter jsonToWeatherConverter = new JsonToWeatherConverter();

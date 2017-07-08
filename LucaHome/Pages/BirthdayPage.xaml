@@ -4,8 +4,10 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:LucaHome.Pages"
+      xmlns:usercontrols="clr-namespace:LucaHome.UserControls"
       mc:Ignorable="d" 
-      Height="425" Width="825"
+      Height="{DynamicResource PageHeight}" 
+      Width="{DynamicResource PageWidth}"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       TextElement.Foreground="{DynamicResource MaterialDesignBody}"
       TextElement.FontWeight="Regular"
@@ -14,10 +16,10 @@
       TextOptions.TextRenderingMode="Auto"   
       Background="{DynamicResource MaterialDesignPaper}"
       FontFamily="{DynamicResource MaterialDesignFont}"
-      Title="LucaHome - WirelessSockets"
+      Title="LucaHome - Birthdays"
       Loaded="Page_Loaded"
       Unloaded="Page_Unloaded">
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -27,23 +29,20 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Image 
-            x:Name="Wallpaper" 
-            Height="100"
-            Stretch="UniformToFill"
+        <usercontrols:ScrollableImage
+            Height="{DynamicResource TopWallpaperHeight}"
             Grid.Column="0"
             Grid.Row="0"
-            Source="/Common;component/Assets/Wallpaper/main_image_birthday.png" >
-        </Image>
+            ImageWallpaperSource="/Common;component/Assets/Wallpaper/main_image_birthday.png" />
 
         <ListView 
             Grid.Column="0"
             Grid.Row="1"
             HorizontalAlignment="Center"
-            Height="300"
+            Height="{DynamicResource ListHeight}"
             Margin="5"
             VerticalAlignment="Center"
-            Width="825"
+            Width="{DynamicResource ListWidth}"
             Name="BirthdayList">
             <ListView.View>
                 <GridView>
@@ -81,6 +80,36 @@
                 </GridView>
             </ListView.View>
         </ListView>
+
+        <Button 
+            Grid.Column="0"
+            Grid.Row="1"
+            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+            Margin="5 -24 5 5"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            ToolTip="MaterialDesignFloatingActionMiniButton"
+            Click="ButtonBack_Click">
+            <materialDesign:PackIcon 
+                Kind="KeyboardBackspace" 
+                Height="24" 
+                Width="24" />
+        </Button>
+
+        <Button 
+            Grid.Column="0"
+            Grid.Row="1"
+            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+            Margin="5 -24 5 5"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            ToolTip="MaterialDesignFloatingActionMiniButton"
+            Click="ButtonAdd_Click">
+            <materialDesign:PackIcon 
+                Kind="Plus" 
+                Height="24" 
+                Width="24" />
+        </Button>
 
         <Button 
             Grid.Column="0"

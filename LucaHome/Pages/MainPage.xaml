@@ -5,7 +5,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:LucaHome.Pages"
       mc:Ignorable="d" 
-      Height="425" Width="700"
+      Height="{DynamicResource PageHeight}" 
+      Width="{DynamicResource PageWidth}"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       TextElement.Foreground="{DynamicResource MaterialDesignBody}"
       TextElement.FontWeight="Regular"
@@ -52,7 +53,7 @@
             HorizontalAlignment="Right"
             Width="40" 
             Height="40"
-            Fill="Purple" />
+            Fill="Indigo" />
         <Ellipse 
             Grid.Row="1" 
             Grid.Column="0"
@@ -80,7 +81,7 @@
             HorizontalAlignment="Right"
             Width="40" 
             Height="40"
-            Fill="Purple" />
+            Fill="Indigo" />
         <Ellipse 
             Grid.Row="2" 
             Grid.Column="0"
@@ -108,7 +109,7 @@
             HorizontalAlignment="Right"
             Width="40" 
             Height="40"
-            Fill="Purple" />
+            Fill="Indigo" />
         <Ellipse 
             Grid.Row="3" 
             Grid.Column="0"
@@ -136,7 +137,7 @@
             HorizontalAlignment="Right"
             Width="40" 
             Height="40"
-            Fill="Purple" />
+            Fill="Indigo" />
         <Ellipse 
             Grid.Row="4" 
             Grid.Column="0"
@@ -164,7 +165,7 @@
             HorizontalAlignment="Right"
             Width="40" 
             Height="40"
-            Fill="Purple" />
+            Fill="Indigo" />
         <Ellipse 
             Grid.Row="5" 
             Grid.Column="0"
@@ -192,7 +193,7 @@
             HorizontalAlignment="Right"
             Width="40" 
             Height="40"
-            Fill="Purple" />
+            Fill="Indigo" />
         <Ellipse 
             Grid.Row="7" 
             Grid.Column="0"

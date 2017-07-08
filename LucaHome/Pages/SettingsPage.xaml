@@ -5,7 +5,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:LucaHome.Pages"
       mc:Ignorable="d" 
-      Height="425" Width="825"
+      Height="{DynamicResource PageHeight}" 
+      Width="{DynamicResource PageWidth}"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       xmlns:validationrules="clr-namespace:LucaHome.Rules"
       TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -273,5 +274,20 @@
                 </Binding>
             </TextBox.Text>
         </TextBox>
+
+        <Button 
+            Grid.Column="0"
+            Grid.Row="6"
+            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+            Margin="5 -24 5 5"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            ToolTip="MaterialDesignFloatingActionMiniButton"
+            Click="ButtonBack_Click">
+            <materialDesign:PackIcon 
+                Kind="KeyboardBackspace" 
+                Height="24" 
+                Width="24" />
+        </Button>
     </Grid>
 </Page>

@@ -3,9 +3,10 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:LucaHome.Pages"
+      xmlns:usercontrols="clr-namespace:LucaHome.UserControls"
       mc:Ignorable="d" 
-      Height="425" Width="825"
+      Height="{DynamicResource PageHeight}" 
+      Width="{DynamicResource PageWidth}"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       TextElement.Foreground="{DynamicResource MaterialDesignBody}"
       TextElement.FontWeight="Regular"
@@ -27,21 +28,21 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Image 
-            Height="100"
-            Stretch="UniformToFill"
+        <usercontrols:ScrollableImage
+            x:Name="Wallpaper"
+            Height="{DynamicResource TopWallpaperHeight}"
             Grid.Column="0"
             Grid.Row="0"
-            Source="/OpenWeather;component/Assets/Images/wallpaper_dummy.png"/>
+            ImageWallpaperSource="/OpenWeather;component/Assets/Images/wallpaper_dummy.png" />
 
         <ListView 
             Grid.Column="0"
             Grid.Row="1"
             HorizontalAlignment="Center"
-            Height="300"
+            Height="{DynamicResource ListHeight}"
             Margin="5"
             VerticalAlignment="Center"
-            Width="825"
+            Width="{DynamicResource ListWidth}"
             Name="TemperatureList">
             <ListView.View>
                 <GridView>
@@ -53,7 +54,7 @@
                                     <Ellipse
                                         Width="40" 
                                         Height="40"
-                                        Fill="Purple"
+                                        Fill="Indigo"
                                         HorizontalAlignment="Center"/>
                                     <Ellipse
                                         Width="38" 
@@ -72,16 +73,31 @@
                                     Width="135"/>
                     <GridViewColumn Header="Area"
                                     DisplayMemberBinding="{Binding Area, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="135"/>
+                                    Width="125"/>
                     <GridViewColumn Header="LastUpdate"
                                     DisplayMemberBinding="{Binding LastUpdate, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="135"/>
+                                    Width="145"/>
                     <GridViewColumn Header="TemperatureType"
                                     DisplayMemberBinding="{Binding GetTemperatureType, UpdateSourceTrigger=PropertyChanged}"
                                     Width="135"/>
                 </GridView>
             </ListView.View>
         </ListView>
+
+        <Button 
+            Grid.Column="0"
+            Grid.Row="1"
+            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+            Margin="5 -24 5 5"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            ToolTip="MaterialDesignFloatingActionMiniButton"
+            Click="ButtonBack_Click">
+            <materialDesign:PackIcon 
+                Kind="KeyboardBackspace" 
+                Height="24" 
+                Width="24" />
+        </Button>
 
         <Button 
             Grid.Column="0"

@@ -134,19 +134,19 @@ namespace Common.Enums
 
         private readonly int _id;
         private readonly string _description;
-        private readonly Uri _icon;
         private readonly Uri _wallpaper;
+        private readonly Uri _icon;
 
         private readonly string _weekendTip;
         private readonly string _workdayTip;
         private readonly string _workdayAfterWorkTip;
 
-        WeatherCondition(int id, string description, Uri icon, Uri wallpaper, string weekendTip, string workdayTip, string workdayAfterWorkTip)
+        WeatherCondition(int id, string description, Uri wallpaper, Uri icon, string weekendTip, string workdayTip, string workdayAfterWorkTip)
         {
             _id = id;
             _description = description;
-            _icon = icon;
             _wallpaper = wallpaper;
+            _icon = icon;
 
             _weekendTip = weekendTip;
             _workdayTip = workdayTip;

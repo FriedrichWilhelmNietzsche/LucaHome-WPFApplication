@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LucaHome"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="LucaHome" 
         Height="475" Width="850"
@@ -17,6 +18,11 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         Icon="/Common;component/Assets/Icons/Others/ic_launcher.png">
+
+    <Window.Resources>
+        <System:Int16 x:Key="PageHeight">425</System:Int16>
+        <System:Int16 x:Key="PageWidth">825</System:Int16>
+    </Window.Resources>
     
     <DockPanel>
         <Frame 

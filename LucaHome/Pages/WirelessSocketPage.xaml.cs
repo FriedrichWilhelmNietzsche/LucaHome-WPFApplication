@@ -132,6 +132,20 @@ namespace LucaHome.Pages
             }
         }
 
+        private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
+        {
+            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+
+            _navigationService.GoBack();
+        }
+
+        private void ButtonAdd_Click(object sender, RoutedEventArgs routedEventArgs)
+        {
+            _logger.Debug(string.Format("ButtonAdd_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+
+            _logger.Warning("Not yet implemented...");
+        }
+
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));

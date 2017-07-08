@@ -28,8 +28,8 @@
     <ProductName>LucaHome</ProductName>
     <PublisherName>GuepardoApps</PublisherName>
     <SuiteName>LucaHome</SuiteName>
-    <ApplicationRevision>170708</ApplicationRevision>
-    <ApplicationVersion>0.2.0.170708</ApplicationVersion>
+    <ApplicationRevision>170709</ApplicationRevision>
+    <ApplicationVersion>0.2.0.170709</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -117,11 +117,8 @@
       <DependentUpon>WeatherPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Rules\TextBoxNotEmptyRule.cs" />
-    <Compile Include="UserControls\Examples\MenuAndToolBars.xaml.cs">
-      <DependentUpon>MenuAndToolBars.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\Examples\Progress.xaml.cs">
-      <DependentUpon>Progress.xaml</DependentUpon>
+    <Compile Include="UserControls\ScrollableImage.xaml.cs">
+      <DependentUpon>ScrollableImage.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -171,11 +168,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\Examples\MenuAndToolBars.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\Examples\Progress.xaml">
+    <Page Include="UserControls\ScrollableImage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

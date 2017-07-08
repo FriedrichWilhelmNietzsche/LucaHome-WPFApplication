@@ -23,6 +23,7 @@ namespace LucaHome.Pages
 
         private readonly AppSettingsService _appSettingsService;
         private readonly OpenWeatherService _openWeatherService;
+        private readonly NavigationService _navigationService;
 
         private readonly Notifier _notifier;
 
@@ -32,6 +33,7 @@ namespace LucaHome.Pages
 
             _appSettingsService = AppSettingsService.Instance;
             _openWeatherService = OpenWeatherService.Instance;
+            _navigationService = navigationService;
 
             InitializeComponent();
 
@@ -304,6 +306,13 @@ namespace LucaHome.Pages
                 int.TryParse(RaspberryPiServerPortTextBox.Text, out raspberryPort);
                 RaspberryPiServerPort = raspberryPort;
             }
+        }
+
+        private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
+        {
+            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+
+            _navigationService.GoBack();
         }
     }
 }

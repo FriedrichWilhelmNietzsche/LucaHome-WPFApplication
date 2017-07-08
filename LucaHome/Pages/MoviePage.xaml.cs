@@ -4,8 +4,11 @@ using Common.Tools;
 using Data.Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Navigation;
 using ToastNotifications;
 using ToastNotifications.Lifetime;
@@ -19,7 +22,7 @@ using ToastNotifications.Position;
 
 namespace LucaHome.Pages
 {
-    public partial class MoviePage : Page
+    public partial class MoviePage : Page, INotifyPropertyChanged
     {
         private const string TAG = "MoviePage";
         private readonly Logger _logger;
@@ -28,6 +31,8 @@ namespace LucaHome.Pages
         private readonly MovieService _movieService;
 
         private readonly Notifier _notifier;
+
+        private string _movieSearchKey = string.Empty;
 
         public MoviePage(NavigationService navigationService)
         {
@@ -59,20 +64,56 @@ namespace LucaHome.Pages
             _notifier.ClearMessages();
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public string MovieSearchKey
+        {
+            get
+            {
+                return string.Empty;
+            }
+            set
+            {
+                _movieSearchKey = value;
+                OnPropertyChanged("MovieSearchKey");
+
+                if (_movieSearchKey != string.Empty)
+                {
+                    List<MovieDto> foundMovies = _movieService.MovieList
+                        .Where(movie =>
+                            movie.Title.Contains(_movieSearchKey)
+                            || movie.Genre.Contains(_movieSearchKey)
+                            || movie.Description.Contains(_movieSearchKey))
+                        .Select(movie => movie)
+                        .ToList();
+
+                    setList(foundMovies);
+                }
+                else
+                {
+                    setList(_movieService.MovieList);
+                }
+            }
+        }
+
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
 
             _movieService.OnMovieDownloadFinished += _movieListDownloadFinished;
             _movieService.OnMovieStartFinished += _movieStartFinished;
-            
+
             if (_movieService.MovieList == null)
             {
                 _movieService.LoadMovieList();
                 return;
             }
 
-            setList();
+            setList(_movieService.MovieList);
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
@@ -83,13 +124,13 @@ namespace LucaHome.Pages
             _movieService.OnMovieStartFinished -= _movieStartFinished;
         }
 
-        private void setList()
+        private void setList(IList<MovieDto> movieList)
         {
             _logger.Debug("setList");
 
             MovieList.Items.Clear();
 
-            foreach (MovieDto entry in _movieService.MovieList)
+            foreach (MovieDto entry in movieList)
             {
                 MovieList.Items.Add(entry);
             }
@@ -98,7 +139,8 @@ namespace LucaHome.Pages
         private void _movieListDownloadFinished(IList<MovieDto> movieList, bool success)
         {
             _logger.Debug(string.Format("_movieListDownloadFinished with model {0} was successful: {1}", movieList, success));
-            setList();
+
+            setList(_movieService.MovieList);
         }
 
         private void _movieStartFinished(bool success)
@@ -127,11 +169,35 @@ namespace LucaHome.Pages
             }
         }
 
+        private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
+        {
+            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+
+            _navigationService.GoBack();
+        }
+
+        private void ButtonAdd_Click(object sender, RoutedEventArgs routedEventArgs)
+        {
+            _logger.Debug(string.Format("ButtonAdd_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+
+            _logger.Warning("Not yet implemented...");
+        }
+
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
 
             _movieService.LoadMovieList();
+        }
+
+        private void SearchMovieTextBox_KeyDown(object sender, KeyEventArgs keyEventArgs)
+        {
+            _logger.Debug(string.Format("SearchMovieTextBox_KeyDown with sender {0} and keyEventArgs: {1}", sender, keyEventArgs));
+
+            if (keyEventArgs.Key == Key.Enter && keyEventArgs.IsDown)
+            {
+                MovieSearchKey = SearchMovieTextBox.Text;
+            }
         }
     }
 }

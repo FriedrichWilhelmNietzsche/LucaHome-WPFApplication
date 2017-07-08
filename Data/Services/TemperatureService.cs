@@ -6,6 +6,7 @@ using Common.Tools;
 using Data.Controller;
 using OpenWeather.Models;
 using OpenWeather.Service;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Common.Dto.TemperatureDto;
@@ -62,6 +63,22 @@ namespace Data.Services
             get
             {
                 return _temperatureList;
+            }
+        }
+
+        public Uri Wallpaper
+        {
+            get
+            {
+                return _openWeatherService?.CurrentWeather?.Condition?.Wallpaper;
+            }
+        }
+
+        public Uri Icon
+        {
+            get
+            {
+                return _openWeatherService?.CurrentWeather?.Condition?.Icon;
             }
         }
 
