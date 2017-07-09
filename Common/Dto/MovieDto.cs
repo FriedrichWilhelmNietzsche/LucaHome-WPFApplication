@@ -136,7 +136,7 @@ namespace Common.Dto
 
         public override string ToString()
         {
-            return string.Format("{{0}: {Id: {1}};{Title: {2}};{Genre: {3}};{Description: {4}};{Rating: {5}};{Watched: {6}};{Sockets: {7}}}", TAG, _id, _title, _genre, _description, _rating, _watched, _sockets);
+            return string.Format("( {0}: (Id: {1} );(Title: {2} );(Genre: {3} );(Description: {4} );(Rating: {5} );(Watched: {6} );(Sockets: {7} ))", TAG, _id, _title, _genre, _description, _rating, _watched, _sockets);
         }
 
         private object getSocketsString()

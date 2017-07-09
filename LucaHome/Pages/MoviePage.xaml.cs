@@ -34,12 +34,16 @@ namespace LucaHome.Pages
 
         private string _movieSearchKey = string.Empty;
 
+        private readonly MovieAddPage _movieAddPage;
+
         public MoviePage(NavigationService navigationService)
         {
             _logger = new Logger(TAG, Enables.LOGGING);
 
             _navigationService = navigationService;
             _movieService = MovieService.Instance;
+
+            _movieAddPage = new MovieAddPage(_navigationService);
 
             InitializeComponent();
 
@@ -180,7 +184,7 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("ButtonAdd_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
 
-            _logger.Warning("Not yet implemented...");
+            _navigationService.Navigate(_movieAddPage);
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)

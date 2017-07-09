@@ -24,13 +24,23 @@ ___________
 ___________
 ![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img004.png)
 ___________
+![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img004_1.png)
+___________
 ![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img005.png)
 ___________
+![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img005_1.png)
+___________
 ![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img006.png)
+___________
+![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img006_1.png)
 ___________
 ![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img007.png)
 ___________
 ![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img008.png)
+___________
+![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img008_1.png)
+___________
+![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img009.png)
 
 # Libraries
 

@@ -63,7 +63,7 @@
 
         public override string ToString()
         {
-            return string.Format("{{0}: {Id: {1}};{Description: {2}};{Rating: {3}};{LastSuggestion: {4}}}", TAG, _id, _description, _rating, _lastSuggestion);
+            return string.Format("( {0}: (Id: {1} );(Description: {2} );(Rating: {3} );(LastSuggestion: {4} ))", TAG, _id, _description, _rating, _lastSuggestion);
         }
     }
 }

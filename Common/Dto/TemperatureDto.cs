@@ -95,7 +95,7 @@ namespace Common.Dto
 
         public override string ToString()
         {
-            return string.Format("{{0}: {Temperature: {1}};{Area: {2}};{LastUpdate: {3}};{SensorPath: {4}};{TemperatureType: {5}};{GraphPath: {6}}}", TAG, TemperatureString, _area, _lastUpdate, _sensorPath, _temperatureType, _graphPath);
+            return string.Format("( {0}: (Temperature: {1} );(Area: {2} );(LastUpdate: {3} );(SensorPath: {4} );(TemperatureType: {5} );(GraphPath: {6} ))", TAG, TemperatureString, _area, _lastUpdate, _sensorPath, _temperatureType, _graphPath);
         }
     }
 }

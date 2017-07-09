@@ -118,7 +118,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished -= _temperatureDownloadFinished;
 
-            if (response.Contains("Error"))
+            if (response.Contains("Error") || response.Contains("ERROR"))
             {
                 _logger.Error(response);
 

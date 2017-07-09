@@ -81,7 +81,7 @@
             Grid.Row="1" 
             Grid.Column="0"
             Padding="5" 
-            Margin="5">
+            Margin="15 5 5 5">
             <TextBlock 
                 HorizontalAlignment="Right" >
                 UserName
@@ -98,7 +98,7 @@
             Grid.Row="1" 
             Grid.Column="1" 
             x:Name="UserNameTextBox"
-            Margin="5 15 5 5" 
+            Margin="5 15 35 5" 
             materialDesign:HintAssist.Hint="Enter username here" 
             KeyDown = "UserNameTextBox_KeyDown">
             <TextBox.Text>
@@ -114,7 +114,7 @@
             Grid.Row="2" 
             Grid.Column="0"
             Padding="5" 
-            Margin="5">
+            Margin="15 5 5 5">
             <TextBlock 
                 HorizontalAlignment="Right" >
                 Password
@@ -131,7 +131,7 @@
             Grid.Row="2" 
             Grid.Column="1" 
             x:Name="PasswordBox"
-            Margin="5 15 5 5" 
+            Margin="5 15 35 5" 
             materialDesign:HintAssist.Hint="Enter your password here" 
             KeyDown = "PasswordBox_KeyDown">
             <TextBox.Text>
@@ -147,7 +147,7 @@
             Grid.Row="3" 
             Grid.Column="0"
             Padding="5" 
-            Margin="5">
+            Margin="15 5 5 5">
             <TextBlock 
                 HorizontalAlignment="Right" >
                 City for the weather
@@ -164,7 +164,7 @@
             Grid.Row="3" 
             Grid.Column="1" 
             x:Name="OpenWeatherCityTextBox"
-            Margin="5 15 5 5" 
+            Margin="5 15 35 5" 
             materialDesign:HintAssist.Hint="Enter your city here" 
             KeyDown = "OpenWeatherCityTextBox_KeyDown">
             <TextBox.Text>
@@ -180,7 +180,7 @@
             Grid.Row="4" 
             Grid.Column="0"
             Padding="5" 
-            Margin="5">
+            Margin="15 5 5 5">
             <TextBlock 
                 HorizontalAlignment="Right" >
                 Home SSID
@@ -197,7 +197,7 @@
             Grid.Row="4" 
             Grid.Column="1" 
             x:Name="HomeSSIDTextBox"
-            Margin="5 15 5 5" 
+            Margin="5 15 35 5" 
             materialDesign:HintAssist.Hint="Enter your home SSID here" 
             KeyDown = "HomeSSIDTextBox_KeyDown">
             <TextBox.Text>
@@ -213,7 +213,7 @@
             Grid.Row="5" 
             Grid.Column="0"
             Padding="5" 
-            Margin="5">
+            Margin="15 5 5 5">
             <TextBlock 
                 HorizontalAlignment="Right" >
                 Raspberry server IP
@@ -230,7 +230,7 @@
             Grid.Row="5" 
             Grid.Column="1" 
             x:Name="RaspberryPiServerIPTextBox"
-            Margin="5 15 5 5" 
+            Margin="5 15 35 5" 
             materialDesign:HintAssist.Hint="Enter the ip of your raspberry server here"
             KeyDown = "RaspberryPiServerIPTextBox_KeyDown">
             <TextBox.Text>
@@ -246,7 +246,7 @@
             Grid.Row="6" 
             Grid.Column="0"
             Padding="5" 
-            Margin="5">
+            Margin="15 5 5 5">
             <TextBlock 
                 HorizontalAlignment="Right" >
                 Raspberry server port
@@ -263,7 +263,7 @@
             Grid.Row="6" 
             Grid.Column="1" 
             x:Name="RaspberryPiServerPortTextBox"
-            Margin="5 15 5 5" 
+            Margin="5 15 35 5" 
             materialDesign:HintAssist.Hint="Enter the port for your raspberry server here"
             KeyDown = "RaspberryPiServerPortTextBox_KeyDown">
             <TextBox.Text>

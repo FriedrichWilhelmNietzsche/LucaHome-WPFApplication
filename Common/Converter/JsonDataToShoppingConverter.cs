@@ -1,7 +1,6 @@
 ﻿using Common.Dto;
 using Common.Enums;
 using Common.Tools;
-using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -12,14 +11,14 @@ namespace Common.Converter
         private const string TAG = "JsonDataToShoppingConverter";
         private static string _searchParameter = "{shopping_entry:";
 
-        private static Logger _logger;
-        
+        private readonly Logger _logger;
+
         public JsonDataToShoppingConverter()
         {
             _logger = new Logger(TAG);
         }
 
-        public static IList<ShoppingEntryDto> GetList(string[] stringArray)
+        public IList<ShoppingEntryDto> GetList(string[] stringArray)
         {
             if (StringHelper.StringsAreEqual(stringArray))
             {
@@ -32,11 +31,16 @@ namespace Common.Converter
             }
         }
 
-        private static IList<ShoppingEntryDto> ParseStringToList(string value)
+        public IList<ShoppingEntryDto> GetList(string jsonString)
+        {
+            return ParseStringToList(jsonString);
+        }
+
+        private IList<ShoppingEntryDto> ParseStringToList(string value)
         {
             if (!value.Contains("Error"))
             {
-                if (StringHelper.GetStringCount(value, _searchParameter) > 1)
+                if (StringHelper.GetStringCount(value, _searchParameter) > 0)
                 {
                     if (value.Contains(_searchParameter))
                     {
@@ -65,7 +69,7 @@ namespace Common.Converter
             return null;
         }
 
-        private static ShoppingEntryDto ParseStringToValue(string[] data)
+        private ShoppingEntryDto ParseStringToValue(string[] data)
         {
             if (data.Length == 4)
             {
@@ -85,7 +89,7 @@ namespace Common.Converter
 
                     string groupString = data[2].Replace("{group:", "").Replace("};", "");
                     ShoppingEntryGroup shoppingEntryGroup = ShoppingEntryGroup.OTHER;
-                    foreach(ShoppingEntryGroup entry in ShoppingEntryGroup.Values)
+                    foreach (ShoppingEntryGroup entry in ShoppingEntryGroup.Values)
                     {
                         if (entry.Description.Contains(groupString))
                         {

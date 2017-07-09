@@ -151,7 +151,7 @@ namespace Common.Dto
 
         public override string ToString()
         {
-            return string.Format("{{0}: {Name: {1}};{Birthday: {2}};{Age: {3}};{HasBirthday: {4}}}", TAG, _name, _birthday, Age, HasBirthday);
+            return string.Format("( {0}: (Name: {1} );(Birthday: {2} );(Age: {3} );(HasBirthday: {4} ))", TAG, _name, _birthday, Age, HasBirthday);
         }
     }
 }

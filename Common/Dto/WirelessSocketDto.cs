@@ -284,7 +284,7 @@ namespace Common.Dto
 
         public override string ToString()
         {
-            return string.Format("{{0}: {Name: {1}};{Area: {2}};{Code: {3}};{IsActivated: {4}}}", TAG, _name, _area, _code, (_isActivated ? "1" : "0"));
+            return string.Format("( {0}: (Name: {1} );(Area: {2} );(Code: {3} );(IsActivated: {4} ))", TAG, _name, _area, _code, (_isActivated ? "1" : "0"));
         }
 
         private string createShortName(string name)

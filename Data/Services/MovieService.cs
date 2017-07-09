@@ -8,11 +8,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using System;
 
 namespace Data.Services
 {
     public delegate void MovieDownloadEventHandler(IList<MovieDto> movieList, bool success);
     public delegate void MovieStartEventHandler(bool success);
+    public delegate void MovieAddEventHandler(bool success);
 
     public class MovieService
     {
@@ -46,6 +48,7 @@ namespace Data.Services
 
         public event MovieDownloadEventHandler OnMovieDownloadFinished;
         public event MovieStartEventHandler OnMovieStartFinished;
+        public event MovieAddEventHandler OnMovieAddFinished;
 
         public static MovieService Instance
         {
@@ -89,6 +92,12 @@ namespace Data.Services
             _logger.Debug(string.Format("Start movie {0}", movieTitle));
 
             startMovieOnPc(movieTitle);
+        }
+
+        public void AddMovie(MovieDto newMovie)
+        {
+            _logger.Debug(string.Format("AddMovie: add new movie {0}", newMovie));
+            addMovieAsync(newMovie);
         }
 
         private void startMovieOnPc(string movieTitle)
@@ -136,6 +145,27 @@ namespace Data.Services
             await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.Movie);
         }
 
+        private async Task addMovieAsync(MovieDto newMovie)
+        {
+            _logger.Debug(string.Format("addMovieAsync: add new movie {0}", newMovie));
+
+            UserDto user = _appSettingsService.User;
+            if (user == null)
+            {
+                OnMovieAddFinished(false);
+                return;
+            }
+
+            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                _appSettingsService.ServerIpAddress, Constants.ACTION_PATH,
+                user.Name, user.Passphrase,
+                newMovie.CommandAdd);
+
+            _downloadController.OnDownloadFinished += _movieAddFinished;
+
+            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.MovieAdd);
+        }
+
         private void _movieDownloadFinished(string response, bool success, DownloadType downloadType)
         {
             _logger.Debug("_movieDownloadFinished");
@@ -148,7 +178,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished -= _movieDownloadFinished;
 
-            if (response.Contains("Error"))
+            if (response.Contains("Error") || response.Contains("ERROR"))
             {
                 _logger.Error(response);
 
@@ -180,11 +210,45 @@ namespace Data.Services
             OnMovieDownloadFinished(_movieList, true);
         }
 
+        private void _movieAddFinished(string response, bool success, DownloadType downloadType)
+        {
+            _logger.Debug("_movieAddFinished");
+
+            if (downloadType != DownloadType.MovieAdd)
+            {
+                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
+                return;
+            }
+
+            _downloadController.OnDownloadFinished -= _movieAddFinished;
+
+            if (response.Contains("Error") || response.Contains("ERROR"))
+            {
+                _logger.Error(response);
+
+                OnMovieAddFinished(false);
+                return;
+            }
+
+            _logger.Debug(string.Format("response: {0}", response));
+
+            if (!success)
+            {
+                _logger.Error("Download was not successful!");
+
+                OnMovieAddFinished(false);
+                return;
+            }
+
+            OnMovieAddFinished(true);
+        }
+
         public void Dispose()
         {
             _logger.Debug("Dispose");
 
             _downloadController.OnDownloadFinished -= _movieDownloadFinished;
+            _downloadController.OnDownloadFinished -= _movieAddFinished;
 
             _downloadController.Dispose();
         }

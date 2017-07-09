@@ -1,4 +1,5 @@
 ﻿using Common.Enums;
+using System;
 
 namespace Common.Dto
 {
@@ -55,6 +56,14 @@ namespace Common.Dto
             }
         }
 
+        public Uri Icon
+        {
+            get
+            {
+                return _group.Icon;
+            }
+        }
+
         public void IncreaseQuantity()
         {
             _quantity++;
@@ -95,7 +104,7 @@ namespace Common.Dto
 
         public override string ToString()
         {
-            return string.Format("{{0}: {Id: {1}};{Name: {2}};{Group: {3}};{Quantity: {4}}}", TAG, _id, _name, _group, _quantity);
+            return string.Format("( {0}: (Id: {1} );(Name: {2} );(Group: {3} );(Quantity: {4} ))", TAG, _id, _name, _group, _quantity);
         }
     }
 }

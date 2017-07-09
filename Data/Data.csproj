@@ -62,6 +62,7 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Services\ShoppingListService.cs" />
     <Compile Include="Services\TemperatureService.cs" />
     <Compile Include="Services\MovieService.cs" />
     <Compile Include="Services\BirthdayService.cs" />

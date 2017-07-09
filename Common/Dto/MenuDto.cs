@@ -84,7 +84,7 @@ namespace Common.Dto
 
         public override string ToString()
         {
-            return string.Format("{{0}: {Id: {1}};{Title: {2}};{Description: {3}};{Date: {4}}}", TAG, _id, _title, _description, _date);
+            return string.Format("( {0}: (Id: {1} );(Title: {2} );(Description: {3} );(Date: {4} ))", TAG, _id, _title, _description, _date);
         }
     }
 }

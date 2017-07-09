@@ -32,12 +32,16 @@ namespace LucaHome.Pages
 
         private readonly Notifier _notifier;
 
+        private readonly WirelessSocketAddPage _wirelessSocketAddPage;
+
         public WirelessSocketPage(NavigationService navigationService)
         {
             _logger = new Logger(TAG, Enables.LOGGING);
 
             _navigationService = navigationService;
             _wirelessSocketService = WirelessSocketService.Instance;
+
+            _wirelessSocketAddPage = new WirelessSocketAddPage(_navigationService);
 
             InitializeComponent();
 
@@ -143,7 +147,7 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("ButtonAdd_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
 
-            _logger.Warning("Not yet implemented...");
+            _navigationService.Navigate(_wirelessSocketAddPage);
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)

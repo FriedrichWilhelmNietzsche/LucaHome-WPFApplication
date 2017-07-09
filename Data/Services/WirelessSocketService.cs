@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace Data.Services
 {
     public delegate void WirelessSocketDownloadEventHandler(IList<WirelessSocketDto> wirelessSocketList, bool success);
+    public delegate void WirelessSocketAddEventHandler(bool success);
 
     public class WirelessSocketService
     {
@@ -36,6 +37,7 @@ namespace Data.Services
 
         public event WirelessSocketDownloadEventHandler OnWirelessSocketDownloadFinished;
         public event WirelessSocketDownloadEventHandler OnSetWirelessSocketFinished;
+        public event WirelessSocketAddEventHandler OnAddWirelessSocketFinished;
 
         public static WirelessSocketService Instance
         {
@@ -123,6 +125,12 @@ namespace Data.Services
             }
         }
 
+        public void AddWirelessSocket(WirelessSocketDto newWirelessSocket)
+        {
+            _logger.Debug(string.Format("AddWirelessSocket: add socket {0}", newWirelessSocket));
+            addWirelessSocketAsync(newWirelessSocket);
+        }
+
         private async Task loadWirelessSocketListAsync()
         {
             _logger.Debug("loadWirelessSocketList");
@@ -159,6 +167,27 @@ namespace Data.Services
             await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.WirelessSocket);
         }
 
+        private async Task addWirelessSocketAsync(WirelessSocketDto newWirelessSocket)
+        {
+            _logger.Debug(string.Format("addWirelessSocketAsync: add new wirelessSocket {0}", newWirelessSocket));
+
+            UserDto user = _appSettingsService.User;
+            if (user == null)
+            {
+                OnAddWirelessSocketFinished(false);
+                return;
+            }
+
+            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                _appSettingsService.ServerIpAddress, Constants.ACTION_PATH,
+                user.Name, user.Passphrase,
+                newWirelessSocket.CommandAdd);
+
+            _downloadController.OnDownloadFinished += _addWirelessSocketFinished;
+
+            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.WirelessSocketAdd);
+        }
+
         private void _wirelessSocketDownloadFinished(string response, bool success, DownloadType downloadType)
         {
             _logger.Debug("_wirelessSocketDownloadFinished");
@@ -171,7 +200,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished -= _wirelessSocketDownloadFinished;
 
-            if (response.Contains("Error"))
+            if (response.Contains("Error") || response.Contains("ERROR"))
             {
                 _logger.Error(response);
 
@@ -214,7 +243,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished -= _setWirelessSocketFinished;
 
-            if (response.Contains("Error") || response.Contains("0"))
+            if (response.Contains("Error") || response.Contains("ERROR") || response.Contains("0"))
             {
                 _logger.Error(response);
 
@@ -235,11 +264,45 @@ namespace Data.Services
             OnSetWirelessSocketFinished(null, true);
         }
 
+        private void _addWirelessSocketFinished(string response, bool success, DownloadType downloadType)
+        {
+            _logger.Debug("_addWirelessSocketFinished");
+
+            if (downloadType != DownloadType.WirelessSocketAdd)
+            {
+                return;
+            }
+
+            _downloadController.OnDownloadFinished -= _addWirelessSocketFinished;
+
+            if (response.Contains("Error") || response.Contains("ERROR") || response.Contains("0"))
+            {
+                _logger.Error(response);
+
+                OnAddWirelessSocketFinished(false);
+                return;
+            }
+
+            _logger.Debug(string.Format("response: {0}", response));
+
+            if (!success)
+            {
+                _logger.Error("Adding was not successful!");
+
+                OnAddWirelessSocketFinished(false);
+                return;
+            }
+
+            OnAddWirelessSocketFinished(true);
+        }
+
         public void Dispose()
         {
             _logger.Debug("Dispose");
 
+            _downloadController.OnDownloadFinished -= _wirelessSocketDownloadFinished;
             _downloadController.OnDownloadFinished -= _setWirelessSocketFinished;
+            _downloadController.OnDownloadFinished -= _addWirelessSocketFinished;
 
             _downloadController.Dispose();
         }

@@ -14,24 +14,24 @@ using System.Windows.Navigation;
 
 namespace LucaHome.Pages
 {
-    public partial class BirthdayPage : Page
+    public partial class ShoppingListPage : Page
     {
-        private const string TAG = "BirthdayPage";
+        private const string TAG = "ShoppingListPage";
         private readonly Logger _logger;
 
         private readonly NavigationService _navigationService;
-        private readonly BirthdayService _birthdayService;
+        private readonly ShoppingListService _shoppingListService;
 
-        private readonly BirthdayAddPage _birthdayAddPage;
+        private readonly ShoppingEntryAddPage _shoppingEntryAddPage;
 
-        public BirthdayPage(NavigationService navigationService)
+        public ShoppingListPage(NavigationService navigationService)
         {
             _logger = new Logger(TAG, Enables.LOGGING);
 
             _navigationService = navigationService;
-            _birthdayService = BirthdayService.Instance;
+            _shoppingListService = ShoppingListService.Instance;
 
-            _birthdayAddPage = new BirthdayAddPage(_navigationService);
+            _shoppingEntryAddPage = new ShoppingEntryAddPage(_navigationService);
 
             InitializeComponent();
         }
@@ -40,11 +40,11 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
 
-            _birthdayService.OnBirthdayDownloadFinished += _birthdayListDownloadFinished;
+            _shoppingListService.OnShoppingListDownloadFinished += _onShoppingListDownloadFinished;
 
-            if (_birthdayService.BirthdayList == null)
+            if (_shoppingListService.ShoppingList == null)
             {
-                _birthdayService.LoadBirthdayList();
+                _shoppingListService.LoadShoppingList();
                 return;
             }
 
@@ -55,25 +55,24 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
 
-            _birthdayService.OnBirthdayDownloadFinished -= _birthdayListDownloadFinished;
+            _shoppingListService.OnShoppingListDownloadFinished -= _onShoppingListDownloadFinished;
         }
 
         private void setList()
         {
             _logger.Debug("setList");
 
-            BirthdayList.Items.Clear();
+            ShoppingList.Items.Clear();
 
-            foreach (BirthdayDto entry in _birthdayService.BirthdayList)
+            foreach (ShoppingEntryDto entry in _shoppingListService.ShoppingList)
             {
-                BirthdayList.Items.Add(entry);
+                ShoppingList.Items.Add(entry);
             }
         }
 
-        private void _birthdayListDownloadFinished(IList<BirthdayDto> birthdayList, bool success)
+        private void _onShoppingListDownloadFinished(IList<ShoppingEntryDto> shoppingList, bool success)
         {
-            _logger.Debug(string.Format("_birthdayListDownloadFinished with model {0} was successful: {1}", birthdayList, success));
-            setList();
+            _logger.Debug(string.Format("_onShoppingListDownloadFinished with model {0} was successful {1}", shoppingList, success));
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
@@ -87,14 +86,15 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("ButtonAdd_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
 
-            _navigationService.Navigate(_birthdayAddPage);
+            _navigationService.Navigate(_shoppingEntryAddPage);
         }
+
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
 
-            _birthdayService.LoadBirthdayList();
+            _shoppingListService.LoadShoppingList();
         }
     }
 }

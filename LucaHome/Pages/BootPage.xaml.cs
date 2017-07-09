@@ -16,7 +16,7 @@ namespace LucaHome.Pages
     {
         private const string TAG = "BootPage";
         private readonly Logger _logger;
-        
+
         private int _downloadCount = 0;
 
         private readonly AppSettingsService _appSettingsService;
@@ -24,6 +24,7 @@ namespace LucaHome.Pages
         private readonly MovieService _movieService;
         private readonly NavigationService _navigationService;
         private readonly OpenWeatherService _openWeatherService;
+        private readonly ShoppingListService _shoppingListService;
         private readonly TemperatureService _temperatureService;
         private readonly WirelessSocketService _wirelessSocketService;
 
@@ -36,6 +37,7 @@ namespace LucaHome.Pages
             _movieService = MovieService.Instance;
             _navigationService = navigationService;
             _openWeatherService = OpenWeatherService.Instance;
+            _shoppingListService = ShoppingListService.Instance;
             _temperatureService = TemperatureService.Instance;
             _wirelessSocketService = WirelessSocketService.Instance;
 
@@ -58,12 +60,16 @@ namespace LucaHome.Pages
                 _openWeatherService.OnCurrentWeatherDownloadFinished += _currentWeatherDownloadFinished;
                 _openWeatherService.OnForecastWeatherDownloadFinished += _forecastWeatherDownloadFinished;
 
+                _shoppingListService.OnShoppingListDownloadFinished += _onShoppingListDownloadFinished;
+
                 _wirelessSocketService.OnWirelessSocketDownloadFinished += _wirelessSocketDownloadFinished;
 
                 _birthdayService.LoadBirthdayList();
 
                 _openWeatherService.LoadCurrentWeather();
                 _openWeatherService.LoadForecastModel();
+
+                _shoppingListService.LoadShoppingList();
 
                 _wirelessSocketService.LoadWirelessSocketList();
             }
@@ -97,6 +103,13 @@ namespace LucaHome.Pages
         private void _movieDownloadFinished(IList<MovieDto> movieList, bool success)
         {
             _logger.Debug(string.Format("_movieDownloadFinished with model {0} was successful: {1}", movieList, success));
+            _downloadCount++;
+            checkDownloadCount();
+        }
+
+        private void _onShoppingListDownloadFinished(IList<ShoppingEntryDto> shoppingList, bool success)
+        {
+            _logger.Debug(string.Format("_onShoppingListDownloadFinished with model {0} was successful: {1}", shoppingList, success));
             _downloadCount++;
             checkDownloadCount();
         }
@@ -141,6 +154,8 @@ namespace LucaHome.Pages
 
             _openWeatherService.OnCurrentWeatherDownloadFinished -= _currentWeatherDownloadFinished;
             _openWeatherService.OnForecastWeatherDownloadFinished -= _forecastWeatherDownloadFinished;
+
+            _shoppingListService.OnShoppingListDownloadFinished -= _onShoppingListDownloadFinished;
 
             _temperatureService.OnTemperatureDownloadFinished -= _temperatureDownloadFinished;
 

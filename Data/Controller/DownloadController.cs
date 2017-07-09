@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace Data.Controller
 {
-    public enum DownloadType { Birthday, Movie, Temperature, User, WirelessSocket};
+    public enum DownloadType
+    {
+        Birthday, BirthdayAdd,
+        Movie, MovieAdd,
+        ShoppingList, ShoppingListAdd,
+        Temperature,
+        User,
+        WirelessSocket, WirelessSocketAdd
+    };
 
     public delegate void DownloadFinishedEventHandler(string response, bool success, DownloadType downloadType);
 

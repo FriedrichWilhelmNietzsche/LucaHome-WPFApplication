@@ -54,7 +54,7 @@ namespace Common.Dto
 
         public override string ToString()
         {
-            return string.Format("{{0}: {Type: {1}};{DateTime: {2}};{User: {3}}}", TAG, _type, _dateTime, _user);
+            return string.Format("( {0}: (Type: {1} );( DateTime: {2});(User: {3} ))", TAG, _type, _dateTime, _user);
         }
     }
 }
