@@ -66,6 +66,14 @@ namespace Common.Dto
             }
         }
 
+        public Uri Icon
+        {
+            get
+            {
+                return new Uri("/Common;component/Assets/Wallpaper/main_image_menu.png", UriKind.Relative);
+            }
+        }
+
         public string CommandUpdate
         {
             get

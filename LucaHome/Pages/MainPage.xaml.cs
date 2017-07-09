@@ -14,6 +14,7 @@ namespace LucaHome.Pages
         private readonly NavigationService _navigationService;
 
         private readonly BirthdayPage _birthdayPage;
+        private readonly MenuPage _menuPage;
         private readonly MoviePage _moviePage;
         private readonly SettingsPage _settingsPage;
         private readonly ShoppingListPage _shoppingListPage;
@@ -27,6 +28,7 @@ namespace LucaHome.Pages
             _navigationService = navigationService;
 
             _birthdayPage = new BirthdayPage(_navigationService);
+            _menuPage = new MenuPage(_navigationService);
             _moviePage = new MoviePage(_navigationService);
             _settingsPage = new SettingsPage(_navigationService);
             _shoppingListPage = new ShoppingListPage(_navigationService);
@@ -77,6 +79,12 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("Received click of sender {0} with arguments {1}", sender, routedEventArgs));
             _navigationService.Navigate(_shoppingListPage);
+        }
+
+        private void Menu_Click(object sender, RoutedEventArgs routedEventArgs)
+        {
+            _logger.Debug(string.Format("Received click of sender {0} with arguments {1}", sender, routedEventArgs));
+            _navigationService.Navigate(_menuPage);
         }
 
         private void Settings_Click(object sender, RoutedEventArgs routedEventArgs)

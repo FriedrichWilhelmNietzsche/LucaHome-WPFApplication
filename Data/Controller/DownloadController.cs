@@ -9,6 +9,7 @@ namespace Data.Controller
     public enum DownloadType
     {
         Birthday, BirthdayAdd,
+        Menu, MenuUpdate,
         Movie, MovieAdd,
         ShoppingList, ShoppingListAdd,
         Temperature,

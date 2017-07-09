@@ -21,6 +21,7 @@ namespace LucaHome.Pages
 
         private readonly AppSettingsService _appSettingsService;
         private readonly BirthdayService _birthdayService;
+        private readonly MenuService _menuService;
         private readonly MovieService _movieService;
         private readonly NavigationService _navigationService;
         private readonly OpenWeatherService _openWeatherService;
@@ -34,6 +35,7 @@ namespace LucaHome.Pages
 
             _appSettingsService = AppSettingsService.Instance;
             _birthdayService = BirthdayService.Instance;
+            _menuService = MenuService.Instance;
             _movieService = MovieService.Instance;
             _navigationService = navigationService;
             _openWeatherService = OpenWeatherService.Instance;
@@ -57,6 +59,8 @@ namespace LucaHome.Pages
             {
                 _birthdayService.OnBirthdayDownloadFinished += _birthdayDownloadFinished;
 
+                _menuService.OnMenuDownloadFinished += _onMenuDownloadFinished;
+
                 _openWeatherService.OnCurrentWeatherDownloadFinished += _currentWeatherDownloadFinished;
                 _openWeatherService.OnForecastWeatherDownloadFinished += _forecastWeatherDownloadFinished;
 
@@ -65,6 +69,8 @@ namespace LucaHome.Pages
                 _wirelessSocketService.OnWirelessSocketDownloadFinished += _wirelessSocketDownloadFinished;
 
                 _birthdayService.LoadBirthdayList();
+
+                _menuService.LoadMenuList();
 
                 _openWeatherService.LoadCurrentWeather();
                 _openWeatherService.LoadForecastModel();
@@ -103,6 +109,13 @@ namespace LucaHome.Pages
         private void _movieDownloadFinished(IList<MovieDto> movieList, bool success)
         {
             _logger.Debug(string.Format("_movieDownloadFinished with model {0} was successful: {1}", movieList, success));
+            _downloadCount++;
+            checkDownloadCount();
+        }
+
+        private void _onMenuDownloadFinished(IList<MenuDto> menuList, bool success)
+        {
+            _logger.Debug(string.Format("_onMenuDownloadFinished with model {0} was successful: {1}", menuList, success));
             _downloadCount++;
             checkDownloadCount();
         }
@@ -149,6 +162,8 @@ namespace LucaHome.Pages
             _downloadCount = 0;
 
             _birthdayService.OnBirthdayDownloadFinished -= _birthdayDownloadFinished;
+
+            _menuService.OnMenuDownloadFinished -= _onMenuDownloadFinished;
 
             _movieService.OnMovieDownloadFinished -= _movieDownloadFinished;
 

@@ -182,9 +182,6 @@
     <Resource Include="Assets\Wallpaper\wallpaper.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\Images\main_image_informations.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Assets\Icons\Sockets\light_off.png" />
     <Resource Include="Assets\Icons\Sockets\light_on.png" />
   </ItemGroup>

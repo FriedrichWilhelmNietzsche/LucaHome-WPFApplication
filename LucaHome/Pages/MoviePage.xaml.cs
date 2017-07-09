@@ -5,7 +5,6 @@ using Data.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -87,15 +86,7 @@ namespace LucaHome.Pages
 
                 if (_movieSearchKey != string.Empty)
                 {
-                    List<MovieDto> foundMovies = _movieService.MovieList
-                        .Where(movie =>
-                            movie.Title.Contains(_movieSearchKey)
-                            || movie.Genre.Contains(_movieSearchKey)
-                            || movie.Description.Contains(_movieSearchKey))
-                        .Select(movie => movie)
-                        .ToList();
-
-                    setList(foundMovies);
+                    setList(_movieService.FoundMovies(_movieSearchKey));
                 }
                 else
                 {

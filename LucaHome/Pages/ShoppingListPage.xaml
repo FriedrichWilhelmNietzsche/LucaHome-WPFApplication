@@ -53,13 +53,13 @@
                             <DataTemplate>
                                 <Grid HorizontalAlignment="Center">
                                     <Ellipse
-                                        Width="40" 
-                                        Height="40"
+                                        Width="{DynamicResource EllipseOuterWidth}" 
+                                        Height="{DynamicResource EllipseOuterHeight}"
                                         Fill="Indigo"
                                         HorizontalAlignment="Center"/>
                                     <Ellipse
-                                        Width="38" 
-                                        Height="38"
+                                        Width="{DynamicResource EllipseInnerWidth}" 
+                                        Height="{DynamicResource EllipseInnerHeight}"
                                         HorizontalAlignment="Center">
                                         <Ellipse.Fill>
                                             <ImageBrush ImageSource="{Binding Icon, UpdateSourceTrigger=PropertyChanged}" />
@@ -71,10 +71,10 @@
                     </GridViewColumn>
                     <GridViewColumn Header="Name"
                                     DisplayMemberBinding="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="150"/>
+                                    Width="250"/>
                     <GridViewColumn Header="Group"
                                     DisplayMemberBinding="{Binding Group, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="200"/>
+                                    Width="300"/>
                     <GridViewColumn Header="Quantity"
                                     DisplayMemberBinding="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}"
                                     Width="100"/>
@@ -86,7 +86,7 @@
             Grid.Column="0"
             Grid.Row="1"
             Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-            Margin="5 -24 5 5"
+            Margin="5"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom"
             ToolTip="MaterialDesignFloatingActionMiniButton"

@@ -2,15 +2,20 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:System="clr-namespace:System;assembly=mscorlib">
 
-    <System:Double x:Key="PageHeight">425</System:Double>
-    <System:Double x:Key="PageWidth">825</System:Double>
+    <System:Double x:Key="PageHeight">550</System:Double>
+    <System:Double x:Key="PageWidth">975</System:Double>
 
-    <System:Double x:Key="ListHeight">300</System:Double>
-    <System:Double x:Key="ListWidth">815</System:Double>
+    <System:Double x:Key="ListHeight">400</System:Double>
+    <System:Double x:Key="ListWidth">965</System:Double>
 
-    <System:Double x:Key="TopWallpaperHeight">100</System:Double>
+    <System:Double x:Key="TopWallpaperHeight">125</System:Double>
 
-    <System:Double x:Key="ScrollableImageWidth">960</System:Double>
+    <System:Double x:Key="ScrollableImageWidth">1110</System:Double>
     <System:Double x:Key="ScrollableImageHeight">540</System:Double>
+
+    <System:Double x:Key="EllipseOuterWidth">45</System:Double>
+    <System:Double x:Key="EllipseInnerWidth">43</System:Double>
+    <System:Double x:Key="EllipseOuterHeight">45</System:Double>
+    <System:Double x:Key="EllipseInnerHeight">43</System:Double>
 
 </ResourceDictionary>

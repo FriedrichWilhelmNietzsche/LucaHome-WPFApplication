@@ -29,6 +29,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -52,15 +53,15 @@
             Grid.Row="1" 
             Grid.Column="0"
             HorizontalAlignment="Right"
-            Width="40" 
-            Height="40"
+            Width="{DynamicResource EllipseOuterWidth}" 
+            Height="{DynamicResource EllipseOuterHeight}"
             Fill="Indigo" />
         <Ellipse 
             Grid.Row="1" 
             Grid.Column="0"
             HorizontalAlignment="Right"
-            Width="38" 
-            Height="38">
+            Width="{DynamicResource EllipseInnerWidth}" 
+            Height="{DynamicResource EllipseInnerHeight}">
             <Ellipse.Fill>
                 <ImageBrush ImageSource="C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\OpenWeather\Assets\Images\wallpaper_dummy.png" />
             </Ellipse.Fill>
@@ -80,15 +81,15 @@
             Grid.Row="2" 
             Grid.Column="0"
             HorizontalAlignment="Right"
-            Width="40" 
-            Height="40"
+            Width="{DynamicResource EllipseOuterWidth}" 
+            Height="{DynamicResource EllipseOuterHeight}"
             Fill="Indigo" />
         <Ellipse 
             Grid.Row="2" 
             Grid.Column="0"
             HorizontalAlignment="Right"
-            Width="38" 
-            Height="38">
+            Width="{DynamicResource EllipseInnerWidth}" 
+            Height="{DynamicResource EllipseInnerHeight}">
             <Ellipse.Fill>
                 <ImageBrush Stretch="Uniform" ImageSource="C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\Assets\Icons\Others\socket_hd.png" />
             </Ellipse.Fill>
@@ -108,15 +109,15 @@
             Grid.Row="3" 
             Grid.Column="0"
             HorizontalAlignment="Right"
-            Width="40" 
-            Height="40"
+            Width="{DynamicResource EllipseOuterWidth}" 
+            Height="{DynamicResource EllipseOuterHeight}"
             Fill="Indigo" />
         <Ellipse 
             Grid.Row="3" 
             Grid.Column="0"
             HorizontalAlignment="Right"
-            Width="38" 
-            Height="38">
+            Width="{DynamicResource EllipseInnerWidth}" 
+            Height="{DynamicResource EllipseInnerHeight}">
             <Ellipse.Fill>
                 <ImageBrush Stretch="Uniform" ImageSource="C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\Assets\Icons\Others\birthday_hd.png" />
             </Ellipse.Fill>
@@ -136,15 +137,15 @@
             Grid.Row="4" 
             Grid.Column="0"
             HorizontalAlignment="Right"
-            Width="40" 
-            Height="40"
+            Width="{DynamicResource EllipseOuterWidth}" 
+            Height="{DynamicResource EllipseOuterHeight}"
             Fill="Indigo" />
         <Ellipse 
             Grid.Row="4" 
             Grid.Column="0"
             HorizontalAlignment="Right"
-            Width="38" 
-            Height="38">
+            Width="{DynamicResource EllipseInnerWidth}" 
+            Height="{DynamicResource EllipseInnerHeight}">
             <Ellipse.Fill>
                 <ImageBrush Stretch="Uniform" ImageSource="C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\Assets\Icons\Others\movie_hd.png" />
             </Ellipse.Fill>
@@ -164,15 +165,15 @@
             Grid.Row="5" 
             Grid.Column="0"
             HorizontalAlignment="Right"
-            Width="40" 
-            Height="40"
+            Width="{DynamicResource EllipseOuterWidth}" 
+            Height="{DynamicResource EllipseOuterHeight}"
             Fill="Indigo" />
         <Ellipse 
             Grid.Row="5" 
             Grid.Column="0"
             HorizontalAlignment="Right"
-            Width="38" 
-            Height="38">
+            Width="{DynamicResource EllipseInnerWidth}" 
+            Height="{DynamicResource EllipseInnerHeight}">
             <Ellipse.Fill>
                 <ImageBrush Stretch="Uniform" ImageSource="C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\Assets\Icons\Others\temperature_hd.png" />
             </Ellipse.Fill>
@@ -192,17 +193,17 @@
             Grid.Row="6" 
             Grid.Column="0"
             HorizontalAlignment="Right"
-            Width="40" 
-            Height="40"
+            Width="{DynamicResource EllipseOuterWidth}" 
+            Height="{DynamicResource EllipseOuterHeight}"
             Fill="Indigo" />
         <Ellipse 
             Grid.Row="6" 
             Grid.Column="0"
             HorizontalAlignment="Right"
-            Width="38" 
-            Height="38">
+            Width="{DynamicResource EllipseInnerWidth}" 
+            Height="{DynamicResource EllipseInnerHeight}">
             <Ellipse.Fill>
-                <ImageBrush Stretch="Uniform" ImageSource="C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\Assets\Icons\Shopping\shopping.png" />
+                <ImageBrush Stretch="Fill" ImageSource="C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\Assets\Wallpaper\main_image_shopping.png" />
             </Ellipse.Fill>
         </Ellipse>
         <Button
@@ -217,25 +218,53 @@
         </Button>
 
         <Ellipse
-            Grid.Row="8" 
+            Grid.Row="7" 
             Grid.Column="0"
             HorizontalAlignment="Right"
-            Width="40" 
-            Height="40"
+            Width="{DynamicResource EllipseOuterWidth}" 
+            Height="{DynamicResource EllipseOuterHeight}"
             Fill="Indigo" />
         <Ellipse 
-            Grid.Row="8" 
+            Grid.Row="7" 
             Grid.Column="0"
             HorizontalAlignment="Right"
-            Width="38" 
-            Height="38">
+            Width="{DynamicResource EllipseInnerWidth}" 
+            Height="{DynamicResource EllipseInnerHeight}">
+            <Ellipse.Fill>
+                <ImageBrush Stretch="Fill" ImageSource="C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\Assets\Wallpaper\main_image_menu.png" />
+            </Ellipse.Fill>
+        </Ellipse>
+        <Button
+            Style="{DynamicResource MaterialDesignRaisedButton}"
+            Grid.Row="7" 
+            Grid.Column="1"
+            Margin="5 5 5 5" 
+            Width="200"
+            ToolTip="Manage your menu for the week"
+            Click="Menu_Click">
+            Menu
+        </Button>
+
+        <Ellipse
+            Grid.Row="9" 
+            Grid.Column="0"
+            HorizontalAlignment="Right"
+            Width="{DynamicResource EllipseOuterWidth}" 
+            Height="{DynamicResource EllipseOuterHeight}"
+            Fill="Indigo" />
+        <Ellipse 
+            Grid.Row="9" 
+            Grid.Column="0"
+            HorizontalAlignment="Right"
+            Width="{DynamicResource EllipseInnerWidth}" 
+            Height="{DynamicResource EllipseInnerHeight}">
             <Ellipse.Fill>
                 <ImageBrush Stretch="Uniform" ImageSource="C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\Assets\Icons\Others\settings_hd.png" />
             </Ellipse.Fill>
         </Ellipse>
         <Button
             Style="{DynamicResource MaterialDesignRaisedButton}"
-            Grid.Row="8" 
+            Grid.Row="9" 
             Grid.Column="1"
             Margin="5 5 5 5" 
             Width="200"

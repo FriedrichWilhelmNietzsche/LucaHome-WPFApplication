@@ -73,6 +73,8 @@ namespace LucaHome.Pages
         private void _onShoppingListDownloadFinished(IList<ShoppingEntryDto> shoppingList, bool success)
         {
             _logger.Debug(string.Format("_onShoppingListDownloadFinished with model {0} was successful {1}", shoppingList, success));
+
+            setList();
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)

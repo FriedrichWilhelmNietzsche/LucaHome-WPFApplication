@@ -52,13 +52,13 @@
                             <DataTemplate>
                                 <Grid HorizontalAlignment="Center">
                                     <Ellipse
-                                        Width="40" 
-                                        Height="40"
+                                        Width="{DynamicResource EllipseOuterWidth}" 
+                                        Height="{DynamicResource EllipseOuterHeight}"
                                         Fill="Indigo"
                                         HorizontalAlignment="Center"/>
                                     <Ellipse
-                                        Width="38" 
-                                        Height="38"
+                                        Width="{DynamicResource EllipseInnerWidth}" 
+                                        Height="{DynamicResource EllipseInnerHeight}"
                                         HorizontalAlignment="Center">
                                         <Ellipse.Fill>
                                             <ImageBrush ImageSource="{Binding Icon, UpdateSourceTrigger=PropertyChanged}" />
@@ -70,16 +70,16 @@
                     </GridViewColumn>
                     <GridViewColumn Header="Temperature"
                                     DisplayMemberBinding="{Binding TemperatureString, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="135"/>
+                                    Width="150"/>
                     <GridViewColumn Header="Area"
                                     DisplayMemberBinding="{Binding Area, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="125"/>
+                                    Width="150"/>
                     <GridViewColumn Header="LastUpdate"
                                     DisplayMemberBinding="{Binding LastUpdate, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="145"/>
+                                    Width="175"/>
                     <GridViewColumn Header="TemperatureType"
                                     DisplayMemberBinding="{Binding GetTemperatureType, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="135"/>
+                                    Width="150"/>
                 </GridView>
             </ListView.View>
         </ListView>
@@ -88,7 +88,7 @@
             Grid.Column="0"
             Grid.Row="1"
             Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-            Margin="5 -24 5 5"
+            Margin="5"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom"
             ToolTip="MaterialDesignFloatingActionMiniButton"

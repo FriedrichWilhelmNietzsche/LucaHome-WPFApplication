@@ -11,14 +11,14 @@ namespace Common.Converter
         private const string TAG = "JsonDataToMenuConverter";
         private static string _searchParameter = "{menu:";
 
-        private static Logger _logger;
+        private readonly Logger _logger;
 
         public JsonDataToMenuConverter()
         {
             _logger = new Logger(TAG);
         }
 
-        public static IList<MenuDto> GetList(string[] stringArray)
+        public IList<MenuDto> GetList(string[] stringArray)
         {
             if (StringHelper.StringsAreEqual(stringArray))
             {
@@ -31,11 +31,16 @@ namespace Common.Converter
             }
         }
 
-        private static IList<MenuDto> ParseStringToList(string value)
+        public IList<MenuDto> GetList(string jsonString)
+        {
+            return ParseStringToList(jsonString);
+        }
+
+        private IList<MenuDto> ParseStringToList(string value)
         {
             if (!value.Contains("Error"))
             {
-                if (StringHelper.GetStringCount(value, _searchParameter) > 1)
+                if (StringHelper.GetStringCount(value, _searchParameter) > 0)
                 {
                     if (value.Contains(_searchParameter))
                     {
@@ -65,7 +70,7 @@ namespace Common.Converter
             return null;
         }
 
-        private static MenuDto ParseStringToValue(int id, string[] data)
+        private MenuDto ParseStringToValue(int id, string[] data)
         {
             if (data.Length == 6)
             {
@@ -90,7 +95,7 @@ namespace Common.Converter
 
                     string monthString = data[2].Replace("{month:", "").Replace("};", "");
                     int month = -1;
-                    bool parseSuccessMonth = int.TryParse(dayString, out month);
+                    bool parseSuccessMonth = int.TryParse(monthString, out month);
                     if (!parseSuccessMonth)
                     {
                         _logger.Error("Failed to parse month from data!");
@@ -99,7 +104,7 @@ namespace Common.Converter
 
                     string yearString = data[3].Replace("{year:", "").Replace("};", "");
                     int year = -1;
-                    bool parseSuccessYear = int.TryParse(dayString, out year);
+                    bool parseSuccessYear = int.TryParse(yearString, out year);
                     if (!parseSuccessYear)
                     {
                         _logger.Error("Failed to parse year from data!");

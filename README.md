@@ -41,6 +41,10 @@ ___________
 ![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img008_1.png)
 ___________
 ![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img009.png)
+___________
+![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img009_1.png)
+___________
+![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img010.png)
 
 # Libraries
 

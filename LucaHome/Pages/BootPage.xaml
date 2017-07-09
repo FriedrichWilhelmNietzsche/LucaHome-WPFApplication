@@ -42,7 +42,7 @@
             Width="158" 
             Height="98">
             <Ellipse.Fill>
-                <ImageBrush ImageSource="/Common;component/Assets/Images/main_image_informations.png" />
+                <ImageBrush ImageSource="/Common;component/Assets/Wallpaper/main_image_informations.png" />
             </Ellipse.Fill>
         </Ellipse>
 

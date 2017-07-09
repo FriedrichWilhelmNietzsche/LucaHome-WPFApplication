@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using System;
+using System.Linq;
 
 namespace Data.Services
 {
@@ -72,6 +72,19 @@ namespace Data.Services
             {
                 return _movieList;
             }
+        }
+
+        public IList<MovieDto> FoundMovies(string searchKey)
+        {
+            List<MovieDto> foundMovies = _movieList
+                        .Where(movie =>
+                            movie.Title.Contains(searchKey)
+                            || movie.Genre.Contains(searchKey)
+                            || movie.Description.Contains(searchKey))
+                        .Select(movie => movie)
+                        .ToList();
+
+            return foundMovies;
         }
 
         public void LoadMovieList()

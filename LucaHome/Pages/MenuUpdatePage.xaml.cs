@@ -2,6 +2,7 @@
 using Common.Dto;
 using Common.Tools;
 using Data.Services;
+using LucaHome.Rules;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,31 +12,29 @@ using ToastNotifications.Lifetime;
 using ToastNotifications.Messages;
 using ToastNotifications.Position;
 using System.Collections.Generic;
-using LucaHome.Rules;
 
 namespace LucaHome.Pages
 {
-    public partial class MovieAddPage : Page
+    public partial class MenuUpdatePage : Page
     {
-        private const string TAG = "MovieAddPage";
+        private const string TAG = "MenuUpdatePage";
         private readonly Logger _logger;
 
-        private readonly MovieService _movieService;
+        private readonly MenuService _menuService;
         private readonly NavigationService _navigationService;
 
         private readonly Notifier _notifier;
 
-        private string _movieTitle = string.Empty;
-        private string _movieGenre = string.Empty;
-        private string _movieDescription = string.Empty;
-        private int _movieRating = 0;
+        private MenuDto _menu;
 
-        public MovieAddPage(NavigationService navigationService)
+        public MenuUpdatePage(NavigationService navigationService, MenuDto menu)
         {
             _logger = new Logger(TAG, Enables.LOGGING);
 
-            _movieService = MovieService.Instance;
+            _menuService = MenuService.Instance;
             _navigationService = navigationService;
+
+            _menu = menu;
 
             InitializeComponent();
 
@@ -64,56 +63,56 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
 
-            TitleTextBox.Text = _movieTitle;
-            GenreTextBox.Text = _movieGenre;
-            DescriptionTextBox.Text = _movieDescription;
-            MovieRatingBar.Value = _movieRating;
+            string titleText = string.Format("Update menu - {0}.{1}.{2}", _menu.Date.Day, _menu.Date.Month, _menu.Date.Year);
+
+            PageTitle.Text = titleText;
+
+            MenuTextBox.Text = _menu.Title;
+            DescriptionTextBox.Text = _menu.Description;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
 
-            _movieService.OnMovieAddFinished -= _onMovieAddFinished;
-            _movieService.OnMovieDownloadFinished -= _onMovieDownloadFinished;
+            _menuService.OnMenuUpdateFinished -= _onMenuUpdateFinished;
+            _menuService.OnMenuDownloadFinished -= _onMenuDownloadFinished;
         }
 
-        private void SaveMovie_Click(object sender, RoutedEventArgs routedEventArgs)
+        private void UpdateMenu_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("SaveMovie_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
+            _logger.Debug(string.Format("UpdateMenu_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
 
-            string movieTitle = TitleTextBox.Text;
+            string menuTitle = MenuTextBox.Text;
 
-            ValidationResult movieTitleResult = new TextBoxLengthRule().Validate(movieTitle, null);
-            if (!movieTitleResult.IsValid)
+            ValidationResult menuTitleResult = new TextBoxLengthRule().Validate(menuTitle, null);
+            if (!menuTitleResult.IsValid)
             {
-                _notifier.ShowError("Please enter a movie title!");
+                _notifier.ShowError("Please enter a menu title!");
                 return;
             }
 
-            int id = _movieService.MovieList.Count;
-            string movieGenre = GenreTextBox.Text;
-            string movieDescription = DescriptionTextBox.Text;
-            int movieRating = MovieRatingBar.Value;
+            string menuDescription = DescriptionTextBox.Text;
 
-            MovieDto newMovie = new MovieDto(id, movieTitle, movieGenre, movieDescription, movieRating, 0, new WirelessSocketDto[] { });
+            _menu.Title = menuTitle;
+            _menu.Description = menuDescription;
 
-            _movieService.OnMovieAddFinished += _onMovieAddFinished;
-            _movieService.AddMovie(newMovie);
+            _menuService.OnMenuUpdateFinished += _onMenuUpdateFinished;
+            _menuService.UpdateMenu(_menu);
         }
 
-        private void _onMovieAddFinished(bool success)
+        private void _onMenuUpdateFinished(bool success)
         {
-            _logger.Debug(string.Format("_onMovieAddFinished was successful {0}", success));
+            _logger.Debug(string.Format("_onMenuUpdateFinished was successful {0}", success));
 
-            _movieService.OnMovieAddFinished -= _onMovieAddFinished;
+            _menuService.OnMenuUpdateFinished -= _onMenuUpdateFinished;
 
             if (success)
             {
-                _notifier.ShowSuccess("Added new movie!");
+                _notifier.ShowSuccess("Updated menu!");
 
-                _movieService.OnMovieDownloadFinished += _onMovieDownloadFinished;
-                _movieService.LoadMovieList();
+                _menuService.OnMenuDownloadFinished += _onMenuDownloadFinished;
+                _menuService.LoadMenuList();
             }
             else
             {
@@ -121,11 +120,11 @@ namespace LucaHome.Pages
             }
         }
 
-        private void _onMovieDownloadFinished(IList<MovieDto> movieList, bool success)
+        private void _onMenuDownloadFinished(IList<MenuDto> menuList, bool success)
         {
-            _logger.Debug(string.Format("_onMovieDownloadFinished with model {0} was successful {1}", movieList, success));
+            _logger.Debug(string.Format("_onMenuDownloadFinished with model {0} was successful {1}", menuList, success));
 
-            _movieService.OnMovieDownloadFinished -= _onMovieDownloadFinished;
+            _menuService.OnMenuDownloadFinished -= _onMenuDownloadFinished;
             _navigationService.GoBack();
         }
 

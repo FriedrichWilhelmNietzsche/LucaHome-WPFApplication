@@ -1,4 +1,4 @@
-﻿<Page x:Class="LucaHome.Pages.BirthdayPage"
+﻿<Page x:Class="LucaHome.Pages.MenuPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -16,7 +16,7 @@
       TextOptions.TextRenderingMode="Auto"   
       Background="{DynamicResource MaterialDesignPaper}"
       FontFamily="{DynamicResource MaterialDesignFont}"
-      Title="LucaHome - Birthdays"
+      Title="LucaHome - Menu"
       Loaded="Page_Loaded"
       Unloaded="Page_Unloaded">
 
@@ -30,10 +30,11 @@
         </Grid.ColumnDefinitions>
 
         <usercontrols:ScrollableImage
+            x:Name="Wallpaper"
             Height="{DynamicResource TopWallpaperHeight}"
             Grid.Column="0"
             Grid.Row="0"
-            ImageWallpaperSource="/Common;component/Assets/Wallpaper/main_image_birthday.png" />
+            ImageWallpaperSource="/Common;component/Assets/Wallpaper/main_image_menu.png" />
 
         <ListView 
             Grid.Column="0"
@@ -43,7 +44,7 @@
             Margin="5"
             VerticalAlignment="Center"
             Width="{DynamicResource ListWidth}"
-            Name="BirthdayList">
+            Name="MenuList">
             <ListView.View>
                 <GridView>
                     <GridViewColumn 
@@ -54,7 +55,7 @@
                                     <Ellipse
                                         Width="{DynamicResource EllipseOuterWidth}" 
                                         Height="{DynamicResource EllipseOuterHeight}"
-                                        Fill="Purple"
+                                        Fill="Indigo"
                                         HorizontalAlignment="Center"/>
                                     <Ellipse
                                         Width="{DynamicResource EllipseInnerWidth}" 
@@ -68,15 +69,33 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Name"
-                                    DisplayMemberBinding="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                    <GridViewColumn Header="Title"
+                                    DisplayMemberBinding="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="350"/>
+                    <GridViewColumn Header="Description"
+                                    DisplayMemberBinding="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
                                     Width="200"/>
-                    <GridViewColumn Header="Birthday"
-                                    DisplayMemberBinding="{Binding Birthday, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="300"/>
-                    <GridViewColumn Header="Age"
-                                    DisplayMemberBinding="{Binding Age, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="150"/>
+                    <GridViewColumn Header="Date"
+                                    DisplayMemberBinding="{Binding Date, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="175"/>
+                    <GridViewColumn 
+                        Width="150" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Center">
+                                    <Button
+                                        Style="{DynamicResource MaterialDesignRaisedButton}"
+                                        Margin="5 5 5 5" 
+                                        Width="135"
+                                        ToolTip="Update this menu"
+                                        Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
+                                        Click="MenuButton_Click">
+                                        Update
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>
@@ -92,21 +111,6 @@
             Click="ButtonBack_Click">
             <materialDesign:PackIcon 
                 Kind="KeyboardBackspace" 
-                Height="24" 
-                Width="24" />
-        </Button>
-
-        <Button 
-            Grid.Column="0"
-            Grid.Row="1"
-            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-            Margin="5 -24 5 5"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            ToolTip="MaterialDesignFloatingActionMiniButton"
-            Click="ButtonAdd_Click">
-            <materialDesign:PackIcon 
-                Kind="Plus" 
                 Height="24" 
                 Width="24" />
         </Button>
