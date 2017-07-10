@@ -1,0 +1,149 @@
+﻿<UserControl 
+    x:Class="LucaHome.UserControls.MainPageCard"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:LucaHome.UserControls"
+    mc:Ignorable="d" 
+    d:DesignHeight="135" 
+    d:DesignWidth="245"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    TextElement.FontWeight="Regular"
+    TextElement.FontSize="13"
+    TextOptions.TextFormattingMode="Ideal" 
+    TextOptions.TextRenderingMode="Auto"   
+    Background="{DynamicResource MaterialDesignPaper}"
+    FontFamily="{DynamicResource MaterialDesignFont}">
+
+    <Grid>
+        <materialDesign:Card 
+            x:Name="MainPageCardContent"
+            Margin="5"
+            Height="125"
+            Width="235"
+            MouseEnter="MainPageCardContent_MouseEnter"
+            MouseLeave="MainPageCardContent_MouseLeave">
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Image 
+                    Grid.Row="0" 
+                    Grid.RowSpan="3"
+                    Grid.Column="0"
+                    Name="CardImageView"
+                    Source="{Binding 
+                    RelativeSource={RelativeSource AncestorType=UserControl},
+                    Path=CardImage, 
+                    Mode=OneWay}" />
+
+                <!-- Help
+                https://stackoverflow.com/questions/7406973/how-do-i-make-a-wpf-textblock-show-my-text-on-multiple-lines
+                -->
+                <TextBlock
+                    Margin="3"
+                    Grid.Row="0" 
+                    Grid.Column="1"
+                    HorizontalAlignment="Center" 
+                    Style="{DynamicResource MaterialDesignTitleTextBlock}"
+                    TextWrapping="Wrap"
+                    TextAlignment="Center"
+                    Text="{Binding 
+                    RelativeSource={RelativeSource AncestorType=UserControl},
+                    Path=Title, 
+                    Mode=OneWay}"
+                    FontSize="18"/>
+
+                <TextBlock
+                    Margin="3"
+                    Grid.Row="1" 
+                    Grid.Column="1"
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Bottom"
+                    TextWrapping="Wrap"
+                    TextAlignment="Center"
+                    Text="{Binding 
+                    RelativeSource={RelativeSource AncestorType=UserControl},
+                    Path=Description, 
+                    Mode=OneWay}" />
+
+                <Grid
+                    Margin="3"
+                    Grid.Row="2" 
+                    Grid.Column="1"
+                    VerticalAlignment="Bottom">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Grid.Row="0" 
+                        Grid.Column="0"
+                        Name="BottomTitleText"
+                        HorizontalAlignment="Right"
+                        Text="{Binding
+                        RelativeSource={RelativeSource AncestorType=UserControl},
+                        Path=BottomTitleProperty,
+                        Mode=OneWay}"
+                        FontSize="11"/>
+
+                    <TextBlock
+                        Grid.Row="1" 
+                        Grid.Column="0"
+                        Name="BottomDataText"
+                        HorizontalAlignment="Right"
+                        Text="{Binding
+                        RelativeSource={RelativeSource AncestorType=UserControl},
+                        Path=BottomDataProperty,
+                        Mode=OneWay}"
+                        FontSize="11" />
+
+                </Grid>
+            </Grid>
+        </materialDesign:Card>
+
+        <Button 
+            Grid.Column="1"
+            Grid.Row="2"
+            Width="30"
+            Height="30"
+            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+            Margin="5 5 5 5"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            ToolTip="Add a new entry"
+            Command="{Binding
+            RelativeSource={RelativeSource AncestorType=UserControl},
+            Path=ButtonAddCommand,
+            Mode=OneWay}"
+            Visibility="{Binding
+            RelativeSource={RelativeSource AncestorType=UserControl},
+            Path=ButtonAddVisibility,
+            Mode=OneWay}"
+            MouseEnter="MainPageCardContent_MouseEnter"
+            MouseLeave="MainPageCardContent_MouseLeave">
+            <materialDesign:PackIcon 
+                Kind="Plus" 
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Height="30" 
+                Width="30" />
+        </Button>
+    </Grid>
+    
+</UserControl>

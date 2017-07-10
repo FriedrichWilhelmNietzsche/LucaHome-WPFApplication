@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:LucaHome.Pages"
+      xmlns:usercontrols="clr-namespace:LucaHome.UserControls"
       mc:Ignorable="d" 
       Height="{DynamicResource PageHeight}" 
       Width="{DynamicResource PageWidth}"
@@ -16,7 +17,8 @@
       Background="{DynamicResource MaterialDesignPaper}"
       FontFamily="{DynamicResource MaterialDesignFont}"
       Title="LucaHome"
-      Loaded="Page_Loaded">
+      Loaded="Page_Loaded"
+      Unloaded="Page_Unloaded">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -24,22 +26,18 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="5*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <materialDesign:Card 
             Grid.Row="0" 
             Grid.Column="0"
-            Grid.ColumnSpan="2"
+            Grid.ColumnSpan="4"
             Padding="22" 
             Margin="8">
             <TextBlock 
@@ -49,228 +47,85 @@
             </TextBlock>
         </materialDesign:Card>
 
-        <Ellipse
-            Grid.Row="1" 
+        <usercontrols:MainPageCard
+            x:Name="SocketCard"
+            Grid.Row="1"
             Grid.Column="0"
-            HorizontalAlignment="Right"
-            Width="{DynamicResource EllipseOuterWidth}" 
-            Height="{DynamicResource EllipseOuterHeight}"
-            Fill="Indigo" />
-        <Ellipse 
-            Grid.Row="1" 
-            Grid.Column="0"
-            HorizontalAlignment="Right"
-            Width="{DynamicResource EllipseInnerWidth}" 
-            Height="{DynamicResource EllipseInnerHeight}">
-            <Ellipse.Fill>
-                <ImageBrush ImageSource="C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\OpenWeather\Assets\Images\wallpaper_dummy.png" />
-            </Ellipse.Fill>
-        </Ellipse>
-        <Button
-            Style="{DynamicResource MaterialDesignRaisedButton}"
-            Grid.Row="1" 
-            Grid.Column="1"
-            Margin="5 5 5 5" 
-            Width="200"
-            ToolTip="Display forecast weather"
-            Click="OpenWeather_Click">
-            Open Weather
-        </Button>
+            CardImage="/Common;component/Assets/Icons/Others/socket_hd.png"
+            Title="Sockets"
+            Description="Control your sockets"
+            ButtonAddVisibility="Visible"
+            MouseUp="SocketCard_MouseUp"/>
 
-        <Ellipse
-            Grid.Row="2" 
-            Grid.Column="0"
-            HorizontalAlignment="Right"
-            Width="{DynamicResource EllipseOuterWidth}" 
-            Height="{DynamicResource EllipseOuterHeight}"
-            Fill="Indigo" />
-        <Ellipse 
-            Grid.Row="2" 
-            Grid.Column="0"
-            HorizontalAlignment="Right"
-            Width="{DynamicResource EllipseInnerWidth}" 
-            Height="{DynamicResource EllipseInnerHeight}">
-            <Ellipse.Fill>
-                <ImageBrush Stretch="Uniform" ImageSource="C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\Assets\Icons\Others\socket_hd.png" />
-            </Ellipse.Fill>
-        </Ellipse>
-        <Button
-            Style="{DynamicResource MaterialDesignRaisedButton}"
-            Grid.Row="2" 
-            Grid.Column="1"
-            Margin="5 5 5 5" 
-            Width="200"
-            ToolTip="Handling sockets"
-            Click="Socket_Click">
-            Sockets
-        </Button>
+        <usercontrols:MainPageCard
+            x:Name="WeatherCard"
+            Grid.Row="1"
+            Grid.Column="2"
+            CardImage="/OpenWeather;component/Assets/Images/wallpaper_dummy.png"
+            Title="Weather"
+            Description="Get your weather for the next days"
+            ButtonAddVisibility="Collapsed"
+            MouseUp="WeatherCard_MouseUp"/>
 
-        <Ellipse
-            Grid.Row="3" 
-            Grid.Column="0"
-            HorizontalAlignment="Right"
-            Width="{DynamicResource EllipseOuterWidth}" 
-            Height="{DynamicResource EllipseOuterHeight}"
-            Fill="Indigo" />
-        <Ellipse 
-            Grid.Row="3" 
-            Grid.Column="0"
-            HorizontalAlignment="Right"
-            Width="{DynamicResource EllipseInnerWidth}" 
-            Height="{DynamicResource EllipseInnerHeight}">
-            <Ellipse.Fill>
-                <ImageBrush Stretch="Uniform" ImageSource="C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\Assets\Icons\Others\birthday_hd.png" />
-            </Ellipse.Fill>
-        </Ellipse>
-        <Button
-            Style="{DynamicResource MaterialDesignRaisedButton}"
-            Grid.Row="3" 
-            Grid.Column="1"
-            Margin="5 5 5 5" 
-            Width="200"
-            ToolTip="Remember birthdays"
-            Click="Birthday_Click">
-            Birthdays
-        </Button>
+        <usercontrols:MainPageCard
+            x:Name="TemperatureCard"
+            Grid.Row="1"
+            Grid.Column="3"
+            CardImage="/Common;component/Assets/Icons/Others/temperature_hd.png"
+            Title="Temperature"
+            Description="Display local and city temperature"
+            ButtonAddVisibility="Collapsed"
+            MouseUp="TemperatureCard_MouseUp"/>
 
-        <Ellipse
-            Grid.Row="4" 
+        <usercontrols:MainPageCard
+            x:Name="MenuCard"
+            Grid.Row="2"
             Grid.Column="0"
-            HorizontalAlignment="Right"
-            Width="{DynamicResource EllipseOuterWidth}" 
-            Height="{DynamicResource EllipseOuterHeight}"
-            Fill="Indigo" />
-        <Ellipse 
-            Grid.Row="4" 
-            Grid.Column="0"
-            HorizontalAlignment="Right"
-            Width="{DynamicResource EllipseInnerWidth}" 
-            Height="{DynamicResource EllipseInnerHeight}">
-            <Ellipse.Fill>
-                <ImageBrush Stretch="Uniform" ImageSource="C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\Assets\Icons\Others\movie_hd.png" />
-            </Ellipse.Fill>
-        </Ellipse>
-        <Button
-            Style="{DynamicResource MaterialDesignRaisedButton}"
-            Grid.Row="4" 
-            Grid.Column="1"
-            Margin="5 5 5 5" 
-            Width="200"
-            ToolTip="Select movies to watch"
-            Click="Movie_Click">
-            Movies
-        </Button>
+            CardImage="/Common;component/Assets/Wallpaper/main_image_menu.png"
+            Title="Menu"
+            Description="Plan your meals for the week"
+            ButtonAddVisibility="Collapsed"
+            MouseUp="MenuCard_MouseUp"/>
 
-        <Ellipse
-            Grid.Row="5" 
-            Grid.Column="0"
-            HorizontalAlignment="Right"
-            Width="{DynamicResource EllipseOuterWidth}" 
-            Height="{DynamicResource EllipseOuterHeight}"
-            Fill="Indigo" />
-        <Ellipse 
-            Grid.Row="5" 
-            Grid.Column="0"
-            HorizontalAlignment="Right"
-            Width="{DynamicResource EllipseInnerWidth}" 
-            Height="{DynamicResource EllipseInnerHeight}">
-            <Ellipse.Fill>
-                <ImageBrush Stretch="Uniform" ImageSource="C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\Assets\Icons\Others\temperature_hd.png" />
-            </Ellipse.Fill>
-        </Ellipse>
-        <Button
-            Style="{DynamicResource MaterialDesignRaisedButton}"
-            Grid.Row="5" 
+        <usercontrols:MainPageCard
+            x:Name="ShoppingListCard"
+            Grid.Row="2"
             Grid.Column="1"
-            Margin="5 5 5 5" 
-            Width="200"
-            ToolTip="Monitor temperatures"
-            Click="Temperature_Click">
-            Temperature
-        </Button>
+            CardImage="/Common;component/Assets/Wallpaper/main_image_shopping.png"
+            Title="Shopping List"
+            Description="What do we need to buy?"
+            ButtonAddVisibility="Visible"
+            MouseUp="ShoppingCard_MouseUp"/>
 
-        <Ellipse
-            Grid.Row="6" 
+        <usercontrols:MainPageCard
+            x:Name="BirthdayCard"
+            Grid.Row="3"
             Grid.Column="0"
-            HorizontalAlignment="Right"
-            Width="{DynamicResource EllipseOuterWidth}" 
-            Height="{DynamicResource EllipseOuterHeight}"
-            Fill="Indigo" />
-        <Ellipse 
-            Grid.Row="6" 
-            Grid.Column="0"
-            HorizontalAlignment="Right"
-            Width="{DynamicResource EllipseInnerWidth}" 
-            Height="{DynamicResource EllipseInnerHeight}">
-            <Ellipse.Fill>
-                <ImageBrush Stretch="Fill" ImageSource="C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\Assets\Wallpaper\main_image_shopping.png" />
-            </Ellipse.Fill>
-        </Ellipse>
-        <Button
-            Style="{DynamicResource MaterialDesignRaisedButton}"
-            Grid.Row="6" 
-            Grid.Column="1"
-            Margin="5 5 5 5" 
-            Width="200"
-            ToolTip="Manage your shopping list"
-            Click="ShoppingList_Click">
-            Shopping List
-        </Button>
+            CardImage="/Common;component/Assets/Wallpaper/main_image_birthday.png"
+            Title="Birthdays"
+            Description="Who's next for birthday"
+            ButtonAddVisibility="Visible"
+            MouseUp="BirthdayCard_MouseUp"/>
 
-        <Ellipse
-            Grid.Row="7" 
-            Grid.Column="0"
-            HorizontalAlignment="Right"
-            Width="{DynamicResource EllipseOuterWidth}" 
-            Height="{DynamicResource EllipseOuterHeight}"
-            Fill="Indigo" />
-        <Ellipse 
-            Grid.Row="7" 
-            Grid.Column="0"
-            HorizontalAlignment="Right"
-            Width="{DynamicResource EllipseInnerWidth}" 
-            Height="{DynamicResource EllipseInnerHeight}">
-            <Ellipse.Fill>
-                <ImageBrush Stretch="Fill" ImageSource="C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\Assets\Wallpaper\main_image_menu.png" />
-            </Ellipse.Fill>
-        </Ellipse>
-        <Button
-            Style="{DynamicResource MaterialDesignRaisedButton}"
-            Grid.Row="7" 
+        <usercontrols:MainPageCard
+            x:Name="MovieCard"
+            Grid.Row="3"
             Grid.Column="1"
-            Margin="5 5 5 5" 
-            Width="200"
-            ToolTip="Manage your menu for the week"
-            Click="Menu_Click">
-            Menu
-        </Button>
+            CardImage="/Common;component/Assets/Wallpaper/main_image_movies.png"
+            Title="Movies"
+            Description="Want to watch some blockbuster?"
+            ButtonAddVisibility="Visible"
+            MouseUp="MovieCard_MouseUp"/>
 
-        <Ellipse
-            Grid.Row="9" 
-            Grid.Column="0"
-            HorizontalAlignment="Right"
-            Width="{DynamicResource EllipseOuterWidth}" 
-            Height="{DynamicResource EllipseOuterHeight}"
-            Fill="Indigo" />
-        <Ellipse 
-            Grid.Row="9" 
-            Grid.Column="0"
-            HorizontalAlignment="Right"
-            Width="{DynamicResource EllipseInnerWidth}" 
-            Height="{DynamicResource EllipseInnerHeight}">
-            <Ellipse.Fill>
-                <ImageBrush Stretch="Uniform" ImageSource="C:\Users\Jonas\Sourcecode\C#\workspace\LucaHome\Common\Assets\Icons\Others\settings_hd.png" />
-            </Ellipse.Fill>
-        </Ellipse>
-        <Button
-            Style="{DynamicResource MaterialDesignRaisedButton}"
-            Grid.Row="9" 
-            Grid.Column="1"
-            Margin="5 5 5 5" 
-            Width="200"
-            ToolTip="Configure your application"
-            Click="Settings_Click">
-            Settings
-        </Button>
+        <usercontrols:MainPageCard
+            x:Name="SettingsCard"
+            Grid.Row="3"
+            Grid.Column="3"
+            CardImage="/Common;component/Assets/Icons/Others/settings_hd.png"
+            Title="Settings"
+            Description="Configure your application"
+            ButtonAddVisibility="Collapsed"
+            MouseUp="SettingsCard_MouseUp"/>
+
     </Grid>
 </Page>

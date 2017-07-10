@@ -52,11 +52,12 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -277,7 +278,7 @@
 
         <Button 
             Grid.Column="0"
-            Grid.Row="6"
+            Grid.Row="7"
             Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
             Margin="5"
             HorizontalAlignment="Left"
