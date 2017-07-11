@@ -15,9 +15,9 @@ using ToastNotifications.Position;
 
 namespace LucaHome.Pages
 {
-    public partial class WirelessSocketAddPage : Page
+    public partial class WirelessSocketUpdatePage : Page
     {
-        private const string TAG = "WirelessSocketAddPage";
+        private const string TAG = "WirelessSocketUpdatePage";
         private readonly Logger _logger;
 
         private readonly NavigationService _navigationService;
@@ -25,16 +25,16 @@ namespace LucaHome.Pages
 
         private readonly Notifier _notifier;
 
-        private string _socketName = string.Empty;
-        private string _socketArea = string.Empty;
-        private string _socketCode = string.Empty;
+        private WirelessSocketDto _wirelessSocket;
 
-        public WirelessSocketAddPage(NavigationService navigationService)
+        public WirelessSocketUpdatePage(NavigationService navigationService, WirelessSocketDto wirelessSocket)
         {
             _logger = new Logger(TAG, Enables.LOGGING);
 
             _navigationService = navigationService;
             _wirelessSocketService = WirelessSocketService.Instance;
+
+            _wirelessSocket = wirelessSocket;
 
             InitializeComponent();
 
@@ -63,24 +63,24 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
 
-            NameTextBox.Text = _socketName;
-            AreaTextBox.Text = _socketArea;
-            CodeTextBox.Text = _socketCode;
+            NameTextBox.Text = _wirelessSocket.Name;
+            AreaTextBox.Text = _wirelessSocket.Area;
+            CodeTextBox.Text = _wirelessSocket.Code;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
 
-            _wirelessSocketService.OnAddWirelessSocketFinished -= _onAddWirelessSocketFinished;
+            _wirelessSocketService.OnUpdateWirelessSocketFinished -= _onUpdateWirelessSocketFinished;
             _wirelessSocketService.OnWirelessSocketDownloadFinished -= _onWirelessSocketDownloadFinished;
         }
 
-        private void SaveWirelessSocket_Click(object sender, RoutedEventArgs routedEventArgs)
+        private void UpdateWirelessSocket_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("SaveWirelessSocket_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
+            _logger.Debug(string.Format("UpdateWirelessSocket_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
 
-            int id = _wirelessSocketService.WirelessSocketList.Count;
+            int id = _wirelessSocket.Id;
             string socketName = NameTextBox.Text;
             string socketArea = AreaTextBox.Text;
             string socketCode = CodeTextBox.Text;
@@ -106,28 +106,28 @@ namespace LucaHome.Pages
                 return;
             }
 
-            WirelessSocketDto newWirelessSocket = new WirelessSocketDto(id, socketName, socketArea, socketCode, false);
+            WirelessSocketDto updateWirelessSocket = new WirelessSocketDto(id, socketName, socketArea, socketCode, _wirelessSocket.IsActivated);
 
-            _wirelessSocketService.OnAddWirelessSocketFinished += _onAddWirelessSocketFinished;
-            _wirelessSocketService.AddWirelessSocket(newWirelessSocket);
+            _wirelessSocketService.OnUpdateWirelessSocketFinished += _onUpdateWirelessSocketFinished;
+            _wirelessSocketService.UpdateWirelessSocket(updateWirelessSocket);
         }
 
-        private void _onAddWirelessSocketFinished(bool success, string response)
+        private void _onUpdateWirelessSocketFinished(bool success, string response)
         {
-            _logger.Debug(string.Format("_onAddWirelessSocketFinished was successful {0}", success));
+            _logger.Debug(string.Format("_onUpdateWirelessSocketFinished was successful {0}", success));
 
-            _wirelessSocketService.OnAddWirelessSocketFinished -= _onAddWirelessSocketFinished;
+            _wirelessSocketService.OnUpdateWirelessSocketFinished -= _onUpdateWirelessSocketFinished;
 
             if (success)
             {
-                _notifier.ShowSuccess("Added new wireless socket!");
+                _notifier.ShowSuccess("Updated wireless socket!");
 
                 _wirelessSocketService.OnWirelessSocketDownloadFinished += _onWirelessSocketDownloadFinished;
                 _wirelessSocketService.LoadWirelessSocketList();
             }
             else
             {
-                _notifier.ShowError(string.Format("Adding wireless socket failed!\n{0}", response));
+                _notifier.ShowError(string.Format("Updating wireless socket failed!\n{0}", response));
             }
         }
 

@@ -1,0 +1,71 @@
+﻿<Window x:Class="LucaHome.Dialogs.DeleteDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LucaHome.Dialogs"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="BirthdayDeleteDialog" 
+        Height="250" 
+        Width="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <materialDesign:Card 
+            Grid.Row="0" 
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Padding="22" 
+            Margin="8">
+            <TextBlock 
+                Name="Title"
+                HorizontalAlignment="Center" 
+                Style="{DynamicResource MaterialDesignTitleTextBlock}">
+                Title
+            </TextBlock>
+        </materialDesign:Card>
+
+        <TextBlock
+            Name="Description"
+            Grid.Row="1" 
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Center" 
+            VerticalAlignment="Center"
+            TextWrapping="Wrap"
+            TextAlignment="Center">
+            Description
+        </TextBlock>
+
+        <Button
+            Grid.Row="3" 
+            Grid.Column="0"
+            Style="{DynamicResource MaterialDesignRaisedButton}"
+            Margin="5 5 5 5" 
+            Width="135"
+            Tag="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+            Click="ConfirmButton_Click">
+            Yes
+        </Button>
+
+        <Button
+            Grid.Row="3" 
+            Grid.Column="1"
+            Style="{DynamicResource MaterialDesignRaisedButton}"
+            Margin="5 5 5 5" 
+            Width="135"
+            Tag="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+            Click="CancelButton_Click">
+            No
+        </Button>
+    </Grid>
+</Window>

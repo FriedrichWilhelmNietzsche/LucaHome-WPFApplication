@@ -77,6 +77,50 @@
                     <GridViewColumn Header="Age"
                                     DisplayMemberBinding="{Binding Age, UpdateSourceTrigger=PropertyChanged}"
                                     Width="150"/>
+                    <GridViewColumn 
+                        Width="65" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button 
+                                    Height="40" 
+                                    Width="40"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                    Margin="5 5 5 5"
+                                    ToolTip="Update birthday"
+                                    Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
+                                    Click="ButtonUpdateBirthday_Click"
+                                    MouseEnter="Button_MouseEnter"
+                                    MouseLeave="Button_MouseLeave">
+                                    <materialDesign:PackIcon 
+                                        Kind="Settings" 
+                                        Height="25" 
+                                        Width="25" />
+                                </Button>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn 
+                        Width="65" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button 
+                                    Height="40" 
+                                    Width="40"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                    Margin="5 5 5 5"
+                                    ToolTip="Delete birthday"
+                                    Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
+                                    Click="ButtonDeleteBirthday_Click" 
+                                    MouseEnter="Button_MouseEnter"
+                                    MouseLeave="Button_MouseLeave">
+                                    <materialDesign:PackIcon 
+                                        Kind="Delete" 
+                                        Height="25" 
+                                        Width="25" />
+                                </Button>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>

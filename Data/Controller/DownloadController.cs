@@ -8,13 +8,13 @@ namespace Data.Controller
 {
     public enum DownloadType
     {
-        Birthday, BirthdayAdd,
+        Birthday, BirthdayAdd, BirthdayUpdate, BirthdayDelete,
         Menu, MenuUpdate,
-        Movie, MovieAdd,
-        ShoppingList, ShoppingListAdd,
+        Movie, MovieAdd, MovieUpdate, MovieDelete,
+        ShoppingList, ShoppingListAdd, ShoppingListDelete, ShoppingListUpdate,
         Temperature,
         User,
-        WirelessSocket, WirelessSocketAdd
+        WirelessSocket, WirelessSocketAdd, WirelessSocketUpdate, WirelessSocketDelete
     };
 
     public delegate void DownloadFinishedEventHandler(string response, bool success, DownloadType downloadType);

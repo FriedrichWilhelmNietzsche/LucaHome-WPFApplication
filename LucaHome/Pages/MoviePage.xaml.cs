@@ -2,6 +2,7 @@
 using Common.Dto;
 using Common.Tools;
 using Data.Services;
+using LucaHome.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -117,6 +118,7 @@ namespace LucaHome.Pages
 
             _movieService.OnMovieDownloadFinished -= _movieListDownloadFinished;
             _movieService.OnMovieStartFinished -= _movieStartFinished;
+            _movieService.OnMovieDeleteFinished -= _onMovieDeleteFinished;
         }
 
         private void setList(IList<MovieDto> movieList)
@@ -128,26 +130,6 @@ namespace LucaHome.Pages
             foreach (MovieDto entry in movieList)
             {
                 MovieList.Items.Add(entry);
-            }
-        }
-
-        private void _movieListDownloadFinished(IList<MovieDto> movieList, bool success)
-        {
-            _logger.Debug(string.Format("_movieListDownloadFinished with model {0} was successful: {1}", movieList, success));
-
-            setList(_movieService.MovieList);
-        }
-
-        private void _movieStartFinished(bool success)
-        {
-            _logger.Debug(string.Format("_movieStartFinished was successful: {0}", success));
-            if (success)
-            {
-                _notifier.ShowSuccess("Successfully started movie");
-            }
-            else
-            {
-                _notifier.ShowError("Failed to start movie");
             }
         }
 
@@ -193,6 +175,86 @@ namespace LucaHome.Pages
             {
                 MovieSearchKey = SearchMovieTextBox.Text;
             }
+        }
+
+        private void ButtonUpdateMovie_Click(object sender, RoutedEventArgs routedEventArgs)
+        {
+            _logger.Debug(string.Format("ButtonUpdateMovie_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+            if (sender is Button)
+            {
+                Button senderButton = (Button)sender;
+                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
+
+                int movieId = (int)senderButton.Tag;
+                MovieDto updateMovie = _movieService.GetById(movieId);
+                _logger.Warning(string.Format("Updating movie {0}!", updateMovie));
+
+                MovieUpdatePage movieUpdatePage = new MovieUpdatePage(_navigationService, updateMovie);
+                _navigationService.Navigate(movieUpdatePage);
+            }
+        }
+
+        private void ButtonDeleteMovie_Click(object sender, RoutedEventArgs routedEventArgs)
+        {
+            _logger.Debug(string.Format("ButtonUpdateMovie_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+            if (sender is Button)
+            {
+                Button senderButton = (Button)sender;
+                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
+
+                int movieId = (int)senderButton.Tag;
+                MovieDto deleteMovie = _movieService.GetById(movieId);
+                _logger.Warning(string.Format("Asking for deleting movie {0}!", deleteMovie));
+
+                DeleteDialog movieDeleteDialog = new DeleteDialog("Delete movie?",
+                    string.Format("Movie: {0}\nGenre: {1}\nDescription: {2}", deleteMovie.Title, deleteMovie.Genre, deleteMovie.Description));
+                movieDeleteDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                movieDeleteDialog.ShowDialog();
+
+                var confirmDelete = movieDeleteDialog.DialogResult;
+                if (confirmDelete == true)
+                {
+                    _movieService.OnMovieDeleteFinished += _onMovieDeleteFinished;
+                    _movieService.DeleteMovie(deleteMovie);
+                }
+            }
+        }
+
+        private void _movieListDownloadFinished(IList<MovieDto> movieList, bool success, string response)
+        {
+            _logger.Debug(string.Format("_movieListDownloadFinished with model {0} was successful: {1}", movieList, success));
+
+            setList(_movieService.MovieList);
+        }
+
+        private void _movieStartFinished(bool success, string response)
+        {
+            _logger.Debug(string.Format("_movieStartFinished was successful: {0}", success));
+            if (success)
+            {
+                _notifier.ShowSuccess("Successfully started movie");
+            }
+            else
+            {
+                _notifier.ShowError(string.Format("Failed to start movie!\n{0}", response));
+            }
+        }
+
+        private void _onMovieDeleteFinished(bool success, string response)
+        {
+            _logger.Debug(string.Format("_onMovieDeleteFinished with response {0} was successful: {1}", response, success));
+            _movieService.OnMovieDeleteFinished -= _onMovieDeleteFinished;
+            _movieService.LoadMovieList();
+        }
+
+        private void Button_MouseEnter(object sender, MouseEventArgs mouseEventArgs)
+        {
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void Button_MouseLeave(object sender, MouseEventArgs mouseEventArgs)
+        {
+            Mouse.OverrideCursor = Cursors.Arrow;
         }
     }
 }

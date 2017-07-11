@@ -1,6 +1,6 @@
 ﻿using Common.Common;
 using Common.Tools;
-using Data.Services;
+using Data.Controller;
 using LucaHome.Pages;
 using OpenWeather.Service;
 using System.Windows;
@@ -13,7 +13,7 @@ namespace LucaHome
         private const string TAG = "MainWindow";
         private readonly Logger _logger;
 
-        private readonly AppSettingsService _appSettingsService;
+        private readonly AppSettingsController _appSettingsController;
         private readonly NavigationService _navigationService;
         private readonly OpenWeatherService _openWeatherService;
 
@@ -24,12 +24,11 @@ namespace LucaHome
             _logger = new Logger(TAG, Enables.LOGGING);
 
             InitializeComponent();
-            
-            _navigationService = _mainFrame.NavigationService;
 
-            _appSettingsService = AppSettingsService.Instance;
+            _appSettingsController = AppSettingsController.Instance;
+            _navigationService = _mainFrame.NavigationService;
             _openWeatherService = OpenWeatherService.Instance;
-            _openWeatherService.City = _appSettingsService.OpenWeatherCity;
+            _openWeatherService.City = _appSettingsController.OpenWeatherCity;
 
             _bootPage = new BootPage(_navigationService);
 

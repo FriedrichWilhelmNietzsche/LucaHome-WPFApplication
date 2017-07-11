@@ -13,14 +13,14 @@ using static Common.Dto.TemperatureDto;
 
 namespace Data.Services
 {
-    public delegate void TemperatureDownloadEventHandler(IList<TemperatureDto> temperatureList, bool success);
+    public delegate void TemperatureDownloadEventHandler(IList<TemperatureDto> temperatureList, bool success, string response);
 
     public class TemperatureService
     {
         private const string TAG = "TemperatureService";
         private readonly Logger _logger;
 
-        private readonly AppSettingsService _appSettingsService;
+        private readonly AppSettingsController _appSettingsController;
         private readonly DownloadController _downloadController;
         private readonly JsonDataToTemperatureConverter _jsonDataToTemperatureConverter;
         private readonly OpenWeatherService _openWeatherService;
@@ -34,7 +34,7 @@ namespace Data.Services
         {
             _logger = new Logger(TAG);
 
-            _appSettingsService = AppSettingsService.Instance;
+            _appSettingsController = AppSettingsController.Instance;
             _downloadController = new DownloadController();
             _jsonDataToTemperatureConverter = new JsonDataToTemperatureConverter();
             _openWeatherService = OpenWeatherService.Instance;
@@ -92,14 +92,14 @@ namespace Data.Services
         {
             _logger.Debug("loadTemperatureListAsync");
 
-            UserDto user = _appSettingsService.User;
+            UserDto user = _appSettingsController.User;
             if (user == null)
             {
-                OnTemperatureDownloadFinished(null, false);
+                OnTemperatureDownloadFinished(null, false, "No user");
                 return;
             }
 
-            string requestUrl = "http://" + _appSettingsService.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_TEMPERATURES.Action;
+            string requestUrl = "http://" + _appSettingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_TEMPERATURES.Action;
 
             _downloadController.OnDownloadFinished += _temperatureDownloadFinished;
 
@@ -122,7 +122,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnTemperatureDownloadFinished(null, false);
+                OnTemperatureDownloadFinished(null, false, response);
                 return;
             }
 
@@ -132,7 +132,7 @@ namespace Data.Services
             {
                 _logger.Error("Download was not successful!");
 
-                OnTemperatureDownloadFinished(null, false);
+                OnTemperatureDownloadFinished(null, false, response);
                 return;
             }
 
@@ -141,7 +141,7 @@ namespace Data.Services
             {
                 _logger.Error("Converted temperatureList is null!");
 
-                OnTemperatureDownloadFinished(null, false);
+                OnTemperatureDownloadFinished(null, false, response);
                 return;
             }
 
@@ -154,7 +154,7 @@ namespace Data.Services
                 _temperatureList.Add(currentWeatherTemperature);
             }
 
-            OnTemperatureDownloadFinished(_temperatureList, true);
+            OnTemperatureDownloadFinished(_temperatureList, true, response);
         }
 
         public void Dispose()

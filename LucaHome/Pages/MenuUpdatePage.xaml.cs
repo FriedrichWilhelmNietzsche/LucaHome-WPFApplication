@@ -75,8 +75,8 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
 
-            _menuService.OnMenuUpdateFinished -= _onMenuUpdateFinished;
             _menuService.OnMenuDownloadFinished -= _onMenuDownloadFinished;
+            _menuService.OnMenuUpdateFinished -= _onMenuUpdateFinished;
         }
 
         private void UpdateMenu_Click(object sender, RoutedEventArgs routedEventArgs)
@@ -101,7 +101,15 @@ namespace LucaHome.Pages
             _menuService.UpdateMenu(_menu);
         }
 
-        private void _onMenuUpdateFinished(bool success)
+        private void _onMenuDownloadFinished(IList<MenuDto> menuList, bool success, string response)
+        {
+            _logger.Debug(string.Format("_onMenuDownloadFinished with model {0} was successful {1}", menuList, success));
+
+            _menuService.OnMenuDownloadFinished -= _onMenuDownloadFinished;
+            _navigationService.GoBack();
+        }
+
+        private void _onMenuUpdateFinished(bool success, string response)
         {
             _logger.Debug(string.Format("_onMenuUpdateFinished was successful {0}", success));
 
@@ -116,16 +124,8 @@ namespace LucaHome.Pages
             }
             else
             {
-                _notifier.ShowError("Adding movie failed!");
+                _notifier.ShowError(string.Format("Updating menu failed!\n{0}", response));
             }
-        }
-
-        private void _onMenuDownloadFinished(IList<MenuDto> menuList, bool success)
-        {
-            _logger.Debug(string.Format("_onMenuDownloadFinished with model {0} was successful {1}", menuList, success));
-
-            _menuService.OnMenuDownloadFinished -= _onMenuDownloadFinished;
-            _navigationService.GoBack();
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)

@@ -2,10 +2,12 @@
 using Common.Dto;
 using Common.Tools;
 using Data.Services;
+using LucaHome.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Navigation;
 using ToastNotifications;
 using ToastNotifications.Lifetime;
@@ -88,6 +90,7 @@ namespace LucaHome.Pages
 
             _wirelessSocketService.OnWirelessSocketDownloadFinished -= _wirelessSocketListDownloadFinished;
             _wirelessSocketService.OnSetWirelessSocketFinished -= _setWirelessSocketFinished;
+            _wirelessSocketService.OnDeleteWirelessSocketFinished -= _onWirelessSocketDeleteFinished;
 
             _notifier.Dispose();
         }
@@ -104,25 +107,6 @@ namespace LucaHome.Pages
             }
         }
 
-        private void _wirelessSocketListDownloadFinished(IList<WirelessSocketDto> wirelessSocketList, bool success)
-        {
-            _logger.Debug(string.Format("_wirelessSocketListDownloadFinished with model {0} was successful: {1}", wirelessSocketList, success));
-            setList();
-        }
-
-        private void _setWirelessSocketFinished(IList<WirelessSocketDto> wirelessSocketList, bool success)
-        {
-            _logger.Debug(string.Format("_setWirelessSocketFinished was successful: {0}", success));
-            if (success)
-            {
-                _notifier.ShowSuccess("Successfully set socket");
-            }
-            else
-            {
-                _notifier.ShowError("Failed to set socket");
-            }
-        }
-
         private void WirelessSocketButton_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Received click of sender {0} with arguments {1}", sender, routedEventArgs));
@@ -133,6 +117,49 @@ namespace LucaHome.Pages
 
                 string socketName = (String)senderButton.Tag;
                 _wirelessSocketService.ChangeWirelessSocketState(socketName);
+            }
+        }
+
+        private void ButtonUpdateWirelessSocket_Click(object sender, RoutedEventArgs routedEventArgs)
+        {
+            _logger.Debug(string.Format("ButtonUpdateWirelessSocket_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+            if (sender is Button)
+            {
+                Button senderButton = (Button)sender;
+                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
+
+                int wirelessSocketId = (int)senderButton.Tag;
+                WirelessSocketDto updateWirelessSocket = _wirelessSocketService.GetById(wirelessSocketId);
+                _logger.Warning(string.Format("Updating wireless socket {0}!", updateWirelessSocket));
+
+                WirelessSocketUpdatePage wirelessSocketUpdatePage = new WirelessSocketUpdatePage(_navigationService, updateWirelessSocket);
+                _navigationService.Navigate(wirelessSocketUpdatePage);
+            }
+        }
+
+        private void ButtonDeleteWirelessSocket_Click(object sender, RoutedEventArgs routedEventArgs)
+        {
+            _logger.Debug(string.Format("ButtonDeleteWirelessSocket_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+            if (sender is Button)
+            {
+                Button senderButton = (Button)sender;
+                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
+
+                int wirelessSocketId = (int)senderButton.Tag;
+                WirelessSocketDto deleteWirelessSocket = _wirelessSocketService.GetById(wirelessSocketId);
+                _logger.Warning(string.Format("Asking for deleting wireless socket {0}!", deleteWirelessSocket));
+
+                DeleteDialog wirelessSocketDeleteDialog = new DeleteDialog("Delete socket?",
+                    string.Format("Socket: {0}\nArea: {1}\nCode: {2}", deleteWirelessSocket.Name, deleteWirelessSocket.Area, deleteWirelessSocket.Code));
+                wirelessSocketDeleteDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                wirelessSocketDeleteDialog.ShowDialog();
+
+                var confirmDelete = wirelessSocketDeleteDialog.DialogResult;
+                if (confirmDelete == true)
+                {
+                    _wirelessSocketService.OnDeleteWirelessSocketFinished += _onWirelessSocketDeleteFinished;
+                    _wirelessSocketService.DeleteWirelessSocket(deleteWirelessSocket);
+                }
             }
         }
 
@@ -155,6 +182,42 @@ namespace LucaHome.Pages
             _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
 
             _wirelessSocketService.LoadWirelessSocketList();
+        }
+
+        private void _wirelessSocketListDownloadFinished(IList<WirelessSocketDto> wirelessSocketList, bool success, string response)
+        {
+            _logger.Debug(string.Format("_wirelessSocketListDownloadFinished with model {0} was successful: {1}", wirelessSocketList, success));
+            setList();
+        }
+
+        private void _setWirelessSocketFinished(IList<WirelessSocketDto> wirelessSocketList, bool success, string response)
+        {
+            _logger.Debug(string.Format("_setWirelessSocketFinished was successful: {0}", success));
+            if (success)
+            {
+                _notifier.ShowSuccess("Successfully set socket");
+            }
+            else
+            {
+                _notifier.ShowError(string.Format("Failed to set socket\n{0}", response));
+            }
+        }
+
+        private void _onWirelessSocketDeleteFinished(bool success, string response)
+        {
+            _logger.Debug(string.Format("_onWirelessSocketDeleteFinished with response {0} was successful: {1}", response, success));
+            _wirelessSocketService.OnDeleteWirelessSocketFinished -= _onWirelessSocketDeleteFinished;
+            _wirelessSocketService.LoadWirelessSocketList();
+        }
+
+        private void Button_MouseEnter(object sender, MouseEventArgs mouseEventArgs)
+        {
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void Button_MouseLeave(object sender, MouseEventArgs mouseEventArgs)
+        {
+            Mouse.OverrideCursor = Cursors.Arrow;
         }
     }
 }

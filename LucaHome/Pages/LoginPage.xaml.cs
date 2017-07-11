@@ -18,8 +18,8 @@ namespace LucaHome.Pages
         private const string TAG = "LoginPage";
         private readonly Logger _logger;
 
-        private readonly AppSettingsService _appSettingsService;
         private readonly NavigationService _navigationService;
+        private readonly UserService _userService;
 
         private readonly Notifier _notifier;
 
@@ -27,8 +27,8 @@ namespace LucaHome.Pages
         {
             _logger = new Logger(TAG, Enables.LOGGING);
 
-            _appSettingsService = AppSettingsService.Instance;
             _navigationService = navigationService;
+            _userService = UserService.Instance;
 
             InitializeComponent();
 
@@ -61,7 +61,7 @@ namespace LucaHome.Pages
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Unloaded with sender {0} with arguments {1}", sender, routedEventArgs));
-            _appSettingsService.OnUserCheckedFinished -= _onUserCheckedFinished;
+            _userService.OnUserCheckedFinished -= _onUserCheckedFinished;
             _notifier.Dispose();
         }
 
@@ -70,7 +70,7 @@ namespace LucaHome.Pages
             _logger.Debug(string.Format("Received click of sender {0} with arguments {1}", sender, routedEventArgs));
 
             string userName = UserNameTextBox.Text;
-            if(userName == null || userName == string.Empty)
+            if (userName == null || userName == string.Empty)
             {
                 _notifier.ShowWarning("Please enter a username");
                 return;
@@ -83,16 +83,16 @@ namespace LucaHome.Pages
                 return;
             }
 
-            _appSettingsService.OnUserCheckedFinished += _onUserCheckedFinished;
+            _userService.OnUserCheckedFinished += _onUserCheckedFinished;
 
-            _appSettingsService.User = new UserDto(userName, password);
+            _userService.ValidateUser(new UserDto(userName, password));
         }
 
         private void _onUserCheckedFinished(string response, bool success)
         {
             _logger.Debug(string.Format("_onUserCheckedFinished with response {0} was successful {1}", response, success));
 
-            _appSettingsService.OnUserCheckedFinished -= _onUserCheckedFinished;
+            _userService.OnUserCheckedFinished -= _onUserCheckedFinished;
 
             if (!success)
             {

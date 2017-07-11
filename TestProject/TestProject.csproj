@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommonConverterTest.cs" />
+    <Compile Include="DataControllerTest.cs" />
     <Compile Include="DataServiceTest.cs" />
     <Compile Include="OpenWeatherTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

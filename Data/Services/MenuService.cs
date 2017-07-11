@@ -10,15 +10,15 @@ using System.Threading.Tasks;
 
 namespace Data.Services
 {
-    public delegate void MenuDownloadEventHandler(IList<MenuDto> menuList, bool success);
-    public delegate void MenuUpdateEventHandler(bool success);
+    public delegate void MenuDownloadEventHandler(IList<MenuDto> menuList, bool success, string response);
+    public delegate void MenuUpdateEventHandler(bool success, string response);
 
     public class MenuService
     {
         private const string TAG = "MenuService";
         private readonly Logger _logger;
 
-        private readonly AppSettingsService _appSettingsService;
+        private readonly AppSettingsController _appSettingsController;
         private readonly DownloadController _downloadController;
         private readonly JsonDataToMenuConverter _jsonDataToMenuConverter;
 
@@ -31,7 +31,7 @@ namespace Data.Services
         {
             _logger = new Logger(TAG);
 
-            _appSettingsService = AppSettingsService.Instance;
+            _appSettingsController = AppSettingsController.Instance;
             _downloadController = new DownloadController();
             _jsonDataToMenuConverter = new JsonDataToMenuConverter();
         }
@@ -90,14 +90,14 @@ namespace Data.Services
         {
             _logger.Debug("loadMenuListAsync");
 
-            UserDto user = _appSettingsService.User;
+            UserDto user = _appSettingsController.User;
             if (user == null)
             {
-                OnMenuDownloadFinished(null, false);
+                OnMenuDownloadFinished(null, false, "No user");
                 return;
             }
 
-            string requestUrl = "http://" + _appSettingsService.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_MENU.Action;
+            string requestUrl = "http://" + _appSettingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_MENU.Action;
 
             _downloadController.OnDownloadFinished += _menuDownloadFinished;
 
@@ -108,15 +108,15 @@ namespace Data.Services
         {
             _logger.Debug(string.Format("updateMenuAsync: {0}", updateMenu));
 
-            UserDto user = _appSettingsService.User;
+            UserDto user = _appSettingsController.User;
             if (user == null)
             {
-                OnMenuUpdateFinished(false);
+                OnMenuUpdateFinished(false, "No user");
                 return;
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _appSettingsService.ServerIpAddress, Constants.ACTION_PATH,
+                _appSettingsController.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 updateMenu.CommandUpdate);
 
@@ -141,7 +141,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnMenuDownloadFinished(null, false);
+                OnMenuDownloadFinished(null, false, response);
                 return;
             }
 
@@ -151,7 +151,7 @@ namespace Data.Services
             {
                 _logger.Error("Download was not successful!");
 
-                OnMenuDownloadFinished(null, false);
+                OnMenuDownloadFinished(null, false, response);
                 return;
             }
 
@@ -160,13 +160,13 @@ namespace Data.Services
             {
                 _logger.Error("Converted menuList is null!");
 
-                OnMenuDownloadFinished(null, false);
+                OnMenuDownloadFinished(null, false, response);
                 return;
             }
 
             _menuList = menuList;
 
-            OnMenuDownloadFinished(_menuList, true);
+            OnMenuDownloadFinished(_menuList, true, response);
         }
 
         private void _menuUpdateFinished(string response, bool success, DownloadType downloadType)
@@ -185,7 +185,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnMenuUpdateFinished(false);
+                OnMenuUpdateFinished(false, response);
                 return;
             }
 
@@ -195,11 +195,11 @@ namespace Data.Services
             {
                 _logger.Error("Update was not successful!");
 
-                OnMenuUpdateFinished(false);
+                OnMenuUpdateFinished(false, response);
                 return;
             }
 
-            OnMenuUpdateFinished(true);
+            OnMenuUpdateFinished(true, response);
         }
 
         public void Dispose()

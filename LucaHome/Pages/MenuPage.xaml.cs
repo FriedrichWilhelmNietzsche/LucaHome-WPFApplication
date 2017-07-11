@@ -93,7 +93,7 @@ namespace LucaHome.Pages
             }
         }
 
-        private void _onMenuListDownloadFinished(IList<MenuDto> menuList, bool success)
+        private void _onMenuListDownloadFinished(IList<MenuDto> menuList, bool success, string response)
         {
             _logger.Debug(string.Format("_onMenuListDownloadFinished with model {0} was successful {1}", menuList, success));
 

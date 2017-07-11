@@ -15,9 +15,9 @@ using ToastNotifications.Position;
 
 namespace LucaHome.Pages
 {
-    public partial class BirthdayAddPage : Page
+    public partial class BirthdayUpdatePage : Page
     {
-        private const string TAG = "BirthdayAddPage";
+        private const string TAG = "BirthdayUpdatePage";
         private readonly Logger _logger;
 
         private readonly BirthdayService _birthdayService;
@@ -25,15 +25,16 @@ namespace LucaHome.Pages
 
         private readonly Notifier _notifier;
 
-        private string _birthdayName = string.Empty;
-        private DateTime _birthdayDate = DateTime.Now;
+        private BirthdayDto _birthday;
 
-        public BirthdayAddPage(NavigationService navigationService)
+        public BirthdayUpdatePage(NavigationService navigationService, BirthdayDto birthday)
         {
             _logger = new Logger(TAG, Enables.LOGGING);
 
             _birthdayService = BirthdayService.Instance;
             _navigationService = navigationService;
+
+            _birthday = birthday;
 
             InitializeComponent();
 
@@ -62,21 +63,21 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
 
-            NameTextBox.Text = _birthdayName;
-            BirthdayDatePicker.SelectedDate = _birthdayDate;
+            NameTextBox.Text = _birthday.Name;
+            BirthdayDatePicker.SelectedDate = _birthday.Birthday;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
 
-            _birthdayService.OnBirthdayAddFinished -= _onBirthdayAddFinished;
+            _birthdayService.OnBirthdayUpdateFinished -= _onBirthdayUpdateFinished;
             _birthdayService.OnBirthdayDownloadFinished -= _onBirthdayDownloadFinished;
         }
 
-        private void SaveBirthday_Click(object sender, RoutedEventArgs routedEventArgs)
+        private void UpdateBirthday_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("SaveBirthday_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
+            _logger.Debug(string.Format("UpdateBirthday_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
 
             string birthdayName = NameTextBox.Text;
 
@@ -87,35 +88,35 @@ namespace LucaHome.Pages
                 return;
             }
 
-            int id = _birthdayService.BirthdayList.Count;
+            int id = _birthday.Id;
             DateTime? birthdayDate = BirthdayDatePicker.SelectedDate;
 
             if (birthdayDate.HasValue)
             {
-                BirthdayDto newBirthday = new BirthdayDto(id, birthdayName, (DateTime)birthdayDate);
-                _logger.Debug(string.Format("Trying to add new birthday {0}", newBirthday));
+                BirthdayDto updateBirthday = new BirthdayDto(id, birthdayName, (DateTime)birthdayDate);
+                _logger.Debug(string.Format("Trying to update birthday {0}", updateBirthday));
 
-                _birthdayService.OnBirthdayAddFinished += _onBirthdayAddFinished;
-                _birthdayService.AddBirthday(newBirthday);
+                _birthdayService.OnBirthdayAddFinished += _onBirthdayUpdateFinished;
+                _birthdayService.UpdateBirthday(updateBirthday);
             }
         }
 
-        private void _onBirthdayAddFinished(bool success, string response)
+        private void _onBirthdayUpdateFinished(bool success, string response)
         {
-            _logger.Debug(string.Format("_onBirthdayAddFinished was successful {0}", success));
+            _logger.Debug(string.Format("_onBirthdayUpdateFinished was successful {0}", success));
 
-            _birthdayService.OnBirthdayAddFinished -= _onBirthdayAddFinished;
+            _birthdayService.OnBirthdayAddFinished -= _onBirthdayUpdateFinished;
 
             if (success)
             {
-                _notifier.ShowSuccess("Added new birthday!");
+                _notifier.ShowSuccess("Updated birthday!");
 
                 _birthdayService.OnBirthdayDownloadFinished += _onBirthdayDownloadFinished;
                 _birthdayService.LoadBirthdayList();
             }
             else
             {
-                _notifier.ShowError(string.Format("Adding birthday failed!\n{0}", response));
+                _notifier.ShowError(string.Format("Updating birthday failed!\n{0}", response));
             }
         }
 

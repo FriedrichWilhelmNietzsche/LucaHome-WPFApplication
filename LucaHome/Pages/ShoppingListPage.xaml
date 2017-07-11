@@ -78,6 +78,72 @@
                     <GridViewColumn Header="Quantity"
                                     DisplayMemberBinding="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}"
                                     Width="100"/>
+                    <GridViewColumn 
+                        Width="55" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button 
+                                    Height="30" 
+                                    Width="30"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                    Margin="5 5 5 5"
+                                    ToolTip="Increase amount"
+                                    Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
+                                    Click="ButtonIncreaseEntryAmount_Click" 
+                                    MouseEnter="Button_MouseEnter"
+                                    MouseLeave="Button_MouseLeave">
+                                    <materialDesign:PackIcon 
+                                        Kind="Plus" 
+                                        Height="15" 
+                                        Width="15" />
+                                </Button>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn 
+                        Width="55" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button 
+                                    Height="30" 
+                                    Width="30"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                    Margin="5 5 5 5"
+                                    ToolTip="Decrease amount"
+                                    Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
+                                    Click="ButtonDecreaseEntryAmount_Click" 
+                                    MouseEnter="Button_MouseEnter"
+                                    MouseLeave="Button_MouseLeave">
+                                    <materialDesign:PackIcon 
+                                        Kind="Minus" 
+                                        Height="15" 
+                                        Width="15" />
+                                </Button>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn 
+                        Width="65" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button 
+                                    Height="40" 
+                                    Width="40"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                    Margin="5 5 5 5"
+                                    ToolTip="Delete entry"
+                                    Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
+                                    Click="ButtonDeleteEntry_Click" 
+                                    MouseEnter="Button_MouseEnter"
+                                    MouseLeave="Button_MouseLeave">
+                                    <materialDesign:PackIcon 
+                                        Kind="Delete" 
+                                        Height="25" 
+                                        Width="25" />
+                                </Button>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>

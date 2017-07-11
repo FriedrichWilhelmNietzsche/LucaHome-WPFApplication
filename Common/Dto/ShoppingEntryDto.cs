@@ -72,9 +72,9 @@ namespace Common.Dto
         public void DecreaseQuantity()
         {
             _quantity--;
-            if (_quantity < 0)
+            if (_quantity < 1)
             {
-                _quantity = 0;
+                _quantity = 1;
             }
         }
 

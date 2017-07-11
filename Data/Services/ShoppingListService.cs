@@ -5,19 +5,22 @@ using Common.Enums;
 using Common.Tools;
 using Data.Controller;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Data.Services
 {
-    public delegate void ShoppingListServiceDownloadEventHandler(IList<ShoppingEntryDto> shoppingList, bool success);
-    public delegate void ShoppingEntryAddEventHandler(bool success);
+    public delegate void ShoppingListServiceDownloadEventHandler(IList<ShoppingEntryDto> shoppingList, bool success, string response);
+    public delegate void ShoppingEntryAddEventHandler(bool success, string response);
+    public delegate void ShoppingEntryUpdateEventHandler(bool success, string response);
+    public delegate void ShoppingEntryDeleteEventHandler(bool success, string response);
 
     public class ShoppingListService
     {
         private const string TAG = "ShoppingListService";
         private readonly Logger _logger;
 
-        private readonly AppSettingsService _appSettingsService;
+        private readonly AppSettingsController _appSettingsController;
         private readonly DownloadController _downloadController;
         private readonly JsonDataToShoppingConverter _jsonDataToShoppingConverter;
 
@@ -30,13 +33,15 @@ namespace Data.Services
         {
             _logger = new Logger(TAG);
 
-            _appSettingsService = AppSettingsService.Instance;
+            _appSettingsController = AppSettingsController.Instance;
             _downloadController = new DownloadController();
             _jsonDataToShoppingConverter = new JsonDataToShoppingConverter();
         }
 
         public event ShoppingListServiceDownloadEventHandler OnShoppingListDownloadFinished;
         public event ShoppingEntryAddEventHandler OnShoppingEntryAddFinished;
+        public event ShoppingEntryUpdateEventHandler OnShoppingEntryUpdateFinished;
+        public event ShoppingEntryDeleteEventHandler OnShoppingEntryDeleteFinished;
 
         public static ShoppingListService Instance
         {
@@ -62,6 +67,16 @@ namespace Data.Services
             }
         }
 
+        public ShoppingEntryDto GetById(int id)
+        {
+            ShoppingEntryDto foundEntry = _shoppingList
+                        .Where(entry => entry.Id == id)
+                        .Select(entry => entry)
+                        .FirstOrDefault();
+
+            return foundEntry;
+        }
+
         public void LoadShoppingList()
         {
             _logger.Debug("LoadShoppingList");
@@ -74,18 +89,30 @@ namespace Data.Services
             addShoppingEntryAsync(newShoppingEntry);
         }
 
+        public void UpdateShoppingEntry(ShoppingEntryDto updateShoppingEntry)
+        {
+            _logger.Debug(string.Format("UpdateShoppingEntry: Updating ShoppingEntry {0}", updateShoppingEntry));
+            updateShoppingEntryAsync(updateShoppingEntry);
+        }
+
+        public void DeleteShoppingEntry(ShoppingEntryDto deleteShoppingEntry)
+        {
+            _logger.Debug(string.Format("DeleteShoppingEntry: Deleting ShoppingEntry {0}", deleteShoppingEntry));
+            deleteShoppingEntryAsync(deleteShoppingEntry);
+        }
+
         private async Task loadShoppingListAsync()
         {
             _logger.Debug("loadShoppingListAsync");
 
-            UserDto user = _appSettingsService.User;
+            UserDto user = _appSettingsController.User;
             if (user == null)
             {
-                OnShoppingListDownloadFinished(null, false);
+                OnShoppingListDownloadFinished(null, false, "No user");
                 return;
             }
 
-            string requestUrl = "http://" + _appSettingsService.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_SHOPPING_LIST.Action;
+            string requestUrl = "http://" + _appSettingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_SHOPPING_LIST.Action;
             _logger.Debug(string.Format("RequestUrl {0}", requestUrl));
 
             _downloadController.OnDownloadFinished += _shoppingListDownloadFinished;
@@ -97,21 +124,63 @@ namespace Data.Services
         {
             _logger.Debug(string.Format("addShoppingEntryAsync: Adding new shoppingEntry {0}", newShoppingEntry));
 
-            UserDto user = _appSettingsService.User;
+            UserDto user = _appSettingsController.User;
             if (user == null)
             {
-                OnShoppingEntryAddFinished(false);
+                OnShoppingEntryAddFinished(false, "No user");
                 return;
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _appSettingsService.ServerIpAddress, Constants.ACTION_PATH,
+                _appSettingsController.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 newShoppingEntry.CommandAdd);
 
             _downloadController.OnDownloadFinished += _shoppingEntryAddFinished;
 
             await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.ShoppingListAdd);
+        }
+
+        private async Task updateShoppingEntryAsync(ShoppingEntryDto updateShoppingEntry)
+        {
+            _logger.Debug(string.Format("updateShoppingEntryAsync: Updating shoppingEntry {0}", updateShoppingEntry));
+
+            UserDto user = _appSettingsController.User;
+            if (user == null)
+            {
+                OnShoppingEntryUpdateFinished(false, "No user");
+                return;
+            }
+
+            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                _appSettingsController.ServerIpAddress, Constants.ACTION_PATH,
+                user.Name, user.Passphrase,
+                updateShoppingEntry.CommandUpdate);
+
+            _downloadController.OnDownloadFinished += _shoppingEntryUpdateFinished;
+
+            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.ShoppingListUpdate);
+        }
+
+        private async Task deleteShoppingEntryAsync(ShoppingEntryDto deleteShoppingEntry)
+        {
+            _logger.Debug(string.Format("deleteShoppingEntryAsync: Deleting shoppingEntry {0}", deleteShoppingEntry));
+
+            UserDto user = _appSettingsController.User;
+            if (user == null)
+            {
+                OnShoppingEntryDeleteFinished(false, "No user");
+                return;
+            }
+
+            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                _appSettingsController.ServerIpAddress, Constants.ACTION_PATH,
+                user.Name, user.Passphrase,
+                deleteShoppingEntry.CommandDelete);
+
+            _downloadController.OnDownloadFinished += _shoppingEntryDeleteFinished;
+
+            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.ShoppingListDelete);
         }
 
         private void _shoppingListDownloadFinished(string response, bool success, DownloadType downloadType)
@@ -130,7 +199,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnShoppingListDownloadFinished(null, false);
+                OnShoppingListDownloadFinished(null, false, response);
                 return;
             }
 
@@ -140,7 +209,7 @@ namespace Data.Services
             {
                 _logger.Error("Download was not successful!");
 
-                OnShoppingListDownloadFinished(null, false);
+                OnShoppingListDownloadFinished(null, false, response);
                 return;
             }
 
@@ -149,13 +218,13 @@ namespace Data.Services
             {
                 _logger.Error("Converted shoppingList is null!");
 
-                OnShoppingListDownloadFinished(null, false);
+                OnShoppingListDownloadFinished(null, false, response);
                 return;
             }
 
             _shoppingList = shoppingList;
 
-            OnShoppingListDownloadFinished(_shoppingList, true);
+            OnShoppingListDownloadFinished(_shoppingList, true, response);
         }
 
         private void _shoppingEntryAddFinished(string response, bool success, DownloadType downloadType)
@@ -174,7 +243,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnShoppingEntryAddFinished(false);
+                OnShoppingEntryAddFinished(false, response);
                 return;
             }
 
@@ -184,11 +253,77 @@ namespace Data.Services
             {
                 _logger.Error("Adding was not successful!");
 
-                OnShoppingEntryAddFinished(false);
+                OnShoppingEntryAddFinished(false, response);
                 return;
             }
 
-            OnShoppingEntryAddFinished(true);
+            OnShoppingEntryAddFinished(true, response);
+        }
+
+        private void _shoppingEntryUpdateFinished(string response, bool success, DownloadType downloadType)
+        {
+            _logger.Debug("_shoppingEntryUpdateFinished");
+
+            if (downloadType != DownloadType.ShoppingListUpdate)
+            {
+                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
+                return;
+            }
+
+            _downloadController.OnDownloadFinished -= _shoppingEntryUpdateFinished;
+
+            if (response.Contains("Error") || response.Contains("ERROR"))
+            {
+                _logger.Error(response);
+
+                OnShoppingEntryUpdateFinished(false, response);
+                return;
+            }
+
+            _logger.Debug(string.Format("response: {0}", response));
+
+            if (!success)
+            {
+                _logger.Error("Adding was not successful!");
+
+                OnShoppingEntryUpdateFinished(false, response);
+                return;
+            }
+
+            OnShoppingEntryUpdateFinished(true, response);
+        }
+
+        private void _shoppingEntryDeleteFinished(string response, bool success, DownloadType downloadType)
+        {
+            _logger.Debug("_shoppingEntryDeleteFinished");
+
+            if (downloadType != DownloadType.ShoppingListDelete)
+            {
+                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
+                return;
+            }
+
+            _downloadController.OnDownloadFinished -= _shoppingEntryDeleteFinished;
+
+            if (response.Contains("Error") || response.Contains("ERROR"))
+            {
+                _logger.Error(response);
+
+                OnShoppingEntryDeleteFinished(false, response);
+                return;
+            }
+
+            _logger.Debug(string.Format("response: {0}", response));
+
+            if (!success)
+            {
+                _logger.Error("Deleting was not successful!");
+
+                OnShoppingEntryDeleteFinished(false, response);
+                return;
+            }
+
+            OnShoppingEntryDeleteFinished(true, response);
         }
 
         public void Dispose()
@@ -197,6 +332,8 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished -= _shoppingListDownloadFinished;
             _downloadController.OnDownloadFinished -= _shoppingEntryAddFinished;
+            _downloadController.OnDownloadFinished -= _shoppingEntryUpdateFinished;
+            _downloadController.OnDownloadFinished -= _shoppingEntryDeleteFinished;
 
             _downloadController.Dispose();
         }

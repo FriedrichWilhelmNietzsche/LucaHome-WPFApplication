@@ -92,9 +92,53 @@
                                         ToolTip="Handling sockets"
                                         Tag="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
                                         Click="WirelessSocketButton_Click">
-                                        Set socket
+                                        Change state
                                     </Button>
                                 </Grid>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn 
+                        Width="65" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button 
+                                    Height="40" 
+                                    Width="40"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                    Margin="5 5 5 5"
+                                    ToolTip="Update wireless socket"
+                                    Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
+                                    Click="ButtonUpdateWirelessSocket_Click"
+                                    MouseEnter="Button_MouseEnter"
+                                    MouseLeave="Button_MouseLeave">
+                                    <materialDesign:PackIcon 
+                                        Kind="Settings" 
+                                        Height="25" 
+                                        Width="25" />
+                                </Button>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn 
+                        Width="65" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button 
+                                    Height="40" 
+                                    Width="40"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                    Margin="5 5 5 5"
+                                    ToolTip="Delete wireless socket"
+                                    Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
+                                    Click="ButtonDeleteWirelessSocket_Click" 
+                                    MouseEnter="Button_MouseEnter"
+                                    MouseLeave="Button_MouseLeave">
+                                    <materialDesign:PackIcon 
+                                        Kind="Delete" 
+                                        Height="25" 
+                                        Width="25" />
+                                </Button>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

@@ -31,7 +31,7 @@ namespace LucaHome.Pages
 
             InitializeComponent();
         }
-        
+
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
@@ -68,7 +68,7 @@ namespace LucaHome.Pages
             Wallpaper.ImageWallpaperSource = _temperatureService.Wallpaper;
         }
 
-        private void _temperatureDownloadFinished(IList<TemperatureDto> temperatureList, bool success)
+        private void _temperatureDownloadFinished(IList<TemperatureDto> temperatureList, bool success, string response)
         {
             _logger.Debug(string.Format("_temperatureDownloadFinished with model {0} was successful: {1}", temperatureList, success));
             setList();

@@ -67,7 +67,7 @@ namespace Common.Converter
 
             _logger.Error(string.Format("{0} has an error!", value));
 
-            return null;
+            return new List<MovieDto>();
         }
 
         private MovieDto ParseStringToValue(int id, string[] data, IList<WirelessSocketDto> allSockets)

@@ -28,8 +28,8 @@
     <ProductName>LucaHome</ProductName>
     <PublisherName>GuepardoApps</PublisherName>
     <SuiteName>LucaHome</SuiteName>
-    <ApplicationRevision>170709</ApplicationRevision>
-    <ApplicationVersion>0.2.0.170709</ApplicationVersion>
+    <ApplicationRevision>170711</ApplicationRevision>
+    <ApplicationVersion>0.3.0.170711</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -110,11 +110,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Dialogs\DeleteDialog.xaml.cs">
+      <DependentUpon>DeleteDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\BirthdayUpdatePage.xaml.cs">
+      <DependentUpon>BirthdayUpdatePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\MenuUpdatePage.xaml.cs">
       <DependentUpon>MenuUpdatePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\MovieUpdatePage.xaml.cs">
+      <DependentUpon>MovieUpdatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\ShoppingEntryAddPage.xaml.cs">
       <DependentUpon>ShoppingEntryAddPage.xaml</DependentUpon>
@@ -124,6 +133,9 @@
     </Compile>
     <Compile Include="Pages\ShoppingListPage.xaml.cs">
       <DependentUpon>ShoppingListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WirelessSocketUpdatePage.xaml.cs">
+      <DependentUpon>WirelessSocketUpdatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\WirelessSocketAddPage.xaml.cs">
       <DependentUpon>WirelessSocketAddPage.xaml</DependentUpon>
@@ -167,6 +179,10 @@
     <Compile Include="UserControls\ScrollableImage.xaml.cs">
       <DependentUpon>ScrollableImage.xaml</DependentUpon>
     </Compile>
+    <Page Include="Dialogs\DeleteDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -179,11 +195,19 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Pages\BirthdayUpdatePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Pages\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\MenuUpdatePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\MovieUpdatePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -196,6 +220,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\ShoppingListPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\WirelessSocketUpdatePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -1,6 +1,7 @@
 ﻿using Common.Common;
 using Common.Dto;
 using Common.Tools;
+using Data.Controller;
 using Data.Services;
 using OpenWeather.Service;
 using System;
@@ -21,9 +22,10 @@ namespace LucaHome.Pages
         private const string TAG = "SettingsPage";
         private readonly Logger _logger;
 
-        private readonly AppSettingsService _appSettingsService;
+        private readonly AppSettingsController _appSettingsController;
         private readonly OpenWeatherService _openWeatherService;
         private readonly NavigationService _navigationService;
+        private readonly UserService _userService;
 
         private readonly Notifier _notifier;
 
@@ -31,9 +33,10 @@ namespace LucaHome.Pages
         {
             _logger = new Logger(TAG, Enables.LOGGING);
 
-            _appSettingsService = AppSettingsService.Instance;
+            _appSettingsController = AppSettingsController.Instance;
             _openWeatherService = OpenWeatherService.Instance;
             _navigationService = navigationService;
+            _userService = UserService.Instance;
 
             InitializeComponent();
 
@@ -68,19 +71,19 @@ namespace LucaHome.Pages
         {
             get
             {
-                return _appSettingsService.User.Name;
+                return _appSettingsController.User.Name;
             }
             set
             {
                 _logger.Debug(string.Format("UserName set with value {0}", value));
                 if (value != null && value != string.Empty)
                 {
-                    string password = _appSettingsService.User.Passphrase;
+                    string password = _appSettingsController.User.Passphrase;
                     UserDto newUser = new UserDto(value, password);
 
-                    if (newUser != _appSettingsService.User)
+                    if (newUser != _appSettingsController.User)
                     {
-                        _appSettingsService.User = newUser;
+                        _userService.ValidateUser(newUser);
 
                         string message = "Set new value for user name in settings";
                         _logger.Debug(message);
@@ -96,19 +99,19 @@ namespace LucaHome.Pages
         {
             get
             {
-                return _appSettingsService.User.Passphrase;
+                return _appSettingsController.User.Passphrase;
             }
             set
             {
                 _logger.Debug(string.Format("Password set with value {0}", value));
                 if (value != null && value != string.Empty)
                 {
-                    string userName = _appSettingsService.User.Name;
+                    string userName = _appSettingsController.User.Name;
                     UserDto newUser = new UserDto(userName, value);
 
-                    if (newUser != _appSettingsService.User)
+                    if (newUser != _appSettingsController.User)
                     {
-                        _appSettingsService.User = newUser;
+                        _userService.ValidateUser(newUser);
 
                         string message = "Set new value for user password in settings";
                         _logger.Debug(message);
@@ -124,18 +127,18 @@ namespace LucaHome.Pages
         {
             get
             {
-                return _appSettingsService.OpenWeatherCity;
+                return _appSettingsController.OpenWeatherCity;
             }
             set
             {
                 _logger.Debug(string.Format("OpenWeatherCity set with value {0}", value));
                 if (value != null && value != string.Empty)
                 {
-                    string openWeatherCity = _appSettingsService.OpenWeatherCity;
+                    string openWeatherCity = _appSettingsController.OpenWeatherCity;
 
                     if (openWeatherCity != value)
                     {
-                        _appSettingsService.OpenWeatherCity = value;
+                        _appSettingsController.OpenWeatherCity = value;
 
                         _openWeatherService.City = value;
                         _openWeatherService.LoadCurrentWeather();
@@ -155,7 +158,7 @@ namespace LucaHome.Pages
         {
             get
             {
-                return _appSettingsService.HomeSSID;
+                return _appSettingsController.HomeSSID;
             }
             set
             {
@@ -163,10 +166,10 @@ namespace LucaHome.Pages
 
                 if (value != null && value != string.Empty)
                 {
-                    string homeSSID = _appSettingsService.HomeSSID;
+                    string homeSSID = _appSettingsController.HomeSSID;
                     if (homeSSID != value)
                     {
-                        _appSettingsService.HomeSSID = value;
+                        _appSettingsController.HomeSSID = value;
 
                         string message = "Set new value for HomeSSID in settings";
                         _logger.Debug(message);
@@ -182,18 +185,18 @@ namespace LucaHome.Pages
         {
             get
             {
-                return _appSettingsService.ServerIpAddress;
+                return _appSettingsController.ServerIpAddress;
             }
             set
             {
                 _logger.Debug(string.Format("ServerIpAddress set with value {0}", value));
                 if (value != null && value != string.Empty)
                 {
-                    string serverIpAddress = _appSettingsService.ServerIpAddress;
+                    string serverIpAddress = _appSettingsController.ServerIpAddress;
 
                     if (serverIpAddress != value)
                     {
-                        _appSettingsService.ServerIpAddress = value;
+                        _appSettingsController.ServerIpAddress = value;
 
                         string message = "Set new value for ServerIpAddress in settings";
                         _logger.Debug(message);
@@ -209,16 +212,16 @@ namespace LucaHome.Pages
         {
             get
             {
-                return _appSettingsService.ServerPort;
+                return _appSettingsController.ServerPort;
             }
             set
             {
                 _logger.Debug(string.Format("ServerPort set with value {0}", value));
-                int serverPort = _appSettingsService.ServerPort;
+                int serverPort = _appSettingsController.ServerPort;
 
                 if (serverPort != value)
                 {
-                    _appSettingsService.ServerPort = value;
+                    _appSettingsController.ServerPort = value;
 
                     string message = "Set new value for ServerPort in settings";
                     _logger.Debug(message);
@@ -233,12 +236,12 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
 
-            UserNameTextBox.Text = _appSettingsService.User.Name;
-            PasswordBox.Text = _appSettingsService.User.Passphrase;
-            OpenWeatherCityTextBox.Text = _appSettingsService.OpenWeatherCity;
-            HomeSSIDTextBox.Text = _appSettingsService.HomeSSID;
-            RaspberryPiServerIPTextBox.Text = _appSettingsService.ServerIpAddress;
-            RaspberryPiServerPortTextBox.Text = _appSettingsService.ServerPort.ToString();
+            UserNameTextBox.Text = _appSettingsController.User.Name;
+            PasswordBox.Text = _appSettingsController.User.Passphrase;
+            OpenWeatherCityTextBox.Text = _appSettingsController.OpenWeatherCity;
+            HomeSSIDTextBox.Text = _appSettingsController.HomeSSID;
+            RaspberryPiServerIPTextBox.Text = _appSettingsController.ServerIpAddress;
+            RaspberryPiServerPortTextBox.Text = _appSettingsController.ServerPort.ToString();
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
@@ -302,7 +305,7 @@ namespace LucaHome.Pages
 
             if (keyEventArgs.Key == Key.Enter && keyEventArgs.IsDown)
             {
-                int raspberryPort = _appSettingsService.ServerPort;
+                int raspberryPort = _appSettingsController.ServerPort;
                 int.TryParse(RaspberryPiServerPortTextBox.Text, out raspberryPort);
                 RaspberryPiServerPort = raspberryPort;
             }

@@ -66,7 +66,7 @@ namespace Common.Converter
 
             _logger.Error(string.Format("{0} has an error!", value));
 
-            return null;
+            return new List<ShoppingEntryDto>();
         }
 
         private ShoppingEntryDto ParseStringToValue(string[] data)

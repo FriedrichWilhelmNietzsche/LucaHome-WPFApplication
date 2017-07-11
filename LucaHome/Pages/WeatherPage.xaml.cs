@@ -31,11 +31,11 @@ namespace LucaHome.Pages
 
             InitializeComponent();
         }
-        
+
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            
+
             _openWeatherService.OnForecastWeatherDownloadFinished += _forecastWeatherDownloadFinished;
 
             if (_openWeatherService.ForecastWeather == null)
@@ -50,7 +50,7 @@ namespace LucaHome.Pages
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            
+
             _openWeatherService.OnForecastWeatherDownloadFinished -= _forecastWeatherDownloadFinished;
         }
 

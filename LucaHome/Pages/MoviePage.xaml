@@ -88,34 +88,78 @@
                     </GridViewColumn>
                     <GridViewColumn Header="Title"
                                     DisplayMemberBinding="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="275"/>
+                                    Width="250"/>
                     <GridViewColumn Header="Genre"
                                     DisplayMemberBinding="{Binding Genre, UpdateSourceTrigger=PropertyChanged}"
                                     Width="100"/>
                     <GridViewColumn Header="Description"
                                     DisplayMemberBinding="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="150"/>
+                                    Width="115"/>
                     <GridViewColumn Header="Rating"
                                     DisplayMemberBinding="{Binding RatingString, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="100"/>
+                                    Width="85"/>
                     <GridViewColumn Header="Watched"
                                     DisplayMemberBinding="{Binding Watched, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="100"/>
+                                    Width="85"/>
                     <GridViewColumn 
-                        Width="150" >
+                        Width="125" >
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid HorizontalAlignment="Center">
                                     <Button
                                         Style="{DynamicResource MaterialDesignRaisedButton}"
                                         Margin="5 5 5 5" 
-                                        Width="135"
+                                        Width="105"
                                         ToolTip="Start movie on your PC"
                                         Tag="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
                                         Click="Button_Click">
                                         Watch Now
                                     </Button>
                                 </Grid>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn 
+                        Width="65" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button 
+                                    Height="40" 
+                                    Width="40"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                    Margin="5 5 5 5"
+                                    ToolTip="Update movie"
+                                    Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
+                                    Click="ButtonUpdateMovie_Click"
+                                    MouseEnter="Button_MouseEnter"
+                                    MouseLeave="Button_MouseLeave">
+                                    <materialDesign:PackIcon 
+                                        Kind="Settings" 
+                                        Height="25" 
+                                        Width="25" />
+                                </Button>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn 
+                        Width="65" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button 
+                                    Height="40" 
+                                    Width="40"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                    Margin="5 5 5 5"
+                                    ToolTip="Delete birthday"
+                                    Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
+                                    Click="ButtonDeleteMovie_Click" 
+                                    MouseEnter="Button_MouseEnter"
+                                    MouseLeave="Button_MouseLeave">
+                                    <materialDesign:PackIcon 
+                                        Kind="Delete" 
+                                        Height="25" 
+                                        Width="25" />
+                                </Button>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

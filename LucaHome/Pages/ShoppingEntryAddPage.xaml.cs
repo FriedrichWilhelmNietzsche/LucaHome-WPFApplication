@@ -140,7 +140,7 @@ namespace LucaHome.Pages
             _shoppingListService.AddShoppingEntry(newShoppingEntry);
         }
 
-        private void _shoppingEntryAddFinished(bool success)
+        private void _shoppingEntryAddFinished(bool success, string response)
         {
             _logger.Debug(string.Format("_ShoppingEntryAddFinished was successful {0}", success));
 
@@ -155,11 +155,11 @@ namespace LucaHome.Pages
             }
             else
             {
-                _notifier.ShowError("Adding shopping entry failed!");
+                _notifier.ShowError(string.Format("Adding shopping entry failed!\n{0}", response));
             }
         }
 
-        private void _onShoppingListDownloadFinished(IList<ShoppingEntryDto> shoppingList, bool success)
+        private void _onShoppingListDownloadFinished(IList<ShoppingEntryDto> shoppingList, bool success, string response)
         {
             _logger.Debug(string.Format("_onShoppingListDownloadFinished with model {0} was successful {1}", shoppingList, success));
 

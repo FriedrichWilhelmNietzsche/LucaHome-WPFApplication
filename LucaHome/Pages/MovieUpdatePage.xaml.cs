@@ -15,9 +15,9 @@ using LucaHome.Rules;
 
 namespace LucaHome.Pages
 {
-    public partial class MovieAddPage : Page
+    public partial class MovieUpdatePage : Page
     {
-        private const string TAG = "MovieAddPage";
+        private const string TAG = "MovieUpdatePage";
         private readonly Logger _logger;
 
         private readonly MovieService _movieService;
@@ -25,17 +25,16 @@ namespace LucaHome.Pages
 
         private readonly Notifier _notifier;
 
-        private string _movieTitle = string.Empty;
-        private string _movieGenre = string.Empty;
-        private string _movieDescription = string.Empty;
-        private int _movieRating = 0;
+        private MovieDto _updateMovie;
 
-        public MovieAddPage(NavigationService navigationService)
+        public MovieUpdatePage(NavigationService navigationService, MovieDto updateMovie)
         {
             _logger = new Logger(TAG, Enables.LOGGING);
 
             _movieService = MovieService.Instance;
             _navigationService = navigationService;
+
+            _updateMovie = updateMovie;
 
             InitializeComponent();
 
@@ -64,10 +63,10 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
 
-            TitleTextBox.Text = _movieTitle;
-            GenreTextBox.Text = _movieGenre;
-            DescriptionTextBox.Text = _movieDescription;
-            MovieRatingBar.Value = _movieRating;
+            TitleTextBox.Text = _updateMovie.Title;
+            GenreTextBox.Text = _updateMovie.Genre;
+            DescriptionTextBox.Text = _updateMovie.Description;
+            MovieRatingBar.Value = _updateMovie.Rating;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
@@ -75,12 +74,12 @@ namespace LucaHome.Pages
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
 
             _movieService.OnMovieDownloadFinished -= _onMovieDownloadFinished;
-            _movieService.OnMovieAddFinished -= _onMovieAddFinished;
+            _movieService.OnMovieUpdateFinished -= _onMovieUpdateFinished;
         }
 
-        private void SaveMovie_Click(object sender, RoutedEventArgs routedEventArgs)
+        private void UpdateMovie_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("SaveMovie_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
+            _logger.Debug(string.Format("UpdateMovie_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
 
             string movieTitle = TitleTextBox.Text;
 
@@ -91,30 +90,22 @@ namespace LucaHome.Pages
                 return;
             }
 
-            int id = _movieService.MovieList.Count;
+            int id = _updateMovie.Id;
             string movieGenre = GenreTextBox.Text;
             string movieDescription = DescriptionTextBox.Text;
             int movieRating = MovieRatingBar.Value;
 
-            MovieDto newMovie = new MovieDto(id, movieTitle, movieGenre, movieDescription, movieRating, 0, new WirelessSocketDto[] { });
+            MovieDto updateMovie = new MovieDto(id, movieTitle, movieGenre, movieDescription, movieRating, _updateMovie.Watched, _updateMovie.Sockets);
 
-            _movieService.OnMovieAddFinished += _onMovieAddFinished;
-            _movieService.AddMovie(newMovie);
+            _movieService.OnMovieUpdateFinished += _onMovieUpdateFinished;
+            _movieService.UpdateMovie(updateMovie);
         }
 
-        private void _onMovieDownloadFinished(IList<MovieDto> movieList, bool success, string response)
+        private void _onMovieUpdateFinished(bool success, string response)
         {
-            _logger.Debug(string.Format("_onMovieDownloadFinished with model {0} was successful {1}", movieList, success));
+            _logger.Debug(string.Format("_onMovieUpdateFinished was successful {0}", success));
 
-            _movieService.OnMovieDownloadFinished -= _onMovieDownloadFinished;
-            _navigationService.GoBack();
-        }
-
-        private void _onMovieAddFinished(bool success, string response)
-        {
-            _logger.Debug(string.Format("_onMovieAddFinished was successful {0}", success));
-
-            _movieService.OnMovieAddFinished -= _onMovieAddFinished;
+            _movieService.OnMovieUpdateFinished -= _onMovieUpdateFinished;
 
             if (success)
             {
@@ -125,8 +116,16 @@ namespace LucaHome.Pages
             }
             else
             {
-                _notifier.ShowError(string.Format("Adding movie failed!\n{0}", response));
+                _notifier.ShowError(string.Format("Updating movie failed!\n{0}", response));
             }
+        }
+
+        private void _onMovieDownloadFinished(IList<MovieDto> movieList, bool success, string response)
+        {
+            _logger.Debug(string.Format("_onMovieDownloadFinished with model {0} was successful {1}", movieList, success));
+
+            _movieService.OnMovieDownloadFinished -= _onMovieDownloadFinished;
+            _navigationService.GoBack();
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
