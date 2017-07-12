@@ -5,6 +5,7 @@ using Data.Services;
 using LucaHome.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -24,7 +25,7 @@ using ToastNotifications.Position;
 
 namespace LucaHome.Pages
 {
-    public partial class WirelessSocketPage : Page
+    public partial class WirelessSocketPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "WirelessSocketPage";
         private readonly Logger _logger;
@@ -33,6 +34,8 @@ namespace LucaHome.Pages
         private readonly WirelessSocketService _wirelessSocketService;
 
         private readonly Notifier _notifier;
+
+        private string _wirelessSocketSearchKey = string.Empty;
 
         private readonly WirelessSocketAddPage _wirelessSocketAddPage;
 
@@ -68,6 +71,34 @@ namespace LucaHome.Pages
             _notifier.ClearMessages();
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public string WirelessSocketSearchKey
+        {
+            get
+            {
+                return _wirelessSocketSearchKey;
+            }
+            set
+            {
+                _wirelessSocketSearchKey = value;
+                OnPropertyChanged("WirelessSocketSearchKey");
+
+                if (_wirelessSocketSearchKey != string.Empty)
+                {
+                    setList(_wirelessSocketService.FoundWirelessSockets(_wirelessSocketSearchKey));
+                }
+                else
+                {
+                    setList(_wirelessSocketService.WirelessSocketList);
+                }
+            }
+        }
+
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
@@ -81,7 +112,7 @@ namespace LucaHome.Pages
                 return;
             }
 
-            setList();
+            setList(_wirelessSocketService.WirelessSocketList);
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
@@ -95,13 +126,13 @@ namespace LucaHome.Pages
             _notifier.Dispose();
         }
 
-        private void setList()
+        private void setList(IList<WirelessSocketDto> wirelessSocketList)
         {
             _logger.Debug("setList");
 
             WirelessSocketList.Items.Clear();
 
-            foreach (WirelessSocketDto entry in _wirelessSocketService.WirelessSocketList)
+            foreach (WirelessSocketDto entry in wirelessSocketList)
             {
                 WirelessSocketList.Items.Add(entry);
             }
@@ -184,10 +215,20 @@ namespace LucaHome.Pages
             _wirelessSocketService.LoadWirelessSocketList();
         }
 
+        private void SearchWirelessSocketTextBox_KeyDown(object sender, KeyEventArgs keyEventArgs)
+        {
+            _logger.Debug(string.Format("SearchWirelessSocketTextBox_KeyDown with sender {0} and keyEventArgs: {1}", sender, keyEventArgs));
+
+            if (keyEventArgs.Key == Key.Enter && keyEventArgs.IsDown)
+            {
+                WirelessSocketSearchKey = SearchWirelessSocketTextBox.Text;
+            }
+        }
+
         private void _wirelessSocketListDownloadFinished(IList<WirelessSocketDto> wirelessSocketList, bool success, string response)
         {
             _logger.Debug(string.Format("_wirelessSocketListDownloadFinished with model {0} was successful: {1}", wirelessSocketList, success));
-            setList();
+            setList(_wirelessSocketService.WirelessSocketList);
         }
 
         private void _setWirelessSocketFinished(IList<WirelessSocketDto> wirelessSocketList, bool success, string response)

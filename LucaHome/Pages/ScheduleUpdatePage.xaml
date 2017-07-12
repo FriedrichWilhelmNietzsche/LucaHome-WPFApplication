@@ -1,0 +1,225 @@
+﻿<Page x:Class="LucaHome.Pages.ScheduleUpdatePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:LucaHome.Pages"
+      mc:Ignorable="d" 
+      Height="{DynamicResource PageHeight}" 
+      Width="{DynamicResource PageWidth}"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+      TextElement.FontWeight="Regular"
+      TextElement.FontSize="13"
+      TextOptions.TextFormattingMode="Ideal" 
+      TextOptions.TextRenderingMode="Auto"   
+      Background="{DynamicResource MaterialDesignPaper}"
+      FontFamily="{DynamicResource MaterialDesignFont}"
+      Title="LucaHome - Update Schedule"
+      Loaded="Page_Loaded"
+      Unloaded="Page_Unloaded">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+
+        <materialDesign:Card 
+            Grid.Row="0" 
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Padding="15" 
+            Margin="8">
+            <TextBlock 
+                HorizontalAlignment="Center" 
+                Style="{DynamicResource MaterialDesignTitleTextBlock}">
+                Update a schedule
+            </TextBlock>
+        </materialDesign:Card>
+
+        <materialDesign:Card 
+            Grid.Row="1" 
+            Grid.Column="0"
+            Padding="5" 
+            Margin="15 5 5 5">
+            <TextBlock 
+                HorizontalAlignment="Right" >
+                Name
+            </TextBlock>
+        </materialDesign:Card>
+
+        <materialDesign:PackIcon 
+            Grid.Row="1" 
+            Grid.Column="1" 
+            Kind="Account" 
+            Margin="5 0 5 5" 
+            Foreground="{Binding ElementName=NameTextBox, Path=BorderBrush}" />
+        <TextBox 
+            Grid.Row="1" 
+            Grid.Column="1" 
+            x:Name="NameTextBox"
+            Margin="5 15 35 5" 
+            materialDesign:HintAssist.Hint="Enter a name" />
+
+        <materialDesign:Card 
+            Grid.Row="2" 
+            Grid.Column="0"
+            Padding="5" 
+            Margin="15 5 5 5">
+            <TextBlock 
+                HorizontalAlignment="Right" >
+                Information
+            </TextBlock>
+        </materialDesign:Card>
+
+        <materialDesign:PackIcon 
+            Grid.Row="2" 
+            Grid.Column="1" 
+            Kind="Map" 
+            Margin="5 0 5 5" 
+            Foreground="{Binding ElementName=InformationTextBox, Path=BorderBrush}" />
+        <TextBox 
+            Grid.Row="2" 
+            Grid.Column="1" 
+            x:Name="InformationTextBox"
+            Margin="5 15 35 5" 
+            materialDesign:HintAssist.Hint="Enter an information" />
+
+        <materialDesign:Card 
+            Grid.Row="3" 
+            Grid.Column="0"
+            Padding="5" 
+            Margin="15 5 5 5">
+            <TextBlock 
+                HorizontalAlignment="Right" >
+                Socket
+            </TextBlock>
+        </materialDesign:Card>
+
+        <materialDesign:PackIcon 
+            Grid.Row="3" 
+            Grid.Column="1" 
+            Kind="PowerSocket" 
+            Margin="5 0 5 5" 
+            Foreground="{Binding ElementName=SocketComboBox, Path=BorderBrush}" />
+        <ComboBox 
+            x:Name="SocketComboBox"
+            Grid.Row="3" 
+            Grid.Column="1" 
+            Margin="5 15 35 5" 
+            materialDesign:HintAssist.Hint="Select a socket" 
+            Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
+            ItemsSource="{Binding SocketList, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <materialDesign:Card 
+            Grid.Row="4" 
+            Grid.Column="0"
+            Padding="5" 
+            Margin="15 5 5 5">
+            <TextBlock 
+                HorizontalAlignment="Right" >
+                Weekday
+            </TextBlock>
+        </materialDesign:Card>
+
+        <materialDesign:PackIcon 
+            Grid.Row="4" 
+            Grid.Column="1" 
+            Kind="Calendar" 
+            Margin="5 0 5 5" 
+            Foreground="{Binding ElementName=InformationTextBox, Path=BorderBrush}" />
+        <ComboBox 
+            x:Name="WeekdayComboBox"
+            Grid.Row="4" 
+            Grid.Column="1" 
+            Margin="5 15 35 5" 
+            materialDesign:HintAssist.Hint="Select a weekday" 
+            Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
+            ItemsSource="{Binding WeekdayList, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <materialDesign:Card 
+            Grid.Row="5" 
+            Grid.Column="0"
+            Padding="5" 
+            Margin="15 5 5 5">
+            <TextBlock 
+                HorizontalAlignment="Right" >
+                Time
+            </TextBlock>
+        </materialDesign:Card>
+
+        <materialDesign:TimePicker 
+            x:Name="TimePicker" 
+            Grid.Row="5" 
+            Grid.Column="1"  
+            Is24Hours="True" 
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center"  
+            Margin="5 15 35 5"  />
+
+        <materialDesign:Card 
+            Grid.Row="6" 
+            Grid.Column="0"
+            Padding="5" 
+            Margin="15 5 5 5">
+            <TextBlock 
+                HorizontalAlignment="Right" >
+                Action
+            </TextBlock>
+        </materialDesign:Card>
+
+        <materialDesign:PackIcon 
+            Grid.Row="6" 
+            Grid.Column="1" 
+            Kind="Check" 
+            Margin="5 0 5 5" 
+            Foreground="{Binding ElementName=ActionComboBox, Path=BorderBrush}" />
+        <ComboBox 
+            x:Name="ActionComboBox"
+            Grid.Row="6" 
+            Grid.Column="1" 
+            Margin="5 15 35 5" 
+            materialDesign:HintAssist.Hint="Select an action" 
+            Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
+            ItemsSource="{Binding ActionList, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <Button
+            Style="{DynamicResource MaterialDesignRaisedButton}"
+            Grid.Row="8" 
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Margin="5 5 5 5" 
+            Width="200"
+            ToolTip="Update schedule"
+            Click="UpdateSchedule_Click">
+            Update
+        </Button>
+
+        <Button 
+            Grid.Column="0"
+            Grid.Row="8"
+            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+            Margin="5"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            ToolTip="MaterialDesignFloatingActionMiniButton"
+            Click="ButtonBack_Click">
+            <materialDesign:PackIcon 
+                Kind="KeyboardBackspace" 
+                Height="24" 
+                Width="24" />
+        </Button>
+    </Grid>
+</Page>

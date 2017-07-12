@@ -77,7 +77,7 @@ namespace LucaHome.Pages
                 {
                     shoppingTypeList.Add(entry.Description);
                 }
-                return new CollectionView(shoppingTypeList); ;
+                return new CollectionView(shoppingTypeList);
             }
         }
 

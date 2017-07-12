@@ -20,7 +20,7 @@ namespace Data.Services
         private const string TAG = "TemperatureService";
         private readonly Logger _logger;
 
-        private readonly AppSettingsController _appSettingsController;
+        private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
         private readonly JsonDataToTemperatureConverter _jsonDataToTemperatureConverter;
         private readonly OpenWeatherService _openWeatherService;
@@ -34,7 +34,7 @@ namespace Data.Services
         {
             _logger = new Logger(TAG);
 
-            _appSettingsController = AppSettingsController.Instance;
+            _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
             _jsonDataToTemperatureConverter = new JsonDataToTemperatureConverter();
             _openWeatherService = OpenWeatherService.Instance;
@@ -82,6 +82,24 @@ namespace Data.Services
             }
         }
 
+        public string OpenWeatherCity
+        {
+            get
+            {
+                return _settingsController.OpenWeatherCity;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    _logger.Error("Cannot add null value for OpenWeatherCity!");
+                    return;
+                }
+
+                _settingsController.OpenWeatherCity = value;
+            }
+        }
+
         public void LoadTemperatureList()
         {
             _logger.Debug("LoadTemperatureList");
@@ -92,14 +110,14 @@ namespace Data.Services
         {
             _logger.Debug("loadTemperatureListAsync");
 
-            UserDto user = _appSettingsController.User;
+            UserDto user = _settingsController.User;
             if (user == null)
             {
                 OnTemperatureDownloadFinished(null, false, "No user");
                 return;
             }
 
-            string requestUrl = "http://" + _appSettingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_TEMPERATURES.Action;
+            string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_TEMPERATURES.Action;
 
             _downloadController.OnDownloadFinished += _temperatureDownloadFinished;
 

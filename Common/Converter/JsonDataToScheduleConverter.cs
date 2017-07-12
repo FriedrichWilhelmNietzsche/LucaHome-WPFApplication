@@ -12,14 +12,14 @@ namespace Common.Converter
         private const string TAG = "JsonDataToScheduleConverter";
         private static string _searchParameter = "{schedule:";
 
-        private static Logger _logger;
+        private readonly Logger _logger;
 
         public JsonDataToScheduleConverter()
         {
             _logger = new Logger(TAG);
         }
 
-        public static IList<ScheduleDto> GetList(string[] stringArray, IList<WirelessSocketDto> socketList)
+        public IList<ScheduleDto> GetList(string[] stringArray, IList<WirelessSocketDto> socketList)
         {
             if (StringHelper.StringsAreEqual(stringArray))
             {
@@ -32,7 +32,12 @@ namespace Common.Converter
             }
         }
 
-        private static IList<ScheduleDto> ParseStringToList(string value, IList<WirelessSocketDto> socketList)
+        public IList<ScheduleDto> GetList(string jsonString, IList<WirelessSocketDto> socketList)
+        {
+            return ParseStringToList(jsonString, socketList);
+        }
+
+        private IList<ScheduleDto> ParseStringToList(string value, IList<WirelessSocketDto> socketList)
         {
             if (!value.Contains("Error"))
             {
@@ -63,10 +68,10 @@ namespace Common.Converter
 
             _logger.Error(string.Format("{0} has an error!", value));
 
-            return null;
+            return new List<ScheduleDto>();
         }
 
-        private static ScheduleDto ParseStringToValue(int id, string[] data, IList<WirelessSocketDto> socketList)
+        private ScheduleDto ParseStringToValue(int id, string[] data, IList<WirelessSocketDto> socketList)
         {
             if (data.Length == 11)
             {

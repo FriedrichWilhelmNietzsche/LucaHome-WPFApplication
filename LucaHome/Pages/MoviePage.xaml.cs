@@ -78,7 +78,7 @@ namespace LucaHome.Pages
         {
             get
             {
-                return string.Empty;
+                return _movieSearchKey;
             }
             set
             {

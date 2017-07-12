@@ -23,7 +23,7 @@ namespace Data.Services
         private const string TAG = "MovieService";
         private readonly Logger _logger;
 
-        private readonly AppSettingsController _appSettingsController;
+        private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
         private readonly JsonDataToMovieConverter _jsonDataToMovieConverter;
         private readonly LocalDriveController _localDriveController;
@@ -39,7 +39,7 @@ namespace Data.Services
         {
             _logger = new Logger(TAG);
 
-            _appSettingsController = AppSettingsController.Instance;
+            _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
             _jsonDataToMovieConverter = new JsonDataToMovieConverter();
             _localDriveController = new LocalDriveController();
@@ -170,14 +170,14 @@ namespace Data.Services
         {
             _logger.Debug("loadMovieListAsync");
 
-            UserDto user = _appSettingsController.User;
+            UserDto user = _settingsController.User;
             if (user == null)
             {
                 OnMovieDownloadFinished(null, false, "No user");
                 return;
             }
 
-            string requestUrl = "http://" + _appSettingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_MOVIES.Action;
+            string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_MOVIES.Action;
 
             _downloadController.OnDownloadFinished += _movieDownloadFinished;
 
@@ -188,7 +188,7 @@ namespace Data.Services
         {
             _logger.Debug(string.Format("addMovieAsync: add new movie {0}", newMovie));
 
-            UserDto user = _appSettingsController.User;
+            UserDto user = _settingsController.User;
             if (user == null)
             {
                 OnMovieAddFinished(false, "No user");
@@ -196,7 +196,7 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _appSettingsController.ServerIpAddress, Constants.ACTION_PATH,
+                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 newMovie.CommandAdd);
 
@@ -209,7 +209,7 @@ namespace Data.Services
         {
             _logger.Debug(string.Format("updateMovieAsync: updating movie {0}", updateMovie));
 
-            UserDto user = _appSettingsController.User;
+            UserDto user = _settingsController.User;
             if (user == null)
             {
                 OnMovieUpdateFinished(false, "No user");
@@ -217,7 +217,7 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _appSettingsController.ServerIpAddress, Constants.ACTION_PATH,
+                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 updateMovie.CommandUpdate);
 
@@ -230,7 +230,7 @@ namespace Data.Services
         {
             _logger.Debug(string.Format("deleteMovieAsync: deleting movie {0}", deleteMovie));
 
-            UserDto user = _appSettingsController.User;
+            UserDto user = _settingsController.User;
             if (user == null)
             {
                 OnMovieDeleteFinished(false, "No user");
@@ -238,7 +238,7 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _appSettingsController.ServerIpAddress, Constants.ACTION_PATH,
+                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 deleteMovie.CommandDelete);
 

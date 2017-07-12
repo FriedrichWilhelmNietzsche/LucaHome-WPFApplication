@@ -1,6 +1,5 @@
 ﻿using Common.Dto;
 using Common.Tools;
-using Data.Controller;
 
 /* Reference Help
  * https://docs.microsoft.com/en-us/dotnet/framework/winforms/advanced/using-application-settings-and-user-settings
@@ -8,24 +7,24 @@ using Data.Controller;
 
 namespace Data.Controller
 {
-    public class AppSettingsController
+    public class SettingsController
     {
-        private const string TAG = "AppSettingsController";
+        private const string TAG = "SettingsController";
         private readonly Logger _logger;
 
         private readonly DownloadController _downloadController;
 
-        private static AppSettingsController _instance = null;
+        private static SettingsController _instance = null;
         private static readonly object _padlock = new object();
 
-        AppSettingsController()
+        SettingsController()
         {
             _logger = new Logger(TAG);
 
             _downloadController = new DownloadController();
         }
 
-        public static AppSettingsController Instance
+        public static SettingsController Instance
         {
             get
             {
@@ -33,7 +32,7 @@ namespace Data.Controller
                 {
                     if (_instance == null)
                     {
-                        _instance = new AppSettingsController();
+                        _instance = new SettingsController();
                     }
 
                     return _instance;
@@ -98,27 +97,6 @@ namespace Data.Controller
             }
         }
 
-        public string OpenWeatherCity
-        {
-            get
-            {
-                return Properties.Settings.Default.OpenWeatherCity;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    _logger.Error("Cannot add null value for OpenWeatherCity!");
-                    return;
-                }
-
-                Properties.Settings.Default.OpenWeatherCity = value;
-                _logger.Debug(string.Format("Received new OpenWeatherCity {0} to save to settings!", value));
-
-                Properties.Settings.Default.Save();
-            }
-        }
-
         public string ServerIpAddress
         {
             get
@@ -140,16 +118,22 @@ namespace Data.Controller
             }
         }
 
-        public int ServerPort
+        public string OpenWeatherCity
         {
             get
             {
-                return Properties.Settings.Default.ServerPort;
+                return Properties.Settings.Default.OpenWeatherCity;
             }
             set
             {
-                Properties.Settings.Default.ServerPort = value;
-                _logger.Debug(string.Format("Received new ServerPort {0} to save to settings!", value));
+                if (value == null)
+                {
+                    _logger.Error("Cannot add null value for OpenWeatherCity!");
+                    return;
+                }
+
+                Properties.Settings.Default.OpenWeatherCity = value;
+                _logger.Debug(string.Format("Received new OpenWeatherCity {0} to save to settings!", value));
 
                 Properties.Settings.Default.Save();
             }

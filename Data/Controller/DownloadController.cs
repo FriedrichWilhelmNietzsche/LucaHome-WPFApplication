@@ -11,10 +11,11 @@ namespace Data.Controller
         Birthday, BirthdayAdd, BirthdayUpdate, BirthdayDelete,
         Menu, MenuUpdate,
         Movie, MovieAdd, MovieUpdate, MovieDelete,
+        Schedule, ScheduleSet, ScheduleAdd, ScheduleUpdate, ScheduleDelete,
         ShoppingList, ShoppingListAdd, ShoppingListDelete, ShoppingListUpdate,
         Temperature,
         User,
-        WirelessSocket, WirelessSocketAdd, WirelessSocketUpdate, WirelessSocketDelete
+        WirelessSocket, WirelessSocketSet, WirelessSocketAdd, WirelessSocketUpdate, WirelessSocketDelete
     };
 
     public delegate void DownloadFinishedEventHandler(string response, bool success, DownloadType downloadType);

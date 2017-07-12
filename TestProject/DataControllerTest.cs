@@ -12,8 +12,8 @@ namespace TestProject
         [TestMethod]
         public void AppSettingsControllerLoadTest()
         {
-            AppSettingsController appSettingsController = AppSettingsController.Instance;
-            string openWeatherCity = appSettingsController.OpenWeatherCity;
+            SettingsController settingsController = SettingsController.Instance;
+            string openWeatherCity = settingsController.OpenWeatherCity;
 
             Assert.AreEqual(openWeatherCity, "Munich, DE");
         }
@@ -23,10 +23,10 @@ namespace TestProject
         {
             UserDto newTestUser = new UserDto("Jonas Schubert", "Passw0rt!");
 
-            AppSettingsController appSettingsController = AppSettingsController.Instance;
-            appSettingsController.User = newTestUser;
+            SettingsController settingsController = SettingsController.Instance;
+            settingsController.User = newTestUser;
 
-            UserDto loadedUser = appSettingsController.User;
+            UserDto loadedUser = settingsController.User;
 
             Assert.AreEqual(newTestUser.ToString(), loadedUser.ToString());
         }

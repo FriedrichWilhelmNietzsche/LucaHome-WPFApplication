@@ -23,6 +23,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -36,9 +37,27 @@
             Grid.Row="0"
             ImageWallpaperSource="/Common;component/Assets/Wallpaper/main_image_shopping.png" />
 
+        <materialDesign:PackIcon 
+            Grid.Row="1" 
+            Grid.Column="0" 
+            Kind="AccountSearch" 
+            Margin="5 0 5 5" 
+            Foreground="{Binding ElementName=SearchShoppingListTextBox, Path=BorderBrush}" />
+        <TextBox 
+            Grid.Row="1" 
+            Grid.Column="0" 
+            x:Name="SearchShoppingListTextBox"
+            Margin="5 15 5 5" 
+            materialDesign:HintAssist.Hint="Search for keywords in the shopping list"
+            KeyDown = "SearchShoppingListTextBox_KeyDown">
+            <TextBox.Text>
+                <Binding Path="ShoppingListSearchKey" UpdateSourceTrigger="PropertyChanged" />
+            </TextBox.Text>
+        </TextBox>
+        
         <ListView 
             Grid.Column="0"
-            Grid.Row="1"
+            Grid.Row="2"
             HorizontalAlignment="Center"
             Height="{DynamicResource ListHeight}"
             Margin="5"
@@ -150,7 +169,7 @@
 
         <Button 
             Grid.Column="0"
-            Grid.Row="1"
+            Grid.Row="2"
             Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
             Margin="5"
             HorizontalAlignment="Left"
@@ -165,7 +184,7 @@
 
         <Button 
             Grid.Column="0"
-            Grid.Row="1"
+            Grid.Row="2"
             Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
             Margin="5 -24 5 5"
             HorizontalAlignment="Right"
@@ -180,7 +199,7 @@
 
         <Button 
             Grid.Column="0"
-            Grid.Row="1"
+            Grid.Row="2"
             Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
             Margin="5"
             HorizontalAlignment="Right"

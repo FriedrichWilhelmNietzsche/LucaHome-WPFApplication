@@ -20,7 +20,7 @@ namespace Data.Services
         private const string TAG = "BirthdayService";
         private readonly Logger _logger;
 
-        private readonly AppSettingsController _appSettingsController;
+        private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
         private readonly JsonDataToBirthdayConverter _jsonDataToBirthdayConverter;
 
@@ -33,7 +33,7 @@ namespace Data.Services
         {
             _logger = new Logger(TAG);
 
-            _appSettingsController = AppSettingsController.Instance;
+            _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
             _jsonDataToBirthdayConverter = new JsonDataToBirthdayConverter();
         }
@@ -119,14 +119,14 @@ namespace Data.Services
         {
             _logger.Debug("loadBirthdayListAsync");
 
-            UserDto user = _appSettingsController.User;
+            UserDto user = _settingsController.User;
             if (user == null)
             {
                 OnBirthdayDownloadFinished(null, false, "No user");
                 return;
             }
 
-            string requestUrl = "http://" + _appSettingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_BIRTHDAYS.Action;
+            string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_BIRTHDAYS.Action;
             _logger.Debug(string.Format("RequestUrl {0}", requestUrl));
 
             _downloadController.OnDownloadFinished += _birthdayDownloadFinished;
@@ -138,7 +138,7 @@ namespace Data.Services
         {
             _logger.Debug(string.Format("addBirthdayAsync: Adding new birthday {0}", newBirthday));
 
-            UserDto user = _appSettingsController.User;
+            UserDto user = _settingsController.User;
             if (user == null)
             {
                 OnBirthdayAddFinished(false, "No user");
@@ -146,7 +146,7 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _appSettingsController.ServerIpAddress, Constants.ACTION_PATH,
+                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 newBirthday.CommandAdd);
 
@@ -159,7 +159,7 @@ namespace Data.Services
         {
             _logger.Debug(string.Format("updateBirthdayAsync: Updating birthday {0}", updateBirthday));
 
-            UserDto user = _appSettingsController.User;
+            UserDto user = _settingsController.User;
             if (user == null)
             {
                 OnBirthdayUpdateFinished(false, "No user");
@@ -167,7 +167,7 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _appSettingsController.ServerIpAddress, Constants.ACTION_PATH,
+                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 updateBirthday.CommandUpdate);
 
@@ -180,7 +180,7 @@ namespace Data.Services
         {
             _logger.Debug(string.Format("deleteBirthdayAsync: Deleting birthday {0}", deleteBirthday));
 
-            UserDto user = _appSettingsController.User;
+            UserDto user = _settingsController.User;
             if (user == null)
             {
                 OnBirthdayDeleteFinished(false, "No user");
@@ -188,7 +188,7 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _appSettingsController.ServerIpAddress, Constants.ACTION_PATH,
+                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 deleteBirthday.CommandDelete);
 

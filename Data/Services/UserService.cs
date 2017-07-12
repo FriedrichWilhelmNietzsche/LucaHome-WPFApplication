@@ -14,7 +14,7 @@ namespace Data.Services
         private const string TAG = "UserService";
         private readonly Logger _logger;
 
-        private readonly AppSettingsController _appSettingsController;
+        private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
 
         private static UserService _instance = null;
@@ -26,7 +26,7 @@ namespace Data.Services
         {
             _logger = new Logger(TAG);
 
-            _appSettingsController = AppSettingsController.Instance;
+            _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
         }
 
@@ -48,14 +48,27 @@ namespace Data.Services
             }
         }
 
-        public UserDto GetUser()
+        public UserDto User
         {
-            return _appSettingsController.User;
+            get
+            {
+                return _settingsController.User;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    _logger.Error("Cannot add null value for User!");
+                    return;
+                }
+
+                _settingsController.User = value;
+            }
         }
 
         public bool UserSaved()
         {
-            UserDto user = _appSettingsController.User;
+            UserDto user = _settingsController.User;
 
             if (!user.Name.Equals("NA") && !user.Passphrase.Equals("NA"))
             {
@@ -67,8 +80,8 @@ namespace Data.Services
 
         public void ValidateUser()
         {
-            _logger.Debug(string.Format("ValidateLoggedInUser: User {0}", GetUser()));
-            validateUserAsync(GetUser());
+            _logger.Debug(string.Format("ValidateLoggedInUser: User {0}", User));
+            validateUserAsync(User);
         }
 
         public void ValidateUser(UserDto user)
@@ -81,7 +94,7 @@ namespace Data.Services
         {
             _logger.Debug(string.Format("validateUserAsync: User {0}", user));
 
-            string requestUrl = "http://" + _appSettingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.VALIDATE_USER.Action;
+            string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.VALIDATE_USER.Action;
 
             _downloadController.OnDownloadFinished += _validateUserFinished;
 
@@ -119,7 +132,7 @@ namespace Data.Services
                 return;
             }
 
-            _appSettingsController.User = _tempUser;
+            _settingsController.User = _tempUser;
             _tempUser = null;
 
             OnUserCheckedFinished(response, true);

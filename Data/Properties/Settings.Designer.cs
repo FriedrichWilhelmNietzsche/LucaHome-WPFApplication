@@ -61,18 +61,6 @@ namespace Data.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Munich, DE")]
-        public string OpenWeatherCity {
-            get {
-                return ((string)(this["OpenWeatherCity"]));
-            }
-            set {
-                this["OpenWeatherCity"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("192.168.178.22")]
         public string ServerIpAddress {
             get {
@@ -85,13 +73,13 @@ namespace Data.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("8080")]
-        public int ServerPort {
+        [global::System.Configuration.DefaultSettingValueAttribute("Munich, DE")]
+        public string OpenWeatherCity {
             get {
-                return ((int)(this["ServerPort"]));
+                return ((string)(this["OpenWeatherCity"]));
             }
             set {
-                this["ServerPort"] = value;
+                this["OpenWeatherCity"] = value;
             }
         }
     }

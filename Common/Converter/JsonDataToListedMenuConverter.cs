@@ -62,7 +62,7 @@ namespace Common.Converter
 
             _logger.Error(string.Format("{0} has an error!", value));
 
-            return null;
+            return new List<ListedMenuDto>();
         }
 
         private static ListedMenuDto ParseStringToValue(string[] data)

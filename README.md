@@ -5,7 +5,7 @@
 <a target="_blank" href="https://www.paypal.me/GuepardoApps" title="Donate using PayPal"><img src="https://img.shields.io/badge/paypal-donate-blue.svg" /></a>
 
 [![Build](https://img.shields.io/badge/build-successful-green.svg)](https://github.com/Gu3pardo/LucaHome-WPFApplication)
-[![Version](https://img.shields.io/badge/version-v0.3.0.170711-green.svg)](https://github.com/Gu3pardo/LucaHome-WPFApplication)
+[![Version](https://img.shields.io/badge/version-v0.4.0.170712-green.svg)](https://github.com/Gu3pardo/LucaHome-WPFApplication)
 [![TestCoverage](https://img.shields.io/badge/testcoverage-less5percent-red.svg)](https://github.com/Gu3pardo/LucaHome-WPFApplication)
 
 Part of the LucaHome-Project
@@ -24,27 +24,19 @@ ___________
 ___________
 ![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img004.png)
 ___________
-![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img004_1.png)
-___________
 ![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img005.png)
 ___________
-![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img005_1.png)
-___________
 ![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img006.png)
-___________
-![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img006_1.png)
 ___________
 ![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img007.png)
 ___________
 ![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img008.png)
 ___________
-![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img008_1.png)
-___________
 ![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img009.png)
 ___________
-![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img009_1.png)
-___________
 ![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img010.png)
+___________
+![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img011.png)
 
 # Libraries
 

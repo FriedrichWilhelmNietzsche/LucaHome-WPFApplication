@@ -24,6 +24,7 @@ namespace LucaHome.Pages
         private readonly MovieService _movieService;
         private readonly NavigationService _navigationService;
         private readonly OpenWeatherService _openWeatherService;
+        private readonly ScheduleService _scheduleService;
         private readonly ShoppingListService _shoppingListService;
         private readonly TemperatureService _temperatureService;
         private readonly UserService _userService;
@@ -38,6 +39,7 @@ namespace LucaHome.Pages
             _movieService = MovieService.Instance;
             _navigationService = navigationService;
             _openWeatherService = OpenWeatherService.Instance;
+            _scheduleService = ScheduleService.Instance;
             _shoppingListService = ShoppingListService.Instance;
             _temperatureService = TemperatureService.Instance;
             _userService = UserService.Instance;
@@ -146,6 +148,13 @@ namespace LucaHome.Pages
             checkDownloadCount();
         }
 
+        private void _scheduleDownloadFinished(IList<ScheduleDto> scheduleList, bool success, string response)
+        {
+            _logger.Debug(string.Format("_scheduleDownloadFinished with model {0} was successful: {1}", scheduleList, success));
+            _downloadCount++;
+            checkDownloadCount();
+        }
+
         private void _temperatureDownloadFinished(IList<TemperatureDto> temperatureList, bool success, string response)
         {
             _logger.Debug(string.Format("_temperatureDownloadFinished with model {0} was successful: {1}", temperatureList, success));
@@ -162,6 +171,10 @@ namespace LucaHome.Pages
             // Start download of movies after downloading wirelesssockets
             _movieService.OnMovieDownloadFinished += _movieDownloadFinished;
             _movieService.LoadMovieList();
+
+            // Start download of schedules after downloading wirelesssockets
+            _scheduleService.OnScheduleDownloadFinished += _scheduleDownloadFinished;
+            _scheduleService.LoadScheduleList();
         }
 
         private void checkDownloadCount()
@@ -185,6 +198,7 @@ namespace LucaHome.Pages
             _movieService.OnMovieDownloadFinished -= _movieDownloadFinished;
             _openWeatherService.OnCurrentWeatherDownloadFinished -= _currentWeatherDownloadFinished;
             _openWeatherService.OnForecastWeatherDownloadFinished -= _forecastWeatherDownloadFinished;
+            _scheduleService.OnScheduleDownloadFinished -= _scheduleDownloadFinished;
             _shoppingListService.OnShoppingListDownloadFinished -= _onShoppingListDownloadFinished;
             _temperatureService.OnTemperatureDownloadFinished -= _temperatureDownloadFinished;
             _userService.OnUserCheckedFinished -= _onUserCheckedFinished;

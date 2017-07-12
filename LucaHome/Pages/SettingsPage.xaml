@@ -57,7 +57,6 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -236,39 +235,6 @@
             KeyDown = "RaspberryPiServerIPTextBox_KeyDown">
             <TextBox.Text>
                 <Binding Path="RaspberryPiServerIP" UpdateSourceTrigger="PropertyChanged">
-                    <Binding.ValidationRules>
-                        <validationrules:TextBoxNotEmptyRule/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
-
-        <materialDesign:Card 
-            Grid.Row="6" 
-            Grid.Column="0"
-            Padding="5" 
-            Margin="15 5 5 5">
-            <TextBlock 
-                HorizontalAlignment="Right" >
-                Raspberry server port
-            </TextBlock>
-        </materialDesign:Card>
-
-        <materialDesign:PackIcon 
-            Grid.Row="6" 
-            Grid.Column="1" 
-            Kind="ServerNetwork" 
-            Margin="5 0 5 5" 
-            Foreground="{Binding ElementName=RaspberryPiServerPortTextBox, Path=BorderBrush}" />
-        <TextBox 
-            Grid.Row="6" 
-            Grid.Column="1" 
-            x:Name="RaspberryPiServerPortTextBox"
-            Margin="5 15 35 5" 
-            materialDesign:HintAssist.Hint="Enter the port for your raspberry server here"
-            KeyDown = "RaspberryPiServerPortTextBox_KeyDown">
-            <TextBox.Text>
-                <Binding Path="RaspberryPiServerPort" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
                         <validationrules:TextBoxNotEmptyRule/>
                     </Binding.ValidationRules>

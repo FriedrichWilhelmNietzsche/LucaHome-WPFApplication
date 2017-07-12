@@ -24,6 +24,7 @@ namespace LucaHome.Pages
         private readonly BirthdayPage _birthdayPage;
         private readonly MenuPage _menuPage;
         private readonly MoviePage _moviePage;
+        private readonly SchedulePage _schedulePage;
         private readonly SettingsPage _settingsPage;
         private readonly ShoppingListPage _shoppingListPage;
         private readonly TemperaturePage _temperaturePage;
@@ -41,6 +42,7 @@ namespace LucaHome.Pages
             _birthdayPage = new BirthdayPage(_navigationService);
             _menuPage = new MenuPage(_navigationService);
             _moviePage = new MoviePage(_navigationService);
+            _schedulePage = new SchedulePage(_navigationService);
             _settingsPage = new SettingsPage(_navigationService);
             _shoppingListPage = new ShoppingListPage(_navigationService);
             _temperaturePage = new TemperaturePage(_navigationService);
@@ -50,6 +52,7 @@ namespace LucaHome.Pages
             InitializeComponent();
 
             SocketCard.ButtonAddCommand = new DelegateCommand(navigateToSocketAdd);
+            ScheduleCard.ButtonAddCommand = new DelegateCommand(navigateToScheduleAdd);
             ShoppingListCard.ButtonAddCommand = new DelegateCommand(navigateToShoppingAdd);
             BirthdayCard.ButtonAddCommand = new DelegateCommand(navigateToBirthdayAdd);
             MovieCard.ButtonAddCommand = new DelegateCommand(navigateToMovieAdd);
@@ -83,7 +86,7 @@ namespace LucaHome.Pages
 
         private void SocketCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            _logger.Debug(string.Format("Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
+            _logger.Debug(string.Format("SocketCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
             _navigationService.Navigate(_wirelessSocketPage);
         }
 
@@ -93,27 +96,39 @@ namespace LucaHome.Pages
             _navigationService.Navigate(new WirelessSocketAddPage(_navigationService));
         }
 
+        private void ScheduleCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        {
+            _logger.Debug(string.Format("ScheduleCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
+            _navigationService.Navigate(_schedulePage);
+        }
+
+        private void navigateToScheduleAdd()
+        {
+            _logger.Debug("navigateToScheduleAdd");
+            _navigationService.Navigate(new ScheduleAddPage(_navigationService));
+        }
+
         private void WeatherCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            _logger.Debug(string.Format("Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
+            _logger.Debug(string.Format("WeatherCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
             _navigationService.Navigate(_weatherPage);
         }
 
         private void TemperatureCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            _logger.Debug(string.Format("Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
+            _logger.Debug(string.Format("TemperatureCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
             _navigationService.Navigate(_temperaturePage);
         }
 
         private void MenuCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            _logger.Debug(string.Format("Received click of sender {0} with arguments {1}", sender, mouseButtonEventArgs));
+            _logger.Debug(string.Format("MenuCard_MouseUp: Received click of sender {0} with arguments {1}", sender, mouseButtonEventArgs));
             _navigationService.Navigate(_menuPage);
         }
 
         private void ShoppingCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            _logger.Debug(string.Format("Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
+            _logger.Debug(string.Format("ShoppingCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
             _navigationService.Navigate(_shoppingListPage);
         }
 
@@ -125,7 +140,7 @@ namespace LucaHome.Pages
 
         private void BirthdayCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            _logger.Debug(string.Format("Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
+            _logger.Debug(string.Format("BirthdayCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
             _navigationService.Navigate(_birthdayPage);
         }
 
@@ -137,7 +152,7 @@ namespace LucaHome.Pages
 
         private void MovieCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            _logger.Debug(string.Format("Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
+            _logger.Debug(string.Format("MovieCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
             _navigationService.Navigate(_moviePage);
         }
 
@@ -149,7 +164,7 @@ namespace LucaHome.Pages
 
         private void SettingsCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            _logger.Debug(string.Format("Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
+            _logger.Debug(string.Format("SettingsCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
             _navigationService.Navigate(_settingsPage);
         }
     }

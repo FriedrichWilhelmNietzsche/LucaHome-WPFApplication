@@ -14,10 +14,10 @@ namespace TestProject
         [TestMethod]
         public async Task TestHttpClientGetAsync()
         {
-            AppSettingsController appSettingsController = AppSettingsController.Instance;
-            UserDto user = appSettingsController.User;
+            SettingsController settingsController = SettingsController.Instance;
+            UserDto user = settingsController.User;
 
-            string requestUrl = "http://" + appSettingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_SOCKETS.Action;
+            string requestUrl = "http://" + settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_SOCKETS.Action;
 
             HttpClient httpClient = new HttpClient();
             string data = await httpClient.GetStringAsync(requestUrl);

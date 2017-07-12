@@ -51,11 +51,21 @@
             x:Name="SocketCard"
             Grid.Row="1"
             Grid.Column="0"
-            CardImage="/Common;component/Assets/Icons/Others/socket_hd.png"
+            CardImage="/Common;component/Assets/Wallpaper/main_image_sockets.png"
             Title="Sockets"
             Description="Control your sockets"
             ButtonAddVisibility="Visible"
             MouseUp="SocketCard_MouseUp"/>
+
+        <usercontrols:MainPageCard
+            x:Name="ScheduleCard"
+            Grid.Row="1"
+            Grid.Column="1"
+            CardImage="/Common;component/Assets/Wallpaper/main_image_schedule.png"
+            Title="Schedules"
+            Description="Manage sockets using schedules"
+            ButtonAddVisibility="Visible"
+            MouseUp="ScheduleCard_MouseUp"/>
 
         <usercontrols:MainPageCard
             x:Name="WeatherCard"
@@ -99,8 +109,8 @@
 
         <usercontrols:MainPageCard
             x:Name="BirthdayCard"
-            Grid.Row="3"
-            Grid.Column="0"
+            Grid.Row="2"
+            Grid.Column="2"
             CardImage="/Common;component/Assets/Wallpaper/main_image_birthday.png"
             Title="Birthdays"
             Description="Who's next for birthday"
@@ -109,8 +119,8 @@
 
         <usercontrols:MainPageCard
             x:Name="MovieCard"
-            Grid.Row="3"
-            Grid.Column="1"
+            Grid.Row="2"
+            Grid.Column="3"
             CardImage="/Common;component/Assets/Wallpaper/main_image_movies.png"
             Title="Movies"
             Description="Want to watch some blockbuster?"

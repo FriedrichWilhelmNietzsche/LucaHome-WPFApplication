@@ -18,7 +18,7 @@ namespace Data.Services
         private const string TAG = "MenuService";
         private readonly Logger _logger;
 
-        private readonly AppSettingsController _appSettingsController;
+        private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
         private readonly JsonDataToMenuConverter _jsonDataToMenuConverter;
 
@@ -31,7 +31,7 @@ namespace Data.Services
         {
             _logger = new Logger(TAG);
 
-            _appSettingsController = AppSettingsController.Instance;
+            _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
             _jsonDataToMenuConverter = new JsonDataToMenuConverter();
         }
@@ -90,14 +90,14 @@ namespace Data.Services
         {
             _logger.Debug("loadMenuListAsync");
 
-            UserDto user = _appSettingsController.User;
+            UserDto user = _settingsController.User;
             if (user == null)
             {
                 OnMenuDownloadFinished(null, false, "No user");
                 return;
             }
 
-            string requestUrl = "http://" + _appSettingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_MENU.Action;
+            string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_MENU.Action;
 
             _downloadController.OnDownloadFinished += _menuDownloadFinished;
 
@@ -108,7 +108,7 @@ namespace Data.Services
         {
             _logger.Debug(string.Format("updateMenuAsync: {0}", updateMenu));
 
-            UserDto user = _appSettingsController.User;
+            UserDto user = _settingsController.User;
             if (user == null)
             {
                 OnMenuUpdateFinished(false, "No user");
@@ -116,7 +116,7 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _appSettingsController.ServerIpAddress, Constants.ACTION_PATH,
+                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 updateMenu.CommandUpdate);
 

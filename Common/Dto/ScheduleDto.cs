@@ -8,7 +8,7 @@ namespace Common.Dto
         private const string TAG = "ScheduleDto";
 
         public enum Weekday { Null = -1, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday }
-        public enum SocketAction {  Null, Activate, Deactivate }
+        public enum SocketAction { Null = -1, Deactivate, Activate }
 
         protected int _id;
 
@@ -78,6 +78,14 @@ namespace Common.Dto
             }
         }
 
+        public string SocketString
+        {
+            get
+            {
+                return _socket.Name;
+            }
+        }
+
         public Weekday WeekDay
         {
             get
@@ -99,6 +107,14 @@ namespace Common.Dto
             set
             {
                 _time = value;
+            }
+        }
+
+        public string TimeString
+        {
+            get
+            {
+                return _time.ToShortTimeString();
             }
         }
 
@@ -126,19 +142,44 @@ namespace Common.Dto
             }
         }
 
-        public virtual string CommandAdd()
+        public string ActiveString
         {
-            return string.Format("{0}{1}&socket={2}&gpio={3}&weekday={4}&hour={5}&minute={6}&onoff={7}&isTimer={8}&playSound={9}&playRaspberry={10}", LucaServerAction.ADD_SCHEDULE.Action, _name, _socket.Name, "", _weekday, _time.Hour, _time.Minute, (_action == SocketAction.Activate ? "1" : "0"), "0", "0", "1");
+            get
+            {
+                return _isActive ? "Active" : "Inactive";
+            }
         }
 
-        public virtual string CommandUpdate()
+        public Uri Icon
         {
-            return string.Format("{0}{1}&socket={2}&gpio={3}&weekday={4}&hour={5}&minute={6}&onoff={7}&isTimer={8}&playSound={9}&playRaspberry={10}&isactive={11}", LucaServerAction.UPDATE_SCHEDULE.Action, _name, _socket.Name, "", _weekday, _time.Hour, _time.Minute, (_action == SocketAction.Activate ? "1" : "0"), "0", "0", "1", (_isActive ? "1" : "0"));
+            get
+            {
+                return new Uri("/Common;component/Assets/Icons/Others/scheduler_hd.png", UriKind.Relative);
+            }
         }
 
-        public virtual string CommandDelete()
+        public virtual string CommandAdd
         {
-            return string.Format("{0}{1}", LucaServerAction.DELETE_SCHEDULE.Action, _name);
+            get
+            {
+                return string.Format("{0}{1}&socket={2}&gpio={3}&weekday={4}&hour={5}&minute={6}&onoff={7}&isTimer={8}&playSound={9}&playRaspberry={10}", LucaServerAction.ADD_SCHEDULE.Action, _name, _socket.Name, "", _weekday, _time.Hour, _time.Minute, (_action == SocketAction.Activate ? "1" : "0"), "0", "0", "1");
+            }
+        }
+
+        public virtual string CommandUpdate
+        {
+            get
+            {
+                return string.Format("{0}{1}&socket={2}&gpio={3}&weekday={4}&hour={5}&minute={6}&onoff={7}&isTimer={8}&playSound={9}&playRaspberry={10}&isactive={11}", LucaServerAction.UPDATE_SCHEDULE.Action, _name, _socket.Name, "", _weekday, _time.Hour, _time.Minute, (_action == SocketAction.Activate ? "1" : "0"), "0", "0", "1", (_isActive ? "1" : "0"));
+            }
+        }
+
+        public virtual string CommandDelete
+        {
+            get
+            {
+                return string.Format("{0}{1}", LucaServerAction.DELETE_SCHEDULE.Action, _name);
+            }
         }
 
         public override string ToString()

@@ -62,7 +62,7 @@ namespace Common.Converter
 
             _logger.Error(string.Format("{0} has an error!", value));
 
-            return null;
+            return new List<ChangeDto>();
         }
 
         private static ChangeDto ParseStringToValue(int id, string[] data)

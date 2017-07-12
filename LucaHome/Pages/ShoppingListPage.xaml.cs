@@ -4,6 +4,7 @@ using Common.Tools;
 using Data.Services;
 using LucaHome.Dialogs;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -16,13 +17,15 @@ using System.Windows.Navigation;
 
 namespace LucaHome.Pages
 {
-    public partial class ShoppingListPage : Page
+    public partial class ShoppingListPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "ShoppingListPage";
         private readonly Logger _logger;
 
         private readonly NavigationService _navigationService;
         private readonly ShoppingListService _shoppingListService;
+
+        private string _shoppingListSearchKey = string.Empty;
 
         private readonly ShoppingEntryAddPage _shoppingEntryAddPage;
 
@@ -38,6 +41,34 @@ namespace LucaHome.Pages
             InitializeComponent();
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public string ShoppingListSearchKey
+        {
+            get
+            {
+                return string.Empty;
+            }
+            set
+            {
+                _shoppingListSearchKey = value;
+                OnPropertyChanged("ShoppingListSearchKey");
+
+                if (_shoppingListSearchKey != string.Empty)
+                {
+                    setList(_shoppingListService.FoundShoppingEntries(_shoppingListSearchKey));
+                }
+                else
+                {
+                    setList(_shoppingListService.ShoppingList);
+                }
+            }
+        }
+
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
@@ -50,7 +81,7 @@ namespace LucaHome.Pages
                 return;
             }
 
-            setList();
+            setList(_shoppingListService.ShoppingList);
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
@@ -62,13 +93,13 @@ namespace LucaHome.Pages
             _shoppingListService.OnShoppingEntryDeleteFinished -= _onShoppingEntryDeleteFinished;
         }
 
-        private void setList()
+        private void setList(IList<ShoppingEntryDto> shoppingList)
         {
             _logger.Debug("setList");
 
             ShoppingList.Items.Clear();
 
-            foreach (ShoppingEntryDto entry in _shoppingListService.ShoppingList)
+            foreach (ShoppingEntryDto entry in shoppingList)
             {
                 ShoppingList.Items.Add(entry);
             }
@@ -78,7 +109,7 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("_onShoppingListDownloadFinished with model {0} was successful {1}", shoppingList, success));
 
-            setList();
+            setList(_shoppingListService.ShoppingList);
         }
 
         private void _onShoppingEntryUpdateFinished(bool success, string response)
@@ -114,6 +145,16 @@ namespace LucaHome.Pages
             _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
 
             _shoppingListService.LoadShoppingList();
+        }
+
+        private void SearchShoppingListTextBox_KeyDown(object sender, KeyEventArgs keyEventArgs)
+        {
+            _logger.Debug(string.Format("SearchShoppingListTextBox_KeyDown with sender {0} and keyEventArgs: {1}", sender, keyEventArgs));
+
+            if (keyEventArgs.Key == Key.Enter && keyEventArgs.IsDown)
+            {
+                ShoppingListSearchKey = SearchShoppingListTextBox.Text;
+            }
         }
 
         private void ButtonIncreaseEntryAmount_Click(object sender, RoutedEventArgs routedEventArgs)

@@ -4,6 +4,7 @@ using Common.Tools;
 using Data.Services;
 using LucaHome.Dialogs;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -18,13 +19,15 @@ using System.Windows.Navigation;
 
 namespace LucaHome.Pages
 {
-    public partial class BirthdayPage : Page
+    public partial class BirthdayPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "BirthdayPage";
         private readonly Logger _logger;
 
         private readonly BirthdayService _birthdayService;
         private readonly NavigationService _navigationService;
+
+        private string _birthdaySearchKey = string.Empty;
 
         private readonly BirthdayAddPage _birthdayAddPage;
 
@@ -40,6 +43,34 @@ namespace LucaHome.Pages
             InitializeComponent();
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public string BirthdaySearchKey
+        {
+            get
+            {
+                return _birthdaySearchKey;
+            }
+            set
+            {
+                _birthdaySearchKey = value;
+                OnPropertyChanged("BirthdaySearchKey");
+
+                if (_birthdaySearchKey != string.Empty)
+                {
+                    setList(_birthdayService.FoundBirthdays(_birthdaySearchKey));
+                }
+                else
+                {
+                    setList(_birthdayService.BirthdayList);
+                }
+            }
+        }
+
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
@@ -52,7 +83,7 @@ namespace LucaHome.Pages
                 return;
             }
 
-            setList();
+            setList(_birthdayService.BirthdayList);
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
@@ -63,13 +94,13 @@ namespace LucaHome.Pages
             _birthdayService.OnBirthdayDeleteFinished -= _onBirthdayDeleteFinished;
         }
 
-        private void setList()
+        private void setList(IList<BirthdayDto> birthdayList)
         {
             _logger.Debug("setList");
 
             BirthdayList.Items.Clear();
 
-            foreach (BirthdayDto entry in _birthdayService.BirthdayList)
+            foreach (BirthdayDto entry in birthdayList)
             {
                 BirthdayList.Items.Add(entry);
             }
@@ -104,7 +135,7 @@ namespace LucaHome.Pages
                 BirthdayDto deleteBirthday = _birthdayService.GetById(birthdayId);
                 _logger.Warning(string.Format("Asking for deleting birthday {0}!", deleteBirthday));
 
-                DeleteDialog birthdayDeleteDialog = new DeleteDialog("Delete birthday?", 
+                DeleteDialog birthdayDeleteDialog = new DeleteDialog("Delete birthday?",
                     string.Format("Birthday: {0}\nAge: {1}\nDate: {2}", deleteBirthday.Name, deleteBirthday.Age, deleteBirthday.Birthday));
                 birthdayDeleteDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                 birthdayDeleteDialog.ShowDialog();
@@ -139,10 +170,20 @@ namespace LucaHome.Pages
             _birthdayService.LoadBirthdayList();
         }
 
+        private void SearchBirthdayTextBox_KeyDown(object sender, KeyEventArgs keyEventArgs)
+        {
+            _logger.Debug(string.Format("SearchBirthdayTextBox_KeyDown with sender {0} and keyEventArgs: {1}", sender, keyEventArgs));
+
+            if (keyEventArgs.Key == Key.Enter && keyEventArgs.IsDown)
+            {
+                BirthdaySearchKey = SearchBirthdayTextBox.Text;
+            }
+        }
+
         private void _birthdayListDownloadFinished(IList<BirthdayDto> birthdayList, bool success, string response)
         {
             _logger.Debug(string.Format("_birthdayListDownloadFinished with model {0} was successful: {1}", birthdayList, success));
-            setList();
+            setList(_birthdayService.BirthdayList);
         }
 
         private void _onBirthdayDeleteFinished(bool success, string response)

@@ -54,8 +54,9 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controller\AppSettingsController.cs" />
+    <Compile Include="Controller\SettingsController.cs" />
     <Compile Include="Controller\LocalDriveController.cs" />
+    <Compile Include="Services\NetworkService.cs" />
     <Compile Include="Services\UserService.cs" />
     <Compile Include="Controller\DownloadController.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -68,6 +69,7 @@
     <Compile Include="Services\TemperatureService.cs" />
     <Compile Include="Services\MovieService.cs" />
     <Compile Include="Services\BirthdayService.cs" />
+    <Compile Include="Services\ScheduleService.cs" />
     <Compile Include="Services\WirelessSocketService.cs" />
   </ItemGroup>
   <ItemGroup>
