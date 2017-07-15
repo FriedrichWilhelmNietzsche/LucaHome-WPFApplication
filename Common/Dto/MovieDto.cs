@@ -110,27 +110,11 @@ namespace Common.Dto
             }
         }
 
-        public string CommandAdd
-        {
-            get
-            {
-                return string.Format("{0}{1}&genre={2}&description={3}&rating={4}&watched={5}&sockets={6}", LucaServerAction.ADD_MOVIE.Action, _title, _genre, _description, _rating, _watched, getSocketsString());
-            }
-        }
-
         public string CommandUpdate
         {
             get
             {
                 return string.Format("{0}{1}&genre={2}&description={3}&rating={4}&watched={5}&sockets={6}", LucaServerAction.UPDATE_MOVIE.Action, _title, _genre, _description, _rating, _watched, getSocketsString());
-            }
-        }
-
-        public string CommandDelete
-        {
-            get
-            {
-                return string.Format("{0}{1}", LucaServerAction.DELETE_MOVIE.Action, _title);
             }
         }
 

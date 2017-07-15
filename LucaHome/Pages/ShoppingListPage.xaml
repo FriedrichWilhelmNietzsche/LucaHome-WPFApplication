@@ -48,13 +48,12 @@
             Grid.Column="0" 
             x:Name="SearchShoppingListTextBox"
             Margin="5 15 5 5" 
-            materialDesign:HintAssist.Hint="Search for keywords in the shopping list"
-            KeyDown = "SearchShoppingListTextBox_KeyDown">
+            materialDesign:HintAssist.Hint="Search for keywords in the shopping list" >
             <TextBox.Text>
                 <Binding Path="ShoppingListSearchKey" UpdateSourceTrigger="PropertyChanged" />
             </TextBox.Text>
         </TextBox>
-        
+
         <ListView 
             Grid.Column="0"
             Grid.Row="2"
@@ -63,7 +62,7 @@
             Margin="5"
             VerticalAlignment="Center"
             Width="{DynamicResource ListWidth}"
-            Name="ShoppingList">
+            ItemsSource="{Binding Path=ShoppingList, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn 
@@ -108,9 +107,7 @@
                                     Margin="5 5 5 5"
                                     ToolTip="Increase amount"
                                     Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
-                                    Click="ButtonIncreaseEntryAmount_Click" 
-                                    MouseEnter="Button_MouseEnter"
-                                    MouseLeave="Button_MouseLeave">
+                                    Click="ButtonIncreaseEntryAmount_Click" >
                                     <materialDesign:PackIcon 
                                         Kind="Plus" 
                                         Height="15" 
@@ -130,9 +127,7 @@
                                     Margin="5 5 5 5"
                                     ToolTip="Decrease amount"
                                     Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
-                                    Click="ButtonDecreaseEntryAmount_Click" 
-                                    MouseEnter="Button_MouseEnter"
-                                    MouseLeave="Button_MouseLeave">
+                                    Click="ButtonDecreaseEntryAmount_Click" >
                                     <materialDesign:PackIcon 
                                         Kind="Minus" 
                                         Height="15" 
@@ -152,9 +147,7 @@
                                     Margin="5 5 5 5"
                                     ToolTip="Delete entry"
                                     Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
-                                    Click="ButtonDeleteEntry_Click" 
-                                    MouseEnter="Button_MouseEnter"
-                                    MouseLeave="Button_MouseLeave">
+                                    Click="ButtonDeleteEntry_Click" >
                                     <materialDesign:PackIcon 
                                         Kind="Delete" 
                                         Height="25" 

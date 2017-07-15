@@ -6,6 +6,7 @@ using Common.Tools;
 using Data.Controller;
 using System.Collections.Generic;
 using System.Linq;
+using System.Timers;
 using System.Threading.Tasks;
 
 namespace Data.Services
@@ -20,6 +21,8 @@ namespace Data.Services
         private const string TAG = "BirthdayService";
         private readonly Logger _logger;
 
+        private const int TIMEOUT = 60 * 60 * 1000;
+
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
         private readonly JsonDataToBirthdayConverter _jsonDataToBirthdayConverter;
@@ -29,6 +32,8 @@ namespace Data.Services
 
         private IList<BirthdayDto> _birthdayList = new List<BirthdayDto>();
 
+        private Timer _downloadTimer;
+
         BirthdayService()
         {
             _logger = new Logger(TAG);
@@ -36,6 +41,13 @@ namespace Data.Services
             _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
             _jsonDataToBirthdayConverter = new JsonDataToBirthdayConverter();
+
+            _downloadController.OnDownloadFinished += _birthdayDownloadFinished;
+
+            _downloadTimer = new Timer(TIMEOUT);
+            _downloadTimer.Elapsed += _downloadTimer_Elapsed;
+            _downloadTimer.AutoReset = true;
+            _downloadTimer.Start();
         }
 
         public event BirthdayDownloadEventHandler OnBirthdayDownloadFinished;
@@ -115,6 +127,12 @@ namespace Data.Services
             deleteBirthdayAsync(deleteBirthday);
         }
 
+        private void _downloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            _logger.Debug(string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
+            loadBirthdayListAsync();
+        }
+
         private async Task loadBirthdayListAsync()
         {
             _logger.Debug("loadBirthdayListAsync");
@@ -128,8 +146,6 @@ namespace Data.Services
 
             string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_BIRTHDAYS.Action;
             _logger.Debug(string.Format("RequestUrl {0}", requestUrl));
-
-            _downloadController.OnDownloadFinished += _birthdayDownloadFinished;
 
             await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.Birthday);
         }
@@ -207,8 +223,6 @@ namespace Data.Services
                 return;
             }
 
-            _downloadController.OnDownloadFinished -= _birthdayDownloadFinished;
-
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
                 _logger.Error(response);
@@ -272,6 +286,8 @@ namespace Data.Services
             }
 
             OnBirthdayAddFinished(true, response);
+
+            loadBirthdayListAsync();
         }
 
         private void _birthdayUpdateFinished(string response, bool success, DownloadType downloadType)
@@ -305,6 +321,8 @@ namespace Data.Services
             }
 
             OnBirthdayUpdateFinished(true, response);
+
+            loadBirthdayListAsync();
         }
 
         private void _birthdayDeleteFinished(string response, bool success, DownloadType downloadType)
@@ -338,6 +356,8 @@ namespace Data.Services
             }
 
             OnBirthdayDeleteFinished(true, response);
+
+            loadBirthdayListAsync();
         }
 
         public void Dispose()
@@ -348,6 +368,10 @@ namespace Data.Services
             _downloadController.OnDownloadFinished -= _birthdayAddFinished;
             _downloadController.OnDownloadFinished -= _birthdayUpdateFinished;
             _downloadController.OnDownloadFinished -= _birthdayDeleteFinished;
+
+            _downloadTimer.Elapsed -= _downloadTimer_Elapsed;
+            _downloadTimer.AutoReset = false;
+            _downloadTimer.Stop();
 
             _downloadController.Dispose();
         }

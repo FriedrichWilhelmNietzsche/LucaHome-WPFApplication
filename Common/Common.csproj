@@ -37,6 +37,27 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Practices.Prism.Composition, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Composition.5.0.0\lib\NET45\Microsoft.Practices.Prism.Composition.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Prism.Interactivity, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Interactivity.5.0.0\lib\NET45\Microsoft.Practices.Prism.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Prism.Mvvm, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Mvvm.1.0.0\lib\net45\Microsoft.Practices.Prism.Mvvm.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Prism.Mvvm.Desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Mvvm.1.0.0\lib\net45\Microsoft.Practices.Prism.Mvvm.Desktop.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Prism.PubSubEvents, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.PubSubEvents.1.0.0\lib\portable-sl4+wp7+windows8+net40\Microsoft.Practices.Prism.PubSubEvents.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Prism.SharedInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Mvvm.1.0.0\lib\net45\Microsoft.Practices.Prism.SharedInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.1.2\lib\portable-windows8+net40+sl5+windowsphone8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -60,6 +81,7 @@
     <Compile Include="Converter\JsonDataToBirthdayConverter.cs" />
     <Compile Include="Converter\JsonDataToChangeConverter.cs" />
     <Compile Include="Converter\JsonDataToListedMenuConverter.cs" />
+    <Compile Include="Converter\JsonDataToMapContentConverter.cs" />
     <Compile Include="Converter\JsonDataToMenuConverter.cs" />
     <Compile Include="Converter\JsonDataToMovieConverter.cs" />
     <Compile Include="Converter\JsonDataToScheduleConverter.cs" />
@@ -71,6 +93,7 @@
     <Compile Include="Dto\BirthdayDto.cs" />
     <Compile Include="Dto\ChangeDto.cs" />
     <Compile Include="Dto\ListedMenuDto.cs" />
+    <Compile Include="Dto\MapContentDto.cs" />
     <Compile Include="Dto\MenuDto.cs" />
     <Compile Include="Dto\MovieDto.cs" />
     <Compile Include="Dto\ScheduleDto.cs" />
@@ -81,6 +104,9 @@
     <Compile Include="Dto\WirelessSocketDto.cs" />
     <Compile Include="Tools\Logger.cs" />
     <Compile Include="Tools\StringHelper.cs" />
+    <Compile Include="UserControls\MapContentControl.xaml.cs">
+      <DependentUpon>MapContentControl.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\LucaServerAction.cs" />
@@ -102,6 +128,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -190,6 +217,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Icons\Others\ic_launcher.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="UserControls\MapContentControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

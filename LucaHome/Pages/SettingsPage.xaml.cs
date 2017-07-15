@@ -40,6 +40,7 @@ namespace LucaHome.Pages
             _userService = UserService.Instance;
 
             InitializeComponent();
+            DataContext = this;
 
             _notifier = new Notifier(cfg =>
             {
@@ -66,12 +67,14 @@ namespace LucaHome.Pages
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            _logger.Debug(string.Format("OnPropertyChanged with propertyName {0}", propertyName));
         }
 
         public string UserName
         {
             get
             {
+                _logger.Debug("Get UserName");
                 return _userService.User.Name;
             }
             set
@@ -100,6 +103,7 @@ namespace LucaHome.Pages
         {
             get
             {
+                _logger.Debug("Get Password");
                 return _userService.User.Passphrase;
             }
             set
@@ -128,6 +132,7 @@ namespace LucaHome.Pages
         {
             get
             {
+                _logger.Debug("Get OpenWeatherCity");
                 return _temperatureService.OpenWeatherCity;
             }
             set
@@ -159,6 +164,7 @@ namespace LucaHome.Pages
         {
             get
             {
+                _logger.Debug("Get HomeSSID");
                 return _networkService.HomeSSID;
             }
             set
@@ -186,6 +192,7 @@ namespace LucaHome.Pages
         {
             get
             {
+                _logger.Debug("Get RaspberryPiServerIP");
                 return _networkService.ServerIpAddress;
             }
             set
@@ -207,22 +214,6 @@ namespace LucaHome.Pages
                     OnPropertyChanged("RaspberryPiServerIP");
                 }
             }
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
-        {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-
-            UserNameTextBox.Text = _userService.User.Name;
-            PasswordBox.Text = _userService.User.Passphrase;
-            OpenWeatherCityTextBox.Text = _temperatureService.OpenWeatherCity;
-            HomeSSIDTextBox.Text = _networkService.HomeSSID;
-            RaspberryPiServerIPTextBox.Text = _networkService.ServerIpAddress;
-        }
-
-        private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
-        {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
         }
 
         private void UserNameTextBox_KeyDown(object sender, KeyEventArgs keyEventArgs)

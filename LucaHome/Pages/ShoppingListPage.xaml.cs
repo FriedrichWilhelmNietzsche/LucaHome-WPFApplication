@@ -26,6 +26,7 @@ namespace LucaHome.Pages
         private readonly ShoppingListService _shoppingListService;
 
         private string _shoppingListSearchKey = string.Empty;
+        private IList<ShoppingEntryDto> _shoppingList = new List<ShoppingEntryDto>();
 
         private readonly ShoppingEntryAddPage _shoppingEntryAddPage;
 
@@ -39,6 +40,7 @@ namespace LucaHome.Pages
             _shoppingEntryAddPage = new ShoppingEntryAddPage(_navigationService);
 
             InitializeComponent();
+            DataContext = this;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -60,12 +62,25 @@ namespace LucaHome.Pages
 
                 if (_shoppingListSearchKey != string.Empty)
                 {
-                    setList(_shoppingListService.FoundShoppingEntries(_shoppingListSearchKey));
+                    ShoppingList = _shoppingListService.FoundShoppingEntries(_shoppingListSearchKey);
                 }
                 else
                 {
-                    setList(_shoppingListService.ShoppingList);
+                    ShoppingList = _shoppingListService.ShoppingList;
                 }
+            }
+        }
+
+        public IList<ShoppingEntryDto> ShoppingList
+        {
+            get
+            {
+                return _shoppingList;
+            }
+            set
+            {
+                _shoppingList = value;
+                OnPropertyChanged("ShoppingList");
             }
         }
 
@@ -81,80 +96,37 @@ namespace LucaHome.Pages
                 return;
             }
 
-            setList(_shoppingListService.ShoppingList);
+            ShoppingList = _shoppingListService.ShoppingList;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _shoppingListService.OnShoppingListDownloadFinished -= _onShoppingListDownloadFinished;
-            _shoppingListService.OnShoppingEntryUpdateFinished -= _onShoppingEntryUpdateFinished;
-            _shoppingListService.OnShoppingEntryDeleteFinished -= _onShoppingEntryDeleteFinished;
-        }
-
-        private void setList(IList<ShoppingEntryDto> shoppingList)
-        {
-            _logger.Debug("setList");
-
-            ShoppingList.Items.Clear();
-
-            foreach (ShoppingEntryDto entry in shoppingList)
-            {
-                ShoppingList.Items.Add(entry);
-            }
         }
 
         private void _onShoppingListDownloadFinished(IList<ShoppingEntryDto> shoppingList, bool success, string response)
         {
             _logger.Debug(string.Format("_onShoppingListDownloadFinished with model {0} was successful {1}", shoppingList, success));
-
-            setList(_shoppingListService.ShoppingList);
-        }
-
-        private void _onShoppingEntryUpdateFinished(bool success, string response)
-        {
-            _logger.Debug(string.Format("_onShoppingEntryUpdateFinished with response {0} was successful: {1}", response, success));
-            _shoppingListService.OnShoppingEntryUpdateFinished -= _onShoppingEntryUpdateFinished;
-            _shoppingListService.LoadShoppingList();
-        }
-
-        private void _onShoppingEntryDeleteFinished(bool success, string response)
-        {
-            _logger.Debug(string.Format("_onShoppingEntryDeleteFinished with response {0} was successful: {1}", response, success));
-            _shoppingListService.OnShoppingEntryDeleteFinished -= _onShoppingEntryDeleteFinished;
-            _shoppingListService.LoadShoppingList();
+            ShoppingList = _shoppingListService.ShoppingList;
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _navigationService.GoBack();
         }
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonAdd_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _navigationService.Navigate(_shoppingEntryAddPage);
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _shoppingListService.LoadShoppingList();
-        }
-
-        private void SearchShoppingListTextBox_KeyDown(object sender, KeyEventArgs keyEventArgs)
-        {
-            _logger.Debug(string.Format("SearchShoppingListTextBox_KeyDown with sender {0} and keyEventArgs: {1}", sender, keyEventArgs));
-
-            if (keyEventArgs.Key == Key.Enter && keyEventArgs.IsDown)
-            {
-                ShoppingListSearchKey = SearchShoppingListTextBox.Text;
-            }
         }
 
         private void ButtonIncreaseEntryAmount_Click(object sender, RoutedEventArgs routedEventArgs)
@@ -170,7 +142,6 @@ namespace LucaHome.Pages
                 _logger.Warning(string.Format("Increasing amount of entry {0}!", shoppingEntry));
                 shoppingEntry.IncreaseQuantity();
 
-                _shoppingListService.OnShoppingEntryUpdateFinished += _onShoppingEntryUpdateFinished;
                 _shoppingListService.UpdateShoppingEntry(shoppingEntry);
             }
         }
@@ -188,7 +159,6 @@ namespace LucaHome.Pages
                 _logger.Warning(string.Format("Decreasing amount of entry {0}!", shoppingEntry));
                 shoppingEntry.DecreaseQuantity();
 
-                _shoppingListService.OnShoppingEntryUpdateFinished += _onShoppingEntryUpdateFinished;
                 _shoppingListService.UpdateShoppingEntry(shoppingEntry);
             }
         }
@@ -213,20 +183,9 @@ namespace LucaHome.Pages
                 var confirmDelete = shoppingEntryDeleteDialog.DialogResult;
                 if (confirmDelete == true)
                 {
-                    _shoppingListService.OnShoppingEntryDeleteFinished += _onShoppingEntryDeleteFinished;
                     _shoppingListService.DeleteShoppingEntry(shoppingEntry);
                 }
             }
-        }
-
-        private void Button_MouseEnter(object sender, MouseEventArgs mouseEventArgs)
-        {
-            Mouse.OverrideCursor = Cursors.Hand;
-        }
-
-        private void Button_MouseLeave(object sender, MouseEventArgs mouseEventArgs)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
         }
     }
 }

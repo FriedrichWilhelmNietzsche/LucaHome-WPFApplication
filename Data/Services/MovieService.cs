@@ -9,19 +9,20 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Timers;
 
 namespace Data.Services
 {
     public delegate void MovieDownloadEventHandler(IList<MovieDto> movieList, bool success, string response);
     public delegate void MovieStartEventHandler(bool success, string response);
-    public delegate void MovieAddEventHandler(bool success, string response);
     public delegate void MovieUpdateEventHandler(bool success, string response);
-    public delegate void MovieDeleteEventHandler(bool success, string response);
 
     public class MovieService
     {
         private const string TAG = "MovieService";
         private readonly Logger _logger;
+
+        private const int TIMEOUT = 15 * 60 * 1000;
 
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
@@ -35,6 +36,8 @@ namespace Data.Services
         private IList<MovieDto> _movieList = new List<MovieDto>();
         private DriveInfo _movieDrive;
 
+        private Timer _downloadTimer;
+
         MovieService()
         {
             _logger = new Logger(TAG);
@@ -46,13 +49,18 @@ namespace Data.Services
             _wirelessSocketService = WirelessSocketService.Instance;
 
             _movieDrive = _localDriveController.GetMovieDrive();
+
+            _downloadController.OnDownloadFinished += _movieDownloadFinished;
+
+            _downloadTimer = new Timer(TIMEOUT);
+            _downloadTimer.Elapsed += _downloadTimer_Elapsed;
+            _downloadTimer.AutoReset = true;
+            _downloadTimer.Start();
         }
 
         public event MovieDownloadEventHandler OnMovieDownloadFinished;
         public event MovieStartEventHandler OnMovieStartFinished;
-        public event MovieAddEventHandler OnMovieAddFinished;
         public event MovieUpdateEventHandler OnMovieUpdateFinished;
-        public event MovieDeleteEventHandler OnMovieDeleteFinished;
 
         public static MovieService Instance
         {
@@ -121,22 +129,16 @@ namespace Data.Services
             startMovieOnPc(movieTitle);
         }
 
-        public void AddMovie(MovieDto newMovie)
-        {
-            _logger.Debug(string.Format("AddMovie: add new movie {0}", newMovie));
-            addMovieAsync(newMovie);
-        }
-
         public void UpdateMovie(MovieDto updateMovie)
         {
             _logger.Debug(string.Format("UpdateMovie: updating movie {0}", updateMovie));
             updateMovieAsync(updateMovie);
         }
 
-        public void DeleteMovie(MovieDto deleteMovie)
+        private void _downloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            _logger.Debug(string.Format("DeleteMovie: deleting movie {0}", deleteMovie));
-            deleteMovieAsync(deleteMovie);
+            _logger.Debug(string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
+            loadMovieListAsync();
         }
 
         private void startMovieOnPc(string movieTitle)
@@ -179,30 +181,7 @@ namespace Data.Services
 
             string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_MOVIES.Action;
 
-            _downloadController.OnDownloadFinished += _movieDownloadFinished;
-
             await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.Movie);
-        }
-
-        private async Task addMovieAsync(MovieDto newMovie)
-        {
-            _logger.Debug(string.Format("addMovieAsync: add new movie {0}", newMovie));
-
-            UserDto user = _settingsController.User;
-            if (user == null)
-            {
-                OnMovieAddFinished(false, "No user");
-                return;
-            }
-
-            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
-                user.Name, user.Passphrase,
-                newMovie.CommandAdd);
-
-            _downloadController.OnDownloadFinished += _movieAddFinished;
-
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.MovieAdd);
         }
 
         private async Task updateMovieAsync(MovieDto updateMovie)
@@ -226,27 +205,6 @@ namespace Data.Services
             await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.MovieUpdate);
         }
 
-        private async Task deleteMovieAsync(MovieDto deleteMovie)
-        {
-            _logger.Debug(string.Format("deleteMovieAsync: deleting movie {0}", deleteMovie));
-
-            UserDto user = _settingsController.User;
-            if (user == null)
-            {
-                OnMovieDeleteFinished(false, "No user");
-                return;
-            }
-
-            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
-                user.Name, user.Passphrase,
-                deleteMovie.CommandDelete);
-
-            _downloadController.OnDownloadFinished += _movieDeleteFinished;
-
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.MovieDelete);
-        }
-
         private void _movieDownloadFinished(string response, bool success, DownloadType downloadType)
         {
             _logger.Debug("_movieDownloadFinished");
@@ -256,8 +214,6 @@ namespace Data.Services
                 _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
-
-            _downloadController.OnDownloadFinished -= _movieDownloadFinished;
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
@@ -291,39 +247,6 @@ namespace Data.Services
             OnMovieDownloadFinished(_movieList, true, response);
         }
 
-        private void _movieAddFinished(string response, bool success, DownloadType downloadType)
-        {
-            _logger.Debug("_movieAddFinished");
-
-            if (downloadType != DownloadType.MovieAdd)
-            {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
-                return;
-            }
-
-            _downloadController.OnDownloadFinished -= _movieAddFinished;
-
-            if (response.Contains("Error") || response.Contains("ERROR"))
-            {
-                _logger.Error(response);
-
-                OnMovieAddFinished(false, response);
-                return;
-            }
-
-            _logger.Debug(string.Format("response: {0}", response));
-
-            if (!success)
-            {
-                _logger.Error("Adding was not successful!");
-
-                OnMovieAddFinished(false, response);
-                return;
-            }
-
-            OnMovieAddFinished(true, response);
-        }
-
         private void _movieUpdateFinished(string response, bool success, DownloadType downloadType)
         {
             _logger.Debug("_movieUpdateFinished");
@@ -355,39 +278,8 @@ namespace Data.Services
             }
 
             OnMovieUpdateFinished(true, response);
-        }
 
-        private void _movieDeleteFinished(string response, bool success, DownloadType downloadType)
-        {
-            _logger.Debug("_movieDeleteFinished");
-
-            if (downloadType != DownloadType.MovieDelete)
-            {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
-                return;
-            }
-
-            _downloadController.OnDownloadFinished -= _movieDeleteFinished;
-
-            if (response.Contains("Error") || response.Contains("ERROR"))
-            {
-                _logger.Error(response);
-
-                OnMovieDeleteFinished(false, response);
-                return;
-            }
-
-            _logger.Debug(string.Format("response: {0}", response));
-
-            if (!success)
-            {
-                _logger.Error("Deleting was not successful!");
-
-                OnMovieDeleteFinished(false, response);
-                return;
-            }
-
-            OnMovieDeleteFinished(true, response);
+            loadMovieListAsync();
         }
 
         public void Dispose()
@@ -395,9 +287,11 @@ namespace Data.Services
             _logger.Debug("Dispose");
 
             _downloadController.OnDownloadFinished -= _movieDownloadFinished;
-            _downloadController.OnDownloadFinished -= _movieAddFinished;
             _downloadController.OnDownloadFinished -= _movieUpdateFinished;
-            _downloadController.OnDownloadFinished -= _movieDeleteFinished;
+
+            _downloadTimer.Elapsed -= _downloadTimer_Elapsed;
+            _downloadTimer.AutoReset = false;
+            _downloadTimer.Stop();
 
             _downloadController.Dispose();
         }

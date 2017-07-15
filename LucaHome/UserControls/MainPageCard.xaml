@@ -17,14 +17,16 @@
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{DynamicResource MaterialDesignFont}">
 
-    <Grid>
+    <Grid 
+        ToolTip="{Binding 
+            RelativeSource={RelativeSource AncestorType=UserControl},
+            Path=Description, 
+            Mode=OneWay}">
         <materialDesign:Card 
             x:Name="MainPageCardContent"
             Margin="5"
             Height="125"
-            Width="235"
-            MouseEnter="MainPageCardContent_MouseEnter"
-            MouseLeave="MainPageCardContent_MouseLeave">
+            Width="235">
 
             <Grid>
                 <Grid.RowDefinitions>
@@ -123,6 +125,32 @@
             Width="30"
             Height="30"
             Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+            Margin="5 5 40 5"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            ToolTip="Show map"
+            Command="{Binding
+            RelativeSource={RelativeSource AncestorType=UserControl},
+            Path=ButtonMapCommand,
+            Mode=OneWay}"
+            Visibility="{Binding
+            RelativeSource={RelativeSource AncestorType=UserControl},
+            Path=ButtonMapVisibility,
+            Mode=OneWay}">
+            <materialDesign:PackIcon 
+                Kind="Map" 
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Height="25" 
+                Width="25" />
+        </Button>
+
+        <Button 
+            Grid.Column="1"
+            Grid.Row="2"
+            Width="30"
+            Height="30"
+            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
             Margin="5 5 5 5"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
@@ -134,9 +162,7 @@
             Visibility="{Binding
             RelativeSource={RelativeSource AncestorType=UserControl},
             Path=ButtonAddVisibility,
-            Mode=OneWay}"
-            MouseEnter="MainPageCardContent_MouseEnter"
-            MouseLeave="MainPageCardContent_MouseLeave">
+            Mode=OneWay}">
             <materialDesign:PackIcon 
                 Kind="Plus" 
                 HorizontalAlignment="Center"
@@ -145,5 +171,5 @@
                 Width="30" />
         </Button>
     </Grid>
-    
+
 </UserControl>

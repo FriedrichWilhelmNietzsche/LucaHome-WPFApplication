@@ -5,7 +5,7 @@
 <a target="_blank" href="https://www.paypal.me/GuepardoApps" title="Donate using PayPal"><img src="https://img.shields.io/badge/paypal-donate-blue.svg" /></a>
 
 [![Build](https://img.shields.io/badge/build-successful-green.svg)](https://github.com/Gu3pardo/LucaHome-WPFApplication)
-[![Version](https://img.shields.io/badge/version-v0.4.0.170712-green.svg)](https://github.com/Gu3pardo/LucaHome-WPFApplication)
+[![Version](https://img.shields.io/badge/version-v0.5.0.17196-green.svg)](https://github.com/Gu3pardo/LucaHome-WPFApplication)
 [![TestCoverage](https://img.shields.io/badge/testcoverage-less5percent-red.svg)](https://github.com/Gu3pardo/LucaHome-WPFApplication)
 
 Part of the LucaHome-Project
@@ -21,6 +21,7 @@ ___________
 ![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img002.png)
 ___________
 ![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img003.png)
+![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img003_3.png)
 ___________
 ![alt tag](https://github.com/Gu3pardo/LucaHome-WPFApplication/blob/master/screenshots/img004.png)
 ___________

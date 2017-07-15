@@ -47,8 +47,7 @@
             Grid.Column="0" 
             x:Name="SearchScheduleTextBox"
             Margin="5 15 5 5" 
-            materialDesign:HintAssist.Hint="Search for keywords in the schedules"
-            KeyDown = "SearchScheduleTextBox_KeyDown">
+            materialDesign:HintAssist.Hint="Search for keywords in the schedules">
             <TextBox.Text>
                 <Binding Path="ScheduleSearchKey" UpdateSourceTrigger="PropertyChanged" />
             </TextBox.Text>
@@ -62,7 +61,7 @@
             Margin="5"
             VerticalAlignment="Center"
             Width="{DynamicResource ListWidth}"
-            Name="ScheduleList">
+            ItemsSource="{Binding Path=ScheduleList, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn 
@@ -137,9 +136,7 @@
                                     Margin="5 5 5 5"
                                     ToolTip="Update schedule"
                                     Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
-                                    Click="ButtonUpdateSchedule_Click"
-                                    MouseEnter="Button_MouseEnter"
-                                    MouseLeave="Button_MouseLeave">
+                                    Click="ButtonUpdateSchedule_Click">
                                     <materialDesign:PackIcon 
                                         Kind="Settings" 
                                         Height="25" 
@@ -159,9 +156,7 @@
                                     Margin="5 5 5 5"
                                     ToolTip="Delete schedule"
                                     Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
-                                    Click="ButtonDeleteSchedule_Click" 
-                                    MouseEnter="Button_MouseEnter"
-                                    MouseLeave="Button_MouseLeave">
+                                    Click="ButtonDeleteSchedule_Click">
                                     <materialDesign:PackIcon 
                                         Kind="Delete" 
                                         Height="25" 

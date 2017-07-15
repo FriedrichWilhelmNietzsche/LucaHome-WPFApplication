@@ -7,6 +7,7 @@ using Data.Controller;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace Data.Services
 {
@@ -20,6 +21,8 @@ namespace Data.Services
         private const string TAG = "ShoppingListService";
         private readonly Logger _logger;
 
+        private const int TIMEOUT = 5 * 60 * 1000;
+
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
         private readonly JsonDataToShoppingConverter _jsonDataToShoppingConverter;
@@ -29,6 +32,8 @@ namespace Data.Services
 
         private IList<ShoppingEntryDto> _shoppingList = new List<ShoppingEntryDto>();
 
+        private Timer _downloadTimer;
+
         ShoppingListService()
         {
             _logger = new Logger(TAG);
@@ -36,6 +41,13 @@ namespace Data.Services
             _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
             _jsonDataToShoppingConverter = new JsonDataToShoppingConverter();
+
+            _downloadController.OnDownloadFinished += _shoppingListDownloadFinished;
+
+            _downloadTimer = new Timer(TIMEOUT);
+            _downloadTimer.Elapsed += _downloadTimer_Elapsed;
+            _downloadTimer.AutoReset = true;
+            _downloadTimer.Start();
         }
 
         public event ShoppingListServiceDownloadEventHandler OnShoppingListDownloadFinished;
@@ -114,6 +126,12 @@ namespace Data.Services
             deleteShoppingEntryAsync(deleteShoppingEntry);
         }
 
+        private void _downloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            _logger.Debug(string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
+            loadShoppingListAsync();
+        }
+
         private async Task loadShoppingListAsync()
         {
             _logger.Debug("loadShoppingListAsync");
@@ -127,8 +145,6 @@ namespace Data.Services
 
             string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_SHOPPING_LIST.Action;
             _logger.Debug(string.Format("RequestUrl {0}", requestUrl));
-
-            _downloadController.OnDownloadFinished += _shoppingListDownloadFinished;
 
             await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.ShoppingList);
         }
@@ -206,8 +222,6 @@ namespace Data.Services
                 return;
             }
 
-            _downloadController.OnDownloadFinished -= _shoppingListDownloadFinished;
-
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
                 _logger.Error(response);
@@ -271,6 +285,8 @@ namespace Data.Services
             }
 
             OnShoppingEntryAddFinished(true, response);
+
+            loadShoppingListAsync();
         }
 
         private void _shoppingEntryUpdateFinished(string response, bool success, DownloadType downloadType)
@@ -304,6 +320,8 @@ namespace Data.Services
             }
 
             OnShoppingEntryUpdateFinished(true, response);
+
+            loadShoppingListAsync();
         }
 
         private void _shoppingEntryDeleteFinished(string response, bool success, DownloadType downloadType)
@@ -337,6 +355,8 @@ namespace Data.Services
             }
 
             OnShoppingEntryDeleteFinished(true, response);
+
+            loadShoppingListAsync();
         }
 
         public void Dispose()
@@ -347,6 +367,10 @@ namespace Data.Services
             _downloadController.OnDownloadFinished -= _shoppingEntryAddFinished;
             _downloadController.OnDownloadFinished -= _shoppingEntryUpdateFinished;
             _downloadController.OnDownloadFinished -= _shoppingEntryDeleteFinished;
+
+            _downloadTimer.Elapsed -= _downloadTimer_Elapsed;
+            _downloadTimer.AutoReset = false;
+            _downloadTimer.Stop();
 
             _downloadController.Dispose();
         }

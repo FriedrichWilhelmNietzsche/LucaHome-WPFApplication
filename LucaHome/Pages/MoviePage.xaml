@@ -47,13 +47,12 @@
             Grid.Column="0" 
             x:Name="SearchMovieTextBox"
             Margin="5 15 5 5" 
-            materialDesign:HintAssist.Hint="Search for keywords in the movies"
-            KeyDown = "SearchMovieTextBox_KeyDown">
+            materialDesign:HintAssist.Hint="Search for keywords in the movies">
             <TextBox.Text>
                 <Binding Path="MovieSearchKey" UpdateSourceTrigger="PropertyChanged" />
             </TextBox.Text>
         </TextBox>
-        
+
         <ListView 
             Grid.Column="0"
             Grid.Row="2"
@@ -62,7 +61,7 @@
             Margin="5"
             VerticalAlignment="Center"
             Width="{DynamicResource ListWidth}"
-            Name="MovieList">
+            ItemsSource="{Binding Path=MovieList, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn 
@@ -131,33 +130,9 @@
                                     Margin="5 5 5 5"
                                     ToolTip="Update movie"
                                     Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
-                                    Click="ButtonUpdateMovie_Click"
-                                    MouseEnter="Button_MouseEnter"
-                                    MouseLeave="Button_MouseLeave">
+                                    Click="ButtonUpdateMovie_Click">
                                     <materialDesign:PackIcon 
                                         Kind="Settings" 
-                                        Height="25" 
-                                        Width="25" />
-                                </Button>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn 
-                        Width="65" >
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button 
-                                    Height="40" 
-                                    Width="40"
-                                    Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-                                    Margin="5 5 5 5"
-                                    ToolTip="Delete birthday"
-                                    Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
-                                    Click="ButtonDeleteMovie_Click" 
-                                    MouseEnter="Button_MouseEnter"
-                                    MouseLeave="Button_MouseLeave">
-                                    <materialDesign:PackIcon 
-                                        Kind="Delete" 
                                         Height="25" 
                                         Width="25" />
                                 </Button>
@@ -167,21 +142,6 @@
                 </GridView>
             </ListView.View>
         </ListView>
-
-        <Button 
-            Grid.Column="0"
-            Grid.Row="0"
-            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-            Margin="5 5 5 -24"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Bottom"
-            ToolTip="MaterialDesignFloatingActionMiniButton"
-            Click="ButtonAdd_Click">
-            <materialDesign:PackIcon 
-                Kind="Plus" 
-                Height="24" 
-                Width="24" />
-        </Button>
 
         <Button 
             Grid.Column="0"

@@ -47,8 +47,7 @@
             Grid.Column="0" 
             x:Name="SearchWirelessSocketTextBox"
             Margin="5 15 5 5" 
-            materialDesign:HintAssist.Hint="Search for keywords in the wireless sockets"
-            KeyDown = "SearchWirelessSocketTextBox_KeyDown">
+            materialDesign:HintAssist.Hint="Search for keywords in the wireless sockets">
             <TextBox.Text>
                 <Binding Path="WirelessSocketSearchKey" UpdateSourceTrigger="PropertyChanged" />
             </TextBox.Text>
@@ -62,7 +61,7 @@
             Margin="5"
             VerticalAlignment="Center"
             Width="{DynamicResource ListWidth}"
-            Name="WirelessSocketList">
+            ItemsSource="{Binding Path=WirelessSocketList, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn 
@@ -128,9 +127,7 @@
                                     Margin="5 5 5 5"
                                     ToolTip="Update wireless socket"
                                     Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
-                                    Click="ButtonUpdateWirelessSocket_Click"
-                                    MouseEnter="Button_MouseEnter"
-                                    MouseLeave="Button_MouseLeave">
+                                    Click="ButtonUpdateWirelessSocket_Click">
                                     <materialDesign:PackIcon 
                                         Kind="Settings" 
                                         Height="25" 
@@ -150,9 +147,7 @@
                                     Margin="5 5 5 5"
                                     ToolTip="Delete wireless socket"
                                     Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
-                                    Click="ButtonDeleteWirelessSocket_Click" 
-                                    MouseEnter="Button_MouseEnter"
-                                    MouseLeave="Button_MouseLeave">
+                                    Click="ButtonDeleteWirelessSocket_Click" >
                                     <materialDesign:PackIcon 
                                         Kind="Delete" 
                                         Height="25" 

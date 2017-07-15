@@ -26,6 +26,9 @@ namespace LucaHome.UserControls
         private ICommand _buttonAddCommand;
         private Visibility _buttonAddVisibility;
 
+        private ICommand _buttonMapCommand;
+        private Visibility _buttonMapVisibility;
+
         private string _bottomTitle;
         private string _bottomData;
 
@@ -40,6 +43,9 @@ namespace LucaHome.UserControls
 
             _buttonAddCommand = new DelegateCommand(dummyCommand);
             _buttonAddVisibility = Visibility.Collapsed;
+
+            _buttonMapCommand = new DelegateCommand(dummyCommand);
+            _buttonMapVisibility = Visibility.Collapsed;
 
             _bottomTitle = string.Empty;
             _bottomData = string.Empty;
@@ -98,6 +104,36 @@ namespace LucaHome.UserControls
             }
         }
 
+        public ICommand ButtonMapCommand
+        {
+            get
+            {
+                _logger.Debug(string.Format("Get ButtonMapCommand: {0}", _buttonMapCommand));
+                return _buttonMapCommand;
+            }
+            set
+            {
+                _buttonMapCommand = value;
+                _logger.Debug(string.Format("Set ButtonMapCommand: {0}", _buttonMapCommand));
+                OnPropertyChanged("ButtonMapCommand");
+            }
+        }
+
+        public Visibility ButtonMapVisibility
+        {
+            get
+            {
+                _logger.Debug(string.Format("Get ButtonMapVisibility: {0}", _buttonMapVisibility));
+                return _buttonMapVisibility;
+            }
+            set
+            {
+                _buttonMapVisibility = value;
+                _logger.Debug(string.Format("Set ButtonMapVisibility: {0}", _buttonMapVisibility));
+                OnPropertyChanged("ButtonMapVisibility");
+            }
+        }
+
         public ICommand ButtonAddCommand
         {
             get
@@ -111,11 +147,6 @@ namespace LucaHome.UserControls
                 _logger.Debug(string.Format("Set ButtonAddCommand: {0}", _buttonAddCommand));
                 OnPropertyChanged("ButtonAddCommand");
             }
-        }
-
-        private void dummyCommand()
-        {
-            _logger.Error("Please bind a command to this button!");
         }
 
         public Visibility ButtonAddVisibility
@@ -163,14 +194,9 @@ namespace LucaHome.UserControls
             }
         }
 
-        private void MainPageCardContent_MouseEnter(object sender, MouseEventArgs mouseEventArgs)
+        private void dummyCommand()
         {
-            Mouse.OverrideCursor = Cursors.Hand;
-        }
-
-        private void MainPageCardContent_MouseLeave(object sender, MouseEventArgs mouseEventArgs)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
+            _logger.Error("Please bind a command to this button!");
         }
     }
 }

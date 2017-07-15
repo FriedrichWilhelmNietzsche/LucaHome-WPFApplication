@@ -47,10 +47,9 @@
             Grid.Column="0" 
             x:Name="SearchBirthdayTextBox"
             Margin="5 15 5 5" 
-            materialDesign:HintAssist.Hint="Search for keywords in the birthdays"
-            KeyDown = "SearchBirthdayTextBox_KeyDown">
+            materialDesign:HintAssist.Hint="Search for keywords in the birthdays">
             <TextBox.Text>
-                <Binding Path="BirthdaySearchKey" UpdateSourceTrigger="PropertyChanged" />
+                <Binding Path="BirthdaySearchKey" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay" />
             </TextBox.Text>
         </TextBox>
 
@@ -62,7 +61,7 @@
             Margin="5"
             VerticalAlignment="Center"
             Width="{DynamicResource ListWidth}"
-            Name="BirthdayList">
+            ItemsSource="{Binding Path=BirthdayList, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn 
@@ -107,9 +106,7 @@
                                     Margin="5 5 5 5"
                                     ToolTip="Update birthday"
                                     Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
-                                    Click="ButtonUpdateBirthday_Click"
-                                    MouseEnter="Button_MouseEnter"
-                                    MouseLeave="Button_MouseLeave">
+                                    Click="ButtonUpdateBirthday_Click">
                                     <materialDesign:PackIcon 
                                         Kind="Settings" 
                                         Height="25" 
@@ -129,9 +126,7 @@
                                     Margin="5 5 5 5"
                                     ToolTip="Delete birthday"
                                     Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
-                                    Click="ButtonDeleteBirthday_Click" 
-                                    MouseEnter="Button_MouseEnter"
-                                    MouseLeave="Button_MouseLeave">
+                                    Click="ButtonDeleteBirthday_Click">
                                     <materialDesign:PackIcon 
                                         Kind="Delete" 
                                         Height="25" 

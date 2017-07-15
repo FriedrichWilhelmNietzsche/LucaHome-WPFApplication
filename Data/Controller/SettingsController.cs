@@ -56,7 +56,7 @@ namespace Data.Controller
                 }
 
                 _logger.Warning("No user found!");
-                return null;
+                return new UserDto("NA", "NA");
             }
             set
             {

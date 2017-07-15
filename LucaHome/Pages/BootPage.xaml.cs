@@ -20,6 +20,7 @@ namespace LucaHome.Pages
         private int _downloadCount = 0;
 
         private readonly BirthdayService _birthdayService;
+        private readonly MapContentService _mapContentService;
         private readonly MenuService _menuService;
         private readonly MovieService _movieService;
         private readonly NavigationService _navigationService;
@@ -27,7 +28,6 @@ namespace LucaHome.Pages
         private readonly ScheduleService _scheduleService;
         private readonly ShoppingListService _shoppingListService;
         private readonly TemperatureService _temperatureService;
-        private readonly UserService _userService;
         private readonly WirelessSocketService _wirelessSocketService;
 
         public BootPage(NavigationService navigationService)
@@ -35,6 +35,7 @@ namespace LucaHome.Pages
             _logger = new Logger(TAG, Enables.LOGGING);
 
             _birthdayService = BirthdayService.Instance;
+            _mapContentService = MapContentService.Instance;
             _menuService = MenuService.Instance;
             _movieService = MovieService.Instance;
             _navigationService = navigationService;
@@ -42,7 +43,6 @@ namespace LucaHome.Pages
             _scheduleService = ScheduleService.Instance;
             _shoppingListService = ShoppingListService.Instance;
             _temperatureService = TemperatureService.Instance;
-            _userService = UserService.Instance;
             _wirelessSocketService = WirelessSocketService.Instance;
 
             InitializeComponent();
@@ -52,54 +52,27 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
 
-            // Check for user first
-            if (!_userService.UserSaved())
-            {
-                _logger.Debug("Not yet entered an user! Navigating to LoginPage");
-                _navigationService.Navigate(new LoginPage(_navigationService));
-            }
-            else
-            {
-                _userService.OnUserCheckedFinished += _onUserCheckedFinished;
-                _userService.ValidateUser();
-            }
-        }
+            _birthdayService.OnBirthdayDownloadFinished += _birthdayDownloadFinished;
 
-        private void _onUserCheckedFinished(string response, bool success)
-        {
-            _logger.Debug(string.Format("_onUserCheckedFinished with response {0} was successful: {1}", response, success));
-            _userService.OnUserCheckedFinished -= _onUserCheckedFinished;
+            _menuService.OnMenuDownloadFinished += _onMenuDownloadFinished;
 
-            // Is entered user was validated start download, otherwise navigate to LogIn Page
-            if (success)
-            {
-                _birthdayService.OnBirthdayDownloadFinished += _birthdayDownloadFinished;
+            _openWeatherService.OnCurrentWeatherDownloadFinished += _currentWeatherDownloadFinished;
+            _openWeatherService.OnForecastWeatherDownloadFinished += _forecastWeatherDownloadFinished;
 
-                _menuService.OnMenuDownloadFinished += _onMenuDownloadFinished;
+            _shoppingListService.OnShoppingListDownloadFinished += _onShoppingListDownloadFinished;
 
-                _openWeatherService.OnCurrentWeatherDownloadFinished += _currentWeatherDownloadFinished;
-                _openWeatherService.OnForecastWeatherDownloadFinished += _forecastWeatherDownloadFinished;
+            _wirelessSocketService.OnWirelessSocketDownloadFinished += _wirelessSocketDownloadFinished;
 
-                _shoppingListService.OnShoppingListDownloadFinished += _onShoppingListDownloadFinished;
+            _birthdayService.LoadBirthdayList();
 
-                _wirelessSocketService.OnWirelessSocketDownloadFinished += _wirelessSocketDownloadFinished;
+            _menuService.LoadMenuList();
 
-                _birthdayService.LoadBirthdayList();
+            _openWeatherService.LoadCurrentWeather();
+            _openWeatherService.LoadForecastModel();
 
-                _menuService.LoadMenuList();
+            _shoppingListService.LoadShoppingList();
 
-                _openWeatherService.LoadCurrentWeather();
-                _openWeatherService.LoadForecastModel();
-
-                _shoppingListService.LoadShoppingList();
-
-                _wirelessSocketService.LoadWirelessSocketList();
-            }
-            else
-            {
-                _logger.Debug("Failed to validate user! Navigating to LoginPage");
-                _navigationService.Navigate(new LoginPage(_navigationService));
-            }
+            _wirelessSocketService.LoadWirelessSocketList();
         }
 
         private void _birthdayDownloadFinished(IList<BirthdayDto> birthdayList, bool success, string response)
@@ -123,6 +96,13 @@ namespace LucaHome.Pages
         private void _forecastWeatherDownloadFinished(ForecastModel forecastWeather, bool success)
         {
             _logger.Debug(string.Format("_forecastWeatherDownloadFinished with model {0} was successful: {1}", forecastWeather, success));
+            _downloadCount++;
+            checkDownloadCount();
+        }
+
+        private void _mapContentDownloadFinished(IList<MapContentDto> mapContentList, bool success, string response)
+        {
+            _logger.Debug(string.Format("_mapContentDownloadFinished with model {0} was successful: {1}", mapContentList, success));
             _downloadCount++;
             checkDownloadCount();
         }
@@ -153,6 +133,10 @@ namespace LucaHome.Pages
             _logger.Debug(string.Format("_scheduleDownloadFinished with model {0} was successful: {1}", scheduleList, success));
             _downloadCount++;
             checkDownloadCount();
+
+            // Start download of mapcontent after downloading wirelesssockets AND schedules
+            _mapContentService.OnMapContentDownloadFinished += _mapContentDownloadFinished;
+            _mapContentService.LoadMapContentList();
         }
 
         private void _temperatureDownloadFinished(IList<TemperatureDto> temperatureList, bool success, string response)
@@ -201,7 +185,6 @@ namespace LucaHome.Pages
             _scheduleService.OnScheduleDownloadFinished -= _scheduleDownloadFinished;
             _shoppingListService.OnShoppingListDownloadFinished -= _onShoppingListDownloadFinished;
             _temperatureService.OnTemperatureDownloadFinished -= _temperatureDownloadFinished;
-            _userService.OnUserCheckedFinished -= _onUserCheckedFinished;
             _wirelessSocketService.OnWirelessSocketDownloadFinished -= _wirelessSocketDownloadFinished;
         }
     }

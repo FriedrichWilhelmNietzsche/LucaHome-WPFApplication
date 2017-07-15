@@ -28,10 +28,11 @@
     <ProductName>LucaHome</ProductName>
     <PublisherName>GuepardoApps</PublisherName>
     <SuiteName>LucaHome</SuiteName>
-    <ApplicationRevision>170712</ApplicationRevision>
-    <ApplicationVersion>0.4.0.170712</ApplicationVersion>
+    <ApplicationRevision>17169</ApplicationRevision>
+    <ApplicationVersion>0.5.0.17169</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -51,10 +52,25 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>0</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>ic_launcher.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>22CC82F9049627DAAE6C7CA7DFC2AE1A32396983</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>LucaHome_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>LucaHome.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MaterialDesignColors, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
@@ -110,11 +126,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Dialogs\ConfirmDialog.xaml.cs">
+      <DependentUpon>ConfirmDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\SetDialog.xaml.cs">
+      <DependentUpon>SetDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\DeleteDialog.xaml.cs">
       <DependentUpon>DeleteDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\BirthdayUpdatePage.xaml.cs">
       <DependentUpon>BirthdayUpdatePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\MapPage.xaml.cs">
+      <DependentUpon>MapPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -148,9 +173,6 @@
     </Compile>
     <Compile Include="Pages\WirelessSocketAddPage.xaml.cs">
       <DependentUpon>WirelessSocketAddPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\MovieAddPage.xaml.cs">
-      <DependentUpon>MovieAddPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\BirthdayAddPage.xaml.cs">
       <DependentUpon>BirthdayAddPage.xaml</DependentUpon>
@@ -188,6 +210,14 @@
     <Compile Include="UserControls\ScrollableImage.xaml.cs">
       <DependentUpon>ScrollableImage.xaml</DependentUpon>
     </Compile>
+    <Page Include="Dialogs\ConfirmDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\SetDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Dialogs\DeleteDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -205,6 +235,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Pages\BirthdayUpdatePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\MapPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -249,10 +283,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\WirelessSocketAddPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Pages\MovieAddPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -319,6 +349,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="LucaHome_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

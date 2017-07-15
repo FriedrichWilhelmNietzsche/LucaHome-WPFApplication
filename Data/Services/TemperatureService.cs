@@ -8,7 +8,9 @@ using OpenWeather.Models;
 using OpenWeather.Service;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 using static Common.Dto.TemperatureDto;
 
 namespace Data.Services
@@ -20,6 +22,8 @@ namespace Data.Services
         private const string TAG = "TemperatureService";
         private readonly Logger _logger;
 
+        private const int TIMEOUT = 5 * 60 * 1000;
+
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
         private readonly JsonDataToTemperatureConverter _jsonDataToTemperatureConverter;
@@ -30,6 +34,8 @@ namespace Data.Services
 
         private IList<TemperatureDto> _temperatureList = new List<TemperatureDto>();
 
+        private Timer _downloadTimer;
+
         TemperatureService()
         {
             _logger = new Logger(TAG);
@@ -38,6 +44,11 @@ namespace Data.Services
             _downloadController = new DownloadController();
             _jsonDataToTemperatureConverter = new JsonDataToTemperatureConverter();
             _openWeatherService = OpenWeatherService.Instance;
+
+            _downloadTimer = new Timer(TIMEOUT);
+            _downloadTimer.Elapsed += _downloadTimer_Elapsed;
+            _downloadTimer.AutoReset = true;
+            _downloadTimer.Start();
         }
 
         public event TemperatureDownloadEventHandler OnTemperatureDownloadFinished;
@@ -64,6 +75,15 @@ namespace Data.Services
             {
                 return _temperatureList;
             }
+        }
+
+        public TemperatureDto GetByType(TemperatureType temperatureType)
+        {
+            TemperatureDto foundTemperature = _temperatureList
+                        .Where(temperature => temperature.GetTemperatureType == temperatureType)
+                        .Select(temperature => temperature)
+                        .FirstOrDefault();
+            return foundTemperature;
         }
 
         public Uri Wallpaper
@@ -103,6 +123,14 @@ namespace Data.Services
         public void LoadTemperatureList()
         {
             _logger.Debug("LoadTemperatureList");
+            loadTemperatureListAsync();
+        }
+
+        private void _downloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            _logger.Debug(string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
+            _openWeatherService.LoadCurrentWeather();
+            _openWeatherService.LoadForecastModel();
             loadTemperatureListAsync();
         }
 
@@ -180,6 +208,10 @@ namespace Data.Services
             _logger.Debug("Dispose");
 
             _downloadController.OnDownloadFinished -= _temperatureDownloadFinished;
+
+            _downloadTimer.Elapsed -= _downloadTimer_Elapsed;
+            _downloadTimer.AutoReset = false;
+            _downloadTimer.Stop();
 
             _downloadController.Dispose();
         }

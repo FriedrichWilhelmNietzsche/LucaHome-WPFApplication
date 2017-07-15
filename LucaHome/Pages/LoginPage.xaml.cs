@@ -101,7 +101,7 @@ namespace LucaHome.Pages
                 return;
             }
 
-            _navigationService.GoBack();
+            _navigationService.Navigate(new BootPage(_navigationService));
         }
     }
 }

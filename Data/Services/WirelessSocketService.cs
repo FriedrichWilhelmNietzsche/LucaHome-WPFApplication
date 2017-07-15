@@ -7,6 +7,7 @@ using Data.Controller;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace Data.Services
 {
@@ -20,6 +21,8 @@ namespace Data.Services
         private const string TAG = "WirelessSocketService";
         private readonly Logger _logger;
 
+        private const int TIMEOUT = 5 * 60 * 1000;
+
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
         private readonly JsonDataToWirelessSocketConverter _jsonDataToWirelessSocketConverter;
@@ -29,6 +32,8 @@ namespace Data.Services
 
         private IList<WirelessSocketDto> _wirelessSocketList = new List<WirelessSocketDto>();
 
+        private Timer _downloadTimer;
+
         WirelessSocketService()
         {
             _logger = new Logger(TAG);
@@ -36,6 +41,13 @@ namespace Data.Services
             _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
             _jsonDataToWirelessSocketConverter = new JsonDataToWirelessSocketConverter();
+
+            _downloadController.OnDownloadFinished += _wirelessSocketDownloadFinished;
+
+            _downloadTimer = new Timer(TIMEOUT);
+            _downloadTimer.Elapsed += _downloadTimer_Elapsed;
+            _downloadTimer.AutoReset = true;
+            _downloadTimer.Start();
         }
 
         public event WirelessSocketDownloadEventHandler OnWirelessSocketDownloadFinished;
@@ -96,7 +108,8 @@ namespace Data.Services
                             || wirelessSocket.Area.Contains(searchKey)
                             || wirelessSocket.Code.Contains(searchKey)
                             || wirelessSocket.ShortName.Contains(searchKey)
-                            || wirelessSocket.IsActivated.ToString().Contains(searchKey))
+                            || wirelessSocket.IsActivated.ToString().Contains(searchKey)
+                            || wirelessSocket.ActivationString.Contains(searchKey))
                         .Select(wirelessSocket => wirelessSocket)
                         .ToList();
 
@@ -153,6 +166,12 @@ namespace Data.Services
             deleteWirelessSocketAsync(deleteWirelessSocket);
         }
 
+        private void _downloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            _logger.Debug(string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
+            loadWirelessSocketListAsync();
+        }
+
         private async Task loadWirelessSocketListAsync()
         {
             _logger.Debug("loadWirelessSocketList");
@@ -165,8 +184,6 @@ namespace Data.Services
             }
 
             string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_SOCKETS.Action;
-
-            _downloadController.OnDownloadFinished += _wirelessSocketDownloadFinished;
 
             await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.WirelessSocket);
         }
@@ -262,8 +279,6 @@ namespace Data.Services
                 return;
             }
 
-            _downloadController.OnDownloadFinished -= _wirelessSocketDownloadFinished;
-
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
                 _logger.Error(response);
@@ -326,6 +341,8 @@ namespace Data.Services
             }
 
             OnSetWirelessSocketFinished(null, true, response);
+
+            loadWirelessSocketListAsync();
         }
 
         private void _addWirelessSocketFinished(string response, bool success, DownloadType downloadType)
@@ -358,6 +375,8 @@ namespace Data.Services
             }
 
             OnAddWirelessSocketFinished(true, response);
+
+            loadWirelessSocketListAsync();
         }
 
         private void _updateWirelessSocketFinished(string response, bool success, DownloadType downloadType)
@@ -390,6 +409,8 @@ namespace Data.Services
             }
 
             OnUpdateWirelessSocketFinished(true, response);
+
+            loadWirelessSocketListAsync();
         }
 
         private void _deleteWirelessSocketFinished(string response, bool success, DownloadType downloadType)
@@ -422,6 +443,8 @@ namespace Data.Services
             }
 
             OnDeleteWirelessSocketFinished(true, response);
+
+            loadWirelessSocketListAsync();
         }
 
         public void Dispose()
@@ -433,6 +456,10 @@ namespace Data.Services
             _downloadController.OnDownloadFinished -= _addWirelessSocketFinished;
             _downloadController.OnDownloadFinished -= _updateWirelessSocketFinished;
             _downloadController.OnDownloadFinished -= _deleteWirelessSocketFinished;
+
+            _downloadTimer.Elapsed -= _downloadTimer_Elapsed;
+            _downloadTimer.AutoReset = false;
+            _downloadTimer.Stop();
 
             _downloadController.Dispose();
         }

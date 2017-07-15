@@ -17,7 +17,8 @@
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        Icon="/Common;component/Assets/Icons/Others/ic_launcher.png">
+        Icon="/Common;component/Assets/Icons/Others/ic_launcher.png"
+        Closing="Window_Closing">
 
     <Window.Resources>
         <System:Int16 x:Key="PageHeight">425</System:Int16>

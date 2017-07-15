@@ -7,6 +7,7 @@ using Data.Controller;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace Data.Services
 {
@@ -18,6 +19,8 @@ namespace Data.Services
         private const string TAG = "MenuService";
         private readonly Logger _logger;
 
+        private const int TIMEOUT = 15 * 60 * 1000;
+
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
         private readonly JsonDataToMenuConverter _jsonDataToMenuConverter;
@@ -27,6 +30,8 @@ namespace Data.Services
 
         private IList<MenuDto> _menuList = new List<MenuDto>();
 
+        private Timer _downloadTimer;
+
         MenuService()
         {
             _logger = new Logger(TAG);
@@ -34,6 +39,13 @@ namespace Data.Services
             _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
             _jsonDataToMenuConverter = new JsonDataToMenuConverter();
+
+            _downloadController.OnDownloadFinished += _menuDownloadFinished;
+
+            _downloadTimer = new Timer(TIMEOUT);
+            _downloadTimer.Elapsed += _downloadTimer_Elapsed;
+            _downloadTimer.AutoReset = true;
+            _downloadTimer.Start();
         }
 
         public event MenuDownloadEventHandler OnMenuDownloadFinished;
@@ -86,6 +98,12 @@ namespace Data.Services
             updateMenuAsync(updateMenu);
         }
 
+        private void _downloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            _logger.Debug(string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
+            loadMenuListAsync();
+        }
+
         private async Task loadMenuListAsync()
         {
             _logger.Debug("loadMenuListAsync");
@@ -98,8 +116,6 @@ namespace Data.Services
             }
 
             string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_MENU.Action;
-
-            _downloadController.OnDownloadFinished += _menuDownloadFinished;
 
             await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.Menu);
         }
@@ -134,8 +150,6 @@ namespace Data.Services
                 _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
-
-            _downloadController.OnDownloadFinished -= _menuDownloadFinished;
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
@@ -200,6 +214,8 @@ namespace Data.Services
             }
 
             OnMenuUpdateFinished(true, response);
+
+            loadMenuListAsync();
         }
 
         public void Dispose()
@@ -208,6 +224,10 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished -= _menuDownloadFinished;
             _downloadController.OnDownloadFinished -= _menuUpdateFinished;
+
+            _downloadTimer.Elapsed -= _downloadTimer_Elapsed;
+            _downloadTimer.AutoReset = false;
+            _downloadTimer.Stop();
 
             _downloadController.Dispose();
         }

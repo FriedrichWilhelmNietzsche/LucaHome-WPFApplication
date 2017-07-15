@@ -47,6 +47,8 @@ Temporary Items
 .apdisk
 
 # Ignored by me
+.vs/
 obj/
 bin/
+publish/
 TestResults/

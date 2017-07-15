@@ -33,8 +33,7 @@ namespace LucaHome.Pages
         private readonly Notifier _notifier;
 
         private string _movieSearchKey = string.Empty;
-
-        private readonly MovieAddPage _movieAddPage;
+        private IList<MovieDto> _movieList = new List<MovieDto>();
 
         public MoviePage(NavigationService navigationService)
         {
@@ -43,9 +42,8 @@ namespace LucaHome.Pages
             _navigationService = navigationService;
             _movieService = MovieService.Instance;
 
-            _movieAddPage = new MovieAddPage(_navigationService);
-
             InitializeComponent();
+            DataContext = this;
 
             _notifier = new Notifier(cfg =>
             {
@@ -87,12 +85,25 @@ namespace LucaHome.Pages
 
                 if (_movieSearchKey != string.Empty)
                 {
-                    setList(_movieService.FoundMovies(_movieSearchKey));
+                    MovieList = _movieService.FoundMovies(_movieSearchKey);
                 }
                 else
                 {
-                    setList(_movieService.MovieList);
+                    MovieList = _movieService.MovieList;
                 }
+            }
+        }
+
+        public IList<MovieDto> MovieList
+        {
+            get
+            {
+                return _movieList;
+            }
+            set
+            {
+                _movieList = value;
+                OnPropertyChanged("MovieList");
             }
         }
 
@@ -109,7 +120,7 @@ namespace LucaHome.Pages
                 return;
             }
 
-            setList(_movieService.MovieList);
+            MovieList = _movieService.MovieList;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
@@ -118,19 +129,6 @@ namespace LucaHome.Pages
 
             _movieService.OnMovieDownloadFinished -= _movieListDownloadFinished;
             _movieService.OnMovieStartFinished -= _movieStartFinished;
-            _movieService.OnMovieDeleteFinished -= _onMovieDeleteFinished;
-        }
-
-        private void setList(IList<MovieDto> movieList)
-        {
-            _logger.Debug("setList");
-
-            MovieList.Items.Clear();
-
-            foreach (MovieDto entry in movieList)
-            {
-                MovieList.Items.Add(entry);
-            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs routedEventArgs)
@@ -149,32 +147,13 @@ namespace LucaHome.Pages
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _navigationService.GoBack();
-        }
-
-        private void ButtonAdd_Click(object sender, RoutedEventArgs routedEventArgs)
-        {
-            _logger.Debug(string.Format("ButtonAdd_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
-            _navigationService.Navigate(_movieAddPage);
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _movieService.LoadMovieList();
-        }
-
-        private void SearchMovieTextBox_KeyDown(object sender, KeyEventArgs keyEventArgs)
-        {
-            _logger.Debug(string.Format("SearchMovieTextBox_KeyDown with sender {0} and keyEventArgs: {1}", sender, keyEventArgs));
-
-            if (keyEventArgs.Key == Key.Enter && keyEventArgs.IsDown)
-            {
-                MovieSearchKey = SearchMovieTextBox.Text;
-            }
         }
 
         private void ButtonUpdateMovie_Click(object sender, RoutedEventArgs routedEventArgs)
@@ -194,37 +173,10 @@ namespace LucaHome.Pages
             }
         }
 
-        private void ButtonDeleteMovie_Click(object sender, RoutedEventArgs routedEventArgs)
-        {
-            _logger.Debug(string.Format("ButtonUpdateMovie_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            if (sender is Button)
-            {
-                Button senderButton = (Button)sender;
-                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
-
-                int movieId = (int)senderButton.Tag;
-                MovieDto deleteMovie = _movieService.GetById(movieId);
-                _logger.Warning(string.Format("Asking for deleting movie {0}!", deleteMovie));
-
-                DeleteDialog movieDeleteDialog = new DeleteDialog("Delete movie?",
-                    string.Format("Movie: {0}\nGenre: {1}\nDescription: {2}", deleteMovie.Title, deleteMovie.Genre, deleteMovie.Description));
-                movieDeleteDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                movieDeleteDialog.ShowDialog();
-
-                var confirmDelete = movieDeleteDialog.DialogResult;
-                if (confirmDelete == true)
-                {
-                    _movieService.OnMovieDeleteFinished += _onMovieDeleteFinished;
-                    _movieService.DeleteMovie(deleteMovie);
-                }
-            }
-        }
-
         private void _movieListDownloadFinished(IList<MovieDto> movieList, bool success, string response)
         {
             _logger.Debug(string.Format("_movieListDownloadFinished with model {0} was successful: {1}", movieList, success));
-
-            setList(_movieService.MovieList);
+            MovieList = _movieService.MovieList;
         }
 
         private void _movieStartFinished(bool success, string response)
@@ -238,23 +190,6 @@ namespace LucaHome.Pages
             {
                 _notifier.ShowError(string.Format("Failed to start movie!\n{0}", response));
             }
-        }
-
-        private void _onMovieDeleteFinished(bool success, string response)
-        {
-            _logger.Debug(string.Format("_onMovieDeleteFinished with response {0} was successful: {1}", response, success));
-            _movieService.OnMovieDeleteFinished -= _onMovieDeleteFinished;
-            _movieService.LoadMovieList();
-        }
-
-        private void Button_MouseEnter(object sender, MouseEventArgs mouseEventArgs)
-        {
-            Mouse.OverrideCursor = Cursors.Hand;
-        }
-
-        private void Button_MouseLeave(object sender, MouseEventArgs mouseEventArgs)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
         }
     }
 }

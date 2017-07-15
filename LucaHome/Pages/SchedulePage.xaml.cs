@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Navigation;
 using ToastNotifications;
 using ToastNotifications.Lifetime;
@@ -36,6 +35,7 @@ namespace LucaHome.Pages
         private readonly Notifier _notifier;
 
         private string _scheduleSearchKey = string.Empty;
+        private IList<ScheduleDto> _scheduleList = new List<ScheduleDto>();
 
         private readonly ScheduleAddPage _scheduleAddPage;
 
@@ -49,6 +49,7 @@ namespace LucaHome.Pages
             _scheduleAddPage = new ScheduleAddPage(_navigationService);
 
             InitializeComponent();
+            DataContext = this;
 
             _notifier = new Notifier(cfg =>
             {
@@ -90,12 +91,25 @@ namespace LucaHome.Pages
 
                 if (_scheduleSearchKey != string.Empty)
                 {
-                    setList(_scheduleService.FoundSchedules(_scheduleSearchKey));
+                    ScheduleList = _scheduleService.FoundSchedules(_scheduleSearchKey);
                 }
                 else
                 {
-                    setList(_scheduleService.ScheduleList);
+                    ScheduleList = _scheduleService.ScheduleList;
                 }
+            }
+        }
+
+        public IList<ScheduleDto> ScheduleList
+        {
+            get
+            {
+                return _scheduleList;
+            }
+            set
+            {
+                _scheduleList = value;
+                OnPropertyChanged("ScheduleList");
             }
         }
 
@@ -112,7 +126,7 @@ namespace LucaHome.Pages
                 return;
             }
 
-            setList(_scheduleService.ScheduleList);
+            ScheduleList = _scheduleService.ScheduleList;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
@@ -121,21 +135,8 @@ namespace LucaHome.Pages
 
             _scheduleService.OnScheduleDownloadFinished -= _scheduleListDownloadFinished;
             _scheduleService.OnSetScheduleFinished -= _setScheduleFinished;
-            _scheduleService.OnDeleteScheduleFinished -= _onScheduleDeleteFinished;
 
             _notifier.Dispose();
-        }
-
-        private void setList(IList<ScheduleDto> scheduleList)
-        {
-            _logger.Debug("setList");
-
-            ScheduleList.Items.Clear();
-
-            foreach (ScheduleDto entry in scheduleList)
-            {
-                ScheduleList.Items.Add(entry);
-            }
         }
 
         private void ScheduleButton_Click(object sender, RoutedEventArgs routedEventArgs)
@@ -188,7 +189,6 @@ namespace LucaHome.Pages
                 var confirmDelete = scheduleDeleteDialog.DialogResult;
                 if (confirmDelete == true)
                 {
-                    _scheduleService.OnDeleteScheduleFinished += _onScheduleDeleteFinished;
                     _scheduleService.DeleteSchedule(deleteSchedule);
                 }
             }
@@ -197,38 +197,25 @@ namespace LucaHome.Pages
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _navigationService.GoBack();
         }
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonAdd_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _navigationService.Navigate(_scheduleAddPage);
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _scheduleService.LoadScheduleList();
-        }
-
-        private void SearchScheduleTextBox_KeyDown(object sender, KeyEventArgs keyEventArgs)
-        {
-            _logger.Debug(string.Format("SearchScheduleTextBox_KeyDown with sender {0} and keyEventArgs: {1}", sender, keyEventArgs));
-
-            if (keyEventArgs.Key == Key.Enter && keyEventArgs.IsDown)
-            {
-                ScheduleSearchKey = SearchScheduleTextBox.Text;
-            }
         }
 
         private void _scheduleListDownloadFinished(IList<ScheduleDto> scheduleList, bool success, string response)
         {
             _logger.Debug(string.Format("_scheduleListDownloadFinished with model {0} was successful: {1}", scheduleList, success));
-            setList(_scheduleService.ScheduleList);
+            ScheduleList = _scheduleService.ScheduleList;
         }
 
         private void _setScheduleFinished(IList<ScheduleDto> scheduleList, bool success, string response)
@@ -242,23 +229,6 @@ namespace LucaHome.Pages
             {
                 _notifier.ShowError(string.Format("Failed to set schedule\n{0}", response));
             }
-        }
-
-        private void _onScheduleDeleteFinished(bool success, string response)
-        {
-            _logger.Debug(string.Format("_onScheduleDeleteFinished with response {0} was successful: {1}", response, success));
-            _scheduleService.OnDeleteScheduleFinished -= _onScheduleDeleteFinished;
-            _scheduleService.LoadScheduleList();
-        }
-
-        private void Button_MouseEnter(object sender, MouseEventArgs mouseEventArgs)
-        {
-            Mouse.OverrideCursor = Cursors.Hand;
-        }
-
-        private void Button_MouseLeave(object sender, MouseEventArgs mouseEventArgs)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
         }
     }
 }

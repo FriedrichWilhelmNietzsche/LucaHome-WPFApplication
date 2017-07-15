@@ -4,6 +4,7 @@ using Common.Tools;
 using Data.Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -19,7 +20,7 @@ using ToastNotifications.Position;
 
 namespace LucaHome.Pages
 {
-    public partial class MenuPage : Page
+    public partial class MenuPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "MenuPage";
         private readonly Logger _logger;
@@ -29,6 +30,8 @@ namespace LucaHome.Pages
 
         private readonly Notifier _notifier;
 
+        private IList<MenuDto> _menuList = new List<MenuDto>();
+
         public MenuPage(NavigationService navigationService)
         {
             _logger = new Logger(TAG, Enables.LOGGING);
@@ -37,6 +40,7 @@ namespace LucaHome.Pages
             _navigationService = navigationService;
 
             InitializeComponent();
+            DataContext = this;
 
             _notifier = new Notifier(cfg =>
             {
@@ -59,6 +63,25 @@ namespace LucaHome.Pages
             _notifier.ClearMessages();
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public IList<MenuDto> MenuList
+        {
+            get
+            {
+                return _menuList;
+            }
+            set
+            {
+                _menuList = value;
+                OnPropertyChanged("MenuList");
+            }
+        }
+
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
@@ -71,33 +94,19 @@ namespace LucaHome.Pages
                 return;
             }
 
-            setList();
+            MenuList = _menuService.MenuList;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _menuService.OnMenuDownloadFinished -= _onMenuListDownloadFinished;
-        }
-
-        private void setList()
-        {
-            _logger.Debug("setList");
-
-            MenuList.Items.Clear();
-
-            foreach (MenuDto entry in _menuService.MenuList)
-            {
-                MenuList.Items.Add(entry);
-            }
         }
 
         private void _onMenuListDownloadFinished(IList<MenuDto> menuList, bool success, string response)
         {
             _logger.Debug(string.Format("_onMenuListDownloadFinished with model {0} was successful {1}", menuList, success));
-
-            setList();
+            MenuList = _menuService.MenuList;
         }
 
         private void MenuButton_Click(object sender, RoutedEventArgs routedEventArgs)
@@ -126,7 +135,6 @@ namespace LucaHome.Pages
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _navigationService.GoBack();
         }
 
@@ -134,7 +142,6 @@ namespace LucaHome.Pages
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _menuService.LoadMenuList();
         }
     }

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Navigation;
 
 /*
@@ -28,6 +27,7 @@ namespace LucaHome.Pages
         private readonly NavigationService _navigationService;
 
         private string _birthdaySearchKey = string.Empty;
+        private IList<BirthdayDto> _birthdayList = new List<BirthdayDto>();
 
         private readonly BirthdayAddPage _birthdayAddPage;
 
@@ -41,6 +41,7 @@ namespace LucaHome.Pages
             _birthdayAddPage = new BirthdayAddPage(_navigationService);
 
             InitializeComponent();
+            DataContext = this;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -62,12 +63,25 @@ namespace LucaHome.Pages
 
                 if (_birthdaySearchKey != string.Empty)
                 {
-                    setList(_birthdayService.FoundBirthdays(_birthdaySearchKey));
+                    BirthdayList = _birthdayService.FoundBirthdays(_birthdaySearchKey);
                 }
                 else
                 {
-                    setList(_birthdayService.BirthdayList);
+                    BirthdayList = _birthdayService.BirthdayList;
                 }
+            }
+        }
+
+        public IList<BirthdayDto> BirthdayList
+        {
+            get
+            {
+                return _birthdayList;
+            }
+            set
+            {
+                _birthdayList = value;
+                OnPropertyChanged("BirthdayList");
             }
         }
 
@@ -83,7 +97,7 @@ namespace LucaHome.Pages
                 return;
             }
 
-            setList(_birthdayService.BirthdayList);
+            BirthdayList = _birthdayService.BirthdayList;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
@@ -91,19 +105,6 @@ namespace LucaHome.Pages
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
 
             _birthdayService.OnBirthdayDownloadFinished -= _birthdayListDownloadFinished;
-            _birthdayService.OnBirthdayDeleteFinished -= _onBirthdayDeleteFinished;
-        }
-
-        private void setList(IList<BirthdayDto> birthdayList)
-        {
-            _logger.Debug("setList");
-
-            BirthdayList.Items.Clear();
-
-            foreach (BirthdayDto entry in birthdayList)
-            {
-                BirthdayList.Items.Add(entry);
-            }
         }
 
         private void ButtonUpdateBirthday_Click(object sender, RoutedEventArgs routedEventArgs)
@@ -143,7 +144,6 @@ namespace LucaHome.Pages
                 var confirmDelete = birthdayDeleteDialog.DialogResult;
                 if (confirmDelete == true)
                 {
-                    _birthdayService.OnBirthdayDeleteFinished += _onBirthdayDeleteFinished;
                     _birthdayService.DeleteBirthday(deleteBirthday);
                 }
             }
@@ -170,37 +170,10 @@ namespace LucaHome.Pages
             _birthdayService.LoadBirthdayList();
         }
 
-        private void SearchBirthdayTextBox_KeyDown(object sender, KeyEventArgs keyEventArgs)
-        {
-            _logger.Debug(string.Format("SearchBirthdayTextBox_KeyDown with sender {0} and keyEventArgs: {1}", sender, keyEventArgs));
-
-            if (keyEventArgs.Key == Key.Enter && keyEventArgs.IsDown)
-            {
-                BirthdaySearchKey = SearchBirthdayTextBox.Text;
-            }
-        }
-
         private void _birthdayListDownloadFinished(IList<BirthdayDto> birthdayList, bool success, string response)
         {
             _logger.Debug(string.Format("_birthdayListDownloadFinished with model {0} was successful: {1}", birthdayList, success));
-            setList(_birthdayService.BirthdayList);
-        }
-
-        private void _onBirthdayDeleteFinished(bool success, string response)
-        {
-            _logger.Debug(string.Format("_onBirthdayDeleteFinished with response {0} was successful: {1}", response, success));
-            _birthdayService.OnBirthdayDeleteFinished -= _onBirthdayDeleteFinished;
-            _birthdayService.LoadBirthdayList();
-        }
-
-        private void Button_MouseEnter(object sender, MouseEventArgs mouseEventArgs)
-        {
-            Mouse.OverrideCursor = Cursors.Hand;
-        }
-
-        private void Button_MouseLeave(object sender, MouseEventArgs mouseEventArgs)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
+            BirthdayList = _birthdayService.BirthdayList;
         }
     }
 }
