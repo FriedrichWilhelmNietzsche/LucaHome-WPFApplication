@@ -10,6 +10,7 @@ using Data.Services;
 using Common.Dto;
 using System.Collections.Generic;
 using OpenWeather.Models;
+using System;
 
 namespace LucaHome.Pages
 {
@@ -36,6 +37,7 @@ namespace LucaHome.Pages
             InitializeComponent();
 
             BirthdayCard.ButtonAddCommand = new DelegateCommand(navigateToBirthdayAdd);
+            CoinsCard.ButtonAddCommand = new DelegateCommand(navigateToCoinAdd);
             ScheduleCard.ButtonAddCommand = new DelegateCommand(navigateToScheduleAdd);
             ScheduleCard.ButtonMapCommand = new DelegateCommand(navigateToMap);
             ShoppingListCard.ButtonAddCommand = new DelegateCommand(navigateToShoppingAdd);
@@ -157,6 +159,18 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("MovieCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
             _navigationService.Navigate(new MoviePage(_navigationService));
+        }
+
+        private void CoinsCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        {
+            _logger.Debug(string.Format("CoinsCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
+            _navigationService.Navigate(new CoinPage(_navigationService));
+        }
+
+        private void navigateToCoinAdd()
+        {
+            _logger.Debug("navigateToCoinAdd");
+            _navigationService.Navigate(new CoinAddPage(_navigationService));
         }
 
         private void SettingsCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)

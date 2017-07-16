@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:LucaHome.Pages"
+      xmlns:converter="clr-namespace:LucaHome.Converter"
       xmlns:validationrules="clr-namespace:LucaHome.Rules"
       mc:Ignorable="d" 
       Height="{DynamicResource PageHeight}" 
@@ -17,8 +18,11 @@
       Background="{DynamicResource MaterialDesignPaper}"
       FontFamily="{DynamicResource MaterialDesignFont}"
       Title="LucaHome - Update WirelessSocket"
-      Loaded="Page_Loaded"
       Unloaded="Page_Unloaded">
+
+    <Page.Resources>
+        <converter:ThreeValueConverter x:Key="ThreeValueConverter" />
+    </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -70,7 +74,16 @@
             x:Name="NameTextBox"
             Margin="5 15 35 5" 
             materialDesign:HintAssist.Hint="Enter a name" >
-            
+            <TextBox.Text>
+                <Binding 
+                    Path="SocketName" 
+                    UpdateSourceTrigger="PropertyChanged" 
+                    Mode="TwoWay">
+                    <Binding.ValidationRules>
+                        <validationrules:TextBoxLengthRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
         </TextBox>
 
         <materialDesign:Card 
@@ -96,7 +109,16 @@
             x:Name="AreaTextBox"
             Margin="5 15 35 5" 
             materialDesign:HintAssist.Hint="Enter an area" >
-            
+            <TextBox.Text>
+                <Binding 
+                    Path="SocketArea" 
+                    UpdateSourceTrigger="PropertyChanged" 
+                    Mode="TwoWay">
+                    <Binding.ValidationRules>
+                        <validationrules:TextBoxLengthRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
         </TextBox>
 
         <materialDesign:Card 
@@ -122,7 +144,16 @@
             x:Name="CodeTextBox"
             Margin="5 15 35 5" 
             materialDesign:HintAssist.Hint="Enter a code" >
-            
+            <TextBox.Text>
+                <Binding 
+                    Path="SocketCode" 
+                    UpdateSourceTrigger="PropertyChanged" 
+                    Mode="TwoWay">
+                    <Binding.ValidationRules>
+                        <validationrules:WirelessSocketCodeFormatRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
         </TextBox>
 
         <Button
@@ -133,8 +164,15 @@
             Margin="5 5 5 5" 
             Width="200"
             ToolTip="Update wireless socket"
-            Click="UpdateWirelessSocket_Click">
-            Update
+            Click="UpdateWirelessSocket_Click"
+            Content="Update" >
+            <Button.IsEnabled>
+                <MultiBinding Converter="{StaticResource ThreeValueConverter}">
+                    <Binding Path="SocketName" />
+                    <Binding Path="SocketArea" />
+                    <Binding Path="SocketCode" />
+                </MultiBinding>
+            </Button.IsEnabled>
         </Button>
 
         <Button 

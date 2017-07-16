@@ -37,16 +37,12 @@ namespace LucaHome.Pages
         private string _scheduleSearchKey = string.Empty;
         private IList<ScheduleDto> _scheduleList = new List<ScheduleDto>();
 
-        private readonly ScheduleAddPage _scheduleAddPage;
-
         public SchedulePage(NavigationService navigationService)
         {
             _logger = new Logger(TAG, Enables.LOGGING);
 
             _navigationService = navigationService;
             _scheduleService = ScheduleService.Instance;
-
-            _scheduleAddPage = new ScheduleAddPage(_navigationService);
 
             InitializeComponent();
             DataContext = this;
@@ -203,7 +199,7 @@ namespace LucaHome.Pages
         private void ButtonAdd_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonAdd_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _navigationService.Navigate(_scheduleAddPage);
+            _navigationService.Navigate(new ScheduleAddPage(_navigationService));
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)

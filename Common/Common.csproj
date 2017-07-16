@@ -78,6 +78,7 @@
     <Compile Include="Common\Enables.cs" />
     <Compile Include="Common\Keys.cs" />
     <Compile Include="Common\Timeouts.cs" />
+    <Compile Include="Converter\JsonDataToCoinConverter.cs" />
     <Compile Include="Converter\JsonDataToBirthdayConverter.cs" />
     <Compile Include="Converter\JsonDataToChangeConverter.cs" />
     <Compile Include="Converter\JsonDataToListedMenuConverter.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="Converter\JsonDataToWirelessSocketConverter.cs" />
     <Compile Include="Converter\UnixToDateTimeConverter.cs" />
     <Compile Include="Dto\BirthdayDto.cs" />
+    <Compile Include="Dto\CoinDto.cs" />
     <Compile Include="Dto\ChangeDto.cs" />
     <Compile Include="Dto\ListedMenuDto.cs" />
     <Compile Include="Dto\MapContentDto.cs" />
@@ -223,6 +225,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Wallpaper\main_image_coins.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Icons\Coins\DASH.png" />
+    <Resource Include="Assets\Icons\Coins\ETC.png" />
+    <Resource Include="Assets\Icons\Coins\ETH.png" />
+    <Resource Include="Assets\Icons\Coins\LTC.png" />
+    <Resource Include="Assets\Icons\Coins\XBT.png" />
+    <Resource Include="Assets\Icons\Coins\XMR.png" />
+    <Resource Include="Assets\Icons\Coins\ZEC.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

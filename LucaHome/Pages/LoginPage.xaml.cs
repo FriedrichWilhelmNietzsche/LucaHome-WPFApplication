@@ -3,6 +3,7 @@ using Common.Dto;
 using Common.Tools;
 using Data.Services;
 using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -13,7 +14,7 @@ using ToastNotifications.Position;
 
 namespace LucaHome.Pages
 {
-    public partial class LoginPage : Page
+    public partial class LoginPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "LoginPage";
         private readonly Logger _logger;
@@ -23,6 +24,8 @@ namespace LucaHome.Pages
 
         private readonly Notifier _notifier;
 
+        private UserDto _newUser;
+
         public LoginPage(NavigationService navigationService)
         {
             _logger = new Logger(TAG, Enables.LOGGING);
@@ -30,7 +33,10 @@ namespace LucaHome.Pages
             _navigationService = navigationService;
             _userService = UserService.Instance;
 
+            _newUser = new UserDto("", "");
+
             InitializeComponent();
+            DataContext = this;
 
             _notifier = new Notifier(cfg =>
             {
@@ -53,9 +59,23 @@ namespace LucaHome.Pages
             _notifier.ClearMessages();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} with arguments {1}", sender, routedEventArgs));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public string UserName
+        {
+            get
+            {
+                return _newUser.Name;
+            }
+            set
+            {
+                _newUser.Name = value;
+                OnPropertyChanged("UserName");
+            }
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
@@ -69,8 +89,7 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("Received click of sender {0} with arguments {1}", sender, routedEventArgs));
 
-            string userName = UserNameTextBox.Text;
-            if (userName == null || userName == string.Empty)
+            if (_newUser.Name == null || _newUser.Name == string.Empty)
             {
                 _notifier.ShowWarning("Please enter a username");
                 return;
@@ -82,16 +101,15 @@ namespace LucaHome.Pages
                 _notifier.ShowWarning("Please enter a password");
                 return;
             }
+            _newUser.Passphrase = password;
 
             _userService.OnUserCheckedFinished += _onUserCheckedFinished;
-
-            _userService.ValidateUser(new UserDto(userName, password));
+            _userService.ValidateUser(_newUser);
         }
 
         private void _onUserCheckedFinished(string response, bool success)
         {
             _logger.Debug(string.Format("_onUserCheckedFinished with response {0} was successful {1}", response, success));
-
             _userService.OnUserCheckedFinished -= _onUserCheckedFinished;
 
             if (!success)

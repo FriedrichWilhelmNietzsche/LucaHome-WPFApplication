@@ -19,6 +19,10 @@
             {
                 return _name;
             }
+            set
+            {
+                _name = value;
+            }
         }
 
         public string Passphrase
@@ -26,6 +30,10 @@
             get
             {
                 return _passphrase;
+            }
+            set
+            {
+                _passphrase = value;
             }
         }
 

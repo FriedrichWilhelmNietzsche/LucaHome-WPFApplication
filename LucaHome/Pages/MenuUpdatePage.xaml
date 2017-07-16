@@ -4,6 +4,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:LucaHome.Pages"
+      xmlns:converter="clr-namespace:LucaHome.Converter"
+      xmlns:validationrules="clr-namespace:LucaHome.Rules"
       mc:Ignorable="d" 
       Height="{DynamicResource PageHeight}" 
       Width="{DynamicResource PageWidth}"
@@ -16,8 +18,11 @@
       Background="{DynamicResource MaterialDesignPaper}"
       FontFamily="{DynamicResource MaterialDesignFont}"
       Title="LucaHome - Update menu"
-      Loaded="Page_Loaded"
       Unloaded="Page_Unloaded">
+
+    <Page.Resources>
+        <converter:TwoValueConverter x:Key="TwoValueConverter" />
+    </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -41,9 +46,8 @@
             <TextBlock 
                 Name="PageTitle"
                 HorizontalAlignment="Center" 
-                Style="{DynamicResource MaterialDesignTitleTextBlock}">
-                Update menu
-            </TextBlock>
+                Style="{DynamicResource MaterialDesignTitleTextBlock}"
+                Text="{Binding Path=MenuPageTitle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
         </materialDesign:Card>
 
         <materialDesign:Card 
@@ -68,7 +72,18 @@
             Grid.Column="1" 
             x:Name="MenuTextBox"
             Margin="5 15 35 5" 
-            materialDesign:HintAssist.Hint="Enter a menu" />
+            materialDesign:HintAssist.Hint="Enter a menu"  >
+            <TextBox.Text>
+                <Binding 
+                    Path="Menu"
+                    UpdateSourceTrigger="PropertyChanged"
+                    Mode="TwoWay">
+                    <Binding.ValidationRules>
+                        <validationrules:TextBoxNotEmptyRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
 
         <materialDesign:Card 
             Grid.Row="2" 
@@ -98,7 +113,18 @@
             VerticalScrollBarVisibility="Auto"
             SpellCheck.IsEnabled="True"
             materialDesign:HintAssist.Hint="Enter a descrption"
-            Height="80"/>
+            Height="80" >
+            <TextBox.Text>
+                <Binding 
+                    Path="Description"
+                    UpdateSourceTrigger="PropertyChanged"
+                    Mode="TwoWay">
+                    <Binding.ValidationRules>
+                        <validationrules:TextBoxNotEmptyRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
 
         <Button
             Style="{DynamicResource MaterialDesignRaisedButton}"
@@ -108,8 +134,14 @@
             Margin="5 5 5 5" 
             Width="200"
             ToolTip="Update menu"
-            Click="UpdateMenu_Click">
-            Update
+            Click="UpdateMenu_Click"
+            Content="Update" >
+            <Button.IsEnabled>
+                <MultiBinding Converter="{StaticResource TwoValueConverter}">
+                    <Binding Path="Menu" />
+                    <Binding Path="Description" />
+                </MultiBinding>
+            </Button.IsEnabled>
         </Button>
 
         <Button 

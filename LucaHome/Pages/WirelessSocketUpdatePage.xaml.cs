@@ -2,9 +2,9 @@
 using Common.Dto;
 using Common.Tools;
 using Data.Services;
-using LucaHome.Rules;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -15,7 +15,7 @@ using ToastNotifications.Position;
 
 namespace LucaHome.Pages
 {
-    public partial class WirelessSocketUpdatePage : Page
+    public partial class WirelessSocketUpdatePage : Page, INotifyPropertyChanged
     {
         private const string TAG = "WirelessSocketUpdatePage";
         private readonly Logger _logger;
@@ -25,18 +25,19 @@ namespace LucaHome.Pages
 
         private readonly Notifier _notifier;
 
-        private WirelessSocketDto _wirelessSocket;
+        private WirelessSocketDto _updateWirelessSocket;
 
-        public WirelessSocketUpdatePage(NavigationService navigationService, WirelessSocketDto wirelessSocket)
+        public WirelessSocketUpdatePage(NavigationService navigationService, WirelessSocketDto updateWirelessSocket)
         {
             _logger = new Logger(TAG, Enables.LOGGING);
 
             _navigationService = navigationService;
             _wirelessSocketService = WirelessSocketService.Instance;
 
-            _wirelessSocket = wirelessSocket;
+            _updateWirelessSocket = updateWirelessSocket;
 
             InitializeComponent();
+            DataContext = this;
 
             _notifier = new Notifier(cfg =>
             {
@@ -59,19 +60,54 @@ namespace LucaHome.Pages
             _notifier.ClearMessages();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
-            NameTextBox.Text = _wirelessSocket.Name;
-            AreaTextBox.Text = _wirelessSocket.Area;
-            CodeTextBox.Text = _wirelessSocket.Code;
+        public string SocketName
+        {
+            get
+            {
+                return _updateWirelessSocket.Name;
+            }
+            set
+            {
+                _updateWirelessSocket.Name = value;
+                OnPropertyChanged("SocketName");
+            }
+        }
+
+        public string SocketArea
+        {
+            get
+            {
+                return _updateWirelessSocket.Area;
+            }
+            set
+            {
+                _updateWirelessSocket.Area = value;
+                OnPropertyChanged("SocketArea");
+            }
+        }
+
+        public string SocketCode
+        {
+            get
+            {
+                return _updateWirelessSocket.Code;
+            }
+            set
+            {
+                _updateWirelessSocket.Code = value;
+                OnPropertyChanged("SocketCode");
+            }
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-
             _wirelessSocketService.OnUpdateWirelessSocketFinished -= _onUpdateWirelessSocketFinished;
             _wirelessSocketService.OnWirelessSocketDownloadFinished -= _onWirelessSocketDownloadFinished;
         }
@@ -79,43 +115,13 @@ namespace LucaHome.Pages
         private void UpdateWirelessSocket_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("UpdateWirelessSocket_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-
-            int id = _wirelessSocket.Id;
-            string socketName = NameTextBox.Text;
-            string socketArea = AreaTextBox.Text;
-            string socketCode = CodeTextBox.Text;
-
-            ValidationResult socketNameResult = new TextBoxLengthRule().Validate(socketName, null);
-            if (!socketNameResult.IsValid)
-            {
-                _notifier.ShowError("Please enter a valid wireless socket name!");
-                return;
-            }
-
-            ValidationResult socketAreaResult = new TextBoxLengthRule().Validate(socketArea, null);
-            if (!socketAreaResult.IsValid)
-            {
-                _notifier.ShowError("Please enter a valid wireless socket area!");
-                return;
-            }
-
-            ValidationResult socketCodeResult = new WirelessSocketCodeFormatRule().Validate(socketCode, null);
-            if (!socketCodeResult.IsValid)
-            {
-                _notifier.ShowError("Please enter a valid wireless socket code!");
-                return;
-            }
-
-            WirelessSocketDto updateWirelessSocket = new WirelessSocketDto(id, socketName, socketArea, socketCode, _wirelessSocket.IsActivated);
-
             _wirelessSocketService.OnUpdateWirelessSocketFinished += _onUpdateWirelessSocketFinished;
-            _wirelessSocketService.UpdateWirelessSocket(updateWirelessSocket);
+            _wirelessSocketService.UpdateWirelessSocket(_updateWirelessSocket);
         }
 
         private void _onUpdateWirelessSocketFinished(bool success, string response)
         {
             _logger.Debug(string.Format("_onUpdateWirelessSocketFinished was successful {0}", success));
-
             _wirelessSocketService.OnUpdateWirelessSocketFinished -= _onUpdateWirelessSocketFinished;
 
             if (success)
@@ -134,7 +140,6 @@ namespace LucaHome.Pages
         private void _onWirelessSocketDownloadFinished(IList<WirelessSocketDto> wirelessSocketList, bool success, string response)
         {
             _logger.Debug(string.Format("_onWirelessSocketDownloadFinished with model {0} was successful {1}", wirelessSocketList, success));
-
             _wirelessSocketService.OnWirelessSocketDownloadFinished -= _onWirelessSocketDownloadFinished;
             _navigationService.GoBack();
         }
@@ -142,7 +147,6 @@ namespace LucaHome.Pages
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _navigationService.GoBack();
         }
     }

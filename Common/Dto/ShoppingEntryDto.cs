@@ -34,6 +34,10 @@ namespace Common.Dto
             {
                 return _name;
             }
+            set
+            {
+                _name = value;
+            }
         }
 
         public ShoppingEntryGroup Group
@@ -41,6 +45,10 @@ namespace Common.Dto
             get
             {
                 return _group;
+            }
+            set
+            {
+                _group = value;
             }
         }
 
@@ -53,6 +61,10 @@ namespace Common.Dto
             set
             {
                 _quantity = value;
+                if (_quantity < 1)
+                {
+                    _quantity = 1;
+                }
             }
         }
 
@@ -61,20 +73,6 @@ namespace Common.Dto
             get
             {
                 return _group.Icon;
-            }
-        }
-
-        public void IncreaseQuantity()
-        {
-            _quantity++;
-        }
-
-        public void DecreaseQuantity()
-        {
-            _quantity--;
-            if (_quantity < 1)
-            {
-                _quantity = 1;
             }
         }
 

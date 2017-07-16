@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:LucaHome.Pages"
+      xmlns:validationrules="clr-namespace:LucaHome.Rules"
       mc:Ignorable="d" 
       Height="{DynamicResource PageHeight}" 
       Width="{DynamicResource PageWidth}"
@@ -16,11 +17,11 @@
       Background="{DynamicResource MaterialDesignPaper}"
       FontFamily="{DynamicResource MaterialDesignFont}"
       Title="LucaHome - Add Birthday"
-      Loaded="Page_Loaded"
       Unloaded="Page_Unloaded">
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -66,34 +67,55 @@
             Grid.Column="1" 
             x:Name="NameTextBox"
             Margin="5 15 35 5" 
-            materialDesign:HintAssist.Hint="Enter a name" />
+            materialDesign:HintAssist.Hint="Enter a name" >
+            <TextBox.Text>
+                <Binding 
+                    Path="BirthdayName"
+                    UpdateSourceTrigger="PropertyChanged"
+                    Mode="TwoWay">
+                    <Binding.ValidationRules>
+                        <validationrules:TextBoxNotEmptyRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+
+        <materialDesign:Card 
+            Grid.Row="2" 
+            Grid.Column="0"
+            Padding="5" 
+            Margin="15 5 5 5">
+            <TextBlock 
+                HorizontalAlignment="Right" >
+                Date
+            </TextBlock>
+        </materialDesign:Card>
 
         <DatePicker 
             Grid.Row="2" 
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
+            Grid.Column="1"
             x:Name="BirthdayDatePicker"
-            HorizontalAlignment="Center"
-            Width="250"
-            Margin="0 16 0 0" 
+            HorizontalAlignment="Stretch"
+            Margin="5 15 35 5" 
             materialDesign:HintAssist.Hint="Pick Date" 
-            Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
+            Style="{StaticResource MaterialDesignFloatingHintDatePicker}" 
+            SelectedDate="{Binding Path=BirthdayDate, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
         <Button
             Style="{DynamicResource MaterialDesignRaisedButton}"
-            Grid.Row="3" 
+            Grid.Row="4" 
             Grid.Column="0"
             Grid.ColumnSpan="2"
             Margin="5 5 5 5" 
             Width="200"
             ToolTip="Save new birthday"
-            Click="SaveBirthday_Click">
-            Save
-        </Button>
+            Click="SaveBirthday_Click"
+            Content="Save"
+            IsEnabled="{Binding ElementName=NameTextBox, Path=Text.Length, Mode=OneWay}" />
 
         <Button 
             Grid.Column="0"
-            Grid.Row="3"
+            Grid.Row="4"
             Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
             Margin="5"
             HorizontalAlignment="Left"

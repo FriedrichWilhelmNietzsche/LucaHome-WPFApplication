@@ -2,9 +2,9 @@
 using Common.Dto;
 using Common.Tools;
 using Data.Services;
-using LucaHome.Rules;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -17,7 +17,7 @@ using static Common.Dto.ScheduleDto;
 
 namespace LucaHome.Pages
 {
-    public partial class ScheduleAddPage : Page
+    public partial class ScheduleAddPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "ScheduleAddPage";
         private readonly Logger _logger;
@@ -29,9 +29,7 @@ namespace LucaHome.Pages
         private readonly Notifier _notifier;
 
         private readonly IList<WirelessSocketDto> _wirelessSocketList;
-
-        private string _scheduleName = string.Empty;
-        private string _scheduleInformation = string.Empty;
+        private ScheduleDto _newSchedule;
 
         public ScheduleAddPage(NavigationService navigationService)
         {
@@ -42,8 +40,10 @@ namespace LucaHome.Pages
             _wirelessSocketService = WirelessSocketService.Instance;
 
             _wirelessSocketList = _wirelessSocketService.WirelessSocketList;
+            _newSchedule = new ScheduleDto(_schedulService.ScheduleList.Count, "", null, (Weekday)DateTime.Now.DayOfWeek, DateTime.Now, SocketAction.Null, true);
 
             InitializeComponent();
+            DataContext = this;
 
             _notifier = new Notifier(cfg =>
             {
@@ -66,16 +66,22 @@ namespace LucaHome.Pages
             _notifier.ClearMessages();
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public CollectionView WeekdayList
         {
             get
             {
-                IList<string> weekdayList = new List<string>();
+                IList<Weekday> weekdayList = new List<Weekday>();
                 foreach (Weekday entry in Enum.GetValues(typeof(Weekday)))
                 {
                     if (entry > Weekday.Null)
                     {
-                        weekdayList.Add(entry.ToString());
+                        weekdayList.Add(entry);
                     }
                 }
                 return new CollectionView(weekdayList);
@@ -99,38 +105,100 @@ namespace LucaHome.Pages
         {
             get
             {
-                IList<string> actionList = new List<string>();
+                IList<SocketAction> actionList = new List<SocketAction>();
                 foreach (SocketAction entry in Enum.GetValues(typeof(SocketAction)))
                 {
                     if (entry > SocketAction.Null)
                     {
-                        actionList.Add(entry.ToString());
+                        actionList.Add(entry);
                     }
                 }
                 return new CollectionView(actionList);
             }
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
+        public string ScheduleName
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
+            get
+            {
+                return _newSchedule.Name;
+            }
+            set
+            {
+                _newSchedule.Name = value;
+                OnPropertyChanged("ScheduleName");
+            }
+        }
 
-            NameTextBox.Text = _scheduleName;
-            InformationTextBox.Text = _scheduleInformation;
-            SocketComboBox.ItemsSource = SocketList;
-            WeekdayComboBox.ItemsSource = WeekdayList;
-            TimePicker.SelectedTime = DateTime.Now;
-            ActionComboBox.ItemsSource = ActionList;
+        public string ScheduleInformation
+        {
+            get
+            {
+                return _newSchedule.Information;
+            }
+            set
+            {
+                _newSchedule.Information = value;
+                OnPropertyChanged("ScheduleInformation");
+            }
+        }
 
-            SocketComboBox.SelectedIndex = 1;
-            WeekdayComboBox.SelectedIndex = (int)DateTime.Now.DayOfWeek;
-            ActionComboBox.SelectedIndex = 1;
+        public string ScheduleSocket
+        {
+            get
+            {
+                return _newSchedule.Socket != null ? _newSchedule.Socket.Name : string.Empty;
+            }
+            set
+            {
+                WirelessSocketDto scheduleSocket = _wirelessSocketService.GetByName(value);
+                _newSchedule.Socket = scheduleSocket;
+                OnPropertyChanged("ScheduleSocket");
+            }
+        }
+
+        public Weekday ScheduleWeekday
+        {
+            get
+            {
+                return _newSchedule.WeekDay;
+            }
+            set
+            {
+                _newSchedule.WeekDay = value;
+                OnPropertyChanged("ScheduleWeekday");
+            }
+        }
+
+        public DateTime ScheduleTime
+        {
+            get
+            {
+                return _newSchedule.Time;
+            }
+            set
+            {
+                _newSchedule.Time = value;
+                OnPropertyChanged("ScheduleTime");
+            }
+        }
+
+        public SocketAction ScheduleAction
+        {
+            get
+            {
+                return _newSchedule.Action;
+            }
+            set
+            {
+                _newSchedule.Action = value;
+                OnPropertyChanged("ScheduleAction");
+            }
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-
             _schedulService.OnAddScheduleFinished -= _onAddScheduleFinished;
             _schedulService.OnScheduleDownloadFinished -= _onScheduleDownloadFinished;
         }
@@ -138,52 +206,13 @@ namespace LucaHome.Pages
         private void SaveSchedule_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("SaveSchedule_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-
-            int id = _schedulService.ScheduleList.Count;
-            string scheduleName = NameTextBox.Text;
-
-            ValidationResult scheduleNameResult = new TextBoxLengthRule().Validate(scheduleName, null);
-            if (!scheduleNameResult.IsValid)
-            {
-                _notifier.ShowError("Please enter a valid schedule name!");
-                return;
-            }
-
-            string scheduleInformation = InformationTextBox.Text;
-
-            string socketName = SocketComboBox.Text;
-            ValidationResult socketNameResult = new TextBoxLengthRule().Validate(socketName, null);
-            if (!socketNameResult.IsValid)
-            {
-                _notifier.ShowError("Please select a socket!");
-                return;
-            }
-
-            WirelessSocketDto socket = _wirelessSocketService.GetByName(socketName);
-
-            int scheduleWeekdayIndex = WeekdayComboBox.SelectedIndex;
-            Weekday scheduleWeekday = (Weekday)scheduleWeekdayIndex;
-
-            DateTime? selectedScheduleTime = TimePicker.SelectedTime;
-            DateTime scheduleTime = DateTime.Now;
-            if (selectedScheduleTime != null)
-            {
-                scheduleTime = (DateTime)selectedScheduleTime;
-            }
-
-            int socketActionIndex = ActionComboBox.SelectedIndex;
-            SocketAction socketAction = (SocketAction)socketActionIndex;
-
-            ScheduleDto newSchedule = new ScheduleDto(id, scheduleName, scheduleInformation, socket, scheduleWeekday, scheduleTime, socketAction, true);
-
             _schedulService.OnAddScheduleFinished += _onAddScheduleFinished;
-            _schedulService.AddSchedule(newSchedule);
+            _schedulService.AddSchedule(_newSchedule);
         }
 
         private void _onAddScheduleFinished(bool success, string response)
         {
             _logger.Debug(string.Format("_onAddScheduleFinished was successful {0}", success));
-
             _schedulService.OnAddScheduleFinished -= _onAddScheduleFinished;
 
             if (success)
@@ -202,7 +231,6 @@ namespace LucaHome.Pages
         private void _onScheduleDownloadFinished(IList<ScheduleDto> scheduleDto, bool success, string response)
         {
             _logger.Debug(string.Format("_onScheduleDownloadFinished with model {0} was successful {1}", scheduleDto, success));
-
             _schedulService.OnScheduleDownloadFinished -= _onScheduleDownloadFinished;
             _navigationService.GoBack();
         }
@@ -210,7 +238,6 @@ namespace LucaHome.Pages
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _navigationService.GoBack();
         }
     }

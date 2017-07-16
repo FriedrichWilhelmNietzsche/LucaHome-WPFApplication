@@ -28,9 +28,7 @@ namespace LucaHome.Pages
 
         private readonly Notifier _notifier;
 
-        private string _shoppingEntryName = string.Empty;
-        private string _shoppingEntryType = string.Empty;
-        private int _shoppingEntryCount = 1;
+        private ShoppingEntryDto _newShoppingEntry;
 
         public ShoppingEntryAddPage(NavigationService navigationService)
         {
@@ -39,7 +37,10 @@ namespace LucaHome.Pages
             _navigationService = navigationService;
             _shoppingListService = ShoppingListService.Instance;
 
+            _newShoppingEntry = new ShoppingEntryDto(_shoppingListService.ShoppingList.Count, "", ShoppingEntryGroup.OTHER, 1);
+
             InitializeComponent();
+            DataContext = this;
 
             _notifier = new Notifier(cfg =>
             {
@@ -81,19 +82,50 @@ namespace LucaHome.Pages
             }
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
+        public string ShoppingEntryName
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
+            get
+            {
+                return _newShoppingEntry.Name;
+            }
+            set
+            {
+                _newShoppingEntry.Name = value;
+                OnPropertyChanged("ShoppingEntryName");
+            }
+        }
 
-            NameTextBox.Text = _shoppingEntryName;
-            ShoppingTypeComboBox.ItemsSource = ShoppingTypeList;
-            CountTextBox.Text = _shoppingEntryCount.ToString();
+        public string ShoppingEntryType
+        {
+            get
+            {
+                return _newShoppingEntry.Group.Description;
+            }
+            set
+            {
+                string description = value;
+                ShoppingEntryGroup shoppingEntryGroup = ShoppingEntryGroup.GetByDescription(description);
+                _newShoppingEntry.Group = shoppingEntryGroup;
+                OnPropertyChanged("ShoppingEntryType");
+            }
+        }
+
+        public int ShoppingEntryQuantity
+        {
+            get
+            {
+                return _newShoppingEntry.Quantity;
+            }
+            set
+            {
+                _newShoppingEntry.Quantity = value;
+                OnPropertyChanged("ShoppingEntryQuantity");
+            }
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-
             _shoppingListService.OnShoppingEntryAddFinished -= _shoppingEntryAddFinished;
             _shoppingListService.OnShoppingListDownloadFinished -= _onShoppingListDownloadFinished;
         }
@@ -101,49 +133,13 @@ namespace LucaHome.Pages
         private void SaveShoppingEntry_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("SaveShoppingEntry_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-
-            string shoppingEntryName = NameTextBox.Text;
-
-            ValidationResult shoppingEntryNameResult = new TextBoxLengthRule().Validate(shoppingEntryName, null);
-            if (!shoppingEntryNameResult.IsValid)
-            {
-                _notifier.ShowError("Please enter a valid shopping entry name!");
-                return;
-            }
-
-            string shoppingEntryType = ShoppingTypeComboBox.Text;
-            ShoppingEntryGroup shoppingEntryGroup = ShoppingEntryGroup.GetByDescription(shoppingEntryType);
-
-            string shoppingEntryCount = CountTextBox.Text;
-
-            ValidationResult shoppingEntryCountResult = new TextBoxNotEmptyRule().Validate(shoppingEntryCount, null);
-            if (!shoppingEntryCountResult.IsValid)
-            {
-                _notifier.ShowError("Please enter a valid shopping entry count!");
-                CountTextBox.Text = "1";
-                return;
-            }
-
-            int count = 1;
-            bool parseCount = int.TryParse(shoppingEntryCount, out count);
-            if (!parseCount)
-            {
-                _notifier.ShowWarning("Failed to get count for shopping entry! Set to 1!");
-                count = 1;
-            }
-
-            int id = _shoppingListService.ShoppingList.Count;
-
-            ShoppingEntryDto newShoppingEntry = new ShoppingEntryDto(id, shoppingEntryName, shoppingEntryGroup, count);
-
             _shoppingListService.OnShoppingEntryAddFinished += _shoppingEntryAddFinished;
-            _shoppingListService.AddShoppingEntry(newShoppingEntry);
+            _shoppingListService.AddShoppingEntry(_newShoppingEntry);
         }
 
         private void _shoppingEntryAddFinished(bool success, string response)
         {
             _logger.Debug(string.Format("_ShoppingEntryAddFinished was successful {0}", success));
-
             _shoppingListService.OnShoppingEntryAddFinished -= _shoppingEntryAddFinished;
 
             if (success)
@@ -162,7 +158,6 @@ namespace LucaHome.Pages
         private void _onShoppingListDownloadFinished(IList<ShoppingEntryDto> shoppingList, bool success, string response)
         {
             _logger.Debug(string.Format("_onShoppingListDownloadFinished with model {0} was successful {1}", shoppingList, success));
-
             _shoppingListService.OnShoppingListDownloadFinished -= _onShoppingListDownloadFinished;
             _navigationService.GoBack();
         }
@@ -170,59 +165,18 @@ namespace LucaHome.Pages
         private void ButtonCountIncrease_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonCountIncrease_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
-            string shoppingEntryCount = CountTextBox.Text;
-
-            ValidationResult shoppingEntryCountResult = new TextBoxNotEmptyRule().Validate(shoppingEntryCount, null);
-            if (!shoppingEntryCountResult.IsValid)
-            {
-                shoppingEntryCount = "1";
-            }
-
-            int count = 1;
-            bool parseCount = int.TryParse(shoppingEntryCount, out count);
-            if (!parseCount)
-            {
-                count = 1;
-            }
-
-            count++;
-
-            CountTextBox.Text = count.ToString();
+            ShoppingEntryQuantity++;
         }
 
         private void ButtonCountDecrease_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonCountDecrease_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
-            string shoppingEntryCount = CountTextBox.Text;
-
-            ValidationResult shoppingEntryCountResult = new TextBoxNotEmptyRule().Validate(shoppingEntryCount, null);
-            if (!shoppingEntryCountResult.IsValid)
-            {
-                shoppingEntryCount = "1";
-            }
-
-            int count = 1;
-            bool parseCount = int.TryParse(shoppingEntryCount, out count);
-            if (!parseCount)
-            {
-                count = 1;
-            }
-
-            count--;
-            if (count < 1)
-            {
-                count = 1;
-            }
-
-            CountTextBox.Text = count.ToString();
+            ShoppingEntryQuantity--;
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _navigationService.GoBack();
         }
     }

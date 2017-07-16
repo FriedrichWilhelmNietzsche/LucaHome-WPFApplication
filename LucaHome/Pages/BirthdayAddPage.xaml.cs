@@ -2,9 +2,9 @@
 using Common.Dto;
 using Common.Tools;
 using Data.Services;
-using LucaHome.Rules;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -15,7 +15,7 @@ using ToastNotifications.Position;
 
 namespace LucaHome.Pages
 {
-    public partial class BirthdayAddPage : Page
+    public partial class BirthdayAddPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "BirthdayAddPage";
         private readonly Logger _logger;
@@ -25,8 +25,7 @@ namespace LucaHome.Pages
 
         private readonly Notifier _notifier;
 
-        private string _birthdayName = string.Empty;
-        private DateTime _birthdayDate = DateTime.Now;
+        private BirthdayDto _newBirthday;
 
         public BirthdayAddPage(NavigationService navigationService)
         {
@@ -35,7 +34,10 @@ namespace LucaHome.Pages
             _birthdayService = BirthdayService.Instance;
             _navigationService = navigationService;
 
+            _newBirthday = new BirthdayDto(_birthdayService.BirthdayList.Count, "", DateTime.Now);
+
             InitializeComponent();
+            DataContext = this;
 
             _notifier = new Notifier(cfg =>
             {
@@ -58,18 +60,41 @@ namespace LucaHome.Pages
             _notifier.ClearMessages();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
-            NameTextBox.Text = _birthdayName;
-            BirthdayDatePicker.SelectedDate = _birthdayDate;
+        public string BirthdayName
+        {
+            get
+            {
+                return _newBirthday.Name;
+            }
+            set
+            {
+                _newBirthday.Name = value;
+                OnPropertyChanged("BirthdayName");
+            }
+        }
+
+        public DateTime BirthdayDate
+        {
+            get
+            {
+                return _newBirthday.Birthday;
+            }
+            set
+            {
+                _newBirthday.Birthday = value;
+                OnPropertyChanged("BirthdayDate");
+            }
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-
             _birthdayService.OnBirthdayAddFinished -= _onBirthdayAddFinished;
             _birthdayService.OnBirthdayDownloadFinished -= _onBirthdayDownloadFinished;
         }
@@ -77,33 +102,14 @@ namespace LucaHome.Pages
         private void SaveBirthday_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("SaveBirthday_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-
-            string birthdayName = NameTextBox.Text;
-
-            ValidationResult birthdayNameResult = new TextBoxLengthRule().Validate(birthdayName, null);
-            if (!birthdayNameResult.IsValid)
-            {
-                _notifier.ShowError("Please enter a valid birthday name!");
-                return;
-            }
-
-            int id = _birthdayService.BirthdayList.Count;
-            DateTime? birthdayDate = BirthdayDatePicker.SelectedDate;
-
-            if (birthdayDate.HasValue)
-            {
-                BirthdayDto newBirthday = new BirthdayDto(id, birthdayName, (DateTime)birthdayDate);
-                _logger.Debug(string.Format("Trying to add new birthday {0}", newBirthday));
-
-                _birthdayService.OnBirthdayAddFinished += _onBirthdayAddFinished;
-                _birthdayService.AddBirthday(newBirthday);
-            }
+            _birthdayService.OnBirthdayAddFinished += _onBirthdayAddFinished;
+            _logger.Debug(string.Format("Trying to add new birthday {0}", _newBirthday));
+            _birthdayService.AddBirthday(_newBirthday);
         }
 
         private void _onBirthdayAddFinished(bool success, string response)
         {
             _logger.Debug(string.Format("_onBirthdayAddFinished was successful {0}", success));
-
             _birthdayService.OnBirthdayAddFinished -= _onBirthdayAddFinished;
 
             if (success)
@@ -122,7 +128,6 @@ namespace LucaHome.Pages
         private void _onBirthdayDownloadFinished(IList<BirthdayDto> birthdayList, bool success, string response)
         {
             _logger.Debug(string.Format("_onBirthdayDownloadFinished with model {0} was successful {1}", birthdayList, success));
-
             _birthdayService.OnBirthdayDownloadFinished -= _onBirthdayDownloadFinished;
             _navigationService.GoBack();
         }
@@ -130,7 +135,6 @@ namespace LucaHome.Pages
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _navigationService.GoBack();
         }
     }

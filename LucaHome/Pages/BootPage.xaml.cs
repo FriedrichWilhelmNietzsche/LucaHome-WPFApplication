@@ -20,6 +20,7 @@ namespace LucaHome.Pages
         private int _downloadCount = 0;
 
         private readonly BirthdayService _birthdayService;
+        private readonly CoinService _coinService;
         private readonly MapContentService _mapContentService;
         private readonly MenuService _menuService;
         private readonly MovieService _movieService;
@@ -35,6 +36,7 @@ namespace LucaHome.Pages
             _logger = new Logger(TAG, Enables.LOGGING);
 
             _birthdayService = BirthdayService.Instance;
+            _coinService = CoinService.Instance;
             _mapContentService = MapContentService.Instance;
             _menuService = MenuService.Instance;
             _movieService = MovieService.Instance;
@@ -54,6 +56,8 @@ namespace LucaHome.Pages
 
             _birthdayService.OnBirthdayDownloadFinished += _birthdayDownloadFinished;
 
+            _coinService.OnCoinDownloadFinished += _onCoinDownloadFinished;
+
             _menuService.OnMenuDownloadFinished += _onMenuDownloadFinished;
 
             _openWeatherService.OnCurrentWeatherDownloadFinished += _currentWeatherDownloadFinished;
@@ -64,6 +68,8 @@ namespace LucaHome.Pages
             _wirelessSocketService.OnWirelessSocketDownloadFinished += _wirelessSocketDownloadFinished;
 
             _birthdayService.LoadBirthdayList();
+
+            _coinService.LoadCoinList();
 
             _menuService.LoadMenuList();
 
@@ -110,6 +116,13 @@ namespace LucaHome.Pages
         private void _movieDownloadFinished(IList<MovieDto> movieList, bool success, string response)
         {
             _logger.Debug(string.Format("_movieDownloadFinished with model {0} was successful: {1}", movieList, success));
+            _downloadCount++;
+            checkDownloadCount();
+        }
+
+        private void _onCoinDownloadFinished(IList<CoinDto> coinList, bool success, string response)
+        {
+            _logger.Debug(string.Format("_onCoinDownloadFinished with model {0} was successful: {1}", coinList, success));
             _downloadCount++;
             checkDownloadCount();
         }
@@ -178,6 +191,7 @@ namespace LucaHome.Pages
             _downloadCount = 0;
 
             _birthdayService.OnBirthdayDownloadFinished -= _birthdayDownloadFinished;
+            _coinService.OnCoinDownloadFinished -= _onCoinDownloadFinished;
             _menuService.OnMenuDownloadFinished -= _onMenuDownloadFinished;
             _movieService.OnMovieDownloadFinished -= _movieDownloadFinished;
             _openWeatherService.OnCurrentWeatherDownloadFinished -= _currentWeatherDownloadFinished;

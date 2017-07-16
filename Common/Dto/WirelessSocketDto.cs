@@ -50,6 +50,10 @@ namespace Common.Dto
             {
                 return _name;
             }
+            set
+            {
+                _name = value;
+            }
         }
 
         public string Area
@@ -58,6 +62,10 @@ namespace Common.Dto
             {
                 return _area;
             }
+            set
+            {
+                _area = value;
+            }
         }
 
         public string Code
@@ -65,6 +73,10 @@ namespace Common.Dto
             get
             {
                 return _code;
+            }
+            set
+            {
+                _code = value;
             }
         }
 

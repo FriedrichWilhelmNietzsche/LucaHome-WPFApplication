@@ -136,6 +136,17 @@
             MouseUp="MovieCard_MouseUp"/>
 
         <usercontrols:MainPageCard
+            x:Name="CoinsCard"
+            Grid.Row="3"
+            Grid.Column="0"
+            CardImage="/Common;component/Assets/Wallpaper/main_image_coins.png"
+            Title="Coins"
+            Description="Watch your coins"
+            ButtonAddVisibility="Visible"
+            ButtonMapVisibility="Collapsed"
+            MouseUp="CoinsCard_MouseUp"/>
+
+        <usercontrols:MainPageCard
             x:Name="SettingsCard"
             Grid.Row="3"
             Grid.Column="3"

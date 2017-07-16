@@ -7,7 +7,7 @@ namespace Common.Dto
     {
         private const string TAG = "BirthdayDto";
 
-        enum BirthdayType { PREVIOUS, TODAY, UPCOMING};
+        enum BirthdayType { PREVIOUS, TODAY, UPCOMING };
 
         private int _id;
 
@@ -20,7 +20,7 @@ namespace Common.Dto
             _name = name;
             _birthday = birthday;
         }
-        
+
         public int Id
         {
             get
@@ -34,6 +34,10 @@ namespace Common.Dto
             get
             {
                 return _name;
+            }
+            set
+            {
+                _name = value;
             }
         }
 
@@ -62,16 +66,16 @@ namespace Common.Dto
             get
             {
                 int age = -1;
-                    
+
                 DateTime today = DateTime.Now;
 
-                if(today.Month > _birthday.Month)
+                if (today.Month > _birthday.Month)
                 {
                     age = today.Year - _birthday.Year;
                 }
-                else if(today.Month == _birthday.Month)
+                else if (today.Month == _birthday.Month)
                 {
-                    if(today.Day >= _birthday.Day)
+                    if (today.Day >= _birthday.Day)
                     {
                         age = today.Year - _birthday.Year;
                     }
@@ -94,7 +98,7 @@ namespace Common.Dto
             get
             {
                 DateTime today = DateTime.Now;
-                if(today.Day == _birthday.Day && today.Month == _birthday.Month)
+                if (today.Day == _birthday.Day && today.Month == _birthday.Month)
                 {
                     return true;
                 }

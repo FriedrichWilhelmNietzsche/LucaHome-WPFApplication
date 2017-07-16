@@ -4,6 +4,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:LucaHome.Pages"
+      xmlns:converter="clr-namespace:LucaHome.Converter"
+      xmlns:validationrules="clr-namespace:LucaHome.Rules"
       mc:Ignorable="d" 
       Height="{DynamicResource PageHeight}" 
       Width="{DynamicResource PageWidth}"
@@ -16,8 +18,11 @@
       Background="{DynamicResource MaterialDesignPaper}"
       FontFamily="{DynamicResource MaterialDesignFont}"
       Title="LucaHome - Add Schedule"
-      Loaded="Page_Loaded"
       Unloaded="Page_Unloaded">
+
+    <Page.Resources>
+        <converter:SixValueConverter x:Key="SixValueConverter" />
+    </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -71,7 +76,18 @@
             Grid.Column="1" 
             x:Name="NameTextBox"
             Margin="5 15 35 5" 
-            materialDesign:HintAssist.Hint="Enter a name" />
+            materialDesign:HintAssist.Hint="Enter a name" >
+            <TextBox.Text>
+                <Binding 
+                    Path="ScheduleName"
+                    UpdateSourceTrigger="PropertyChanged"
+                    Mode="TwoWay">
+                    <Binding.ValidationRules>
+                        <validationrules:TextBoxNotEmptyRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
 
         <materialDesign:Card 
             Grid.Row="2" 
@@ -95,7 +111,18 @@
             Grid.Column="1" 
             x:Name="InformationTextBox"
             Margin="5 15 35 5" 
-            materialDesign:HintAssist.Hint="Enter an information" />
+            materialDesign:HintAssist.Hint="Enter an information" >
+            <TextBox.Text>
+                <Binding 
+                    Path="ScheduleInformation"
+                    UpdateSourceTrigger="PropertyChanged"
+                    Mode="TwoWay">
+                    <Binding.ValidationRules>
+                        <validationrules:TextBoxNotEmptyRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
 
         <materialDesign:Card 
             Grid.Row="3" 
@@ -107,7 +134,7 @@
                 Socket
             </TextBlock>
         </materialDesign:Card>
- 
+
         <materialDesign:PackIcon 
             Grid.Row="3" 
             Grid.Column="1" 
@@ -121,7 +148,8 @@
             Margin="5 15 35 5" 
             materialDesign:HintAssist.Hint="Select a socket" 
             Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
-            ItemsSource="{Binding SocketList, UpdateSourceTrigger=PropertyChanged}"/>
+            ItemsSource="{Binding SocketList, UpdateSourceTrigger=PropertyChanged}"
+            SelectedItem="{Binding ScheduleSocket, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
         <materialDesign:Card 
             Grid.Row="4" 
@@ -147,7 +175,8 @@
             Margin="5 15 35 5" 
             materialDesign:HintAssist.Hint="Select a weekday" 
             Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
-            ItemsSource="{Binding WeekdayList, UpdateSourceTrigger=PropertyChanged}"/>
+            ItemsSource="{Binding WeekdayList, UpdateSourceTrigger=PropertyChanged}"
+            SelectedItem="{Binding Path=ScheduleWeekday, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
         <materialDesign:Card 
             Grid.Row="5" 
@@ -167,7 +196,8 @@
             Is24Hours="True" 
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"  
-            Margin="5 15 35 5"  />
+            Margin="5 15 35 5"
+            SelectedTime="{Binding Path=ScheduleTime, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
         <materialDesign:Card 
             Grid.Row="6" 
@@ -193,7 +223,8 @@
             Margin="5 15 35 5" 
             materialDesign:HintAssist.Hint="Select an action" 
             Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
-            ItemsSource="{Binding ActionList, UpdateSourceTrigger=PropertyChanged}"/>
+            ItemsSource="{Binding ActionList, UpdateSourceTrigger=PropertyChanged}"
+            SelectedItem="{Binding Path=ScheduleAction, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
         <Button
             Style="{DynamicResource MaterialDesignRaisedButton}"
@@ -203,8 +234,18 @@
             Margin="5 5 5 5" 
             Width="200"
             ToolTip="Save new schedule"
-            Click="SaveSchedule_Click">
-            Save
+            Click="SaveSchedule_Click"
+            Content="Save" >
+            <Button.IsEnabled>
+                <MultiBinding Converter="{StaticResource SixValueConverter}">
+                    <Binding Path="ScheduleName" />
+                    <Binding Path="ScheduleInformation" />
+                    <Binding ElementName="SocketComboBox" Path="Text" />
+                    <Binding ElementName="WeekdayComboBox" Path="Text" />
+                    <Binding ElementName="TimePicker" Path="Text" />
+                    <Binding ElementName="ActionComboBox" Path="Text" />
+                </MultiBinding>
+            </Button.IsEnabled>
         </Button>
 
         <Button 

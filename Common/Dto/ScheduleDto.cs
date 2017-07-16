@@ -36,7 +36,7 @@ namespace Common.Dto
             : this(id, name, "", socket, weekday, time, action, isActive) { }
 
         public ScheduleDto(int id, string name, string information, SocketAction action, bool isActive)
-            : this(id, name, information, null, Weekday.Sunday, new DateTime(), action, isActive) { }
+            : this(id, name, information, null, Weekday.Sunday, DateTime.Now, action, isActive) { }
 
         public int Id
         {
@@ -51,6 +51,10 @@ namespace Common.Dto
             get
             {
                 return _name;
+            }
+            set
+            {
+                _name = value;
             }
         }
 

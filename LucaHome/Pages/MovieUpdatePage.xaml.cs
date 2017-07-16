@@ -11,11 +11,11 @@ using ToastNotifications.Lifetime;
 using ToastNotifications.Messages;
 using ToastNotifications.Position;
 using System.Collections.Generic;
-using LucaHome.Rules;
+using System.ComponentModel;
 
 namespace LucaHome.Pages
 {
-    public partial class MovieUpdatePage : Page
+    public partial class MovieUpdatePage : Page, INotifyPropertyChanged
     {
         private const string TAG = "MovieUpdatePage";
         private readonly Logger _logger;
@@ -37,6 +37,7 @@ namespace LucaHome.Pages
             _updateMovie = updateMovie;
 
             InitializeComponent();
+            DataContext = this;
 
             _notifier = new Notifier(cfg =>
             {
@@ -59,14 +60,62 @@ namespace LucaHome.Pages
             _notifier.ClearMessages();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
-            TitleTextBox.Text = _updateMovie.Title;
-            GenreTextBox.Text = _updateMovie.Genre;
-            DescriptionTextBox.Text = _updateMovie.Description;
-            MovieRatingBar.Value = _updateMovie.Rating;
+        public string MovieTitle
+        {
+            get
+            {
+                return _updateMovie.Title;
+            }
+            set
+            {
+                _updateMovie.Title = value;
+                OnPropertyChanged("MovieTitle");
+            }
+        }
+
+        public string MovieGenre
+        {
+            get
+            {
+                return _updateMovie.Genre;
+            }
+            set
+            {
+                _updateMovie.Genre = value;
+                OnPropertyChanged("MovieGenre");
+            }
+        }
+
+        public string MovieDescription
+        {
+            get
+            {
+                return _updateMovie.Description;
+            }
+            set
+            {
+                _updateMovie.Description = value;
+                OnPropertyChanged("MovieDescription");
+            }
+        }
+
+        public int MovieRating
+        {
+            get
+            {
+                return _updateMovie.Rating;
+            }
+            set
+            {
+                _updateMovie.Rating = value;
+                OnPropertyChanged("MovieRating");
+            }
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
@@ -80,25 +129,8 @@ namespace LucaHome.Pages
         private void UpdateMovie_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("UpdateMovie_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-
-            string movieTitle = TitleTextBox.Text;
-
-            ValidationResult movieTitleResult = new TextBoxLengthRule().Validate(movieTitle, null);
-            if (!movieTitleResult.IsValid)
-            {
-                _notifier.ShowError("Please enter a movie title!");
-                return;
-            }
-
-            int id = _updateMovie.Id;
-            string movieGenre = GenreTextBox.Text;
-            string movieDescription = DescriptionTextBox.Text;
-            int movieRating = MovieRatingBar.Value;
-
-            MovieDto updateMovie = new MovieDto(id, movieTitle, movieGenre, movieDescription, movieRating, _updateMovie.Watched, _updateMovie.Sockets);
-
             _movieService.OnMovieUpdateFinished += _onMovieUpdateFinished;
-            _movieService.UpdateMovie(updateMovie);
+            _movieService.UpdateMovie(_updateMovie);
         }
 
         private void _onMovieUpdateFinished(bool success, string response)
@@ -131,7 +163,6 @@ namespace LucaHome.Pages
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _navigationService.GoBack();
         }
     }

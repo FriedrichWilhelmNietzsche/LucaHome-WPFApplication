@@ -37,16 +37,12 @@ namespace LucaHome.Pages
         private string _wirelessSocketSearchKey = string.Empty;
         private IList<WirelessSocketDto> _wirelessSocketList = new List<WirelessSocketDto>();
 
-        private readonly WirelessSocketAddPage _wirelessSocketAddPage;
-
         public WirelessSocketPage(NavigationService navigationService)
         {
             _logger = new Logger(TAG, Enables.LOGGING);
 
             _navigationService = navigationService;
             _wirelessSocketService = WirelessSocketService.Instance;
-
-            _wirelessSocketAddPage = new WirelessSocketAddPage(_navigationService);
 
             InitializeComponent();
             DataContext = this;
@@ -205,7 +201,7 @@ namespace LucaHome.Pages
         private void ButtonAdd_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonAdd_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _navigationService.Navigate(_wirelessSocketAddPage);
+            _navigationService.Navigate(new WirelessSocketAddPage(_navigationService));
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)

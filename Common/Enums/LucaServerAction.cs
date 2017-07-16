@@ -21,6 +21,13 @@ namespace Common.Enums
         //CHANGE
         public static readonly LucaServerAction GET_CHANGES = new LucaServerAction(30, "getchangesrest");
 
+        //COINS
+        public static readonly LucaServerAction GET_COINS_ALL = new LucaServerAction(130, "getcoinsall");
+        public static readonly LucaServerAction GET_COINS_USER = new LucaServerAction(131, "getcoinsuser");
+        public static readonly LucaServerAction ADD_COIN = new LucaServerAction(132, "addcoin&id=");
+        public static readonly LucaServerAction UPDATE_COIN = new LucaServerAction(133, "updatecoin&id=");
+        public static readonly LucaServerAction DELETE_COIN = new LucaServerAction(134, "deletecoin&id=");
+
         //INFORMATION
         public static readonly LucaServerAction GET_INFORMATIONS = new LucaServerAction(40, "getinformationsrest");
 

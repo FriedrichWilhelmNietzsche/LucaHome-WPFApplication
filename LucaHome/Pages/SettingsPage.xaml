@@ -100,7 +100,10 @@
             materialDesign:HintAssist.Hint="Enter username here" 
             KeyDown = "UserNameTextBox_KeyDown">
             <TextBox.Text>
-                <Binding Path="UserName" UpdateSourceTrigger="PropertyChanged"  Mode="TwoWay">
+                <Binding 
+                    Path="UserName" 
+                    UpdateSourceTrigger="PropertyChanged"  
+                    Mode="TwoWay">
                     <Binding.ValidationRules>
                         <validationrules:TextBoxNotEmptyRule/>
                     </Binding.ValidationRules>
@@ -133,7 +136,10 @@
             materialDesign:HintAssist.Hint="Enter your password here" 
             KeyDown = "PasswordBox_KeyDown">
             <TextBox.Text>
-                <Binding Path="Password" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay">
+                <Binding 
+                    Path="Password" 
+                    UpdateSourceTrigger="PropertyChanged" 
+                    Mode="TwoWay">
                     <Binding.ValidationRules>
                         <validationrules:TextBoxNotEmptyRule/>
                     </Binding.ValidationRules>
@@ -166,7 +172,10 @@
             materialDesign:HintAssist.Hint="Enter your city here" 
             KeyDown = "OpenWeatherCityTextBox_KeyDown">
             <TextBox.Text>
-                <Binding Path="OpenWeatherCity" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay">
+                <Binding 
+                    Path="OpenWeatherCity" 
+                    UpdateSourceTrigger="PropertyChanged" 
+                    Mode="TwoWay">
                     <Binding.ValidationRules>
                         <validationrules:TextBoxNotEmptyRule/>
                     </Binding.ValidationRules>
@@ -199,7 +208,10 @@
             materialDesign:HintAssist.Hint="Enter your home SSID here" 
             KeyDown = "HomeSSIDTextBox_KeyDown">
             <TextBox.Text>
-                <Binding Path="HomeSSID" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay">
+                <Binding 
+                    Path="HomeSSID" 
+                    UpdateSourceTrigger="PropertyChanged" 
+                    Mode="TwoWay">
                     <Binding.ValidationRules>
                         <validationrules:TextBoxNotEmptyRule/>
                     </Binding.ValidationRules>
@@ -232,7 +244,10 @@
             materialDesign:HintAssist.Hint="Enter the ip of your raspberry server here"
             KeyDown = "RaspberryPiServerIPTextBox_KeyDown">
             <TextBox.Text>
-                <Binding Path="RaspberryPiServerIP" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay">
+                <Binding 
+                    Path="RaspberryPiServerIP" 
+                    UpdateSourceTrigger="PropertyChanged" 
+                    Mode="TwoWay">
                     <Binding.ValidationRules>
                         <validationrules:TextBoxNotEmptyRule/>
                     </Binding.ValidationRules>

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Navigation;
 
 /*
@@ -28,16 +27,12 @@ namespace LucaHome.Pages
         private string _shoppingListSearchKey = string.Empty;
         private IList<ShoppingEntryDto> _shoppingList = new List<ShoppingEntryDto>();
 
-        private readonly ShoppingEntryAddPage _shoppingEntryAddPage;
-
         public ShoppingListPage(NavigationService navigationService)
         {
             _logger = new Logger(TAG, Enables.LOGGING);
 
             _navigationService = navigationService;
             _shoppingListService = ShoppingListService.Instance;
-
-            _shoppingEntryAddPage = new ShoppingEntryAddPage(_navigationService);
 
             InitializeComponent();
             DataContext = this;
@@ -120,7 +115,7 @@ namespace LucaHome.Pages
         private void ButtonAdd_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonAdd_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _navigationService.Navigate(_shoppingEntryAddPage);
+            _navigationService.Navigate(new ShoppingEntryAddPage(_navigationService));
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
@@ -140,7 +135,7 @@ namespace LucaHome.Pages
                 int shoppingEntryId = (int)senderButton.Tag;
                 ShoppingEntryDto shoppingEntry = _shoppingListService.GetById(shoppingEntryId);
                 _logger.Warning(string.Format("Increasing amount of entry {0}!", shoppingEntry));
-                shoppingEntry.IncreaseQuantity();
+                shoppingEntry.Quantity++;
 
                 _shoppingListService.UpdateShoppingEntry(shoppingEntry);
             }
@@ -157,7 +152,7 @@ namespace LucaHome.Pages
                 int shoppingEntryId = (int)senderButton.Tag;
                 ShoppingEntryDto shoppingEntry = _shoppingListService.GetById(shoppingEntryId);
                 _logger.Warning(string.Format("Decreasing amount of entry {0}!", shoppingEntry));
-                shoppingEntry.DecreaseQuantity();
+                shoppingEntry.Quantity--;
 
                 _shoppingListService.UpdateShoppingEntry(shoppingEntry);
             }

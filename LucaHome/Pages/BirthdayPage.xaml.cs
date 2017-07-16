@@ -29,16 +29,12 @@ namespace LucaHome.Pages
         private string _birthdaySearchKey = string.Empty;
         private IList<BirthdayDto> _birthdayList = new List<BirthdayDto>();
 
-        private readonly BirthdayAddPage _birthdayAddPage;
-
         public BirthdayPage(NavigationService navigationService)
         {
             _logger = new Logger(TAG, Enables.LOGGING);
 
             _birthdayService = BirthdayService.Instance;
             _navigationService = navigationService;
-
-            _birthdayAddPage = new BirthdayAddPage(_navigationService);
 
             InitializeComponent();
             DataContext = this;
@@ -103,7 +99,6 @@ namespace LucaHome.Pages
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _birthdayService.OnBirthdayDownloadFinished -= _birthdayListDownloadFinished;
         }
 
@@ -152,21 +147,18 @@ namespace LucaHome.Pages
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _navigationService.GoBack();
         }
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonAdd_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
-            _navigationService.Navigate(_birthdayAddPage);
+            _navigationService.Navigate(new BirthdayAddPage(_navigationService));
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _birthdayService.LoadBirthdayList();
         }
 

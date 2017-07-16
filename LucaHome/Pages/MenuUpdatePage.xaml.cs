@@ -2,7 +2,6 @@
 using Common.Dto;
 using Common.Tools;
 using Data.Services;
-using LucaHome.Rules;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,10 +11,11 @@ using ToastNotifications.Lifetime;
 using ToastNotifications.Messages;
 using ToastNotifications.Position;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace LucaHome.Pages
 {
-    public partial class MenuUpdatePage : Page
+    public partial class MenuUpdatePage : Page, INotifyPropertyChanged
     {
         private const string TAG = "MenuUpdatePage";
         private readonly Logger _logger;
@@ -25,18 +25,19 @@ namespace LucaHome.Pages
 
         private readonly Notifier _notifier;
 
-        private MenuDto _menu;
+        private MenuDto _updateMenu;
 
-        public MenuUpdatePage(NavigationService navigationService, MenuDto menu)
+        public MenuUpdatePage(NavigationService navigationService, MenuDto updateMenu)
         {
             _logger = new Logger(TAG, Enables.LOGGING);
 
             _menuService = MenuService.Instance;
             _navigationService = navigationService;
 
-            _menu = menu;
+            _updateMenu = updateMenu;
 
             InitializeComponent();
+            DataContext = this;
 
             _notifier = new Notifier(cfg =>
             {
@@ -59,16 +60,49 @@ namespace LucaHome.Pages
             _notifier.ClearMessages();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
-            string titleText = string.Format("Update menu - {0}.{1}.{2}", _menu.Date.Day, _menu.Date.Month, _menu.Date.Year);
+        public string MenuPageTitle
+        {
+            get
+            {
+                return string.Format("Update menu - {0}.{1}.{2}", _updateMenu.Date.Day, _updateMenu.Date.Month, _updateMenu.Date.Year); ;
+            }
+            set
+            {
+                _logger.Debug("MenuPageTitle cannot be overriden!");
+                OnPropertyChanged("MenuPageTitle");
+            }
+        }
 
-            PageTitle.Text = titleText;
+        public string Menu
+        {
+            get
+            {
+                return _updateMenu.Title;
+            }
+            set
+            {
+                _updateMenu.Title = value;
+                OnPropertyChanged("Menu");
+            }
+        }
 
-            MenuTextBox.Text = _menu.Title;
-            DescriptionTextBox.Text = _menu.Description;
+        public string Description
+        {
+            get
+            {
+                return _updateMenu.Description;
+            }
+            set
+            {
+                _updateMenu.Description = value;
+                OnPropertyChanged("Description");
+            }
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
@@ -82,23 +116,8 @@ namespace LucaHome.Pages
         private void UpdateMenu_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("UpdateMenu_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-
-            string menuTitle = MenuTextBox.Text;
-
-            ValidationResult menuTitleResult = new TextBoxLengthRule().Validate(menuTitle, null);
-            if (!menuTitleResult.IsValid)
-            {
-                _notifier.ShowError("Please enter a menu title!");
-                return;
-            }
-
-            string menuDescription = DescriptionTextBox.Text;
-
-            _menu.Title = menuTitle;
-            _menu.Description = menuDescription;
-
             _menuService.OnMenuUpdateFinished += _onMenuUpdateFinished;
-            _menuService.UpdateMenu(_menu);
+            _menuService.UpdateMenu(_updateMenu);
         }
 
         private void _onMenuDownloadFinished(IList<MenuDto> menuList, bool success, string response)
@@ -131,7 +150,6 @@ namespace LucaHome.Pages
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _navigationService.GoBack();
         }
     }

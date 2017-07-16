@@ -5,6 +5,8 @@ using OpenWeather.Downloader;
 using OpenWeather.Models;
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OpenWeather.Service
 {
@@ -44,6 +46,48 @@ namespace OpenWeather.Service
         private void OnForecastWeatherDownloadFinishedHandler(ForecastModel forecastWeather, bool success)
         {
             OnForecastWeatherDownloadFinished?.Invoke(forecastWeather, success);
+        }
+
+        public IList<ForecastPartModel> FoundForecastEntries(string searchKey)
+        {
+            List<ForecastPartModel> foundForecastEntries;
+
+            DateTime today = DateTime.Now;
+            DateTime tomorrow = new DateTime(today.Year, today.Month, today.Day + 1);
+
+            switch (searchKey)
+            {
+                case "Today":
+                case "Heute":
+                    foundForecastEntries = _forecastWeather.List
+                        .Where(forecastEntry => forecastEntry.Datetime.Date == today.Date)
+                        .Select(forecastEntry => forecastEntry)
+                        .ToList();
+                    break;
+
+                case "Tomorrow":
+                case "Morgen":
+                    foundForecastEntries = _forecastWeather.List
+                        .Where(forecastEntry => forecastEntry.Datetime.Date == tomorrow.Date)
+                        .Select(forecastEntry => forecastEntry)
+                        .ToList();
+                    break;
+
+                default:
+                    foundForecastEntries = _forecastWeather.List
+                        .Where(forecastEntry =>
+                            forecastEntry.Condition.ToString().Contains(searchKey)
+                            || forecastEntry.DateTimeString.Contains(searchKey)
+                            || forecastEntry.Description.Contains(searchKey)
+                            || forecastEntry.HumidityString.Contains(searchKey)
+                            || forecastEntry.PressureString.Contains(searchKey)
+                            || forecastEntry.TemperatureString.Contains(searchKey))
+                        .Select(forecastEntry => forecastEntry)
+                        .ToList();
+                    break;
+            }
+
+            return foundForecastEntries;
         }
 
         public static OpenWeatherService Instance

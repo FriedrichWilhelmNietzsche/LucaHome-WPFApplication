@@ -15,6 +15,7 @@ namespace LucaHome
         private readonly Logger _logger;
 
         private readonly BirthdayService _birthdayService;
+        private readonly CoinService _coinService;
         private readonly MapContentService _mapContentService;
         private readonly MenuService _menuService;
         private readonly MovieService _movieService;
@@ -35,6 +36,7 @@ namespace LucaHome
             InitializeComponent();
 
             _birthdayService = BirthdayService.Instance;
+            _coinService = CoinService.Instance;
             _mapContentService = MapContentService.Instance;
             _menuService = MenuService.Instance;
             _movieService = MovieService.Instance;
@@ -86,6 +88,7 @@ namespace LucaHome
             _userService.OnUserCheckedFinished -= _onUserCheckedFinished;
 
             _birthdayService.Dispose();
+            _coinService.Dispose();
             _mapContentService.Dispose();
             _menuService.Dispose();
             _movieService.Dispose();

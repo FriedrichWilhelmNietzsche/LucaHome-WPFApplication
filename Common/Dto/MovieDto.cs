@@ -44,6 +44,10 @@ namespace Common.Dto
             {
                 return _title;
             }
+            set
+            {
+                _title = value;
+            }
         }
 
         public string Genre
@@ -52,6 +56,10 @@ namespace Common.Dto
             {
                 return _genre;
             }
+            set
+            {
+                _genre = value;
+            }
         }
 
         public string Description
@@ -59,6 +67,10 @@ namespace Common.Dto
             get
             {
                 return _description;
+            }
+            set
+            {
+                _description = value;
             }
         }
 
@@ -127,7 +139,7 @@ namespace Common.Dto
         {
             string socketsString = "";
 
-            foreach(WirelessSocketDto socket in _sockets)
+            foreach (WirelessSocketDto socket in _sockets)
             {
                 socketsString += socket.Name + "|";
             }

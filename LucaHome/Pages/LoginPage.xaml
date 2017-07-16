@@ -10,7 +10,6 @@
       Width="{DynamicResource PageWidth}"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       Title="LoginPage"
-      Loaded="Page_Loaded"
       Unloaded="Page_Unloaded">
 
     <Page.Resources>
@@ -20,6 +19,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Slider.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
             <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource MaterialDesignTextBox}">
                 <Setter Property="Margin" Value="0 8 0 8" />
             </Style>
@@ -67,7 +67,10 @@
             Margin="5 15 5 5" 
             materialDesign:HintAssist.Hint="Enter username here" >
             <TextBox.Text>
-                <Binding Path="UserName" UpdateSourceTrigger="PropertyChanged">
+                <Binding 
+                    Path="UserName" 
+                    UpdateSourceTrigger="PropertyChanged"
+                    Mode="TwoWay">
                     <Binding.ValidationRules>
                         <validationrules:TextBoxNotEmptyRule/>
                     </Binding.ValidationRules>
@@ -87,9 +90,7 @@
             x:Name="PasswordBox"
             Margin="5 15 5 5" 
             materialDesign:HintAssist.Hint="Enter your password here"
-            Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" >
-
-        </PasswordBox>
+            Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
 
         <Button
             Style="{DynamicResource MaterialDesignRaisedButton}"
@@ -98,8 +99,8 @@
             Margin="5 5 5 5" 
             Width="200"
             ToolTip="Login with entered data"
-            Click="Button_Click">
-            Login
-        </Button>
+            Click="Button_Click"
+            Content="Login"
+            IsEnabled="{Binding ElementName=PasswordBox, Path=Password.Length, Mode=OneWay}" />
     </Grid>
 </Page>

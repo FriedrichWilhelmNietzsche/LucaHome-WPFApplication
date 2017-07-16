@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Navigation;
 using ToastNotifications;
 using ToastNotifications.Lifetime;
@@ -15,26 +16,26 @@ using ToastNotifications.Position;
 
 namespace LucaHome.Pages
 {
-    public partial class WirelessSocketAddPage : Page, INotifyPropertyChanged
+    public partial class CoinAddPage : Page, INotifyPropertyChanged
     {
-        private const string TAG = "WirelessSocketAddPage";
+        private const string TAG = "CoinAddPage";
         private readonly Logger _logger;
 
+        private readonly CoinService _coinService;
         private readonly NavigationService _navigationService;
-        private readonly WirelessSocketService _wirelessSocketService;
 
         private readonly Notifier _notifier;
 
-        private WirelessSocketDto _newWirelessSocket;
+        private CoinDto _newCoin;
 
-        public WirelessSocketAddPage(NavigationService navigationService)
+        public CoinAddPage(NavigationService navigationService)
         {
             _logger = new Logger(TAG, Enables.LOGGING);
 
+            _coinService = CoinService.Instance;
             _navigationService = navigationService;
-            _wirelessSocketService = WirelessSocketService.Instance;
 
-            _newWirelessSocket = new WirelessSocketDto(_wirelessSocketService.WirelessSocketList.Count, "", "", "", false);
+            _newCoin = new CoinDto(_coinService.CoinList.Count, "", "", 0);
 
             InitializeComponent();
             DataContext = this;
@@ -66,81 +67,91 @@ namespace LucaHome.Pages
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public string SocketName
+        public string CoinAmount
         {
             get
             {
-                return _newWirelessSocket.Name;
+                return _newCoin.Amount.ToString();
             }
             set
             {
-                _newWirelessSocket.Name = value;
-                OnPropertyChanged("SocketName");
+                string amountString = value;
+                double amount = 0;
+                bool parseAmountSuccess = double.TryParse(amountString, out amount);
+                if (parseAmountSuccess)
+                {
+                    _newCoin.Amount = amount;
+                    OnPropertyChanged("CoinAmount");
+                }
             }
         }
 
-        public string SocketArea
+        public string CoinUser
         {
             get
             {
-                return _newWirelessSocket.Area;
+                return _newCoin.User;
             }
             set
             {
-                _newWirelessSocket.Area = value;
-                OnPropertyChanged("SocketArea");
+                _newCoin.User = value;
+                OnPropertyChanged("CoinUser");
             }
         }
 
-        public string SocketCode
+        public CollectionView TypeList
         {
             get
             {
-                return _newWirelessSocket.Code;
-            }
-            set
-            {
-                _newWirelessSocket.Code = value;
-                OnPropertyChanged("SocketCode");
+                IList<string> typeList = new List<string>();
+                typeList.Add("XBT");
+                typeList.Add("DASH");
+                typeList.Add("ETC");
+                typeList.Add("ETH");
+                typeList.Add("LTC");
+                typeList.Add("XMR");
+                typeList.Add("ZEC");
+                return new CollectionView(typeList);
             }
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-            _wirelessSocketService.OnAddWirelessSocketFinished -= _onAddWirelessSocketFinished;
-            _wirelessSocketService.OnWirelessSocketDownloadFinished -= _onWirelessSocketDownloadFinished;
+            _coinService.OnCoinAddFinished -= _onCoinAddFinished;
+            _coinService.OnCoinDownloadFinished -= _onCoinDownloadFinished;
         }
 
-        private void SaveWirelessSocket_Click(object sender, RoutedEventArgs routedEventArgs)
+        private void SaveCoin_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("SaveWirelessSocket_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-            _wirelessSocketService.OnAddWirelessSocketFinished += _onAddWirelessSocketFinished;
-            _wirelessSocketService.AddWirelessSocket(_newWirelessSocket);
+            _logger.Debug(string.Format("SaveCoin_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
+            _coinService.OnCoinAddFinished += _onCoinAddFinished;
+            _logger.Debug(string.Format("Trying to add new coin {0}", _newCoin));
+            _coinService.AddCoin(_newCoin);
         }
 
-        private void _onAddWirelessSocketFinished(bool success, string response)
+        private void _onCoinAddFinished(bool success, string response)
         {
-            _logger.Debug(string.Format("_onAddWirelessSocketFinished was successful {0}", success));
-            _wirelessSocketService.OnAddWirelessSocketFinished -= _onAddWirelessSocketFinished;
+            _logger.Debug(string.Format("_onCoinAddFinished was successful {0}", success));
+            _coinService.OnCoinAddFinished -= _onCoinAddFinished;
 
             if (success)
             {
-                _notifier.ShowSuccess("Added new wireless socket!");
+                _notifier.ShowSuccess("Added new coin!");
 
-                _wirelessSocketService.OnWirelessSocketDownloadFinished += _onWirelessSocketDownloadFinished;
-                _wirelessSocketService.LoadWirelessSocketList();
+                _coinService.OnCoinDownloadFinished += _onCoinDownloadFinished;
+                _coinService.LoadCoinList();
             }
             else
             {
-                _notifier.ShowError(string.Format("Adding wireless socket failed!\n{0}", response));
+                _notifier.ShowError(string.Format("Adding coin failed!\n{0}", response));
             }
         }
 
-        private void _onWirelessSocketDownloadFinished(IList<WirelessSocketDto> wirelessSocketList, bool success, string response)
+        private void _onCoinDownloadFinished(IList<CoinDto> coinList, bool success, string response)
         {
-            _logger.Debug(string.Format("_onWirelessSocketDownloadFinished with model {0} was successful {1}", wirelessSocketList, success));
-            _wirelessSocketService.OnWirelessSocketDownloadFinished -= _onWirelessSocketDownloadFinished;
+            _logger.Debug(string.Format("_onCoinDownloadFinished with model {0} was successful {1}", coinList, success));
+            _coinService.OnCoinDownloadFinished -= _onCoinDownloadFinished;
             _navigationService.GoBack();
         }
 
