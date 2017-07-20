@@ -22,16 +22,16 @@ namespace Common.Converter
         {
             if (StringHelper.StringsAreEqual(stringArray))
             {
-                return ParseStringToList(stringArray[0]);
+                return parseStringToList(stringArray[0]);
             }
             else
             {
                 string usedEntry = StringHelper.SelectString(stringArray, _searchParameter);
-                return ParseStringToList(usedEntry);
+                return parseStringToList(usedEntry);
             }
         }
 
-        private static IList<ChangeDto> ParseStringToList(string value)
+        private static IList<ChangeDto> parseStringToList(string value)
         {
             if (!value.Contains("Error"))
             {
@@ -48,7 +48,7 @@ namespace Common.Converter
                             string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
                             string[] data = Regex.Split(replacedEntry, "\\};");
-                            ChangeDto newValue = ParseStringToValue(index, data);
+                            ChangeDto newValue = parseStringToValue(index, data);
                             if (newValue != null)
                             {
                                 list.Add(newValue);
@@ -65,7 +65,7 @@ namespace Common.Converter
             return new List<ChangeDto>();
         }
 
-        private static ChangeDto ParseStringToValue(int id, string[] data)
+        private static ChangeDto parseStringToValue(int id, string[] data)
         {
             if (data.Length == 7)
             {

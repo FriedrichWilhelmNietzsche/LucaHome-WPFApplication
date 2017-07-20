@@ -9,7 +9,7 @@ namespace Data.Controller
     public enum DownloadType
     {
         Birthday, BirthdayAdd, BirthdayUpdate, BirthdayDelete,
-        Coin, CoinAdd, CoinUpdate, CoinDelete,
+        CoinConversion, Coin, CoinAdd, CoinUpdate, CoinDelete,
         MapContent,
         Menu, MenuUpdate,
         Movie, MovieAdd, MovieUpdate, MovieDelete,
@@ -125,6 +125,8 @@ namespace Data.Controller
 
             HttpClient httpClient = new HttpClient();
             string data = await httpClient.GetStringAsync(requestUrl);
+
+            _logger.Debug(string.Format("ResponseData: {0}", data));
 
             OnDownloadFinished(data, (data != null), downloadType);
         }

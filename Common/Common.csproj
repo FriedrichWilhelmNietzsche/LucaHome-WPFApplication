@@ -78,6 +78,7 @@
     <Compile Include="Common\Enables.cs" />
     <Compile Include="Common\Keys.cs" />
     <Compile Include="Common\Timeouts.cs" />
+    <Compile Include="Converter\JsonDataToCoinConversionConverter.cs" />
     <Compile Include="Converter\JsonDataToCoinConverter.cs" />
     <Compile Include="Converter\JsonDataToBirthdayConverter.cs" />
     <Compile Include="Converter\JsonDataToChangeConverter.cs" />
@@ -234,7 +235,7 @@
     <Resource Include="Assets\Icons\Coins\ETC.png" />
     <Resource Include="Assets\Icons\Coins\ETH.png" />
     <Resource Include="Assets\Icons\Coins\LTC.png" />
-    <Resource Include="Assets\Icons\Coins\XBT.png" />
+    <Resource Include="Assets\Icons\Coins\BTC.png" />
     <Resource Include="Assets\Icons\Coins\XMR.png" />
     <Resource Include="Assets\Icons\Coins\ZEC.png" />
   </ItemGroup>

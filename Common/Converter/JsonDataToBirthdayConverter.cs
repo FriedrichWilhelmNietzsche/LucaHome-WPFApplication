@@ -22,21 +22,21 @@ namespace Common.Converter
         {
             if (StringHelper.StringsAreEqual(stringArray))
             {
-                return ParseStringToList(stringArray[0]);
+                return parseStringToList(stringArray[0]);
             }
             else
             {
                 string usedEntry = StringHelper.SelectString(stringArray, _searchParameter);
-                return ParseStringToList(usedEntry);
+                return parseStringToList(usedEntry);
             }
         }
 
         public IList<BirthdayDto> GetList(string responseString)
         {
-            return ParseStringToList(responseString);
+            return parseStringToList(responseString);
         }
 
-        private IList<BirthdayDto> ParseStringToList(string value)
+        private IList<BirthdayDto> parseStringToList(string value)
         {
             if (!value.Contains("Error"))
             {
@@ -53,7 +53,7 @@ namespace Common.Converter
                             string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
                             string[] data = Regex.Split(replacedEntry, "\\};");
-                            BirthdayDto newValue = ParseStringToValue(data);
+                            BirthdayDto newValue = parseStringToValue(data);
                             if (newValue != null)
                             {
                                 list.Add(newValue);
@@ -70,7 +70,7 @@ namespace Common.Converter
             return new List<BirthdayDto>();
         }
 
-        private BirthdayDto ParseStringToValue(string[] data)
+        private BirthdayDto parseStringToValue(string[] data)
         {
             if (data.Length == 5)
             {

@@ -28,13 +28,12 @@ namespace Data.Services
         private readonly DownloadController _downloadController;
         private readonly JsonDataToMovieConverter _jsonDataToMovieConverter;
         private readonly LocalDriveController _localDriveController;
-        private readonly WirelessSocketService _wirelessSocketService;
 
         private static MovieService _instance = null;
         private static readonly object _padlock = new object();
 
         private IList<MovieDto> _movieList = new List<MovieDto>();
-        private DriveInfo _movieDrive;
+        private DriveInfo _videothekDrive;
 
         private Timer _downloadTimer;
 
@@ -46,9 +45,8 @@ namespace Data.Services
             _downloadController = new DownloadController();
             _jsonDataToMovieConverter = new JsonDataToMovieConverter();
             _localDriveController = new LocalDriveController();
-            _wirelessSocketService = WirelessSocketService.Instance;
 
-            _movieDrive = _localDriveController.GetMovieDrive();
+            _videothekDrive = _localDriveController.GetVideothekDrive();
 
             _downloadController.OnDownloadFinished += _movieDownloadFinished;
 
@@ -82,7 +80,7 @@ namespace Data.Services
         {
             get
             {
-                return _movieList;
+                return _movieList.OrderBy(movie => movie.Title).ToList();
             }
         }
 
@@ -102,8 +100,11 @@ namespace Data.Services
                         .Where(movie =>
                             movie.Title.Contains(searchKey)
                             || movie.Genre.Contains(searchKey)
-                            || movie.Description.Contains(searchKey))
+                            || movie.Description.Contains(searchKey)
+                            || movie.RatingString.Contains(searchKey)
+                            || movie.Watched.ToString().Contains(searchKey))
                         .Select(movie => movie)
+                        .OrderBy(movie => movie.Title)
                         .ToList();
 
             return foundMovies;
@@ -145,7 +146,7 @@ namespace Data.Services
         {
             _logger.Debug(string.Format("startMovieOnPc with title {0}", movieTitle));
 
-            string moviePathString = string.Format("{0}{1}", _movieDrive.Name, movieTitle);
+            string moviePathString = string.Format("{0}{1}{2}", _videothekDrive.Name, "Filme\\", movieTitle);
             DirectoryInfo moviePath = new DirectoryInfo(moviePathString);
 
             FileInfo[] movieFiles = _localDriveController.ReadFilesInDir(moviePath);
@@ -156,7 +157,7 @@ namespace Data.Services
             }
             else if (movieFiles.Length == 1)
             {
-                string path = string.Format("{0}{1}\\{2}", _movieDrive.Name, movieTitle, movieFiles[0].Name);
+                string path = string.Format("{0}\\{1}", moviePathString, movieFiles[0].Name);
                 _logger.Debug(string.Format("Opening {0} with associated programm", path));
                 Process.Start(@path);
                 OnMovieStartFinished(true, string.Empty);
@@ -233,7 +234,7 @@ namespace Data.Services
                 return;
             }
 
-            IList<MovieDto> movieList = _jsonDataToMovieConverter.GetList(response, _wirelessSocketService.WirelessSocketList);
+            IList<MovieDto> movieList = _jsonDataToMovieConverter.GetList(response);
             if (movieList == null)
             {
                 _logger.Error("Converted movieList is null!");

@@ -24,6 +24,7 @@ namespace Data.Services
         private readonly DownloadController _downloadController;
         private readonly JsonDataToMapContentConverter _jsonDataToMapContentConverter;
         private readonly ScheduleService _scheduleService;
+        private readonly TemperatureService _temperatureService;
         private readonly WirelessSocketService _wirelessSocketService;
 
         private static MapContentService _instance = null;
@@ -41,6 +42,7 @@ namespace Data.Services
             _downloadController = new DownloadController();
             _jsonDataToMapContentConverter = new JsonDataToMapContentConverter();
             _scheduleService = ScheduleService.Instance;
+            _temperatureService = TemperatureService.Instance;
             _wirelessSocketService = WirelessSocketService.Instance;
 
             _downloadTimer = new Timer(TIMEOUT);
@@ -92,7 +94,8 @@ namespace Data.Services
                             mapContent.Id.ToString().Contains(searchKey)
                             || mapContent.Position.ToString().Contains(searchKey)
                             || mapContent.MapDrawingType.ToString().Contains(searchKey)
-                            || mapContent.TemperatureArea.Contains(searchKey)
+                            || mapContent.Area.Contains(searchKey)
+                            || mapContent.Temperature.ToString().Contains(searchKey)
                             || mapContent.Socket.ToString().Contains(searchKey)
                             || mapContent.ScheduleList.ToString().Contains(searchKey)
                             || mapContent.ButtonVisibility.ToString().Contains(searchKey))
@@ -162,7 +165,7 @@ namespace Data.Services
                 return;
             }
 
-            IList<MapContentDto> mapContentList = _jsonDataToMapContentConverter.GetList(response, _wirelessSocketService.WirelessSocketList, _scheduleService.ScheduleList);
+            IList<MapContentDto> mapContentList = _jsonDataToMapContentConverter.GetList(response, _temperatureService.TemperatureList, _wirelessSocketService.WirelessSocketList, _scheduleService.ScheduleList);
             if (mapContentList == null)
             {
                 _logger.Error("Converted mapContentList is null!");

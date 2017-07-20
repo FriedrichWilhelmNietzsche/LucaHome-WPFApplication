@@ -35,7 +35,7 @@ namespace LucaHome.Pages
             _coinService = CoinService.Instance;
             _navigationService = navigationService;
 
-            _newCoin = new CoinDto(_coinService.CoinList.Count, "", "", 0);
+            _newCoin = new CoinDto(_coinService.CoinList.Count, "", "", 0, 0);
 
             InitializeComponent();
             DataContext = this;
@@ -104,7 +104,7 @@ namespace LucaHome.Pages
             get
             {
                 IList<string> typeList = new List<string>();
-                typeList.Add("XBT");
+                typeList.Add("BTC");
                 typeList.Add("DASH");
                 typeList.Add("ETC");
                 typeList.Add("ETH");

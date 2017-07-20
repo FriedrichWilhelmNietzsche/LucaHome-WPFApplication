@@ -12,12 +12,16 @@ namespace Common.Dto
         private string _type;
         private double _amount;
 
-        public CoinDto(int id, string user, string type, double amount)
+        private double _currentConversion;
+
+        public CoinDto(int id, string user, string type, double amount, double currentConversion)
         {
             _id = id;
             _user = user;
             _type = type;
             _amount = amount;
+
+            _currentConversion = currentConversion;
         }
 
         public int Id
@@ -64,6 +68,42 @@ namespace Common.Dto
             }
         }
 
+        public double CurrentConversion
+        {
+            get
+            {
+                return _currentConversion;
+            }
+            set
+            {
+                _currentConversion = value;
+            }
+        }
+
+        public string CurrentConversionString
+        {
+            get
+            {
+                return string.Format("{0:0.00} €", CurrentConversion);
+            }
+        }
+
+        public double Value
+        {
+            get
+            {
+                return _amount * _currentConversion;
+            }
+        }
+
+        public string ValueString
+        {
+            get
+            {
+                return string.Format("{0:0.00} €", Value);
+            }
+        }
+
         public Uri Icon
         {
             get
@@ -98,7 +138,7 @@ namespace Common.Dto
 
         public override string ToString()
         {
-            return string.Format("( {0}: (User: {1} );( Type: {2});(Amount: {3} ))", TAG, _user, _type, _amount);
+            return string.Format("( {0}: (User: {1} );( Type: {2});(Amount: {3} );(CurrentConversion: {4} );(Value: {5} ))", TAG, _user, _type, _amount, _currentConversion, Value);
         }
     }
 }

@@ -196,7 +196,7 @@ namespace Data.Services
             WeatherModel currentWeather = _openWeatherService.CurrentWeather;
             if (currentWeather != null)
             {
-                TemperatureDto currentWeatherTemperature = new TemperatureDto(currentWeather.Temperature, currentWeather.City, currentWeather.LastUpdate, string.Empty, TemperatureType.CITY, string.Empty);
+                TemperatureDto currentWeatherTemperature = new TemperatureDto(currentWeather.Temperature, "Outdoor", currentWeather.LastUpdate, string.Empty, TemperatureType.CITY, string.Empty);
                 _temperatureList.Add(currentWeatherTemperature);
             }
 

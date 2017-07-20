@@ -17,25 +17,25 @@ namespace Common.Converter
             _logger = new Logger(TAG);
         }
 
-        public IList<CoinDto> GetList(string[] stringArray)
+        public IList<CoinDto> GetList(string[] stringArray, IList<KeyValuePair<string, double>> conversionList)
         {
             if (StringHelper.StringsAreEqual(stringArray))
             {
-                return ParseStringToList(stringArray[0]);
+                return parseStringToList(stringArray[0], conversionList);
             }
             else
             {
                 string usedEntry = StringHelper.SelectString(stringArray, _searchParameter);
-                return ParseStringToList(usedEntry);
+                return parseStringToList(usedEntry, conversionList);
             }
         }
 
-        public IList<CoinDto> GetList(string responseString)
+        public IList<CoinDto> GetList(string responseString, IList<KeyValuePair<string, double>> conversionList)
         {
-            return ParseStringToList(responseString);
+            return parseStringToList(responseString, conversionList);
         }
 
-        private IList<CoinDto> ParseStringToList(string value)
+        private IList<CoinDto> parseStringToList(string value, IList<KeyValuePair<string, double>> conversionList)
         {
             if (!value.Contains("Error"))
             {
@@ -52,7 +52,7 @@ namespace Common.Converter
                             string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
                             string[] data = Regex.Split(replacedEntry, "\\};");
-                            CoinDto newValue = ParseStringToValue(data);
+                            CoinDto newValue = parseStringToValue(data, conversionList);
                             if (newValue != null)
                             {
                                 list.Add(newValue);
@@ -69,7 +69,7 @@ namespace Common.Converter
             return new List<CoinDto>();
         }
 
-        private CoinDto ParseStringToValue(string[] data)
+        private CoinDto parseStringToValue(string[] data, IList<KeyValuePair<string, double>> conversionList)
         {
             if (data.Length == 4)
             {
@@ -91,7 +91,7 @@ namespace Common.Converter
 
                     string type = data[2].Replace("{Type:", "").Replace("};", "");
 
-                    string amountString = data[3].Replace("{Amount:", "").Replace("};", "");
+                    string amountString = data[3].Replace("{Amount:", "").Replace("};", "").Replace(".", ",");
                     double amount = -1;
                     bool parseSuccessAmount = double.TryParse(amountString, out amount);
                     if (!parseSuccessAmount)
@@ -100,7 +100,16 @@ namespace Common.Converter
                         return null;
                     }
 
-                    return new CoinDto(id, user, type, amount);
+                    double currentConversion = 0;
+                    foreach (KeyValuePair<string, double> entry in conversionList)
+                    {
+                        if (entry.Key.Contains(type))
+                        {
+                            currentConversion = entry.Value;
+                        }
+                    }
+
+                    return new CoinDto(id, user, type, amount, currentConversion);
                 }
                 else
                 {

@@ -1,6 +1,5 @@
 ﻿using Common.Dto;
 using Common.Tools;
-using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -18,25 +17,25 @@ namespace Common.Converter
             _logger = new Logger(TAG);
         }
 
-        public IList<MovieDto> GetList(string[] stringArray, IList<WirelessSocketDto> allSockets)
+        public IList<MovieDto> GetList(string[] stringArray)
         {
             if (StringHelper.StringsAreEqual(stringArray))
             {
-                return ParseStringToList(stringArray[0], allSockets);
+                return parseStringToList(stringArray[0]);
             }
             else
             {
                 string usedEntry = StringHelper.SelectString(stringArray, _searchParameter);
-                return ParseStringToList(usedEntry, allSockets);
+                return parseStringToList(usedEntry);
             }
         }
 
-        public IList<MovieDto> GetList(string jsonString, IList<WirelessSocketDto> allSockets)
+        public IList<MovieDto> GetList(string jsonString)
         {
-            return ParseStringToList(jsonString, allSockets);
+            return parseStringToList(jsonString);
         }
 
-        private IList<MovieDto> ParseStringToList(string value, IList<WirelessSocketDto> allSockets)
+        private IList<MovieDto> parseStringToList(string value)
         {
             if (!value.Contains("Error"))
             {
@@ -53,7 +52,7 @@ namespace Common.Converter
                             string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
                             string[] data = Regex.Split(replacedEntry, "\\};");
-                            MovieDto newValue = ParseStringToValue(index, data, allSockets);
+                            MovieDto newValue = parseStringToValue(index, data);
                             if (newValue != null)
                             {
                                 list.Add(newValue);
@@ -70,16 +69,15 @@ namespace Common.Converter
             return new List<MovieDto>();
         }
 
-        private MovieDto ParseStringToValue(int id, string[] data, IList<WirelessSocketDto> allSockets)
+        private MovieDto parseStringToValue(int id, string[] data)
         {
-            if (data.Length == 6)
+            if (data.Length == 5)
             {
                 if (data[0].Contains("{Title:")
                     && data[1].Contains("{Genre:")
                     && data[2].Contains("{Description:")
                     && data[3].Contains("{Rating:")
-                    && data[4].Contains("{Watched:")
-                    && data[5].Contains("{Sockets:"))
+                    && data[4].Contains("{Watched:"))
                 {
 
                     string title = data[0].Replace("{Title:", "").Replace("};", "");
@@ -102,30 +100,7 @@ namespace Common.Converter
                         _logger.Warning("Failed to parse watched from data!");
                     }
 
-                    string socketString = data[5].Replace("{Sockets:", "").Replace("};", "");
-                    string[] socketStringArray = socketString.Split(new string[] { "\\|" }, StringSplitOptions.RemoveEmptyEntries);
-                    WirelessSocketDto[] sockets = new WirelessSocketDto[socketStringArray.Length];
-                    if (allSockets != null)
-                    {
-                        for (int index = 0; index < socketStringArray.Length; index++)
-                        {
-                            string searchedSocket = socketStringArray[index].Replace("|", "");
-                            foreach (WirelessSocketDto socket in allSockets)
-                            {
-                                if (socket.Name.Contains(searchedSocket))
-                                {
-                                    sockets[index] = socket;
-                                    continue;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        _logger.Warning("SocketList is null!");
-                    }
-
-                    MovieDto newValue = new MovieDto(id, title, genre, description, rating, watched, sockets);
+                    MovieDto newValue = new MovieDto(id, title, genre, description, rating, watched);
                     return newValue;
                 }
                 else

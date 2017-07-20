@@ -11,7 +11,8 @@ using System.Threading.Tasks;
 
 namespace Data.Services
 {
-    public delegate void CoinDownloadEventHandler(IList<CoinDto> birthdayList, bool success, string response);
+    public delegate void CoinConversionDownloadEventHandler(IList<KeyValuePair<string, double>> coinConversionList, bool success, string response);
+    public delegate void CoinDownloadEventHandler(IList<CoinDto> coinList, bool success, string response);
     public delegate void CoinAddEventHandler(bool success, string response);
     public delegate void CoinUpdateEventHandler(bool success, string response);
     public delegate void CoinDeleteEventHandler(bool success, string response);
@@ -26,11 +27,13 @@ namespace Data.Services
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
         private readonly JsonDataToCoinConverter _jsonDataToCoinConverter;
+        private readonly JsonDataToCoinConversionConverter _jsonDataToCoinConversionConverter;
 
         private static CoinService _instance = null;
         private static readonly object _padlock = new object();
 
         private IList<CoinDto> _coinList = new List<CoinDto>();
+        private IList<KeyValuePair<string, double>> _coinConversionList = new List<KeyValuePair<string, double>>();
 
         private Timer _downloadTimer;
 
@@ -41,8 +44,9 @@ namespace Data.Services
             _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
             _jsonDataToCoinConverter = new JsonDataToCoinConverter();
+            _jsonDataToCoinConversionConverter = new JsonDataToCoinConversionConverter();
 
-            _downloadController.OnDownloadFinished += _coinDownloadFinished;
+            _downloadController.OnDownloadFinished += _coinConversionDownloadFinished;
 
             _downloadTimer = new Timer(TIMEOUT);
             _downloadTimer.Elapsed += _downloadTimer_Elapsed;
@@ -50,6 +54,7 @@ namespace Data.Services
             _downloadTimer.Start();
         }
 
+        public event CoinConversionDownloadEventHandler OnCoinConversionDownloadFinished;
         public event CoinDownloadEventHandler OnCoinDownloadFinished;
         public event CoinAddEventHandler OnCoinAddFinished;
         public event CoinUpdateEventHandler OnCoinUpdateFinished;
@@ -103,6 +108,12 @@ namespace Data.Services
             return foundCoins;
         }
 
+        public void LoadCoinConversionList()
+        {
+            _logger.Debug("LoadCoinConversionList");
+            loadCoinConversionAsync();
+        }
+
         public void LoadCoinList()
         {
             _logger.Debug("LoadCoinList");
@@ -133,6 +144,16 @@ namespace Data.Services
             loadCoinListAsync();
         }
 
+        private async Task loadCoinConversionAsync()
+        {
+            _logger.Debug("loadCoinConversionAsync");
+
+            string requestUrl = "https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,DASH,ETC,ETH,LTC,XMR,ZEC&tsyms=EUR";
+            _logger.Debug(string.Format("RequestUrl {0}", requestUrl));
+
+            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.CoinConversion);
+        }
+
         private async Task loadCoinListAsync()
         {
             _logger.Debug("loadCoinListAsync");
@@ -146,6 +167,8 @@ namespace Data.Services
 
             string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_COINS_USER.Action;
             _logger.Debug(string.Format("RequestUrl {0}", requestUrl));
+
+            _downloadController.OnDownloadFinished += _coinDownloadFinished;
 
             await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.Coin);
         }
@@ -213,6 +236,27 @@ namespace Data.Services
             await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.CoinDelete);
         }
 
+        private void _coinConversionDownloadFinished(string response, bool success, DownloadType downloadType)
+        {
+            _logger.Debug("_coinConversionDownloadFinished");
+
+            if (downloadType != DownloadType.CoinConversion)
+            {
+                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
+                return;
+            }
+
+            IList<KeyValuePair<string, double>> coinConversionList = _jsonDataToCoinConversionConverter.GetList(response);
+            if (coinConversionList == null)
+            {
+                _logger.Error("Converted coinConversionList is null!");
+                coinConversionList = new List<KeyValuePair<string, double>>();
+            }
+
+            _coinConversionList = coinConversionList;
+            OnCoinConversionDownloadFinished(_coinConversionList, false, response);
+        }
+
         private void _coinDownloadFinished(string response, bool success, DownloadType downloadType)
         {
             _logger.Debug("_coinDownloadFinished");
@@ -222,6 +266,8 @@ namespace Data.Services
                 _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
+
+            _downloadController.OnDownloadFinished -= _coinDownloadFinished;
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
@@ -241,7 +287,7 @@ namespace Data.Services
                 return;
             }
 
-            IList<CoinDto> coinList = _jsonDataToCoinConverter.GetList(response);
+            IList<CoinDto> coinList = _jsonDataToCoinConverter.GetList(response, _coinConversionList);
             if (coinList == null)
             {
                 _logger.Error("Converted coinList is null!");
@@ -364,6 +410,7 @@ namespace Data.Services
         {
             _logger.Debug("Dispose");
 
+            _downloadController.OnDownloadFinished -= _coinConversionDownloadFinished;
             _downloadController.OnDownloadFinished -= _coinDownloadFinished;
             _downloadController.OnDownloadFinished -= _coinAddFinished;
             _downloadController.OnDownloadFinished -= _coinUpdateFinished;

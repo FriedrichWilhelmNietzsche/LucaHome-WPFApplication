@@ -15,9 +15,7 @@ namespace Common.Dto
         private int _rating;
         private int _watched;
 
-        private WirelessSocketDto[] _sockets;
-
-        public MovieDto(int id, string title, string genre, string description, int rating, int watched, WirelessSocketDto[] sockets)
+        public MovieDto(int id, string title, string genre, string description, int rating, int watched)
         {
             _id = id;
 
@@ -26,8 +24,6 @@ namespace Common.Dto
             _description = description;
             _rating = rating;
             _watched = watched;
-
-            _sockets = sockets;
         }
 
         public int Id
@@ -102,18 +98,6 @@ namespace Common.Dto
             }
         }
 
-        public WirelessSocketDto[] Sockets
-        {
-            get
-            {
-                return _sockets;
-            }
-            set
-            {
-                _sockets = value;
-            }
-        }
-
         public Uri Icon
         {
             get
@@ -126,26 +110,13 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}&genre={2}&description={3}&rating={4}&watched={5}&sockets={6}", LucaServerAction.UPDATE_MOVIE.Action, _title, _genre, _description, _rating, _watched, getSocketsString());
+                return string.Format("{0}{1}&genre={2}&description={3}&rating={4}&watched={5}", LucaServerAction.UPDATE_MOVIE.Action, _title, _genre, _description, _rating, _watched);
             }
         }
 
         public override string ToString()
         {
-            return string.Format("( {0}: (Id: {1} );(Title: {2} );(Genre: {3} );(Description: {4} );(Rating: {5} );(Watched: {6} );(Sockets: {7} ))", TAG, _id, _title, _genre, _description, _rating, _watched, _sockets);
-        }
-
-        private object getSocketsString()
-        {
-            string socketsString = "";
-
-            foreach (WirelessSocketDto socket in _sockets)
-            {
-                socketsString += socket.Name + "|";
-            }
-            socketsString = socketsString.Substring(0, socketsString.Length - 1);
-
-            return socketsString;
+            return string.Format("( {0}: (Id: {1} );(Title: {2} );(Genre: {3} );(Description: {4} );(Rating: {5} );(Watched: {6} ))", TAG, _id, _title, _genre, _description, _rating, _watched);
         }
     }
 }

@@ -50,6 +50,7 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JsonConverterTest.cs" />
     <Compile Include="CommonConverterTest.cs" />
     <Compile Include="DataControllerTest.cs" />
     <Compile Include="DataServiceTest.cs" />

@@ -27,5 +27,23 @@ namespace TestProject
             Assert.IsNotNull(socketList);
             Assert.IsTrue(downloadSuccess);
         }
+
+        [TestMethod]
+        public void CoinServiceDownloadConversionTest()
+        {
+            IList<KeyValuePair<string, double>> coinConversionList = null;
+            bool downloadSuccess = false;
+
+            CoinService coinService = CoinService.Instance;
+            coinService.OnCoinConversionDownloadFinished += (list, success, response) =>
+            {
+                coinConversionList = list;
+                downloadSuccess = success;
+            };
+            coinService.LoadCoinList();
+
+            Assert.IsNotNull(coinConversionList);
+            Assert.IsTrue(downloadSuccess);
+        }
     }
 }

@@ -15,9 +15,9 @@ namespace Data.Controller
             _logger = new Logger(TAG);
         }
 
-        public DriveInfo GetMovieDrive()
+        public DriveInfo GetVideothekDrive()
         {
-            _logger.Debug("GetMovieDrive");
+            _logger.Debug("GetVideothekDrive");
 
             DriveInfo[] localDrives = DriveInfo.GetDrives();
             foreach (DriveInfo localDrive in localDrives)

@@ -16,7 +16,8 @@ namespace Common.Dto
         private int _id;
         private int[] _position;
         private DrawingType _drawingType;
-        private string _temperatureArea;
+        private string _area;
+        private TemperatureDto _temperature;
         private WirelessSocketDto _socket;
         private IList<ScheduleDto> _scheduleList;
         private Visibility _visibility;
@@ -25,7 +26,8 @@ namespace Common.Dto
             int id,
             int[] position,
             DrawingType drawingType,
-            string temperatureArea,
+            string area,
+            TemperatureDto temperature,
             WirelessSocketDto socket,
             IList<ScheduleDto> scheduleList,
             Visibility visibility)
@@ -35,7 +37,8 @@ namespace Common.Dto
             _id = id;
             _position = position;
             _drawingType = drawingType;
-            _temperatureArea = temperatureArea;
+            _area = area;
+            _temperature = temperature;
             _socket = socket;
             _scheduleList = scheduleList;
             _visibility = visibility;
@@ -73,15 +76,27 @@ namespace Common.Dto
             }
         }
 
-        public string TemperatureArea
+        public string Area
         {
             get
             {
-                return _temperatureArea;
+                return _area;
             }
             set
             {
-                _temperatureArea = value;
+                _area = value;
+            }
+        }
+
+        public TemperatureDto Temperature
+        {
+            get
+            {
+                return _temperature;
+            }
+            set
+            {
+                _temperature = value;
             }
         }
 
@@ -132,7 +147,7 @@ namespace Common.Dto
                     case DrawingType.Socket:
                         return _socket?.ShortName;
                     case DrawingType.Temperature:
-                        return "T";
+                        return _temperature?.TemperatureString;
                     case DrawingType.Null:
                     default:
                         return "";
@@ -163,7 +178,7 @@ namespace Common.Dto
                     case DrawingType.Socket:
                         return string.Format("Here is the socket {0}", _socket?.Name);
                     case DrawingType.Temperature:
-                        return string.Format("Here is the temperature at {0}", _temperatureArea);
+                        return string.Format("Here is the temperature at {0}", _area);
                     case DrawingType.Null:
                     default:
                         return "";
@@ -240,7 +255,7 @@ namespace Common.Dto
 
         public override string ToString()
         {
-            return string.Format("( {0}: (Id: {1} );(Position: {2} );(Type: {3} );(TemperatureArea: {4} );(Socket: {5} );(ScheduleList: {6} );(ButtonVisibility: {7} ))", TAG, _id, _position, _drawingType, _temperatureArea, _socket, _scheduleList, _visibility);
+            return string.Format("( {0}: (Id: {1} );(Position: {2} );(Type: {3} );(Area: {4} );(Temperature: {5} );(Socket: {6} );(ScheduleList: {7} );(ButtonVisibility: {8} ))", TAG, _id, _position, _drawingType, _area, _temperature, _socket, _scheduleList, _visibility);
         }
     }
 }

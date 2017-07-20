@@ -72,7 +72,7 @@ namespace LucaHome.Pages
             get
             {
                 IList<string> typeList = new List<string>();
-                typeList.Add("XBT");
+                typeList.Add("BTC");
                 typeList.Add("DASH");
                 typeList.Add("ETC");
                 typeList.Add("ETH");

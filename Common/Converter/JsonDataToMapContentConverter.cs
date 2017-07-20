@@ -19,25 +19,25 @@ namespace Common.Converter
             _logger = new Logger(TAG);
         }
 
-        public IList<MapContentDto> GetList(string[] stringArray, IList<WirelessSocketDto> socketList, IList<ScheduleDto> scheduleList)
+        public IList<MapContentDto> GetList(string[] stringArray, IList<TemperatureDto> temperatureList, IList<WirelessSocketDto> socketList, IList<ScheduleDto> scheduleList)
         {
             if (StringHelper.StringsAreEqual(stringArray))
             {
-                return ParseStringToList(stringArray[0], socketList, scheduleList);
+                return ParseStringToList(stringArray[0], temperatureList, socketList, scheduleList);
             }
             else
             {
                 string usedEntry = StringHelper.SelectString(stringArray, _searchParameter);
-                return ParseStringToList(usedEntry, socketList, scheduleList);
+                return ParseStringToList(usedEntry, temperatureList, socketList, scheduleList);
             }
         }
 
-        public IList<MapContentDto> GetList(string jsonString, IList<WirelessSocketDto> socketList, IList<ScheduleDto> scheduleList)
+        public IList<MapContentDto> GetList(string jsonString, IList<TemperatureDto> temperatureList, IList<WirelessSocketDto> socketList, IList<ScheduleDto> scheduleList)
         {
-            return ParseStringToList(jsonString, socketList, scheduleList);
+            return ParseStringToList(jsonString, temperatureList, socketList, scheduleList);
         }
 
-        private IList<MapContentDto> ParseStringToList(string value, IList<WirelessSocketDto> socketList, IList<ScheduleDto> scheduleList)
+        private IList<MapContentDto> ParseStringToList(string value, IList<TemperatureDto> temperatureList, IList<WirelessSocketDto> socketList, IList<ScheduleDto> scheduleList)
         {
             if (!value.Contains("Error"))
             {
@@ -54,7 +54,7 @@ namespace Common.Converter
                             string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
                             string[] data = Regex.Split(replacedEntry, "\\};");
-                            MapContentDto newValue = ParseStringToValue(data, socketList, scheduleList);
+                            MapContentDto newValue = ParseStringToValue(data, temperatureList, socketList, scheduleList);
                             if (newValue != null)
                             {
                                 list.Add(newValue);
@@ -71,7 +71,7 @@ namespace Common.Converter
             return new List<MapContentDto>();
         }
 
-        private MapContentDto ParseStringToValue(string[] data, IList<WirelessSocketDto> socketList, IList<ScheduleDto> scheduleList)
+        private MapContentDto ParseStringToValue(string[] data, IList<TemperatureDto> temperatureList, IList<WirelessSocketDto> socketList, IList<ScheduleDto> scheduleList)
         {
             if (data.Length == 8)
             {
@@ -166,13 +166,26 @@ namespace Common.Converter
                             break;
                         }
                     }
-
+                    
                     string temperatureArea = data[5].Replace("{temperatureArea:", "").Replace("};", "");
+
+                    TemperatureDto temperature = null;
+                    if (type == DrawingType.Temperature)
+                    {
+                        foreach (TemperatureDto entry in temperatureList)
+                        {
+                            if (entry.Area.Contains(temperatureArea))
+                            {
+                                temperature = entry;
+                                break;
+                            }
+                        }
+                    }
 
                     string visibilityString = data[6].Replace("{visibility:", "").Replace("};", "");
                     Visibility visibility = visibilityString.Contains("1") ? Visibility.Visible : Visibility.Collapsed;
 
-                    return new MapContentDto(id, position, type, temperatureArea, mapContentSocket, mapContentScheduleList, visibility);
+                    return new MapContentDto(id, position, type, temperatureArea, temperature, mapContentSocket, mapContentScheduleList, visibility);
                 }
                 else
                 {

@@ -91,9 +91,15 @@
                                     Width="200"/>
                     <GridViewColumn Header="Amount"
                                     DisplayMemberBinding="{Binding Amount, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="300"/>
+                                    Width="250"/>
                     <GridViewColumn Header="User"
                                     DisplayMemberBinding="{Binding User, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="150"/>
+                    <GridViewColumn Header="Conversion"
+                                    DisplayMemberBinding="{Binding CurrentConversionString, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="150"/>
+                    <GridViewColumn Header="Value"
+                                    DisplayMemberBinding="{Binding ValueString, UpdateSourceTrigger=PropertyChanged}"
                                     Width="150"/>
                     <GridViewColumn 
                         Width="65" >

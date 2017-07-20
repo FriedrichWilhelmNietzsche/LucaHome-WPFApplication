@@ -56,7 +56,7 @@ namespace LucaHome.Pages
 
             _birthdayService.OnBirthdayDownloadFinished += _birthdayDownloadFinished;
 
-            _coinService.OnCoinDownloadFinished += _onCoinDownloadFinished;
+            _coinService.OnCoinConversionDownloadFinished += _onCoinConversionDownloadFinished;
 
             _menuService.OnMenuDownloadFinished += _onMenuDownloadFinished;
 
@@ -69,7 +69,7 @@ namespace LucaHome.Pages
 
             _birthdayService.LoadBirthdayList();
 
-            _coinService.LoadCoinList();
+            _coinService.LoadCoinConversionList();
 
             _menuService.LoadMenuList();
 
@@ -84,14 +84,12 @@ namespace LucaHome.Pages
         private void _birthdayDownloadFinished(IList<BirthdayDto> birthdayList, bool success, string response)
         {
             _logger.Debug(string.Format("_birthdayDownloadFinished with model {0} was successful: {1}", birthdayList, success));
-            _downloadCount++;
             checkDownloadCount();
         }
 
         private void _currentWeatherDownloadFinished(WeatherModel currentWeather, bool success)
         {
             _logger.Debug(string.Format("_currentWeatherDownloadFinished with model {0} was successful: {1}", currentWeather, success));
-            _downloadCount++;
             checkDownloadCount();
 
             // Start download of temperatures after downloading current weather
@@ -102,49 +100,52 @@ namespace LucaHome.Pages
         private void _forecastWeatherDownloadFinished(ForecastModel forecastWeather, bool success)
         {
             _logger.Debug(string.Format("_forecastWeatherDownloadFinished with model {0} was successful: {1}", forecastWeather, success));
-            _downloadCount++;
             checkDownloadCount();
         }
 
         private void _mapContentDownloadFinished(IList<MapContentDto> mapContentList, bool success, string response)
         {
             _logger.Debug(string.Format("_mapContentDownloadFinished with model {0} was successful: {1}", mapContentList, success));
-            _downloadCount++;
             checkDownloadCount();
         }
 
         private void _movieDownloadFinished(IList<MovieDto> movieList, bool success, string response)
         {
             _logger.Debug(string.Format("_movieDownloadFinished with model {0} was successful: {1}", movieList, success));
-            _downloadCount++;
             checkDownloadCount();
+        }
+
+        private void _onCoinConversionDownloadFinished(IList<KeyValuePair<string, double>> coinConversionList, bool success, string response)
+        {
+            _logger.Debug(string.Format("_onCoinConversionDownloadFinished with model {0} was successful: {1}", coinConversionList, success));
+            checkDownloadCount();
+
+            // Start download of coins after downloading coin conversion
+            _coinService.OnCoinDownloadFinished += _onCoinDownloadFinished;
+            _coinService.LoadCoinList();
         }
 
         private void _onCoinDownloadFinished(IList<CoinDto> coinList, bool success, string response)
         {
             _logger.Debug(string.Format("_onCoinDownloadFinished with model {0} was successful: {1}", coinList, success));
-            _downloadCount++;
             checkDownloadCount();
         }
 
         private void _onMenuDownloadFinished(IList<MenuDto> menuList, bool success, string response)
         {
             _logger.Debug(string.Format("_onMenuDownloadFinished with model {0} was successful: {1}", menuList, success));
-            _downloadCount++;
             checkDownloadCount();
         }
 
         private void _onShoppingListDownloadFinished(IList<ShoppingEntryDto> shoppingList, bool success, string response)
         {
             _logger.Debug(string.Format("_onShoppingListDownloadFinished with model {0} was successful: {1}", shoppingList, success));
-            _downloadCount++;
             checkDownloadCount();
         }
 
         private void _scheduleDownloadFinished(IList<ScheduleDto> scheduleList, bool success, string response)
         {
             _logger.Debug(string.Format("_scheduleDownloadFinished with model {0} was successful: {1}", scheduleList, success));
-            _downloadCount++;
             checkDownloadCount();
 
             // Start download of mapcontent after downloading wirelesssockets AND schedules
@@ -155,14 +156,12 @@ namespace LucaHome.Pages
         private void _temperatureDownloadFinished(IList<TemperatureDto> temperatureList, bool success, string response)
         {
             _logger.Debug(string.Format("_temperatureDownloadFinished with model {0} was successful: {1}", temperatureList, success));
-            _downloadCount++;
             checkDownloadCount();
         }
 
         private void _wirelessSocketDownloadFinished(IList<WirelessSocketDto> wirelessSocketList, bool success, string response)
         {
             _logger.Debug(string.Format("_wirelessSocketDownloadFinished with model {0} was successful: {1}", wirelessSocketList, success));
-            _downloadCount++;
             checkDownloadCount();
 
             // Start download of movies after downloading wirelesssockets
@@ -176,7 +175,8 @@ namespace LucaHome.Pages
 
         private void checkDownloadCount()
         {
-            _logger.Debug("checkDownloadCount");
+            _downloadCount++;
+            _logger.Debug(string.Format("checkDownloadCount: Download {0}/{1}", _downloadCount, Constants.DOWNLOAD_STEPS));
 
             if (_downloadCount >= Constants.DOWNLOAD_STEPS)
             {
