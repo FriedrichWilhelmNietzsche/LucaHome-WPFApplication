@@ -11,7 +11,7 @@ namespace Common.Converter
         private const string TAG = "JsonDataToBirthdayConverter";
         private static string _searchParameter = "{birthday:";
 
-        private static Logger _logger;
+        private readonly Logger _logger;
         
         public JsonDataToBirthdayConverter()
         {

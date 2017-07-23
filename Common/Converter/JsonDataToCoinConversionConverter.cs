@@ -7,7 +7,7 @@ namespace Common.Converter
     public class JsonDataToCoinConversionConverter
     {
         private const string TAG = "JsonDataToCoinConversionConverter";
-        private static Logger _logger;
+        private readonly Logger _logger;
 
         public JsonDataToCoinConversionConverter()
         {

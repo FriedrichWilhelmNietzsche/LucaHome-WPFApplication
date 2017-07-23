@@ -11,14 +11,14 @@ namespace Common.Converter
         private const string TAG = "JsonDataToChangeConverter";
         private static string _searchParameter = "{change:";
 
-        private static Logger _logger;
+        private readonly Logger _logger;
 
         public JsonDataToChangeConverter()
         {
             _logger = new Logger(TAG);
         }
 
-        public static IList<ChangeDto> GetList(string[] stringArray)
+        public IList<ChangeDto> GetList(string[] stringArray)
         {
             if (StringHelper.StringsAreEqual(stringArray))
             {
@@ -31,7 +31,7 @@ namespace Common.Converter
             }
         }
 
-        private static IList<ChangeDto> parseStringToList(string value)
+        private IList<ChangeDto> parseStringToList(string value)
         {
             if (!value.Contains("Error"))
             {
@@ -65,7 +65,7 @@ namespace Common.Converter
             return new List<ChangeDto>();
         }
 
-        private static ChangeDto parseStringToValue(int id, string[] data)
+        private ChangeDto parseStringToValue(int id, string[] data)
         {
             if (data.Length == 7)
             {

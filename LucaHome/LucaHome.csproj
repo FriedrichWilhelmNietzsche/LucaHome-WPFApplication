@@ -28,8 +28,8 @@
     <ProductName>LucaHome</ProductName>
     <PublisherName>GuepardoApps</PublisherName>
     <SuiteName>LucaHome</SuiteName>
-    <ApplicationRevision>17201</ApplicationRevision>
-    <ApplicationVersion>0.6.0.17201</ApplicationVersion>
+    <ApplicationRevision>17204</ApplicationRevision>
+    <ApplicationVersion>1.0.1.17204</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -53,6 +53,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>0</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>ic_launcher.ico</ApplicationIcon>
@@ -138,6 +139,12 @@
     <Compile Include="Dialogs\DeleteDialog.xaml.cs">
       <DependentUpon>DeleteDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\MagazinListPage.xaml.cs">
+      <DependentUpon>MagazinListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\MagazinPage.xaml.cs">
+      <DependentUpon>MagazinPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\CoinUpdatePage.xaml.cs">
       <DependentUpon>CoinUpdatePage.xaml</DependentUpon>
     </Compile>
@@ -216,6 +223,9 @@
     <Compile Include="Rules\TextBoxLengthRule.cs" />
     <Compile Include="Rules\WirelessSocketCodeFormatRule.cs" />
     <Compile Include="Rules\TextBoxNotEmptyRule.cs" />
+    <Compile Include="UserControls\MagazinCard.xaml.cs">
+      <DependentUpon>MagazinCard.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\MainPageCard.xaml.cs">
       <DependentUpon>MainPageCard.xaml</DependentUpon>
     </Compile>
@@ -246,6 +256,14 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Pages\MagazinListPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\MagazinPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Pages\CoinUpdatePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -345,6 +363,10 @@
     <Page Include="Pages\WeatherPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\MagazinCard.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\MainPageCard.xaml">
       <SubType>Designer</SubType>

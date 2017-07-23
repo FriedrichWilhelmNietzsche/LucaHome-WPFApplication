@@ -23,21 +23,21 @@ namespace Common.Converter
         {
             if (StringHelper.StringsAreEqual(stringArray))
             {
-                return ParseStringToList(stringArray[0], socketList);
+                return parseStringToList(stringArray[0], socketList);
             }
             else
             {
                 string usedEntry = StringHelper.SelectString(stringArray, _searchParameter);
-                return ParseStringToList(usedEntry, socketList);
+                return parseStringToList(usedEntry, socketList);
             }
         }
 
         public IList<ScheduleDto> GetList(string jsonString, IList<WirelessSocketDto> socketList)
         {
-            return ParseStringToList(jsonString, socketList);
+            return parseStringToList(jsonString, socketList);
         }
 
-        private IList<ScheduleDto> ParseStringToList(string value, IList<WirelessSocketDto> socketList)
+        private IList<ScheduleDto> parseStringToList(string value, IList<WirelessSocketDto> socketList)
         {
             if (!value.Contains("Error"))
             {
@@ -54,7 +54,7 @@ namespace Common.Converter
                             string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
                             string[] data = Regex.Split(replacedEntry, "\\};");
-                            ScheduleDto newValue = ParseStringToValue(index, data, socketList);
+                            ScheduleDto newValue = parseStringToValue(index, data, socketList);
                             if (newValue != null)
                             {
                                 list.Add(newValue);
@@ -71,7 +71,7 @@ namespace Common.Converter
             return new List<ScheduleDto>();
         }
 
-        private ScheduleDto ParseStringToValue(int id, string[] data, IList<WirelessSocketDto> socketList)
+        private ScheduleDto parseStringToValue(int id, string[] data, IList<WirelessSocketDto> socketList)
         {
             if (data.Length == 11)
             {

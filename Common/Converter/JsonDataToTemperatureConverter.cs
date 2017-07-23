@@ -12,7 +12,7 @@ namespace Common.Converter
         private const string TAG = "JsonDataToTemperatureConverter";
         private static string _searchParameter = "{temperature:";
 
-        private Logger _logger;
+        private readonly Logger _logger;
 
         public JsonDataToTemperatureConverter()
         {
@@ -23,21 +23,21 @@ namespace Common.Converter
         {
             if (StringHelper.StringsAreEqual(stringArray))
             {
-                return ParseStringToList(stringArray[0]);
+                return parseStringToList(stringArray[0]);
             }
             else
             {
                 string usedEntry = StringHelper.SelectString(stringArray, _searchParameter);
-                return ParseStringToList(usedEntry);
+                return parseStringToList(usedEntry);
             }
         }
 
         public IList<TemperatureDto> GetList(string jsonString)
         {
-            return ParseStringToList(jsonString);
+            return parseStringToList(jsonString);
         }
 
-        private IList<TemperatureDto> ParseStringToList(string value)
+        private IList<TemperatureDto> parseStringToList(string value)
         {
             if (!value.Contains("Error"))
             {
@@ -53,7 +53,7 @@ namespace Common.Converter
                             string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
                             string[] data = Regex.Split(replacedEntry, "\\};");
-                            TemperatureDto newValue = ParseStringToValue(data);
+                            TemperatureDto newValue = parseStringToValue(data);
                             if (newValue != null)
                             {
                                 list.Add(newValue);
@@ -78,7 +78,7 @@ namespace Common.Converter
             return new List<TemperatureDto>();
         }
 
-        private TemperatureDto ParseStringToValue(string[] data)
+        private TemperatureDto parseStringToValue(string[] data)
         {
             if (data.Length == 4)
             {

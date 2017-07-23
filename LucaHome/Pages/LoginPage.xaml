@@ -100,7 +100,6 @@
             Width="200"
             ToolTip="Login with entered data"
             Click="Button_Click"
-            Content="Login"
-            IsEnabled="{Binding ElementName=PasswordBox, Path=Password.Length, Mode=OneWay}" />
+            Content="Login" />
     </Grid>
 </Page>

@@ -1,6 +1,5 @@
 ﻿using Common.Dto;
 using Common.Tools;
-using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -11,27 +10,32 @@ namespace Common.Converter
         private const string TAG = "JsonDataToListedMenuConverter";
         private static string _searchParameter = "{listedmenu:";
 
-        private static Logger _logger;
+        private readonly Logger _logger;
 
         public JsonDataToListedMenuConverter()
         {
             _logger = new Logger(TAG);
         }
 
-        public static IList<ListedMenuDto> GetList(string[] stringArray)
+        public IList<ListedMenuDto> GetList(string[] stringArray)
         {
             if (StringHelper.StringsAreEqual(stringArray))
             {
-                return ParseStringToList(stringArray[0]);
+                return parseStringToList(stringArray[0]);
             }
             else
             {
                 string usedEntry = StringHelper.SelectString(stringArray, _searchParameter);
-                return ParseStringToList(usedEntry);
+                return parseStringToList(usedEntry);
             }
         }
 
-        private static IList<ListedMenuDto> ParseStringToList(string value)
+        public IList<ListedMenuDto> GetList(string jsonString)
+        {
+            return parseStringToList(jsonString);
+        }
+
+        private IList<ListedMenuDto> parseStringToList(string value)
         {
             if (!value.Contains("Error"))
             {
@@ -48,7 +52,7 @@ namespace Common.Converter
                             string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
                             string[] data = Regex.Split(replacedEntry, "\\};");
-                            ListedMenuDto newValue = ParseStringToValue(data);
+                            ListedMenuDto newValue = parseStringToValue(data);
                             if (newValue != null)
                             {
                                 list.Add(newValue);
@@ -65,7 +69,7 @@ namespace Common.Converter
             return new List<ListedMenuDto>();
         }
 
-        private static ListedMenuDto ParseStringToValue(string[] data)
+        private ListedMenuDto parseStringToValue(string[] data)
         {
             if (data.Length == 4)
             {

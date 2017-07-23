@@ -67,23 +67,15 @@
             Kind="Food" 
             Margin="5 0 5 5" 
             Foreground="{Binding ElementName=MenuTextBox, Path=BorderBrush}" />
-        <TextBox 
+        <ComboBox 
+            x:Name="MenuComboBox"
             Grid.Row="1" 
             Grid.Column="1" 
-            x:Name="MenuTextBox"
             Margin="5 15 35 5" 
-            materialDesign:HintAssist.Hint="Enter a menu"  >
-            <TextBox.Text>
-                <Binding 
-                    Path="Menu"
-                    UpdateSourceTrigger="PropertyChanged"
-                    Mode="TwoWay">
-                    <Binding.ValidationRules>
-                        <validationrules:TextBoxNotEmptyRule/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
+            materialDesign:HintAssist.Hint="Select or enter a menu" 
+            Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
+            ItemsSource="{Binding ListedMenuList, UpdateSourceTrigger=PropertyChanged}"
+            SelectedItem="{Binding Menu, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
         <materialDesign:Card 
             Grid.Row="2" 

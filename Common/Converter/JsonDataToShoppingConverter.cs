@@ -22,21 +22,21 @@ namespace Common.Converter
         {
             if (StringHelper.StringsAreEqual(stringArray))
             {
-                return ParseStringToList(stringArray[0]);
+                return parseStringToList(stringArray[0]);
             }
             else
             {
                 string usedEntry = StringHelper.SelectString(stringArray, _searchParameter);
-                return ParseStringToList(usedEntry);
+                return parseStringToList(usedEntry);
             }
         }
 
         public IList<ShoppingEntryDto> GetList(string jsonString)
         {
-            return ParseStringToList(jsonString);
+            return parseStringToList(jsonString);
         }
 
-        private IList<ShoppingEntryDto> ParseStringToList(string value)
+        private IList<ShoppingEntryDto> parseStringToList(string value)
         {
             if (!value.Contains("Error"))
             {
@@ -52,7 +52,7 @@ namespace Common.Converter
                             string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
                             string[] data = Regex.Split(replacedEntry, "\\};");
-                            ShoppingEntryDto newValue = ParseStringToValue(data);
+                            ShoppingEntryDto newValue = parseStringToValue(data);
                             if (newValue != null)
                             {
                                 list.Add(newValue);
@@ -69,7 +69,7 @@ namespace Common.Converter
             return new List<ShoppingEntryDto>();
         }
 
-        private ShoppingEntryDto ParseStringToValue(string[] data)
+        private ShoppingEntryDto parseStringToValue(string[] data)
         {
             if (data.Length == 4)
             {

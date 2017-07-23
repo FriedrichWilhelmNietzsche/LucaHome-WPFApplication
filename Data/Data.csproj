@@ -58,6 +58,7 @@
     <Compile Include="Controller\LocalDriveController.cs" />
     <Compile Include="Services\CoinService.cs" />
     <Compile Include="Services\MapContentService.cs" />
+    <Compile Include="Services\LibraryService.cs" />
     <Compile Include="Services\NetworkService.cs" />
     <Compile Include="Services\UserService.cs" />
     <Compile Include="Controller\DownloadController.cs" />

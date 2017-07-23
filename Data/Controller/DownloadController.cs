@@ -1,4 +1,5 @@
 ﻿using Common.Tools;
+using System;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
@@ -11,6 +12,7 @@ namespace Data.Controller
         Birthday, BirthdayAdd, BirthdayUpdate, BirthdayDelete,
         CoinConversion, Coin, CoinAdd, CoinUpdate, CoinDelete,
         MapContent,
+        ListedMenu,
         Menu, MenuUpdate,
         Movie, MovieAdd, MovieUpdate, MovieDelete,
         Schedule, ScheduleSet, ScheduleAdd, ScheduleUpdate, ScheduleDelete,
@@ -123,8 +125,11 @@ namespace Data.Controller
                 return;
             }
 
+            string data = "";
             HttpClient httpClient = new HttpClient();
-            string data = await httpClient.GetStringAsync(requestUrl);
+
+            httpClient.Timeout = TimeSpan.FromMilliseconds(3000);
+            data = await httpClient.GetStringAsync(requestUrl);
 
             _logger.Debug(string.Format("ResponseData: {0}", data));
 

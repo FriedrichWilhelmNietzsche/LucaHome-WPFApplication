@@ -10,7 +10,7 @@ namespace Common.Converter
         private const string TAG = "JsonDataToCoinConverter";
         private static string _searchParameter = "{coin:";
 
-        private static Logger _logger;
+        private readonly Logger _logger;
 
         public JsonDataToCoinConverter()
         {

@@ -78,6 +78,15 @@ namespace LucaHome.Pages
             {
                 _coinList = value;
                 OnPropertyChanged("CoinList");
+                OnPropertyChanged("AllCoinValue");
+            }
+        }
+
+        public string AllCoinValue
+        {
+            get
+            {
+                return _coinService.AllCoinsValue;
             }
         }
 
@@ -159,6 +168,7 @@ namespace LucaHome.Pages
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+            _coinService.LoadCoinConversionList();
             _coinService.LoadCoinList();
         }
 

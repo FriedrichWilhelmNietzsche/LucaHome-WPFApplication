@@ -2,13 +2,11 @@
 using Common.Dto;
 using Common.Tools;
 using Data.Services;
-using LucaHome.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Navigation;
 using ToastNotifications;
 using ToastNotifications.Lifetime;
@@ -139,7 +137,7 @@ namespace LucaHome.Pages
                 Button senderButton = (Button)sender;
                 _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
 
-                string movieTitle = (String)senderButton.Tag;
+                string movieTitle = (string)senderButton.Tag;
                 _movieService.StartMovieOnPc(movieTitle);
             }
         }

@@ -21,6 +21,7 @@ namespace LucaHome.Pages
 
         private readonly BirthdayService _birthdayService;
         private readonly CoinService _coinService;
+        private readonly LibraryService _libraryService;
         private readonly MapContentService _mapContentService;
         private readonly MenuService _menuService;
         private readonly MovieService _movieService;
@@ -37,6 +38,7 @@ namespace LucaHome.Pages
 
             _birthdayService = BirthdayService.Instance;
             _coinService = CoinService.Instance;
+            _libraryService = LibraryService.Instance;
             _mapContentService = MapContentService.Instance;
             _menuService = MenuService.Instance;
             _movieService = MovieService.Instance;
@@ -55,30 +57,46 @@ namespace LucaHome.Pages
             _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
 
             _birthdayService.OnBirthdayDownloadFinished += _birthdayDownloadFinished;
-
             _coinService.OnCoinConversionDownloadFinished += _onCoinConversionDownloadFinished;
-
-            _menuService.OnMenuDownloadFinished += _onMenuDownloadFinished;
-
+            _libraryService.OnMagazinListDownloadFinished += _onMagazinListDownloadFinished;
+            _menuService.OnListedMenuDownloadFinished += _onListedMenuDownloadFinished;
+            _movieService.OnMovieDownloadFinished += _movieDownloadFinished;
             _openWeatherService.OnCurrentWeatherDownloadFinished += _currentWeatherDownloadFinished;
             _openWeatherService.OnForecastWeatherDownloadFinished += _forecastWeatherDownloadFinished;
-
             _shoppingListService.OnShoppingListDownloadFinished += _onShoppingListDownloadFinished;
-
             _wirelessSocketService.OnWirelessSocketDownloadFinished += _wirelessSocketDownloadFinished;
 
             _birthdayService.LoadBirthdayList();
-
             _coinService.LoadCoinConversionList();
-
-            _menuService.LoadMenuList();
-
+            _libraryService.LoadMagazinList();
+            _menuService.LoadListedMenuList();
+            _movieService.LoadMovieList();
             _openWeatherService.LoadCurrentWeather();
             _openWeatherService.LoadForecastModel();
-
             _shoppingListService.LoadShoppingList();
-
             _wirelessSocketService.LoadWirelessSocketList();
+        }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
+
+            _downloadCount = 0;
+
+            _birthdayService.OnBirthdayDownloadFinished -= _birthdayDownloadFinished;
+            _coinService.OnCoinConversionDownloadFinished -= _onCoinConversionDownloadFinished;
+            _coinService.OnCoinDownloadFinished -= _onCoinDownloadFinished;
+            _libraryService.OnMagazinListDownloadFinished -= _onMagazinListDownloadFinished;
+            _mapContentService.OnMapContentDownloadFinished -= _mapContentDownloadFinished;
+            _menuService.OnListedMenuDownloadFinished -= _onListedMenuDownloadFinished;
+            _menuService.OnMenuDownloadFinished -= _onMenuDownloadFinished;
+            _movieService.OnMovieDownloadFinished -= _movieDownloadFinished;
+            _openWeatherService.OnCurrentWeatherDownloadFinished -= _currentWeatherDownloadFinished;
+            _openWeatherService.OnForecastWeatherDownloadFinished -= _forecastWeatherDownloadFinished;
+            _scheduleService.OnScheduleDownloadFinished -= _scheduleDownloadFinished;
+            _shoppingListService.OnShoppingListDownloadFinished -= _onShoppingListDownloadFinished;
+            _temperatureService.OnTemperatureDownloadFinished -= _temperatureDownloadFinished;
+            _wirelessSocketService.OnWirelessSocketDownloadFinished -= _wirelessSocketDownloadFinished;
         }
 
         private void _birthdayDownloadFinished(IList<BirthdayDto> birthdayList, bool success, string response)
@@ -131,6 +149,22 @@ namespace LucaHome.Pages
             checkDownloadCount();
         }
 
+        private void _onListedMenuDownloadFinished(IList<ListedMenuDto> listedMenuList, bool success, string response)
+        {
+            _logger.Debug(string.Format("_onListedMenuDownloadFinished with model {0} was successful: {1}", listedMenuList, success));
+            checkDownloadCount();
+
+            // Start download of menu after downloading listed menu entries
+            _menuService.OnMenuDownloadFinished += _onMenuDownloadFinished;
+            _menuService.LoadMenuList();
+        }
+
+        private void _onMagazinListDownloadFinished(IList<MagazinDirDto> magazinList, bool success, string response)
+        {
+            _logger.Debug(string.Format("_onMagazinListDownloadFinished with model {0} was successful: {1}", magazinList, success));
+            checkDownloadCount();
+        }
+
         private void _onMenuDownloadFinished(IList<MenuDto> menuList, bool success, string response)
         {
             _logger.Debug(string.Format("_onMenuDownloadFinished with model {0} was successful: {1}", menuList, success));
@@ -164,10 +198,6 @@ namespace LucaHome.Pages
             _logger.Debug(string.Format("_wirelessSocketDownloadFinished with model {0} was successful: {1}", wirelessSocketList, success));
             checkDownloadCount();
 
-            // Start download of movies after downloading wirelesssockets
-            _movieService.OnMovieDownloadFinished += _movieDownloadFinished;
-            _movieService.LoadMovieList();
-
             // Start download of schedules after downloading wirelesssockets
             _scheduleService.OnScheduleDownloadFinished += _scheduleDownloadFinished;
             _scheduleService.LoadScheduleList();
@@ -182,24 +212,6 @@ namespace LucaHome.Pages
             {
                 Application.Current.Dispatcher.Invoke(new Action(() => { _navigationService.Navigate(new MainPage(_navigationService)); }));
             }
-        }
-
-        private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
-        {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-
-            _downloadCount = 0;
-
-            _birthdayService.OnBirthdayDownloadFinished -= _birthdayDownloadFinished;
-            _coinService.OnCoinDownloadFinished -= _onCoinDownloadFinished;
-            _menuService.OnMenuDownloadFinished -= _onMenuDownloadFinished;
-            _movieService.OnMovieDownloadFinished -= _movieDownloadFinished;
-            _openWeatherService.OnCurrentWeatherDownloadFinished -= _currentWeatherDownloadFinished;
-            _openWeatherService.OnForecastWeatherDownloadFinished -= _forecastWeatherDownloadFinished;
-            _scheduleService.OnScheduleDownloadFinished -= _scheduleDownloadFinished;
-            _shoppingListService.OnShoppingListDownloadFinished -= _onShoppingListDownloadFinished;
-            _temperatureService.OnTemperatureDownloadFinished -= _temperatureDownloadFinished;
-            _wirelessSocketService.OnWirelessSocketDownloadFinished -= _wirelessSocketDownloadFinished;
         }
     }
 }

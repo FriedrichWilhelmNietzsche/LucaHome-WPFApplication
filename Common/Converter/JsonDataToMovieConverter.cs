@@ -10,7 +10,7 @@ namespace Common.Converter
         private const string TAG = "JsonDataToMovieConverter";
         private static string _searchParameter = "{movie:";
 
-        private Logger _logger;
+        private readonly Logger _logger;
 
         public JsonDataToMovieConverter()
         {

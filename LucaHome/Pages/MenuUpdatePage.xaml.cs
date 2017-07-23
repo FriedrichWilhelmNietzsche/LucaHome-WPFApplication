@@ -12,6 +12,7 @@ using ToastNotifications.Messages;
 using ToastNotifications.Position;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows.Data;
 
 namespace LucaHome.Pages
 {
@@ -76,6 +77,19 @@ namespace LucaHome.Pages
             {
                 _logger.Debug("MenuPageTitle cannot be overriden!");
                 OnPropertyChanged("MenuPageTitle");
+            }
+        }
+
+        public CollectionView ListedMenuList
+        {
+            get
+            {
+                IList<string> listedMenuList = new List<string>();
+                foreach (ListedMenuDto entry in _menuService.ListedMenuList)
+                {
+                    listedMenuList.Add(entry.Description);
+                }
+                return new CollectionView(listedMenuList);
             }
         }
 

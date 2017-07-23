@@ -149,7 +149,8 @@ namespace Data.Services
             string moviePathString = string.Format("{0}{1}{2}", _videothekDrive.Name, "Filme\\", movieTitle);
             DirectoryInfo moviePath = new DirectoryInfo(moviePathString);
 
-            FileInfo[] movieFiles = _localDriveController.ReadFilesInDir(moviePath);
+            string[] extensionArray = new string[] { ".mkv", ".avi", ".mp4" };
+            FileInfo[] movieFiles = _localDriveController.ReadFilesInDir(moviePath, extensionArray);
             if (movieFiles.Length == 0)
             {
                 _logger.Error(string.Format("Found no files for movie {0} in directory {1}", movieTitle, moviePath));

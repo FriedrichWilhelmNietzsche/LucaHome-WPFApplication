@@ -125,9 +125,20 @@
             MouseUp="BirthdayCard_MouseUp"/>
 
         <usercontrols:MainPageCard
-            x:Name="MovieCard"
+            x:Name="CoinsCard"
             Grid.Row="2"
             Grid.Column="3"
+            CardImage="/Common;component/Assets/Wallpaper/main_image_coins.png"
+            Title="Coins"
+            Description="Watch your coins"
+            ButtonAddVisibility="Visible"
+            ButtonMapVisibility="Collapsed"
+            MouseUp="CoinsCard_MouseUp"/>
+
+        <usercontrols:MainPageCard
+            x:Name="MovieCard"
+            Grid.Row="3"
+            Grid.Column="0"
             CardImage="/Common;component/Assets/Wallpaper/main_image_movies.png"
             Title="Movies"
             Description="Want to watch some blockbuster?"
@@ -136,15 +147,15 @@
             MouseUp="MovieCard_MouseUp"/>
 
         <usercontrols:MainPageCard
-            x:Name="CoinsCard"
+            x:Name="MagazinCard"
             Grid.Row="3"
-            Grid.Column="0"
-            CardImage="/Common;component/Assets/Wallpaper/main_image_coins.png"
-            Title="Coins"
-            Description="Watch your coins"
-            ButtonAddVisibility="Visible"
+            Grid.Column="1"
+            CardImage="/Common;component/Assets/Wallpaper/main_image_magazine.png"
+            Title="Magazine"
+            Description="Read some papers?"
+            ButtonAddVisibility="Collapsed"
             ButtonMapVisibility="Collapsed"
-            MouseUp="CoinsCard_MouseUp"/>
+            MouseUp="MagazinCard_MouseUp"/>
 
         <usercontrols:MainPageCard
             x:Name="SettingsCard"

@@ -23,21 +23,21 @@ namespace Common.Converter
         {
             if (StringHelper.StringsAreEqual(stringArray))
             {
-                return ParseStringToList(stringArray[0], temperatureList, socketList, scheduleList);
+                return parseStringToList(stringArray[0], temperatureList, socketList, scheduleList);
             }
             else
             {
                 string usedEntry = StringHelper.SelectString(stringArray, _searchParameter);
-                return ParseStringToList(usedEntry, temperatureList, socketList, scheduleList);
+                return parseStringToList(usedEntry, temperatureList, socketList, scheduleList);
             }
         }
 
         public IList<MapContentDto> GetList(string jsonString, IList<TemperatureDto> temperatureList, IList<WirelessSocketDto> socketList, IList<ScheduleDto> scheduleList)
         {
-            return ParseStringToList(jsonString, temperatureList, socketList, scheduleList);
+            return parseStringToList(jsonString, temperatureList, socketList, scheduleList);
         }
 
-        private IList<MapContentDto> ParseStringToList(string value, IList<TemperatureDto> temperatureList, IList<WirelessSocketDto> socketList, IList<ScheduleDto> scheduleList)
+        private IList<MapContentDto> parseStringToList(string value, IList<TemperatureDto> temperatureList, IList<WirelessSocketDto> socketList, IList<ScheduleDto> scheduleList)
         {
             if (!value.Contains("Error"))
             {
@@ -54,7 +54,7 @@ namespace Common.Converter
                             string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
                             string[] data = Regex.Split(replacedEntry, "\\};");
-                            MapContentDto newValue = ParseStringToValue(data, temperatureList, socketList, scheduleList);
+                            MapContentDto newValue = parseStringToValue(data, temperatureList, socketList, scheduleList);
                             if (newValue != null)
                             {
                                 list.Add(newValue);
@@ -71,7 +71,7 @@ namespace Common.Converter
             return new List<MapContentDto>();
         }
 
-        private MapContentDto ParseStringToValue(string[] data, IList<TemperatureDto> temperatureList, IList<WirelessSocketDto> socketList, IList<ScheduleDto> scheduleList)
+        private MapContentDto parseStringToValue(string[] data, IList<TemperatureDto> temperatureList, IList<WirelessSocketDto> socketList, IList<ScheduleDto> scheduleList)
         {
             if (data.Length == 8)
             {

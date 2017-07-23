@@ -16,6 +16,7 @@ namespace LucaHome
 
         private readonly BirthdayService _birthdayService;
         private readonly CoinService _coinService;
+        private readonly LibraryService _libraryService;
         private readonly MapContentService _mapContentService;
         private readonly MenuService _menuService;
         private readonly MovieService _movieService;
@@ -37,6 +38,7 @@ namespace LucaHome
 
             _birthdayService = BirthdayService.Instance;
             _coinService = CoinService.Instance;
+            _libraryService = LibraryService.Instance;
             _mapContentService = MapContentService.Instance;
             _menuService = MenuService.Instance;
             _movieService = MovieService.Instance;
@@ -89,6 +91,7 @@ namespace LucaHome
 
             _birthdayService.Dispose();
             _coinService.Dispose();
+            _libraryService.Dispose();
             _mapContentService.Dispose();
             _menuService.Dispose();
             _movieService.Dispose();

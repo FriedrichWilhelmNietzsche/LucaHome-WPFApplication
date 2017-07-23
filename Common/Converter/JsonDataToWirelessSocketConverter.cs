@@ -1,6 +1,5 @@
 ﻿using Common.Dto;
 using Common.Tools;
-using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -11,7 +10,7 @@ namespace Common.Converter
         private const string TAG = "JsonDataToWirelessSocketConverter";
         private static string _searchParameter = "{socket:";
 
-        private static Logger _logger;
+        private readonly Logger _logger;
 
         public JsonDataToWirelessSocketConverter()
         {
@@ -22,12 +21,12 @@ namespace Common.Converter
         {
             if (StringHelper.StringsAreEqual(jsonStringArray))
             {
-                return ParseStringToList(jsonStringArray[0]);
+                return parseStringToList(jsonStringArray[0]);
             }
             else
             {
                 string usedEntry = StringHelper.SelectString(jsonStringArray, _searchParameter);
-                return ParseStringToList(usedEntry);
+                return parseStringToList(usedEntry);
             }
         }
 
@@ -35,10 +34,10 @@ namespace Common.Converter
         {
             _logger.Debug(string.Format("GetList with jsonString {0}", jsonString));
 
-            return ParseStringToList(jsonString);
+            return parseStringToList(jsonString);
         }
 
-        private IList<WirelessSocketDto> ParseStringToList(string value)
+        private IList<WirelessSocketDto> parseStringToList(string value)
         {
             _logger.Debug(string.Format("ParseStringToList with value {0}", value));
 
@@ -64,7 +63,7 @@ namespace Common.Converter
                             string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
                             string[] data = Regex.Split(replacedEntry, "\\};");
-                            WirelessSocketDto newValue = ParseStringToValue(index, data);
+                            WirelessSocketDto newValue = parseStringToValue(index, data);
                             if (newValue != null)
                             {
                                 list.Add(newValue);
@@ -89,7 +88,7 @@ namespace Common.Converter
             return new List<WirelessSocketDto>();
         }
 
-        private WirelessSocketDto ParseStringToValue(int id, string[] data)
+        private WirelessSocketDto parseStringToValue(int id, string[] data)
         {
             if (data.Length == 4)
             {

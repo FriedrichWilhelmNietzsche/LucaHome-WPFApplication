@@ -108,6 +108,21 @@ namespace Data.Services
             return foundCoins;
         }
 
+        public string AllCoinsValue
+        {
+            get
+            {
+                double value = 0;
+
+                foreach (CoinDto coin in _coinList)
+                {
+                    value += coin.Value;
+                }
+
+                return string.Format("Sum: {0:0.00} €", value);
+            }
+        }
+
         public void LoadCoinConversionList()
         {
             _logger.Debug("LoadCoinConversionList");
@@ -141,6 +156,7 @@ namespace Data.Services
         private void _downloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             _logger.Debug(string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
+            loadCoinConversionAsync();
             loadCoinListAsync();
         }
 
@@ -254,6 +270,16 @@ namespace Data.Services
             }
 
             _coinConversionList = coinConversionList;
+
+            foreach (CoinDto entry in _coinList)
+            {
+                entry.CurrentConversion = _coinConversionList
+                    .Where(conversion => conversion.Key.Contains(entry.Type))
+                    .Select(conversion => conversion)
+                    .FirstOrDefault()
+                    .Value;
+            }
+
             OnCoinConversionDownloadFinished(_coinConversionList, false, response);
         }
 

@@ -10,7 +10,6 @@ using Data.Services;
 using Common.Dto;
 using System.Collections.Generic;
 using OpenWeather.Models;
-using System;
 
 namespace LucaHome.Pages
 {
@@ -155,12 +154,6 @@ namespace LucaHome.Pages
             _navigationService.Navigate(new BirthdayAddPage(_navigationService));
         }
 
-        private void MovieCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
-        {
-            _logger.Debug(string.Format("MovieCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
-            _navigationService.Navigate(new MoviePage(_navigationService));
-        }
-
         private void CoinsCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
             _logger.Debug(string.Format("CoinsCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
@@ -171,6 +164,18 @@ namespace LucaHome.Pages
         {
             _logger.Debug("navigateToCoinAdd");
             _navigationService.Navigate(new CoinAddPage(_navigationService));
+        }
+
+        private void MovieCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        {
+            _logger.Debug(string.Format("MovieCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
+            _navigationService.Navigate(new MoviePage(_navigationService));
+        }
+
+        private void MagazinCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        {
+            _logger.Debug(string.Format("MagazinCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
+            _navigationService.Navigate(new MagazinPage(_navigationService));
         }
 
         private void SettingsCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)

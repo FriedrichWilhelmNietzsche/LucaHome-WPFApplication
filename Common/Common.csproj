@@ -96,6 +96,7 @@
     <Compile Include="Dto\CoinDto.cs" />
     <Compile Include="Dto\ChangeDto.cs" />
     <Compile Include="Dto\ListedMenuDto.cs" />
+    <Compile Include="Dto\MagazinDirDto.cs" />
     <Compile Include="Dto\MapContentDto.cs" />
     <Compile Include="Dto\MenuDto.cs" />
     <Compile Include="Dto\MovieDto.cs" />
@@ -238,6 +239,9 @@
     <Resource Include="Assets\Icons\Coins\BTC.png" />
     <Resource Include="Assets\Icons\Coins\XMR.png" />
     <Resource Include="Assets\Icons\Coins\ZEC.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Wallpaper\main_image_magazine.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

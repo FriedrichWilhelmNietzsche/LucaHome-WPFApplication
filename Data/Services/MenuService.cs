@@ -11,6 +11,7 @@ using System.Timers;
 
 namespace Data.Services
 {
+    public delegate void ListedMenuDownloadEventHandler(IList<ListedMenuDto> listedMenuList, bool success, string response);
     public delegate void MenuDownloadEventHandler(IList<MenuDto> menuList, bool success, string response);
     public delegate void MenuUpdateEventHandler(bool success, string response);
 
@@ -23,11 +24,13 @@ namespace Data.Services
 
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
+        private readonly JsonDataToListedMenuConverter _jsonDataToListedMenuConverter;
         private readonly JsonDataToMenuConverter _jsonDataToMenuConverter;
 
         private static MenuService _instance = null;
         private static readonly object _padlock = new object();
 
+        private IList<ListedMenuDto> _listedMenuList = new List<ListedMenuDto>();
         private IList<MenuDto> _menuList = new List<MenuDto>();
 
         private Timer _downloadTimer;
@@ -38,8 +41,10 @@ namespace Data.Services
 
             _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
+            _jsonDataToListedMenuConverter = new JsonDataToListedMenuConverter();
             _jsonDataToMenuConverter = new JsonDataToMenuConverter();
 
+            _downloadController.OnDownloadFinished += _listedMenuDownloadFinished;
             _downloadController.OnDownloadFinished += _menuDownloadFinished;
 
             _downloadTimer = new Timer(TIMEOUT);
@@ -48,6 +53,7 @@ namespace Data.Services
             _downloadTimer.Start();
         }
 
+        public event ListedMenuDownloadEventHandler OnListedMenuDownloadFinished;
         public event MenuDownloadEventHandler OnMenuDownloadFinished;
         public event MenuUpdateEventHandler OnMenuUpdateFinished;
 
@@ -67,12 +73,19 @@ namespace Data.Services
             }
         }
 
+        public IList<ListedMenuDto> ListedMenuList
+        {
+            get
+            {
+                return _listedMenuList;
+            }
+        }
+
         public IList<MenuDto> MenuList
         {
             get
             {
-                IList<MenuDto> sortedMenuList = _menuList.OrderBy(menu => menu.Date).ToList();
-                return sortedMenuList;
+                return _menuList.OrderBy(menu => menu.Date).ToList();
             }
         }
 
@@ -84,6 +97,12 @@ namespace Data.Services
                         .FirstOrDefault();
 
             return foundMenu;
+        }
+
+        public void LoadListedMenuList()
+        {
+            _logger.Debug("LoadListedMenuList");
+            loadListedMenuListAsync();
         }
 
         public void LoadMenuList()
@@ -101,7 +120,24 @@ namespace Data.Services
         private void _downloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             _logger.Debug(string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
+            loadListedMenuListAsync();
             loadMenuListAsync();
+        }
+
+        private async Task loadListedMenuListAsync()
+        {
+            _logger.Debug("loadListedMenuListAsync");
+
+            UserDto user = _settingsController.User;
+            if (user == null)
+            {
+                OnListedMenuDownloadFinished(null, false, "No user");
+                return;
+            }
+
+            string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_LISTED_MENU.Action;
+
+            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.ListedMenu);
         }
 
         private async Task loadMenuListAsync()
@@ -139,6 +175,48 @@ namespace Data.Services
             _downloadController.OnDownloadFinished += _menuUpdateFinished;
 
             await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.MenuUpdate);
+        }
+
+        private void _listedMenuDownloadFinished(string response, bool success, DownloadType downloadType)
+        {
+            _logger.Debug("_listedMenuDownloadFinished");
+
+            if (downloadType != DownloadType.ListedMenu)
+            {
+                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
+                return;
+            }
+
+            if (response.Contains("Error") || response.Contains("ERROR"))
+            {
+                _logger.Error(response);
+
+                OnListedMenuDownloadFinished(null, false, response);
+                return;
+            }
+
+            _logger.Debug(string.Format("response: {0}", response));
+
+            if (!success)
+            {
+                _logger.Error("Download was not successful!");
+
+                OnListedMenuDownloadFinished(null, false, response);
+                return;
+            }
+
+            IList<ListedMenuDto> listedMenuList = _jsonDataToListedMenuConverter.GetList(response);
+            if (listedMenuList == null)
+            {
+                _logger.Error("Converted listedMenuList is null!");
+
+                OnListedMenuDownloadFinished(null, false, response);
+                return;
+            }
+
+            _listedMenuList = listedMenuList;
+
+            OnListedMenuDownloadFinished(_listedMenuList, true, response);
         }
 
         private void _menuDownloadFinished(string response, bool success, DownloadType downloadType)

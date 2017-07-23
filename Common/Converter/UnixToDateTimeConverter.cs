@@ -13,7 +13,7 @@ namespace Common.Converter
     public class UnixToDateTimeConverter
     {
         private const string TAG = "UnixToDateTimeConverter";
-        private Logger _logger;
+        private readonly Logger _logger;
 
         public UnixToDateTimeConverter()
         {
