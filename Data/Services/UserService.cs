@@ -99,7 +99,7 @@ namespace Data.Services
             _downloadController.OnDownloadFinished += _validateUserFinished;
 
             _tempUser = user;
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.User);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.User);
         }
 
         private void _validateUserFinished(string response, bool success, DownloadType downloadType)

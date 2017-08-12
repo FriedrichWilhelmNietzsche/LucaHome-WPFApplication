@@ -56,8 +56,11 @@ namespace LucaHome.Pages
             _openWeatherService.OnCurrentWeatherDownloadFinished += _onCurrentWeatherDownloadFinished;
 
             // TODO Create and fix binding
-            TemperatureCard.BottomTitleText.Text = _temperatureService.TemperatureList[0]?.Area;
-            TemperatureCard.BottomDataText.Text = _temperatureService.TemperatureList[0]?.TemperatureString;
+            if (_temperatureService.TemperatureList.Count > 0)
+            {
+                TemperatureCard.BottomTitleText.Text = _temperatureService.TemperatureList[0]?.Area;
+                TemperatureCard.BottomDataText.Text = _temperatureService.TemperatureList[0]?.TemperatureString;
+            }
             _temperatureService.OnTemperatureDownloadFinished += _onTemperatureDownloadFinished;
         }
 
@@ -176,6 +179,12 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("MagazinCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
             _navigationService.Navigate(new MagazinPage(_navigationService));
+        }
+
+        private void SecurityCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        {
+            _logger.Debug(string.Format("SecurityCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
+            _navigationService.Navigate(new SecurityPage(_navigationService));
         }
 
         private void SettingsCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)

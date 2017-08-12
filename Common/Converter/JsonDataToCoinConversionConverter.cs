@@ -1,10 +1,11 @@
-﻿using Common.Tools;
+﻿using Common.Interfaces;
+using Common.Tools;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Common.Converter
 {
-    public class JsonDataToCoinConversionConverter
+    public class JsonDataToCoinConversionConverter : IJsonDataConverter<KeyValuePair<string, double>>
     {
         private const string TAG = "JsonDataToCoinConversionConverter";
         private readonly Logger _logger;
@@ -12,6 +13,19 @@ namespace Common.Converter
         public JsonDataToCoinConversionConverter()
         {
             _logger = new Logger(TAG);
+        }
+
+        public IList<KeyValuePair<string, double>> GetList(string[] stringArray)
+        {
+            if (StringHelper.StringsAreEqual(stringArray))
+            {
+                return parseStringToList(stringArray[0]);
+            }
+            else
+            {
+                string usedEntry = StringHelper.SelectString(stringArray, "");
+                return parseStringToList(usedEntry);
+            }
         }
 
         public IList<KeyValuePair<string, double>> GetList(string responseString)

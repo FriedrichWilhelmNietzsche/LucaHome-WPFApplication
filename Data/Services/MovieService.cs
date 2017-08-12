@@ -10,6 +10,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Timers;
+using Common.Interfaces;
 
 namespace Data.Services
 {
@@ -26,7 +27,7 @@ namespace Data.Services
 
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
-        private readonly JsonDataToMovieConverter _jsonDataToMovieConverter;
+        private readonly IJsonDataConverter<MovieDto> _jsonDataToMovieConverter;
         private readonly LocalDriveController _localDriveController;
 
         private static MovieService _instance = null;
@@ -183,7 +184,7 @@ namespace Data.Services
 
             string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_MOVIES.Action;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.Movie);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.Movie);
         }
 
         private async Task updateMovieAsync(MovieDto updateMovie)
@@ -204,7 +205,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _movieUpdateFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.MovieUpdate);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.MovieUpdate);
         }
 
         private void _movieDownloadFinished(string response, bool success, DownloadType downloadType)

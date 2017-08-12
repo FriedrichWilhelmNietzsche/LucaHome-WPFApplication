@@ -1,8 +1,6 @@
 ﻿using Common.Tools;
 using System;
 using System.Net.Http;
-using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Data.Controller
@@ -13,11 +11,13 @@ namespace Data.Controller
         CoinConversion, Coin, CoinAdd, CoinUpdate, CoinDelete,
         MapContent,
         ListedMenu,
-        Menu, MenuUpdate,
-        Movie, MovieAdd, MovieUpdate, MovieDelete,
+        Menu, MenuUpdate, MenuClear,
+        Movie, MovieUpdate,
         Schedule, ScheduleSet, ScheduleAdd, ScheduleUpdate, ScheduleDelete,
+        Security, SecurityCamera, SecurityCameraControl,
         ShoppingList, ShoppingListAdd, ShoppingListDelete, ShoppingListUpdate,
         Temperature,
+        TimerAdd, TimerUpdate, TimerDelete,
         User,
         WirelessSocket, WirelessSocketSet, WirelessSocketAdd, WirelessSocketUpdate, WirelessSocketDelete
     };
@@ -29,10 +29,6 @@ namespace Data.Controller
         private const string TAG = "DownloadController";
         private readonly Logger _logger;
 
-        private const int RECEIVE_BUFFER_SIZE = 16777216;
-
-        private readonly TcpClient _tcpClient = new TcpClient();
-
         public DownloadController()
         {
             _logger = new Logger(TAG);
@@ -40,76 +36,23 @@ namespace Data.Controller
 
         public event DownloadFinishedEventHandler OnDownloadFinished;
 
-        public string SendCommandToConnectedServer(string ip, int port, string command)
+        public async void SendCommandToWebsite(string requestUrl, DownloadType downloadType)
         {
-            _logger.Debug("SendCommandToConnectedServer");
-
-            if (ip == null)
+            _logger.Debug("SendCommandToWebsite");
+            try
             {
-                _logger.Error("IP may not be null!");
-                return "ERROR: IP may not be null!";
+                await sendCommandToWebsiteAsync(requestUrl, downloadType);
             }
-
-            if (ip.Length < 13)
+            catch (Exception exception)
             {
-                _logger.Error("Invalid ip length!");
-                return "ERROR: Invalid ip length!";
+                _logger.Error(exception.Message);
+                OnDownloadFinished(exception.Message, false, downloadType);
             }
-
-            if (port == -1)
-            {
-                _logger.Error("Invalid value for port!");
-                return "ERROR: Invalid value for port!";
-            }
-
-            _logger.Debug(string.Format("Connecting to server with ip {0} at port {1}", ip, port));
-            _tcpClient.Connect(ip, port);
-
-            if (!_tcpClient.Connected)
-            {
-                _logger.Error("TcpClient is not connected!");
-                return "ERROR: Not connected!";
-            }
-
-            if (command == null)
-            {
-                _logger.Error("Command may not be null!");
-                return "ERROR: Command may not be null!";
-            }
-
-            if (command.Length < 10)
-            {
-                _logger.Error("Invalid command length!");
-                return "ERROR: Invalid command length!";
-            }
-
-            _logger.Debug(string.Format("Sending command {0} to server", command));
-
-            NetworkStream serverStream = _tcpClient.GetStream();
-            byte[] outStream = Encoding.ASCII.GetBytes(command + "$");
-            serverStream.Write(outStream, 0, outStream.Length);
-            serverStream.Flush();
-
-            byte[] inputStream = new byte[RECEIVE_BUFFER_SIZE];
-            serverStream.Read(inputStream, 0, (int)_tcpClient.ReceiveBufferSize);
-            _logger.Debug(string.Format("Received inputStream {0} from server!", inputStream));
-
-            string returnData = Encoding.ASCII.GetString(inputStream);
-            _logger.Debug(string.Format("Received data {0} from server!", returnData));
-
-            serverStream.Close();
-
-            if (_tcpClient.Connected)
-            {
-                _tcpClient.Close();
-            }
-
-            return returnData;
         }
 
-        public async Task SendCommandToWebsiteAsync(string requestUrl, DownloadType downloadType)
+        private async Task sendCommandToWebsiteAsync(string requestUrl, DownloadType downloadType)
         {
-            _logger.Debug("SendCommandToConnectedServer");
+            _logger.Debug("sendCommandToWebsiteAsync");
 
             if (requestUrl == null)
             {
@@ -139,10 +82,6 @@ namespace Data.Controller
         public void Dispose()
         {
             _logger.Debug("Dispose");
-            if (_tcpClient.Connected)
-            {
-                _tcpClient.Close();
-            }
         }
     }
 }

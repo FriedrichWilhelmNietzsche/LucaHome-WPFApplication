@@ -2,6 +2,7 @@
 using Common.Converter;
 using Common.Dto;
 using Common.Enums;
+using Common.Interfaces;
 using Common.Tools;
 using Data.Controller;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace Data.Services
 
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
-        private readonly JsonDataToShoppingConverter _jsonDataToShoppingConverter;
+        private readonly IJsonDataConverter<ShoppingEntryDto> _jsonDataToShoppingConverter;
 
         private static ShoppingListService _instance = null;
         private static readonly object _padlock = new object();
@@ -146,7 +147,7 @@ namespace Data.Services
             string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_SHOPPING_LIST.Action;
             _logger.Debug(string.Format("RequestUrl {0}", requestUrl));
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.ShoppingList);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.ShoppingList);
         }
 
         private async Task addShoppingEntryAsync(ShoppingEntryDto newShoppingEntry)
@@ -167,7 +168,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _shoppingEntryAddFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.ShoppingListAdd);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.ShoppingListAdd);
         }
 
         private async Task updateShoppingEntryAsync(ShoppingEntryDto updateShoppingEntry)
@@ -188,7 +189,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _shoppingEntryUpdateFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.ShoppingListUpdate);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.ShoppingListUpdate);
         }
 
         private async Task deleteShoppingEntryAsync(ShoppingEntryDto deleteShoppingEntry)
@@ -209,7 +210,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _shoppingEntryDeleteFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.ShoppingListDelete);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.ShoppingListDelete);
         }
 
         private void _shoppingListDownloadFinished(string response, bool success, DownloadType downloadType)

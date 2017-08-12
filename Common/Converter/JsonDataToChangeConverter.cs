@@ -1,4 +1,5 @@
 ﻿using Common.Dto;
+using Common.Interfaces;
 using Common.Tools;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace Common.Converter
 {
-    public class JsonDataToChangeConverter
+    public class JsonDataToChangeConverter : IJsonDataConverter<ChangeDto>
     {
         private const string TAG = "JsonDataToChangeConverter";
         private static string _searchParameter = "{change:";
@@ -29,6 +30,11 @@ namespace Common.Converter
                 string usedEntry = StringHelper.SelectString(stringArray, _searchParameter);
                 return parseStringToList(usedEntry);
             }
+        }
+
+        public IList<ChangeDto> GetList(string responseString)
+        {
+            return parseStringToList(responseString);
         }
 
         private IList<ChangeDto> parseStringToList(string value)

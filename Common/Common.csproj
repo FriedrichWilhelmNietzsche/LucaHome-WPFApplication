@@ -78,6 +78,7 @@
     <Compile Include="Common\Enables.cs" />
     <Compile Include="Common\Keys.cs" />
     <Compile Include="Common\Timeouts.cs" />
+    <Compile Include="Converter\JsonDataToSecurityConverter.cs" />
     <Compile Include="Converter\JsonDataToCoinConversionConverter.cs" />
     <Compile Include="Converter\JsonDataToCoinConverter.cs" />
     <Compile Include="Converter\JsonDataToBirthdayConverter.cs" />
@@ -101,11 +102,13 @@
     <Compile Include="Dto\MenuDto.cs" />
     <Compile Include="Dto\MovieDto.cs" />
     <Compile Include="Dto\ScheduleDto.cs" />
+    <Compile Include="Dto\SecurityDto.cs" />
     <Compile Include="Dto\ShoppingEntryDto.cs" />
     <Compile Include="Dto\TemperatureDto.cs" />
     <Compile Include="Dto\TimerDto.cs" />
     <Compile Include="Dto\UserDto.cs" />
     <Compile Include="Dto\WirelessSocketDto.cs" />
+    <Compile Include="Interfaces\IJsonDataConverter.cs" />
     <Compile Include="Tools\Logger.cs" />
     <Compile Include="Tools\StringHelper.cs" />
     <Compile Include="UserControls\MapContentControl.xaml.cs">
@@ -242,6 +245,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Wallpaper\main_image_magazine.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Icons\Coins\BCH.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Wallpaper\main_image_security.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

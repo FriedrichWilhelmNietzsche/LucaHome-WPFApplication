@@ -2,6 +2,7 @@
 using Common.Converter;
 using Common.Dto;
 using Common.Enums;
+using Common.Interfaces;
 using Common.Tools;
 using Data.Controller;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace Data.Services
 
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
-        private readonly JsonDataToWirelessSocketConverter _jsonDataToWirelessSocketConverter;
+        private readonly IJsonDataConverter<WirelessSocketDto> _jsonDataToWirelessSocketConverter;
 
         private static WirelessSocketService _instance = null;
         private static readonly object _padlock = new object();
@@ -185,7 +186,7 @@ namespace Data.Services
 
             string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_SOCKETS.Action;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.WirelessSocket);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.WirelessSocket);
         }
 
         private async Task setWirelessSocketAsync(string socketName, bool state)
@@ -203,7 +204,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _setWirelessSocketFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.WirelessSocketSet);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.WirelessSocketSet);
         }
 
         private async Task addWirelessSocketAsync(WirelessSocketDto newWirelessSocket)
@@ -224,7 +225,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _addWirelessSocketFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.WirelessSocketAdd);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.WirelessSocketAdd);
         }
 
         private async Task updateWirelessSocketAsync(WirelessSocketDto updateWirelessSocket)
@@ -245,7 +246,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _updateWirelessSocketFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.WirelessSocketUpdate);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.WirelessSocketUpdate);
         }
 
         private async Task deleteWirelessSocketAsync(WirelessSocketDto deleteWirelessSocket)
@@ -266,7 +267,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _deleteWirelessSocketFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.WirelessSocketDelete);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.WirelessSocketDelete);
         }
 
         private void _wirelessSocketDownloadFinished(string response, bool success, DownloadType downloadType)

@@ -94,19 +94,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\Images\wallpaper_clear.png" />
-    <Resource Include="Assets\Images\wallpaper_cloud.png" />
-    <Resource Include="Assets\Images\wallpaper_drizzle.png" />
-    <Resource Include="Assets\Images\wallpaper_dummy.png" />
-    <Resource Include="Assets\Images\wallpaper_fog.png" />
-    <Resource Include="Assets\Images\wallpaper_haze.png" />
-    <Resource Include="Assets\Images\wallpaper_mist.png" />
-    <Resource Include="Assets\Images\wallpaper_night.png" />
-    <Resource Include="Assets\Images\wallpaper_rain.png" />
-    <Resource Include="Assets\Images\wallpaper_sleet.png" />
-    <Resource Include="Assets\Images\wallpaper_snow.png" />
-    <Resource Include="Assets\Images\wallpaper_sun.png" />
-    <Resource Include="Assets\Images\wallpaper_thunderstorm.png" />
     <Resource Include="Assets\Images\weather_clear.png" />
     <Resource Include="Assets\Images\weather_cloud.png" />
     <Resource Include="Assets\Images\weather_dummy.png" />
@@ -117,7 +104,20 @@
     <Resource Include="Assets\Images\weather_snow.png" />
     <Resource Include="Assets\Images\weather_thunderstorm.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Assets\Images\weather_wallpaper_clear.png" />
+    <Resource Include="Assets\Images\weather_wallpaper_cloud.png" />
+    <Resource Include="Assets\Images\weather_wallpaper_drizzle.png" />
+    <Resource Include="Assets\Images\weather_wallpaper_dummy.png" />
+    <Resource Include="Assets\Images\weather_wallpaper_fog.png" />
+    <Resource Include="Assets\Images\weather_wallpaper_haze.png" />
+    <Resource Include="Assets\Images\weather_wallpaper_mist.png" />
+    <Resource Include="Assets\Images\weather_wallpaper_rain.png" />
+    <Resource Include="Assets\Images\weather_wallpaper_sleet.png" />
+    <Resource Include="Assets\Images\weather_wallpaper_snow.png" />
+    <Resource Include="Assets\Images\weather_wallpaper_sun.png" />
+    <Resource Include="Assets\Images\weather_wallpaper_thunderstorm.png" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{a93889ac-dddb-477c-8f4a-12edc56cdffe}</Project>

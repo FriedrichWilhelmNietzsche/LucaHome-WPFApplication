@@ -1,11 +1,12 @@
 ﻿using Common.Dto;
+using Common.Interfaces;
 using Common.Tools;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Common.Converter
 {
-    public class JsonDataToWirelessSocketConverter
+    public class JsonDataToWirelessSocketConverter : IJsonDataConverter<WirelessSocketDto>
     {
         private const string TAG = "JsonDataToWirelessSocketConverter";
         private static string _searchParameter = "{socket:";

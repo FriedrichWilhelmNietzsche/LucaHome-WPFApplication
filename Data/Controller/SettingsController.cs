@@ -12,16 +12,12 @@ namespace Data.Controller
         private const string TAG = "SettingsController";
         private readonly Logger _logger;
 
-        private readonly DownloadController _downloadController;
-
         private static SettingsController _instance = null;
         private static readonly object _padlock = new object();
 
         SettingsController()
         {
             _logger = new Logger(TAG);
-
-            _downloadController = new DownloadController();
         }
 
         public static SettingsController Instance

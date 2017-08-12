@@ -56,6 +56,11 @@
   <ItemGroup>
     <Compile Include="Controller\SettingsController.cs" />
     <Compile Include="Controller\LocalDriveController.cs" />
+    <Compile Include="CustomEventArgs\ImageReadyEventArsgs.cs" />
+    <Compile Include="CustomEventArgs\PartReadyEventArgs.cs" />
+    <Compile Include="Misc\AutomaticMultiPartReader.cs" />
+    <Compile Include="Misc\MultiPartStream.cs" />
+    <Compile Include="Services\SecurityService.cs" />
     <Compile Include="Services\CoinService.cs" />
     <Compile Include="Services\MapContentService.cs" />
     <Compile Include="Services\LibraryService.cs" />

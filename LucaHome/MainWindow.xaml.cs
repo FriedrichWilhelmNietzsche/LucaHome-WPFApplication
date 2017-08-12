@@ -2,6 +2,7 @@
 using Common.Tools;
 using Data.Services;
 using LucaHome.Pages;
+using OpenWeather.Models;
 using OpenWeather.Service;
 using System.ComponentModel;
 using System.Windows;
@@ -11,6 +12,8 @@ namespace LucaHome
 {
     public partial class MainWindow : Window
     {
+        private const string APP_ID = "guepardoapps.LucaHome";
+
         private const string TAG = "MainWindow";
         private readonly Logger _logger;
 
@@ -23,6 +26,7 @@ namespace LucaHome
         private readonly NavigationService _navigationService;
         private readonly OpenWeatherService _openWeatherService;
         private readonly ScheduleService _scheduleService;
+        private readonly SecurityService _securityService;
         private readonly ShoppingListService _shoppingListService;
         private readonly TemperatureService _temperatureService;
         private readonly UserService _userService;
@@ -45,6 +49,7 @@ namespace LucaHome
             _navigationService = _mainFrame.NavigationService;
             _openWeatherService = OpenWeatherService.Instance;
             _scheduleService = ScheduleService.Instance;
+            _securityService = SecurityService.Instance;
             _shoppingListService = ShoppingListService.Instance;
             _temperatureService = TemperatureService.Instance;
             _userService = UserService.Instance;
@@ -52,6 +57,8 @@ namespace LucaHome
 
             _openWeatherService.City = _temperatureService.OpenWeatherCity;
 
+            _openWeatherService.OnForecastWeatherDownloadFinished += _onForecastWeatherDownloadFinished;
+            
             // Check for user first
             if (!_userService.UserSaved())
             {
@@ -63,6 +70,13 @@ namespace LucaHome
                 _userService.OnUserCheckedFinished += _onUserCheckedFinished;
                 _userService.ValidateUser();
             }
+        }
+
+        private void _onForecastWeatherDownloadFinished(ForecastModel forecastWeather, bool success)
+        {
+            _logger.Debug(string.Format("_onForecastWeatherDownloadFinished with model {0} was successful: {1}", forecastWeather, success));
+
+            // TODO
         }
 
         private void _onUserCheckedFinished(string response, bool success)
@@ -96,6 +110,7 @@ namespace LucaHome
             _menuService.Dispose();
             _movieService.Dispose();
             _scheduleService.Dispose();
+            _securityService.Dispose();
             _shoppingListService.Dispose();
             _temperatureService.Dispose();
             _userService.Dispose();

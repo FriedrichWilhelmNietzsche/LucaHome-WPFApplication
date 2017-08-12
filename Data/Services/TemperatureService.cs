@@ -2,6 +2,7 @@
 using Common.Converter;
 using Common.Dto;
 using Common.Enums;
+using Common.Interfaces;
 using Common.Tools;
 using Data.Controller;
 using OpenWeather.Models;
@@ -26,7 +27,7 @@ namespace Data.Services
 
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
-        private readonly JsonDataToTemperatureConverter _jsonDataToTemperatureConverter;
+        private readonly IJsonDataConverter<TemperatureDto> _jsonDataToTemperatureConverter;
         private readonly OpenWeatherService _openWeatherService;
 
         private static TemperatureService _instance = null;
@@ -149,7 +150,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _temperatureDownloadFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.Temperature);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.Temperature);
         }
 
         private void _temperatureDownloadFinished(string response, bool success, DownloadType downloadType)

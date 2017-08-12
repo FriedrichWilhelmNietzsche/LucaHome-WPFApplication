@@ -1,4 +1,5 @@
 ﻿using Common.Dto;
+using Common.Interfaces;
 using Common.Tools;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace Common.Converter
 {
-    public class JsonDataToBirthdayConverter
+    public class JsonDataToBirthdayConverter : IJsonDataConverter<BirthdayDto>
     {
         private const string TAG = "JsonDataToBirthdayConverter";
         private static string _searchParameter = "{birthday:";

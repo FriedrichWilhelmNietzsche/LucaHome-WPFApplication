@@ -187,7 +187,7 @@ namespace Data.Services
 
             string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_SCHEDULES.Action;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.Schedule);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.Schedule);
         }
 
         private async Task setScheduleAsync(string scheduleName, bool state)
@@ -205,7 +205,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _setScheduleFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.ScheduleSet);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.ScheduleSet);
         }
 
         private async Task addScheduleAsync(ScheduleDto newSchedule)
@@ -226,7 +226,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _addScheduleFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.ScheduleAdd);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.ScheduleAdd);
         }
 
         private async Task updateScheduleAsync(ScheduleDto updateSchedule)
@@ -247,7 +247,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _updateScheduleFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.ScheduleUpdate);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.ScheduleUpdate);
         }
 
         private async Task deleteScheduleAsync(ScheduleDto deleteSchedule)
@@ -268,7 +268,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _deleteScheduleFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.ScheduleDelete);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.ScheduleDelete);
         }
 
         private void _scheduleDownloadFinished(string response, bool success, DownloadType downloadType)

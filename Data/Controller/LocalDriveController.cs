@@ -28,6 +28,12 @@ namespace Data.Controller
             return getDriveByLabel("Filme&Serien");
         }
 
+        public DriveInfo GetRaspberryDrive()
+        {
+            _logger.Debug("GetRaspberryDrive");
+            return getDriveByLabel("raspberryStore");
+        }
+
         public string[] ReadDirInDir(string directory)
         {
             return Directory.GetDirectories(directory);
@@ -71,7 +77,7 @@ namespace Data.Controller
 
         private DriveInfo getDriveByLabel(string label)
         {
-            _logger.Debug(string.Format("getkDriveByLabel: {0}", label));
+            _logger.Debug(string.Format("getDriveByLabel: {0}", label));
 
             DriveInfo[] localDrives = DriveInfo.GetDrives();
             foreach (DriveInfo localDrive in localDrives)
@@ -86,6 +92,7 @@ namespace Data.Controller
                 catch (Exception exception)
                 {
                     _logger.Error(exception.Message);
+                    continue;
                 }
             }
 

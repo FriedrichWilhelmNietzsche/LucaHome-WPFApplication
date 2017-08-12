@@ -132,7 +132,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _mapContentDownloadFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.MapContent);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.MapContent);
         }
 
         private void _mapContentDownloadFinished(string response, bool success, DownloadType downloadType)

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using System.Threading.Tasks;
+using Common.Interfaces;
 
 namespace Data.Services
 {
@@ -25,7 +26,7 @@ namespace Data.Services
 
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
-        private readonly JsonDataToBirthdayConverter _jsonDataToBirthdayConverter;
+        private readonly IJsonDataConverter<BirthdayDto> _jsonDataToBirthdayConverter;
 
         private static BirthdayService _instance = null;
         private static readonly object _padlock = new object();
@@ -147,7 +148,7 @@ namespace Data.Services
             string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_BIRTHDAYS.Action;
             _logger.Debug(string.Format("RequestUrl {0}", requestUrl));
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.Birthday);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.Birthday);
         }
 
         private async Task addBirthdayAsync(BirthdayDto newBirthday)
@@ -168,7 +169,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _birthdayAddFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.BirthdayAdd);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.BirthdayAdd);
         }
 
         private async Task updateBirthdayAsync(BirthdayDto updateBirthday)
@@ -189,7 +190,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _birthdayUpdateFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.BirthdayUpdate);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.BirthdayUpdate);
         }
 
         private async Task deleteBirthdayAsync(BirthdayDto deleteBirthday)
@@ -210,7 +211,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _birthdayDeleteFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.BirthdayDelete);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.BirthdayDelete);
         }
 
         private void _birthdayDownloadFinished(string response, bool success, DownloadType downloadType)

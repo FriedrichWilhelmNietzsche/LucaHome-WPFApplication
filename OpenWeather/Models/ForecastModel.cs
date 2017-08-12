@@ -52,6 +52,20 @@ namespace OpenWeather.Models
             }
         }
 
+        public Uri Wallpaper
+        {
+            get
+            {
+                WeatherCondition mostWeatherConditions = _list
+                    .GroupBy(v => v)
+                    .OrderByDescending(g => g.Count())
+                    .Select(g => g.Key.Condition)
+                    .FirstOrDefault();
+
+                return mostWeatherConditions?.Wallpaper;
+            }
+        }
+
         public Uri Icon
         {
             get
@@ -66,7 +80,7 @@ namespace OpenWeather.Models
             }
         }
 
-        public Uri Wallpaper
+        public string WeekendTip
         {
             get
             {
@@ -76,7 +90,35 @@ namespace OpenWeather.Models
                     .Select(g => g.Key.Condition)
                     .FirstOrDefault();
 
-                return mostWeatherConditions?.Wallpaper;
+                return mostWeatherConditions?.WeekendTip;
+            }
+        }
+
+        public string WorkdayTip
+        {
+            get
+            {
+                WeatherCondition mostWeatherConditions = _list
+                    .GroupBy(v => v)
+                    .OrderByDescending(g => g.Count())
+                    .Select(g => g.Key.Condition)
+                    .FirstOrDefault();
+
+                return mostWeatherConditions?.WorkdayTip;
+            }
+        }
+
+        public string WorkdayAfterWorkTip
+        {
+            get
+            {
+                WeatherCondition mostWeatherConditions = _list
+                    .GroupBy(v => v)
+                    .OrderByDescending(g => g.Count())
+                    .Select(g => g.Key.Condition)
+                    .FirstOrDefault();
+
+                return mostWeatherConditions?.WorkdayAfterWorkTip;
             }
         }
     }

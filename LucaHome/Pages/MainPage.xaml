@@ -73,7 +73,7 @@
             x:Name="WeatherCard"
             Grid.Row="1"
             Grid.Column="2"
-            CardImage="/OpenWeather;component/Assets/Images/wallpaper_dummy.png"
+            CardImage="/OpenWeather;component/Assets/Images/weather_wallpaper_dummy.png"
             Title="Weather"
             Description="Get your weather for the next days"
             ButtonAddVisibility="Collapsed"
@@ -156,6 +156,17 @@
             ButtonAddVisibility="Collapsed"
             ButtonMapVisibility="Collapsed"
             MouseUp="MagazinCard_MouseUp"/>
+
+        <usercontrols:MainPageCard
+            x:Name="SecurityCard"
+            Grid.Row="3"
+            Grid.Column="2"
+            CardImage="/Common;component/Assets/Wallpaper/main_image_security.png"
+            Title="Security"
+            Description="Secure your flat!"
+            ButtonAddVisibility="Collapsed"
+            ButtonMapVisibility="Collapsed"
+            MouseUp="SecurityCard_MouseUp"/>
 
         <usercontrols:MainPageCard
             x:Name="SettingsCard"

@@ -1,11 +1,12 @@
 ﻿using Common.Dto;
+using Common.Interfaces;
 using Common.Tools;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Common.Converter
 {
-    public class JsonDataToMovieConverter
+    public class JsonDataToMovieConverter : IJsonDataConverter<MovieDto>
     {
         private const string TAG = "JsonDataToMovieConverter";
         private static string _searchParameter = "{movie:";

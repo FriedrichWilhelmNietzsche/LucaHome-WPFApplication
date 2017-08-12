@@ -1,4 +1,5 @@
 ﻿using Common.Dto;
+using Common.Interfaces;
 using Common.Tools;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using static Common.Dto.TemperatureDto;
 
 namespace Common.Converter
 {
-    public class JsonDataToTemperatureConverter
+    public class JsonDataToTemperatureConverter : IJsonDataConverter<TemperatureDto>
     {
         private const string TAG = "JsonDataToTemperatureConverter";
         private static string _searchParameter = "{temperature:";

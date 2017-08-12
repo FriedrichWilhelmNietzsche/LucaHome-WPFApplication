@@ -1,12 +1,13 @@
 ﻿using Common.Dto;
 using Common.Enums;
+using Common.Interfaces;
 using Common.Tools;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Common.Converter
 {
-    public class JsonDataToShoppingConverter
+    public class JsonDataToShoppingConverter : IJsonDataConverter<ShoppingEntryDto>
     {
         private const string TAG = "JsonDataToShoppingConverter";
         private static string _searchParameter = "{shopping_entry:";

@@ -106,6 +106,7 @@ namespace Common.Converter
                         if (entry.Key.Contains(type))
                         {
                             currentConversion = entry.Value;
+                            break;
                         }
                     }
 

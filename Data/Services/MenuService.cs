@@ -2,6 +2,7 @@
 using Common.Converter;
 using Common.Dto;
 using Common.Enums;
+using Common.Interfaces;
 using Common.Tools;
 using Data.Controller;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace Data.Services
     public delegate void ListedMenuDownloadEventHandler(IList<ListedMenuDto> listedMenuList, bool success, string response);
     public delegate void MenuDownloadEventHandler(IList<MenuDto> menuList, bool success, string response);
     public delegate void MenuUpdateEventHandler(bool success, string response);
+    public delegate void MenuClearEventHandler(bool success, string response);
 
     public class MenuService
     {
@@ -24,8 +26,8 @@ namespace Data.Services
 
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
-        private readonly JsonDataToListedMenuConverter _jsonDataToListedMenuConverter;
-        private readonly JsonDataToMenuConverter _jsonDataToMenuConverter;
+        private readonly IJsonDataConverter<ListedMenuDto> _jsonDataToListedMenuConverter;
+        private readonly IJsonDataConverter<MenuDto> _jsonDataToMenuConverter;
 
         private static MenuService _instance = null;
         private static readonly object _padlock = new object();
@@ -56,6 +58,7 @@ namespace Data.Services
         public event ListedMenuDownloadEventHandler OnListedMenuDownloadFinished;
         public event MenuDownloadEventHandler OnMenuDownloadFinished;
         public event MenuUpdateEventHandler OnMenuUpdateFinished;
+        public event MenuClearEventHandler OnMenuClearFinished;
 
         public static MenuService Instance
         {
@@ -117,6 +120,12 @@ namespace Data.Services
             updateMenuAsync(updateMenu);
         }
 
+        public void ClearMenu(MenuDto clearMenu)
+        {
+            _logger.Debug(string.Format("ClearMenu: {0}", clearMenu));
+            clearMenuAsync(clearMenu);
+        }
+
         private void _downloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             _logger.Debug(string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
@@ -137,7 +146,7 @@ namespace Data.Services
 
             string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_LISTED_MENU.Action;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.ListedMenu);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.ListedMenu);
         }
 
         private async Task loadMenuListAsync()
@@ -153,7 +162,7 @@ namespace Data.Services
 
             string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_MENU.Action;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.Menu);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.Menu);
         }
 
         private async Task updateMenuAsync(MenuDto updateMenu)
@@ -174,7 +183,28 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _menuUpdateFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.MenuUpdate);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.MenuUpdate);
+        }
+
+        private async Task clearMenuAsync(MenuDto clearMenu)
+        {
+            _logger.Debug(string.Format("clearMenuAsync: {0}", clearMenu));
+
+            UserDto user = _settingsController.User;
+            if (user == null)
+            {
+                OnMenuClearFinished(false, "No user");
+                return;
+            }
+
+            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
+                user.Name, user.Passphrase,
+                clearMenu.CommandClear);
+
+            _downloadController.OnDownloadFinished += _menuClearFinished;
+
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.MenuClear);
         }
 
         private void _listedMenuDownloadFinished(string response, bool success, DownloadType downloadType)
@@ -296,12 +326,48 @@ namespace Data.Services
             loadMenuListAsync();
         }
 
+        private void _menuClearFinished(string response, bool success, DownloadType downloadType)
+        {
+            _logger.Debug("_menuUpdateFinished");
+
+            if (downloadType != DownloadType.MenuClear)
+            {
+                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
+                return;
+            }
+
+            _downloadController.OnDownloadFinished -= _menuClearFinished;
+
+            if (response.Contains("Error") || response.Contains("ERROR"))
+            {
+                _logger.Error(response);
+
+                OnMenuClearFinished(false, response);
+                return;
+            }
+
+            _logger.Debug(string.Format("response: {0}", response));
+
+            if (!success)
+            {
+                _logger.Error("Update was not successful!");
+
+                OnMenuClearFinished(false, response);
+                return;
+            }
+
+            OnMenuClearFinished(true, response);
+
+            loadMenuListAsync();
+        }
+
         public void Dispose()
         {
             _logger.Debug("Dispose");
 
             _downloadController.OnDownloadFinished -= _menuDownloadFinished;
             _downloadController.OnDownloadFinished -= _menuUpdateFinished;
+            _downloadController.OnDownloadFinished -= _menuClearFinished;
 
             _downloadTimer.Elapsed -= _downloadTimer_Elapsed;
             _downloadTimer.AutoReset = false;

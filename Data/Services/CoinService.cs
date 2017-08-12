@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using System.Threading.Tasks;
+using Common.Interfaces;
 
 namespace Data.Services
 {
@@ -27,7 +28,7 @@ namespace Data.Services
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
         private readonly JsonDataToCoinConverter _jsonDataToCoinConverter;
-        private readonly JsonDataToCoinConversionConverter _jsonDataToCoinConversionConverter;
+        private readonly IJsonDataConverter<KeyValuePair<string, double>> _jsonDataToCoinConversionConverter;
 
         private static CoinService _instance = null;
         private static readonly object _padlock = new object();
@@ -164,10 +165,10 @@ namespace Data.Services
         {
             _logger.Debug("loadCoinConversionAsync");
 
-            string requestUrl = "https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,DASH,ETC,ETH,LTC,XMR,ZEC&tsyms=EUR";
+            string requestUrl = "https://min-api.cryptocompare.com/data/pricemulti?fsyms=BCH,BTC,DASH,ETC,ETH,LTC,XMR,ZEC&tsyms=EUR";
             _logger.Debug(string.Format("RequestUrl {0}", requestUrl));
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.CoinConversion);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.CoinConversion);
         }
 
         private async Task loadCoinListAsync()
@@ -186,7 +187,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _coinDownloadFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.Coin);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.Coin);
         }
 
         private async Task addCoinAsync(CoinDto newCoin)
@@ -207,7 +208,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _coinAddFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.CoinAdd);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.CoinAdd);
         }
 
         private async Task updateCoinAsync(CoinDto updateCoin)
@@ -228,7 +229,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _coinUpdateFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.CoinUpdate);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.CoinUpdate);
         }
 
         private async Task deleteCoinAsync(CoinDto deleteCoin)
@@ -249,7 +250,7 @@ namespace Data.Services
 
             _downloadController.OnDownloadFinished += _coinDeleteFinished;
 
-            await _downloadController.SendCommandToWebsiteAsync(requestUrl, DownloadType.CoinDelete);
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.CoinDelete);
         }
 
         private void _coinConversionDownloadFinished(string response, bool success, DownloadType downloadType)
@@ -266,7 +267,8 @@ namespace Data.Services
             if (coinConversionList == null)
             {
                 _logger.Error("Converted coinConversionList is null!");
-                coinConversionList = new List<KeyValuePair<string, double>>();
+                OnCoinConversionDownloadFinished(_coinConversionList, false, response);
+                return;
             }
 
             _coinConversionList = coinConversionList;
@@ -280,7 +282,7 @@ namespace Data.Services
                     .Value;
             }
 
-            OnCoinConversionDownloadFinished(_coinConversionList, false, response);
+            OnCoinConversionDownloadFinished(_coinConversionList, true, response);
         }
 
         private void _coinDownloadFinished(string response, bool success, DownloadType downloadType)

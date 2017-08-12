@@ -1,4 +1,5 @@
 ﻿using Common.Dto;
+using Common.Interfaces;
 using Common.Tools;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace Common.Converter
 {
-    public class JsonDataToMenuConverter
+    public class JsonDataToMenuConverter : IJsonDataConverter<MenuDto>
     {
         private const string TAG = "JsonDataToMenuConverter";
         private static string _searchParameter = "{menu:";
