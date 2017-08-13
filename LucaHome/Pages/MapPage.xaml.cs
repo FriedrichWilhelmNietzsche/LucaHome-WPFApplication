@@ -89,6 +89,7 @@ namespace LucaHome.Pages
                 mapContentControl.ButtonText = entry.ButtonText;
                 mapContentControl.ButtonToolTip = entry.ButtonToolTip;
                 mapContentControl.ButtonVisibility = entry.ButtonVisibility;
+
                 if (entry.MapDrawingType == DrawingType.Socket)
                 {
                     mapContentControl.ButtonCommand = new DelegateCommand(() =>

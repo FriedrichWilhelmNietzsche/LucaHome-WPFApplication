@@ -14,6 +14,12 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 
+# Keys
+*.cer
+*.pvk
+*.pfx
+*.snk
+
 # Windows shortcuts
 *.lnk
 
@@ -50,5 +56,4 @@ Temporary Items
 .vs/
 obj/
 bin/
-publish/
 TestResults/

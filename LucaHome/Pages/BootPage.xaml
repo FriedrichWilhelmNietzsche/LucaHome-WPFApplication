@@ -67,9 +67,8 @@
             Margin="5">
             <TextBlock 
                 HorizontalAlignment="Center" 
-                Style="{DynamicResource MaterialDesignSubheadingTextBlock}">
-                Loading LucaHome WPF Application ...
-            </TextBlock>
+                Style="{DynamicResource MaterialDesignSubheadingTextBlock}"
+                Text="{Binding ProgressText, UpdateSourceTrigger=PropertyChanged}" />
         </materialDesign:Card>
     </Grid>
 </Page>

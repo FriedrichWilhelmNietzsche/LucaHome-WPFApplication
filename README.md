@@ -4,8 +4,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 <a target="_blank" href="https://www.paypal.me/GuepardoApps" title="Donate using PayPal"><img src="https://img.shields.io/badge/paypal-donate-blue.svg" /></a>
 
-[![Build](https://img.shields.io/badge/build-successful-green.svg)](https://github.com/GuepardoApps/LucaHome-WPFApplication)
-[![Version](https://img.shields.io/badge/version-v1.1.0.17226-green.svg)](https://github.com/GuepardoApps/LucaHome-WPFApplication)
+[![Build](https://img.shields.io/badge/build-successful-green.svg)](https://github.com/GuepardoApps/LucaHome-WPFApplication/tree/master/LucaHome/publish)
+[![Version](https://img.shields.io/badge/version-v1.1.5.17225-green.svg)](https://github.com/GuepardoApps/LucaHome-WPFApplication)
 [![TestCoverage](https://img.shields.io/badge/testcoverage-less10percent-orange.svg)](https://github.com/GuepardoApps/LucaHome-WPFApplication)
 
 Part of the LucaHome-Project

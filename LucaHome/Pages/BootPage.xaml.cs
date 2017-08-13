@@ -6,18 +6,21 @@ using OpenWeather.Models;
 using OpenWeather.Service;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 
 namespace LucaHome.Pages
 {
-    public partial class BootPage : Page
+    public partial class BootPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "BootPage";
         private readonly Logger _logger;
 
         private int _downloadCount = 0;
+        private int _progressPercent = 0;
+        private string _progressText = "Loading LucaHome WPF Application ... {0} %";
 
         private readonly BirthdayService _birthdayService;
         private readonly CoinService _coinService;
@@ -52,6 +55,25 @@ namespace LucaHome.Pages
             _wirelessSocketService = WirelessSocketService.Instance;
 
             InitializeComponent();
+            DataContext = this;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public string ProgressText
+        {
+            get
+            {
+                return String.Format(_progressText, _progressPercent);
+            }
+            set
+            {
+                OnPropertyChanged("ProgressText");
+            }
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
@@ -218,6 +240,9 @@ namespace LucaHome.Pages
         {
             _downloadCount++;
             _logger.Debug(string.Format("checkDownloadCount: Download {0}/{1}", _downloadCount, Constants.DOWNLOAD_STEPS));
+
+            _progressPercent = (_downloadCount * 100) / Constants.DOWNLOAD_STEPS;
+            OnPropertyChanged("ProgressText");
 
             if (_downloadCount >= Constants.DOWNLOAD_STEPS)
             {

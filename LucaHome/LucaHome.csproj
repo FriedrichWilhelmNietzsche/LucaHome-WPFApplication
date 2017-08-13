@@ -25,11 +25,12 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <SupportUrl>https://github.com/Gu3pardo/LucaHome-WPFApplication</SupportUrl>
+    <ErrorReportUrl>https://github.com/Gu3pardo/LucaHome-WPFApplication</ErrorReportUrl>
     <ProductName>LucaHome</ProductName>
     <PublisherName>GuepardoApps</PublisherName>
     <SuiteName>LucaHome</SuiteName>
-    <ApplicationRevision>17226</ApplicationRevision>
-    <ApplicationVersion>1.1.0.17226</ApplicationVersion>
+    <ApplicationRevision>17225</ApplicationRevision>
+    <ApplicationVersion>1.1.5.17225</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -59,10 +60,10 @@
     <ApplicationIcon>ic_launcher.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>A7E7CE708EA7060633E731D1D6861982AA6241D1</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>4A45C99D021096E15B7E23D7F99E9522354E5CE6</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>LucaHome_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>lucahome_signing.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -72,6 +73,12 @@
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>LucaHome.App</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>lucahome_key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MaterialDesignColors, Version=1.1.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -404,7 +411,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="LucaHome_TemporaryKey.pfx" />
+    <None Include="lucahome_key.snk" />
+    <None Include="lucahome_key_public.snk" />
+    <None Include="lucahome_signing.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -442,6 +451,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ic_launcher.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="certificate_install.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

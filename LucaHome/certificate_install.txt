@@ -1,0 +1,13 @@
+﻿https://msdn.microsoft.com/de-de/library/che5h906.aspx
+https://msdn.microsoft.com/de-de/library/6f05ezxy.aspx
+https://msdn.microsoft.com/en-us/library/ms247123(v=vs.100).aspx
+https://msdn.microsoft.com/de-de/library/ms229859(v=vs.110).aspx
+
+1) open dev -> Developer-Eingabeaufforderung
+
+2) Schluesselpaar erstellen -> sn -k keypair.snk
+3) Oeffentlichen Schluessel extrahieren -> sn -p keypair.snk public.snk  
+
+4) unter Properties -> Signing -> Assembly-key auswaehlen (PUBLIC key!)
+
+http://www.digitallycreated.net/Blog/38/using-makecert-to-create-certificates-for-development
