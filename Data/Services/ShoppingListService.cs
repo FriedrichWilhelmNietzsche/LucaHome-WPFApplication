@@ -22,7 +22,7 @@ namespace Data.Services
         private const string TAG = "ShoppingListService";
         private readonly Logger _logger;
 
-        private const int TIMEOUT = 5 * 60 * 1000;
+        private const int TIMEOUT = 3 * 60 * 60 * 1000;
 
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
@@ -52,9 +52,28 @@ namespace Data.Services
         }
 
         public event ShoppingListServiceDownloadEventHandler OnShoppingListDownloadFinished;
+        private void publishOnShoppingListDownloadFinished(IList<ShoppingEntryDto> shoppingList, bool success, string response)
+        {
+            OnShoppingListDownloadFinished?.Invoke(shoppingList, success, response);
+        }
+
         public event ShoppingEntryAddEventHandler OnShoppingEntryAddFinished;
+        private void publishOnShoppingEntryAddFinished(bool success, string response)
+        {
+            OnShoppingEntryAddFinished?.Invoke(success, response);
+        }
+
         public event ShoppingEntryUpdateEventHandler OnShoppingEntryUpdateFinished;
+        private void publishOnShoppingEntryUpdateFinished(bool success, string response)
+        {
+            OnShoppingEntryUpdateFinished?.Invoke(success, response);
+        }
+
         public event ShoppingEntryDeleteEventHandler OnShoppingEntryDeleteFinished;
+        private void publishOnShoppingEntryDeleteFinished(bool success, string response)
+        {
+            OnShoppingEntryDeleteFinished?.Invoke(success, response);
+        }
 
         public static ShoppingListService Instance
         {
@@ -140,7 +159,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnShoppingListDownloadFinished(null, false, "No user");
+                publishOnShoppingListDownloadFinished(null, false, "No user");
                 return;
             }
 
@@ -157,7 +176,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnShoppingEntryAddFinished(false, "No user");
+                publishOnShoppingEntryAddFinished(false, "No user");
                 return;
             }
 
@@ -178,7 +197,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnShoppingEntryUpdateFinished(false, "No user");
+                publishOnShoppingEntryUpdateFinished(false, "No user");
                 return;
             }
 
@@ -199,7 +218,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnShoppingEntryDeleteFinished(false, "No user");
+                publishOnShoppingEntryDeleteFinished(false, "No user");
                 return;
             }
 
@@ -227,7 +246,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnShoppingListDownloadFinished(null, false, response);
+                publishOnShoppingListDownloadFinished(null, false, response);
                 return;
             }
 
@@ -237,7 +256,7 @@ namespace Data.Services
             {
                 _logger.Error("Download was not successful!");
 
-                OnShoppingListDownloadFinished(null, false, response);
+                publishOnShoppingListDownloadFinished(null, false, response);
                 return;
             }
 
@@ -246,13 +265,13 @@ namespace Data.Services
             {
                 _logger.Error("Converted shoppingList is null!");
 
-                OnShoppingListDownloadFinished(null, false, response);
+                publishOnShoppingListDownloadFinished(null, false, response);
                 return;
             }
 
             _shoppingList = shoppingList;
 
-            OnShoppingListDownloadFinished(_shoppingList, true, response);
+            publishOnShoppingListDownloadFinished(_shoppingList, true, response);
         }
 
         private void _shoppingEntryAddFinished(string response, bool success, DownloadType downloadType)
@@ -271,7 +290,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnShoppingEntryAddFinished(false, response);
+                publishOnShoppingEntryAddFinished(false, response);
                 return;
             }
 
@@ -281,11 +300,11 @@ namespace Data.Services
             {
                 _logger.Error("Adding was not successful!");
 
-                OnShoppingEntryAddFinished(false, response);
+                publishOnShoppingEntryAddFinished(false, response);
                 return;
             }
 
-            OnShoppingEntryAddFinished(true, response);
+            publishOnShoppingEntryAddFinished(true, response);
 
             loadShoppingListAsync();
         }
@@ -306,7 +325,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnShoppingEntryUpdateFinished(false, response);
+                publishOnShoppingEntryUpdateFinished(false, response);
                 return;
             }
 
@@ -316,11 +335,11 @@ namespace Data.Services
             {
                 _logger.Error("Adding was not successful!");
 
-                OnShoppingEntryUpdateFinished(false, response);
+                publishOnShoppingEntryUpdateFinished(false, response);
                 return;
             }
 
-            OnShoppingEntryUpdateFinished(true, response);
+            publishOnShoppingEntryUpdateFinished(true, response);
 
             loadShoppingListAsync();
         }
@@ -341,7 +360,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnShoppingEntryDeleteFinished(false, response);
+                publishOnShoppingEntryDeleteFinished(false, response);
                 return;
             }
 
@@ -351,11 +370,11 @@ namespace Data.Services
             {
                 _logger.Error("Deleting was not successful!");
 
-                OnShoppingEntryDeleteFinished(false, response);
+                publishOnShoppingEntryDeleteFinished(false, response);
                 return;
             }
 
-            OnShoppingEntryDeleteFinished(true, response);
+            publishOnShoppingEntryDeleteFinished(true, response);
 
             loadShoppingListAsync();
         }

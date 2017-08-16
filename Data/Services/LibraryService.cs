@@ -17,7 +17,7 @@ namespace Data.Services
         private const string TAG = "LibraryService";
         private readonly Logger _logger;
 
-        private const int TIMEOUT = 15 * 60 * 1000;
+        private const int TIMEOUT = 6 * 60 * 60 * 1000;
 
         private readonly LocalDriveController _localDriveController;
 
@@ -46,6 +46,10 @@ namespace Data.Services
         }
 
         public event MagazinListDownloadEventHandler OnMagazinListDownloadFinished;
+        private void publishOnMagazinListDownloadFinished(IList<MagazinDirDto> magazinList, bool success, string response)
+        {
+            OnMagazinListDownloadFinished?.Invoke(magazinList, success, response);
+        }
 
         public static LibraryService Instance
         {
@@ -127,7 +131,7 @@ namespace Data.Services
                 _magazinList.Add(newEntry);
             }
 
-            OnMagazinListDownloadFinished(_magazinList, true, "Success");
+            publishOnMagazinListDownloadFinished(_magazinList, true, "Success");
         }
 
         private void _reloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)

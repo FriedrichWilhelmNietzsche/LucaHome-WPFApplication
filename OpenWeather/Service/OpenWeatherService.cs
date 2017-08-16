@@ -48,7 +48,7 @@ namespace OpenWeather.Service
             OnForecastWeatherDownloadFinished?.Invoke(forecastWeather, success);
         }
 
-        public IList<ForecastPartModel> FoundForecastEntries(string searchKey)
+        public ForecastModel FoundForecastEntries(string searchKey)
         {
             List<ForecastPartModel> foundForecastEntries;
 
@@ -87,7 +87,9 @@ namespace OpenWeather.Service
                     break;
             }
 
-            return foundForecastEntries;
+            ForecastModel foundForecastModel = new ForecastModel(_forecastWeather.City, _forecastWeather.Country, foundForecastEntries);
+
+            return foundForecastModel;
         }
 
         public static OpenWeatherService Instance

@@ -21,7 +21,7 @@ namespace Data.Services
         private const string TAG = "ScheduleService";
         private readonly Logger _logger;
 
-        private const int TIMEOUT = 10 * 60 * 1000;
+        private const int TIMEOUT = 60 * 60 * 1000;
 
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
@@ -53,10 +53,34 @@ namespace Data.Services
         }
 
         public event ScheduleDownloadEventHandler OnScheduleDownloadFinished;
+        private void publishOnScheduleDownloadFinished(IList<ScheduleDto> scheduleList, bool success, string response)
+        {
+            OnScheduleDownloadFinished?.Invoke(scheduleList, success, response);
+        }
+
         public event ScheduleDownloadEventHandler OnSetScheduleFinished;
+        private void publishOnSetScheduleFinished(IList<ScheduleDto> scheduleList, bool success, string response)
+        {
+            OnSetScheduleFinished?.Invoke(scheduleList, success, response);
+        }
+
         public event ScheduleAddEventHandler OnAddScheduleFinished;
+        private void publishOnAddScheduleFinished(bool success, string response)
+        {
+            OnAddScheduleFinished?.Invoke(success, response);
+        }
+
         public event ScheduleUpdateEventHandler OnUpdateScheduleFinished;
+        private void publishOnUpdateScheduleFinished(bool success, string response)
+        {
+            OnUpdateScheduleFinished?.Invoke(success, response);
+        }
+
         public event ScheduleDeleteEventHandler OnDeleteScheduleFinished;
+        private void publishOnDeleteScheduleFinished(bool success, string response)
+        {
+            OnDeleteScheduleFinished?.Invoke(success, response);
+        }
 
         public static ScheduleService Instance
         {
@@ -181,7 +205,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnScheduleDownloadFinished(null, false, "No user");
+                publishOnScheduleDownloadFinished(null, false, "No user");
                 return;
             }
 
@@ -197,7 +221,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnScheduleDownloadFinished(null, false, "No user");
+                publishOnScheduleDownloadFinished(null, false, "No user");
                 return;
             }
 
@@ -215,7 +239,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnAddScheduleFinished(false, "No user");
+                publishOnAddScheduleFinished(false, "No user");
                 return;
             }
 
@@ -236,7 +260,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnUpdateScheduleFinished(false, "No user");
+                publishOnUpdateScheduleFinished(false, "No user");
                 return;
             }
 
@@ -257,7 +281,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnDeleteScheduleFinished(false, "No user");
+                publishOnDeleteScheduleFinished(false, "No user");
                 return;
             }
 
@@ -285,7 +309,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnScheduleDownloadFinished(null, false, response);
+                publishOnScheduleDownloadFinished(null, false, response);
                 return;
             }
 
@@ -295,7 +319,7 @@ namespace Data.Services
             {
                 _logger.Error("Download was not successful!");
 
-                OnScheduleDownloadFinished(null, false, response);
+                publishOnScheduleDownloadFinished(null, false, response);
                 return;
             }
 
@@ -304,13 +328,13 @@ namespace Data.Services
             {
                 _logger.Error("Converted scheduleList is null!");
 
-                OnScheduleDownloadFinished(null, false, response);
+                publishOnScheduleDownloadFinished(null, false, response);
                 return;
             }
 
             _scheduleList = scheduleList;
 
-            OnScheduleDownloadFinished(_scheduleList, true, response);
+            publishOnScheduleDownloadFinished(_scheduleList, true, response);
         }
 
         private void _setScheduleFinished(string response, bool success, DownloadType downloadType)
@@ -328,7 +352,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnSetScheduleFinished(null, false, response);
+                publishOnSetScheduleFinished(null, false, response);
                 return;
             }
 
@@ -338,11 +362,11 @@ namespace Data.Services
             {
                 _logger.Error("Setting was not successful!");
 
-                OnSetScheduleFinished(null, false, response);
+                publishOnSetScheduleFinished(null, false, response);
                 return;
             }
 
-            OnSetScheduleFinished(null, true, response);
+            publishOnSetScheduleFinished(null, true, response);
 
             loadScheduleListAsync();
         }
@@ -362,7 +386,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnAddScheduleFinished(false, response);
+                publishOnAddScheduleFinished(false, response);
                 return;
             }
 
@@ -372,11 +396,11 @@ namespace Data.Services
             {
                 _logger.Error("Adding was not successful!");
 
-                OnAddScheduleFinished(false, response);
+                publishOnAddScheduleFinished(false, response);
                 return;
             }
 
-            OnAddScheduleFinished(true, response);
+            publishOnAddScheduleFinished(true, response);
 
             loadScheduleListAsync();
         }
@@ -396,7 +420,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnUpdateScheduleFinished(false, response);
+                publishOnUpdateScheduleFinished(false, response);
                 return;
             }
 
@@ -406,11 +430,11 @@ namespace Data.Services
             {
                 _logger.Error("Updating was not successful!");
 
-                OnUpdateScheduleFinished(false, response);
+                publishOnUpdateScheduleFinished(false, response);
                 return;
             }
 
-            OnUpdateScheduleFinished(true, response);
+            publishOnUpdateScheduleFinished(true, response);
 
             loadScheduleListAsync();
         }
@@ -430,7 +454,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnDeleteScheduleFinished(false, response);
+                publishOnDeleteScheduleFinished(false, response);
                 return;
             }
 
@@ -440,11 +464,11 @@ namespace Data.Services
             {
                 _logger.Error("Deleting was not successful!");
 
-                OnDeleteScheduleFinished(false, response);
+                publishOnDeleteScheduleFinished(false, response);
                 return;
             }
 
-            OnDeleteScheduleFinished(true, response);
+            publishOnDeleteScheduleFinished(true, response);
 
             loadScheduleListAsync();
         }

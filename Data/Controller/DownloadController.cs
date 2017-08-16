@@ -35,6 +35,10 @@ namespace Data.Controller
         }
 
         public event DownloadFinishedEventHandler OnDownloadFinished;
+        private void publishOnDownloadFinished(string response, bool success, DownloadType downloadType)
+        {
+            OnDownloadFinished?.Invoke(response, success, downloadType);
+        }
 
         public async void SendCommandToWebsite(string requestUrl, DownloadType downloadType)
         {
@@ -46,7 +50,7 @@ namespace Data.Controller
             catch (Exception exception)
             {
                 _logger.Error(exception.Message);
-                OnDownloadFinished(exception.Message, false, downloadType);
+                publishOnDownloadFinished(exception.Message, false, downloadType);
             }
         }
 
@@ -57,14 +61,14 @@ namespace Data.Controller
             if (requestUrl == null)
             {
                 _logger.Error("RequestUrl may not be null!");
-                OnDownloadFinished("ERROR: RequestUrl may not be null!", false, downloadType);
+                publishOnDownloadFinished("ERROR: RequestUrl may not be null!", false, downloadType);
                 return;
             }
 
             if (requestUrl.Length < 15)
             {
                 _logger.Error("Invalid requestUrl length!");
-                OnDownloadFinished("ERROR: Invalid requestUrl length!", false, downloadType);
+                publishOnDownloadFinished("ERROR: Invalid requestUrl length!", false, downloadType);
                 return;
             }
 
@@ -76,7 +80,7 @@ namespace Data.Controller
 
             _logger.Debug(string.Format("ResponseData: {0}", data));
 
-            OnDownloadFinished(data, (data != null), downloadType);
+            publishOnDownloadFinished(data, (data != null), downloadType);
         }
 
         public void Dispose()

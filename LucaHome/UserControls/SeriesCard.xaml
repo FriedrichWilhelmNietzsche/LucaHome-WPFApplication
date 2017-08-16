@@ -1,0 +1,97 @@
+﻿<UserControl 
+    x:Class="LucaHome.UserControls.SeriesCard"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:LucaHome.UserControls"
+    mc:Ignorable="d" 
+    d:DesignHeight="200" 
+    d:DesignWidth="150"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    TextElement.FontWeight="Regular"
+    TextElement.FontSize="13"
+    TextOptions.TextFormattingMode="Ideal" 
+    TextOptions.TextRenderingMode="Auto"   
+    Background="{DynamicResource MaterialDesignPaper}"
+    FontFamily="{DynamicResource MaterialDesignFont}">
+
+    <Grid 
+        ToolTip="{Binding 
+            RelativeSource={RelativeSource AncestorType=UserControl},
+            Path=Description, 
+            Mode=OneWay}">
+        <materialDesign:Card 
+            x:Name="SeriesCardContent"
+            Margin="5"
+            Height="190"
+            Width="140"
+            MouseUp="SeriesCard_MouseUp">
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Image 
+                    Grid.Row="0" 
+                    Grid.Column="0"
+                    Name="SeriesIconView"
+                    Source="{Binding 
+                    RelativeSource={RelativeSource AncestorType=UserControl},
+                    Path=SeriesIcon, 
+                    Mode=OneWay}"
+                    MouseUp="SeriesCard_MouseUp"/>
+
+                <materialDesign:Card 
+                    Margin="5 5 15 5"
+                    VerticalAlignment="Bottom"
+                    Padding="5"
+                    MouseUp="SeriesCard_MouseUp">
+                    <TextBlock
+                        Margin="5"
+                        Grid.Row="0" 
+                        Grid.Column="0"
+                        HorizontalAlignment="Center" 
+                        VerticalAlignment="Center"
+                        Style="{DynamicResource MaterialDesignTitleTextBlock}"
+                        TextWrapping="Wrap"
+                        TextAlignment="Center"
+                        Text="{Binding 
+                        RelativeSource={RelativeSource AncestorType=UserControl},
+                        Path=SeriesName, 
+                        Mode=OneWay}"
+                        FontSize="12"
+                        MouseUp="SeriesCard_MouseUp"/>
+                </materialDesign:Card>
+            </Grid>
+        </materialDesign:Card>
+
+        <Button 
+            Grid.Column="1"
+            Grid.Row="2"
+            Width="30"
+            Height="30"
+            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+            Margin="5 5 5 5"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            ToolTip="Open Explorer"
+            Command="{Binding
+            RelativeSource={RelativeSource AncestorType=UserControl},
+            Path=ButtonOpenExplorerCommand,
+            Mode=OneWay}">
+            <materialDesign:PackIcon 
+                Kind="Folder" 
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Height="20" 
+                Width="20" />
+        </Button>
+    </Grid>
+
+</UserControl>

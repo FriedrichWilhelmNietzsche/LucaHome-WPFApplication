@@ -22,7 +22,7 @@ namespace Data.Services
         private const string TAG = "SecurityService";
         private readonly Logger _logger;
 
-        private const int TIMEOUT = 60 * 60 * 1000;
+        private const int TIMEOUT = 15 * 60 * 1000;
 
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
@@ -57,6 +57,10 @@ namespace Data.Services
         }
 
         public event SecurityDownloadEventHandler OnSecurityDownloadFinished;
+        private void publishOnSecurityDownloadFinished(SecurityDto security, bool success, string response)
+        {
+            OnSecurityDownloadFinished?.Invoke(security, success, response);
+        }
 
         public static SecurityService Instance
         {
@@ -139,7 +143,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnSecurityDownloadFinished(null, false, "No user");
+                publishOnSecurityDownloadFinished(null, false, "No user");
                 return;
             }
 
@@ -158,7 +162,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnSecurityDownloadFinished(null, false, "No user");
+                publishOnSecurityDownloadFinished(null, false, "No user");
                 return;
             }
 
@@ -185,7 +189,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnSecurityDownloadFinished(null, false, "No user");
+                publishOnSecurityDownloadFinished(null, false, "No user");
                 return;
             }
 
@@ -211,7 +215,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnSecurityDownloadFinished(null, false, response);
+                publishOnSecurityDownloadFinished(null, false, response);
                 return;
             }
 
@@ -221,7 +225,7 @@ namespace Data.Services
             {
                 _logger.Error("Download was not successful!");
 
-                OnSecurityDownloadFinished(null, false, response);
+                publishOnSecurityDownloadFinished(null, false, response);
                 return;
             }
 
@@ -230,13 +234,13 @@ namespace Data.Services
             {
                 _logger.Error("Converted security is null!");
 
-                OnSecurityDownloadFinished(null, false, response);
+                publishOnSecurityDownloadFinished(null, false, response);
                 return;
             }
 
             _security = security;
 
-            OnSecurityDownloadFinished(_security, true, response);
+            publishOnSecurityDownloadFinished(_security, true, response);
         }
 
         private void _setCameraStateFinished(string response, bool success, DownloadType downloadType)
@@ -255,7 +259,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnSecurityDownloadFinished(null, false, response);
+                publishOnSecurityDownloadFinished(null, false, response);
                 return;
             }
 
@@ -265,7 +269,7 @@ namespace Data.Services
             {
                 _logger.Error("Download was not successful!");
 
-                OnSecurityDownloadFinished(null, false, response);
+                publishOnSecurityDownloadFinished(null, false, response);
                 return;
             }
 
@@ -288,7 +292,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnSecurityDownloadFinished(null, false, response);
+                publishOnSecurityDownloadFinished(null, false, response);
                 return;
             }
 
@@ -298,7 +302,7 @@ namespace Data.Services
             {
                 _logger.Error("Download was not successful!");
 
-                OnSecurityDownloadFinished(null, false, response);
+                publishOnSecurityDownloadFinished(null, false, response);
                 return;
             }
 

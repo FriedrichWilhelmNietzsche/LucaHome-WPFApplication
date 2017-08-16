@@ -23,7 +23,7 @@ namespace Data.Services
         private const string TAG = "CoinService";
         private readonly Logger _logger;
 
-        private const int TIMEOUT = 30 * 60 * 1000;
+        private const int TIMEOUT = 15 * 60 * 1000;
 
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
@@ -56,10 +56,34 @@ namespace Data.Services
         }
 
         public event CoinConversionDownloadEventHandler OnCoinConversionDownloadFinished;
+        private void publishOnCoinConversionDownloadFinished(IList<KeyValuePair<string, double>> coinConversionList, bool success, string response)
+        {
+            OnCoinConversionDownloadFinished?.Invoke(coinConversionList, success, response);
+        }
+
         public event CoinDownloadEventHandler OnCoinDownloadFinished;
+        private void publishOnCoinDownloadFinished(IList<CoinDto> coinList, bool success, string response)
+        {
+            OnCoinDownloadFinished?.Invoke(coinList, success, response);
+        }
+
         public event CoinAddEventHandler OnCoinAddFinished;
+        private void publishOnCoinAddFinished(bool success, string response)
+        {
+            OnCoinAddFinished?.Invoke(success, response);
+        }
+
         public event CoinUpdateEventHandler OnCoinUpdateFinished;
+        private void publishOnCoinUpdateFinished(bool success, string response)
+        {
+            OnCoinUpdateFinished?.Invoke(success, response);
+        }
+
         public event CoinDeleteEventHandler OnCoinDeleteFinished;
+        private void publishOnCoinDeleteFinished(bool success, string response)
+        {
+            OnCoinDeleteFinished?.Invoke(success, response);
+        }
 
         public static CoinService Instance
         {
@@ -178,7 +202,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnCoinDownloadFinished(null, false, "No user");
+                publishOnCoinDownloadFinished(null, false, "No user");
                 return;
             }
 
@@ -197,7 +221,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnCoinAddFinished(false, "No user");
+                publishOnCoinAddFinished(false, "No user");
                 return;
             }
 
@@ -218,7 +242,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnCoinUpdateFinished(false, "No user");
+                publishOnCoinUpdateFinished(false, "No user");
                 return;
             }
 
@@ -239,7 +263,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnCoinDeleteFinished(false, "No user");
+                publishOnCoinDeleteFinished(false, "No user");
                 return;
             }
 
@@ -263,11 +287,33 @@ namespace Data.Services
                 return;
             }
 
+            if (!response.Contains("BCH")
+                || !response.Contains("BTC")
+                || !response.Contains("DASH")
+                || !response.Contains("ETC")
+                || !response.Contains("ETH")
+                || !response.Contains("LTC")
+                || !response.Contains("XMR")
+                || !response.Contains("ZEC")
+                || !response.Contains("EUR"))
+            {
+                _logger.Error(string.Format("Invalid response {0}", response));
+                publishOnCoinConversionDownloadFinished(_coinConversionList, false, response);
+                return;
+            }
+
             IList<KeyValuePair<string, double>> coinConversionList = _jsonDataToCoinConversionConverter.GetList(response);
             if (coinConversionList == null)
             {
                 _logger.Error("Converted coinConversionList is null!");
-                OnCoinConversionDownloadFinished(_coinConversionList, false, response);
+                publishOnCoinConversionDownloadFinished(_coinConversionList, false, response);
+                return;
+            }
+
+            if (coinConversionList.Count == 0)
+            {
+                _logger.Error("Converted coinConversionList is null!");
+                publishOnCoinConversionDownloadFinished(_coinConversionList, false, response);
                 return;
             }
 
@@ -282,7 +328,7 @@ namespace Data.Services
                     .Value;
             }
 
-            OnCoinConversionDownloadFinished(_coinConversionList, true, response);
+            publishOnCoinConversionDownloadFinished(_coinConversionList, true, response);
         }
 
         private void _coinDownloadFinished(string response, bool success, DownloadType downloadType)
@@ -301,7 +347,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnCoinDownloadFinished(null, false, response);
+                publishOnCoinDownloadFinished(null, false, response);
                 return;
             }
 
@@ -311,7 +357,7 @@ namespace Data.Services
             {
                 _logger.Error("Download was not successful!");
 
-                OnCoinDownloadFinished(null, false, response);
+                publishOnCoinDownloadFinished(null, false, response);
                 return;
             }
 
@@ -320,13 +366,13 @@ namespace Data.Services
             {
                 _logger.Error("Converted coinList is null!");
 
-                OnCoinDownloadFinished(null, false, response);
+                publishOnCoinDownloadFinished(null, false, response);
                 return;
             }
 
             _coinList = coinList;
 
-            OnCoinDownloadFinished(_coinList, true, response);
+            publishOnCoinDownloadFinished(_coinList, true, response);
         }
 
         private void _coinAddFinished(string response, bool success, DownloadType downloadType)
@@ -345,7 +391,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnCoinAddFinished(false, response);
+                publishOnCoinAddFinished(false, response);
                 return;
             }
 
@@ -355,11 +401,11 @@ namespace Data.Services
             {
                 _logger.Error("Adding was not successful!");
 
-                OnCoinAddFinished(false, response);
+                publishOnCoinAddFinished(false, response);
                 return;
             }
 
-            OnCoinAddFinished(true, response);
+            publishOnCoinAddFinished(true, response);
 
             loadCoinListAsync();
         }
@@ -380,7 +426,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnCoinUpdateFinished(false, response);
+                publishOnCoinUpdateFinished(false, response);
                 return;
             }
 
@@ -390,11 +436,11 @@ namespace Data.Services
             {
                 _logger.Error("Updating was not successful!");
 
-                OnCoinUpdateFinished(false, response);
+                publishOnCoinUpdateFinished(false, response);
                 return;
             }
 
-            OnCoinUpdateFinished(true, response);
+            publishOnCoinUpdateFinished(true, response);
 
             loadCoinListAsync();
         }
@@ -415,7 +461,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnCoinDeleteFinished(false, response);
+                publishOnCoinDeleteFinished(false, response);
                 return;
             }
 
@@ -425,11 +471,11 @@ namespace Data.Services
             {
                 _logger.Error("Deleting was not successful!");
 
-                OnCoinDeleteFinished(false, response);
+                publishOnCoinDeleteFinished(false, response);
                 return;
             }
 
-            OnCoinDeleteFinished(true, response);
+            publishOnCoinDeleteFinished(true, response);
 
             loadCoinListAsync();
         }

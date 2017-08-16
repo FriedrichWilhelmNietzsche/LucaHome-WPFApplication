@@ -22,7 +22,7 @@ namespace Data.Services
         private const string TAG = "BirthdayService";
         private readonly Logger _logger;
 
-        private const int TIMEOUT = 60 * 60 * 1000;
+        private const int TIMEOUT = 6 * 60 * 60 * 1000;
 
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
@@ -52,9 +52,28 @@ namespace Data.Services
         }
 
         public event BirthdayDownloadEventHandler OnBirthdayDownloadFinished;
+        private void publishOnBirthdayDownloadFinished(IList<BirthdayDto> birthdayList, bool success, string response)
+        {
+            OnBirthdayDownloadFinished?.Invoke(birthdayList, success, response);
+        }
+
         public event BirthdayAddEventHandler OnBirthdayAddFinished;
+        private void publishOnBirthdayAddFinished(bool success, string response)
+        {
+            OnBirthdayAddFinished?.Invoke(success, response);
+        }
+
         public event BirthdayUpdateEventHandler OnBirthdayUpdateFinished;
+        private void publishOnBirthdayUpdateFinished(bool success, string response)
+        {
+            OnBirthdayUpdateFinished?.Invoke(success, response);
+        }
+
         public event BirthdayDeleteEventHandler OnBirthdayDeleteFinished;
+        private void publishOnBirthdayDeleteFinished(bool success, string response)
+        {
+            OnBirthdayDeleteFinished?.Invoke(success, response);
+        }
 
         public static BirthdayService Instance
         {
@@ -141,7 +160,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnBirthdayDownloadFinished(null, false, "No user");
+                publishOnBirthdayDownloadFinished(null, false, "No user");
                 return;
             }
 
@@ -158,7 +177,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnBirthdayAddFinished(false, "No user");
+                publishOnBirthdayAddFinished(false, "No user");
                 return;
             }
 
@@ -179,7 +198,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnBirthdayUpdateFinished(false, "No user");
+                publishOnBirthdayUpdateFinished(false, "No user");
                 return;
             }
 
@@ -200,7 +219,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnBirthdayDeleteFinished(false, "No user");
+                publishOnBirthdayDeleteFinished(false, "No user");
                 return;
             }
 
@@ -228,7 +247,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnBirthdayDownloadFinished(null, false, response);
+                publishOnBirthdayDownloadFinished(null, false, response);
                 return;
             }
 
@@ -238,7 +257,7 @@ namespace Data.Services
             {
                 _logger.Error("Download was not successful!");
 
-                OnBirthdayDownloadFinished(null, false, response);
+                publishOnBirthdayDownloadFinished(null, false, response);
                 return;
             }
 
@@ -247,13 +266,13 @@ namespace Data.Services
             {
                 _logger.Error("Converted birthdayList is null!");
 
-                OnBirthdayDownloadFinished(null, false, response);
+                publishOnBirthdayDownloadFinished(null, false, response);
                 return;
             }
 
             _birthdayList = birthdayList;
 
-            OnBirthdayDownloadFinished(_birthdayList, true, response);
+            publishOnBirthdayDownloadFinished(_birthdayList, true, response);
         }
 
         private void _birthdayAddFinished(string response, bool success, DownloadType downloadType)
@@ -272,7 +291,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnBirthdayAddFinished(false, response);
+                publishOnBirthdayAddFinished(false, response);
                 return;
             }
 
@@ -282,11 +301,11 @@ namespace Data.Services
             {
                 _logger.Error("Adding was not successful!");
 
-                OnBirthdayAddFinished(false, response);
+                publishOnBirthdayAddFinished(false, response);
                 return;
             }
 
-            OnBirthdayAddFinished(true, response);
+            publishOnBirthdayAddFinished(true, response);
 
             loadBirthdayListAsync();
         }
@@ -307,7 +326,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnBirthdayUpdateFinished(false, response);
+                publishOnBirthdayUpdateFinished(false, response);
                 return;
             }
 
@@ -317,11 +336,11 @@ namespace Data.Services
             {
                 _logger.Error("Updating was not successful!");
 
-                OnBirthdayUpdateFinished(false, response);
+                publishOnBirthdayUpdateFinished(false, response);
                 return;
             }
 
-            OnBirthdayUpdateFinished(true, response);
+            publishOnBirthdayUpdateFinished(true, response);
 
             loadBirthdayListAsync();
         }
@@ -342,7 +361,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnBirthdayDeleteFinished(false, response);
+                publishOnBirthdayDeleteFinished(false, response);
                 return;
             }
 
@@ -352,11 +371,11 @@ namespace Data.Services
             {
                 _logger.Error("Deleting was not successful!");
 
-                OnBirthdayDeleteFinished(false, response);
+                publishOnBirthdayDeleteFinished(false, response);
                 return;
             }
 
-            OnBirthdayDeleteFinished(true, response);
+            publishOnBirthdayDeleteFinished(true, response);
 
             loadBirthdayListAsync();
         }

@@ -52,10 +52,34 @@ namespace Data.Services
         }
 
         public event WirelessSocketDownloadEventHandler OnWirelessSocketDownloadFinished;
+        private void publishOnWirelessSocketDownloadFinished(IList<WirelessSocketDto> wirelessSocketList, bool success, string response)
+        {
+            OnWirelessSocketDownloadFinished?.Invoke(wirelessSocketList, success, response);
+        }
+
         public event WirelessSocketDownloadEventHandler OnSetWirelessSocketFinished;
+        private void publishOnSetWirelessSocketFinished(IList<WirelessSocketDto> wirelessSocketList, bool success, string response)
+        {
+            OnSetWirelessSocketFinished?.Invoke(wirelessSocketList, success, response);
+        }
+
         public event WirelessSocketAddEventHandler OnAddWirelessSocketFinished;
+        private void publishOnAddWirelessSocketFinished(bool success, string response)
+        {
+            OnAddWirelessSocketFinished?.Invoke(success, response);
+        }
+
         public event WirelessSocketUpdateEventHandler OnUpdateWirelessSocketFinished;
+        private void publishOnUpdateWirelessSocketFinished(bool success, string response)
+        {
+            OnUpdateWirelessSocketFinished?.Invoke(success, response);
+        }
+
         public event WirelessSocketDeleteEventHandler OnDeleteWirelessSocketFinished;
+        private void publishOnDeleteWirelessSocketFinished(bool success, string response)
+        {
+            OnDeleteWirelessSocketFinished?.Invoke(success, response);
+        }
 
         public static WirelessSocketService Instance
         {
@@ -180,7 +204,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnWirelessSocketDownloadFinished(null, false, "No user");
+                publishOnWirelessSocketDownloadFinished(null, false, "No user");
                 return;
             }
 
@@ -196,7 +220,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnWirelessSocketDownloadFinished(null, false, "No user");
+                publishOnWirelessSocketDownloadFinished(null, false, "No user");
                 return;
             }
 
@@ -214,7 +238,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnAddWirelessSocketFinished(false, "No user");
+                publishOnAddWirelessSocketFinished(false, "No user");
                 return;
             }
 
@@ -235,7 +259,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnUpdateWirelessSocketFinished(false, "No user");
+                publishOnUpdateWirelessSocketFinished(false, "No user");
                 return;
             }
 
@@ -256,7 +280,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnDeleteWirelessSocketFinished(false, "No user");
+                publishOnDeleteWirelessSocketFinished(false, "No user");
                 return;
             }
 
@@ -284,7 +308,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnWirelessSocketDownloadFinished(null, false, response);
+                publishOnWirelessSocketDownloadFinished(null, false, response);
                 return;
             }
 
@@ -294,7 +318,7 @@ namespace Data.Services
             {
                 _logger.Error("Download was not successful!");
 
-                OnWirelessSocketDownloadFinished(null, false, response);
+                publishOnWirelessSocketDownloadFinished(null, false, response);
                 return;
             }
 
@@ -303,13 +327,13 @@ namespace Data.Services
             {
                 _logger.Error("Converted wirelessSocketList is null!");
 
-                OnWirelessSocketDownloadFinished(null, false, response);
+                publishOnWirelessSocketDownloadFinished(null, false, response);
                 return;
             }
 
             _wirelessSocketList = wirelessSocketList;
 
-            OnWirelessSocketDownloadFinished(_wirelessSocketList, true, response);
+            publishOnWirelessSocketDownloadFinished(_wirelessSocketList, true, response);
         }
 
         private void _setWirelessSocketFinished(string response, bool success, DownloadType downloadType)
@@ -327,7 +351,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnSetWirelessSocketFinished(null, false, response);
+                publishOnSetWirelessSocketFinished(null, false, response);
                 return;
             }
 
@@ -337,11 +361,11 @@ namespace Data.Services
             {
                 _logger.Error("Setting was not successful!");
 
-                OnSetWirelessSocketFinished(null, false, response);
+                publishOnSetWirelessSocketFinished(null, false, response);
                 return;
             }
 
-            OnSetWirelessSocketFinished(null, true, response);
+            publishOnSetWirelessSocketFinished(null, true, response);
 
             loadWirelessSocketListAsync();
         }
@@ -361,7 +385,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnAddWirelessSocketFinished(false, response);
+                publishOnAddWirelessSocketFinished(false, response);
                 return;
             }
 
@@ -371,11 +395,11 @@ namespace Data.Services
             {
                 _logger.Error("Adding was not successful!");
 
-                OnAddWirelessSocketFinished(false, response);
+                publishOnAddWirelessSocketFinished(false, response);
                 return;
             }
 
-            OnAddWirelessSocketFinished(true, response);
+            publishOnAddWirelessSocketFinished(true, response);
 
             loadWirelessSocketListAsync();
         }
@@ -395,7 +419,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnUpdateWirelessSocketFinished(false, response);
+                publishOnUpdateWirelessSocketFinished(false, response);
                 return;
             }
 
@@ -405,11 +429,11 @@ namespace Data.Services
             {
                 _logger.Error("Updating was not successful!");
 
-                OnUpdateWirelessSocketFinished(false, response);
+                publishOnUpdateWirelessSocketFinished(false, response);
                 return;
             }
 
-            OnUpdateWirelessSocketFinished(true, response);
+            publishOnUpdateWirelessSocketFinished(true, response);
 
             loadWirelessSocketListAsync();
         }
@@ -429,7 +453,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnDeleteWirelessSocketFinished(false, response);
+                publishOnDeleteWirelessSocketFinished(false, response);
                 return;
             }
 
@@ -439,11 +463,11 @@ namespace Data.Services
             {
                 _logger.Error("Deleting was not successful!");
 
-                OnDeleteWirelessSocketFinished(false, response);
+                publishOnDeleteWirelessSocketFinished(false, response);
                 return;
             }
 
-            OnDeleteWirelessSocketFinished(true, response);
+            publishOnDeleteWirelessSocketFinished(true, response);
 
             loadWirelessSocketListAsync();
         }

@@ -137,7 +137,7 @@
             Margin="5"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom"
-            ToolTip="MaterialDesignFloatingActionMiniButton"
+            ToolTip="Go back"
             Click="ButtonBack_Click">
             <materialDesign:PackIcon 
                 Kind="KeyboardBackspace" 
@@ -152,7 +152,7 @@
             Margin="5"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
-            ToolTip="MaterialDesignFloatingActionMiniButton"
+            ToolTip="Reload"
             Click="ButtonReload_Click">
             <materialDesign:PackIcon 
                 Kind="Reload" 

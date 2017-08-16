@@ -103,6 +103,8 @@
     <Compile Include="Dto\CoinDto.cs" />
     <Compile Include="Dto\ChangeDto.cs" />
     <Compile Include="Dto\ListedMenuDto.cs" />
+    <Compile Include="Dto\SeasonDto.cs" />
+    <Compile Include="Dto\SeriesDto.cs" />
     <Compile Include="Dto\MagazinDirDto.cs" />
     <Compile Include="Dto\MapContentDto.cs" />
     <Compile Include="Dto\MenuDto.cs" />
@@ -258,6 +260,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Wallpaper\main_image_security.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Wallpaper\main_image_series.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

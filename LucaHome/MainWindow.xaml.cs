@@ -27,6 +27,7 @@ namespace LucaHome
         private readonly OpenWeatherService _openWeatherService;
         private readonly ScheduleService _scheduleService;
         private readonly SecurityService _securityService;
+        private readonly SeriesService _seriesService;
         private readonly ShoppingListService _shoppingListService;
         private readonly TemperatureService _temperatureService;
         private readonly UserService _userService;
@@ -50,6 +51,7 @@ namespace LucaHome
             _openWeatherService = OpenWeatherService.Instance;
             _scheduleService = ScheduleService.Instance;
             _securityService = SecurityService.Instance;
+            _seriesService = SeriesService.Instance;
             _shoppingListService = ShoppingListService.Instance;
             _temperatureService = TemperatureService.Instance;
             _userService = UserService.Instance;
@@ -58,7 +60,7 @@ namespace LucaHome
             _openWeatherService.City = _temperatureService.OpenWeatherCity;
 
             _openWeatherService.OnForecastWeatherDownloadFinished += _onForecastWeatherDownloadFinished;
-            
+
             // Check for user first
             if (!_userService.UserSaved())
             {
@@ -111,6 +113,7 @@ namespace LucaHome
             _movieService.Dispose();
             _scheduleService.Dispose();
             _securityService.Dispose();
+            _seriesService.Dispose();
             _shoppingListService.Dispose();
             _temperatureService.Dispose();
             _userService.Dispose();

@@ -22,7 +22,7 @@ namespace Data.Services
         private const string TAG = "MenuService";
         private readonly Logger _logger;
 
-        private const int TIMEOUT = 15 * 60 * 1000;
+        private const int TIMEOUT = 6 * 60 * 60 * 1000;
 
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
@@ -56,9 +56,28 @@ namespace Data.Services
         }
 
         public event ListedMenuDownloadEventHandler OnListedMenuDownloadFinished;
+        private void publishOnListedMenuDownloadFinished(IList<ListedMenuDto> listedMenuList, bool success, string response)
+        {
+            OnListedMenuDownloadFinished?.Invoke(listedMenuList, success, response);
+        }
+
         public event MenuDownloadEventHandler OnMenuDownloadFinished;
+        private void publishOnMenuDownloadFinished(IList<MenuDto> menuList, bool success, string response)
+        {
+            OnMenuDownloadFinished?.Invoke(menuList, success, response);
+        }
+
         public event MenuUpdateEventHandler OnMenuUpdateFinished;
+        private void publishOnMenuUpdateFinished(bool success, string response)
+        {
+            OnMenuUpdateFinished?.Invoke(success, response);
+        }
+
         public event MenuClearEventHandler OnMenuClearFinished;
+        private void publishOnMenuClearFinished(bool success, string response)
+        {
+            OnMenuClearFinished?.Invoke(success, response);
+        }
 
         public static MenuService Instance
         {
@@ -140,7 +159,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnListedMenuDownloadFinished(null, false, "No user");
+                publishOnListedMenuDownloadFinished(null, false, "No user");
                 return;
             }
 
@@ -156,7 +175,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnMenuDownloadFinished(null, false, "No user");
+                publishOnMenuDownloadFinished(null, false, "No user");
                 return;
             }
 
@@ -172,7 +191,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnMenuUpdateFinished(false, "No user");
+                publishOnMenuUpdateFinished(false, "No user");
                 return;
             }
 
@@ -193,7 +212,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnMenuClearFinished(false, "No user");
+                publishOnMenuClearFinished(false, "No user");
                 return;
             }
 
@@ -221,7 +240,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnListedMenuDownloadFinished(null, false, response);
+                publishOnListedMenuDownloadFinished(null, false, response);
                 return;
             }
 
@@ -231,7 +250,7 @@ namespace Data.Services
             {
                 _logger.Error("Download was not successful!");
 
-                OnListedMenuDownloadFinished(null, false, response);
+                publishOnListedMenuDownloadFinished(null, false, response);
                 return;
             }
 
@@ -240,13 +259,13 @@ namespace Data.Services
             {
                 _logger.Error("Converted listedMenuList is null!");
 
-                OnListedMenuDownloadFinished(null, false, response);
+                publishOnListedMenuDownloadFinished(null, false, response);
                 return;
             }
 
             _listedMenuList = listedMenuList;
 
-            OnListedMenuDownloadFinished(_listedMenuList, true, response);
+            publishOnListedMenuDownloadFinished(_listedMenuList, true, response);
         }
 
         private void _menuDownloadFinished(string response, bool success, DownloadType downloadType)
@@ -263,7 +282,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnMenuDownloadFinished(null, false, response);
+                publishOnMenuDownloadFinished(null, false, response);
                 return;
             }
 
@@ -273,7 +292,7 @@ namespace Data.Services
             {
                 _logger.Error("Download was not successful!");
 
-                OnMenuDownloadFinished(null, false, response);
+                publishOnMenuDownloadFinished(null, false, response);
                 return;
             }
 
@@ -282,13 +301,13 @@ namespace Data.Services
             {
                 _logger.Error("Converted menuList is null!");
 
-                OnMenuDownloadFinished(null, false, response);
+                publishOnMenuDownloadFinished(null, false, response);
                 return;
             }
 
             _menuList = menuList;
 
-            OnMenuDownloadFinished(_menuList, true, response);
+            publishOnMenuDownloadFinished(_menuList, true, response);
         }
 
         private void _menuUpdateFinished(string response, bool success, DownloadType downloadType)
@@ -307,7 +326,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnMenuUpdateFinished(false, response);
+                publishOnMenuUpdateFinished(false, response);
                 return;
             }
 
@@ -317,11 +336,11 @@ namespace Data.Services
             {
                 _logger.Error("Update was not successful!");
 
-                OnMenuUpdateFinished(false, response);
+                publishOnMenuUpdateFinished(false, response);
                 return;
             }
 
-            OnMenuUpdateFinished(true, response);
+            publishOnMenuUpdateFinished(true, response);
 
             loadMenuListAsync();
         }
@@ -342,7 +361,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnMenuClearFinished(false, response);
+                publishOnMenuClearFinished(false, response);
                 return;
             }
 
@@ -352,11 +371,11 @@ namespace Data.Services
             {
                 _logger.Error("Update was not successful!");
 
-                OnMenuClearFinished(false, response);
+                publishOnMenuClearFinished(false, response);
                 return;
             }
 
-            OnMenuClearFinished(true, response);
+            publishOnMenuClearFinished(true, response);
 
             loadMenuListAsync();
         }

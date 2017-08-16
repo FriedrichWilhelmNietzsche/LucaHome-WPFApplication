@@ -23,7 +23,7 @@
             Path=Description, 
             Mode=OneWay}">
         <materialDesign:Card 
-            x:Name="MainPageCardContent"
+            x:Name="MagazinCardContent"
             Margin="5"
             Height="190"
             Width="140"

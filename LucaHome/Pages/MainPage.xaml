@@ -26,8 +26,10 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
@@ -37,7 +39,7 @@
         <materialDesign:Card 
             Grid.Row="0" 
             Grid.Column="0"
-            Grid.ColumnSpan="4"
+            Grid.ColumnSpan="5"
             Padding="22" 
             Margin="8">
             <TextBlock 
@@ -127,7 +129,7 @@
         <usercontrols:MainPageCard
             x:Name="CoinsCard"
             Grid.Row="2"
-            Grid.Column="3"
+            Grid.Column="4"
             CardImage="/Common;component/Assets/Wallpaper/main_image_coins.png"
             Title="Coins"
             Description="Watch your coins"
@@ -147,9 +149,20 @@
             MouseUp="MovieCard_MouseUp"/>
 
         <usercontrols:MainPageCard
-            x:Name="MagazinCard"
+            x:Name="SeriesCard"
             Grid.Row="3"
             Grid.Column="1"
+            CardImage="/Common;component/Assets/Wallpaper/main_image_series.jpg"
+            Title="Series"
+            Description="Want to watch some series?"
+            ButtonAddVisibility="Collapsed"
+            ButtonMapVisibility="Collapsed"
+            MouseUp="SeriesCard_MouseUp"/>
+
+        <usercontrols:MainPageCard
+            x:Name="MagazinCard"
+            Grid.Row="3"
+            Grid.Column="3"
             CardImage="/Common;component/Assets/Wallpaper/main_image_magazine.png"
             Title="Magazine"
             Description="Read some papers?"
@@ -159,8 +172,8 @@
 
         <usercontrols:MainPageCard
             x:Name="SecurityCard"
-            Grid.Row="3"
-            Grid.Column="2"
+            Grid.Row="4"
+            Grid.Column="0"
             CardImage="/Common;component/Assets/Wallpaper/main_image_security.png"
             Title="Security"
             Description="Secure your flat!"
@@ -170,8 +183,8 @@
 
         <usercontrols:MainPageCard
             x:Name="SettingsCard"
-            Grid.Row="3"
-            Grid.Column="3"
+            Grid.Row="4"
+            Grid.Column="4"
             CardImage="/Common;component/Assets/Icons/Others/settings_hd.png"
             Title="Settings"
             Description="Configure your application"

@@ -175,6 +175,12 @@ namespace LucaHome.Pages
             _navigationService.Navigate(new MoviePage(_navigationService));
         }
 
+        private void SeriesCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        {
+            _logger.Debug(string.Format("SeriesCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
+            _navigationService.Navigate(new SeriesPage(_navigationService));
+        }
+
         private void MagazinCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
             _logger.Debug(string.Format("MagazinCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));

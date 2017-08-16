@@ -5,7 +5,7 @@ namespace Common.Common
     public class Constants
     {
         // ========== DOWNLOADS ==========
-        public static int DOWNLOAD_STEPS = 15;
+        public static int DOWNLOAD_STEPS = 16;
 
         // ========== RASPBERRY CONNECTION ==========
         public static string ACTION_PATH = "/lib/lucahome.php?user=";

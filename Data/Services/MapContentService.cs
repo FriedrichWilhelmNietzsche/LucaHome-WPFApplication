@@ -18,7 +18,7 @@ namespace Data.Services
         private const string TAG = "MapContentService";
         private readonly Logger _logger;
 
-        private const int TIMEOUT = 60 * 60 * 1000;
+        private const int TIMEOUT = 6 * 60 * 60 * 1000;
 
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
@@ -52,6 +52,10 @@ namespace Data.Services
         }
 
         public event MapContentDownloadEventHandler OnMapContentDownloadFinished;
+        private void publishOnMapContentDownloadFinished(IList<MapContentDto> mapContentList, bool success, string response)
+        {
+            OnMapContentDownloadFinished?.Invoke(mapContentList, success, response);
+        }
 
         public static MapContentService Instance
         {
@@ -124,7 +128,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnMapContentDownloadFinished(null, false, "No user");
+                publishOnMapContentDownloadFinished(null, false, "No user");
                 return;
             }
 
@@ -151,7 +155,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnMapContentDownloadFinished(null, false, response);
+                publishOnMapContentDownloadFinished(null, false, response);
                 return;
             }
 
@@ -161,7 +165,7 @@ namespace Data.Services
             {
                 _logger.Error("Download was not successful!");
 
-                OnMapContentDownloadFinished(null, false, response);
+                publishOnMapContentDownloadFinished(null, false, response);
                 return;
             }
 
@@ -170,13 +174,13 @@ namespace Data.Services
             {
                 _logger.Error("Converted mapContentList is null!");
 
-                OnMapContentDownloadFinished(null, false, response);
+                publishOnMapContentDownloadFinished(null, false, response);
                 return;
             }
 
             _mapContentList = mapContentList;
 
-            OnMapContentDownloadFinished(_mapContentList, true, response);
+            publishOnMapContentDownloadFinished(_mapContentList, true, response);
         }
 
         public void Dispose()

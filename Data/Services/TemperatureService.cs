@@ -53,6 +53,10 @@ namespace Data.Services
         }
 
         public event TemperatureDownloadEventHandler OnTemperatureDownloadFinished;
+        private void publishOnTemperatureDownloadFinished(IList<TemperatureDto> temperatureList, bool success, string response)
+        {
+            OnTemperatureDownloadFinished?.Invoke(temperatureList, success, response);
+        }
 
         public static TemperatureService Instance
         {
@@ -142,7 +146,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnTemperatureDownloadFinished(null, false, "No user");
+                publishOnTemperatureDownloadFinished(null, false, "No user");
                 return;
             }
 
@@ -169,7 +173,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnTemperatureDownloadFinished(null, false, response);
+                publishOnTemperatureDownloadFinished(null, false, response);
                 return;
             }
 
@@ -179,7 +183,7 @@ namespace Data.Services
             {
                 _logger.Error("Download was not successful!");
 
-                OnTemperatureDownloadFinished(null, false, response);
+                publishOnTemperatureDownloadFinished(null, false, response);
                 return;
             }
 
@@ -188,7 +192,7 @@ namespace Data.Services
             {
                 _logger.Error("Converted temperatureList is null!");
 
-                OnTemperatureDownloadFinished(null, false, response);
+                publishOnTemperatureDownloadFinished(null, false, response);
                 return;
             }
 
@@ -201,7 +205,7 @@ namespace Data.Services
                 _temperatureList.Add(currentWeatherTemperature);
             }
 
-            OnTemperatureDownloadFinished(_temperatureList, true, response);
+            publishOnTemperatureDownloadFinished(_temperatureList, true, response);
         }
 
         public void Dispose()

@@ -44,13 +44,20 @@ namespace Common.Converter
                 string replacedEntry = entry.Replace("},", "").Replace("{", "").Replace("}}", "");
                 string[] data = Regex.Split(replacedEntry, "\\:");
 
-                string key = data[0].Replace("\"", "");
-                string valueString = data[2].Replace(".", ",");
-                double value = 0;
-                bool parseValueSuccess = double.TryParse(valueString, out value);
+                if (data.Length == 3)
+                {
+                    string key = data[0].Replace("\"", "");
+                    string valueString = data[2].Replace(".", ",");
+                    double value = 0;
+                    bool parseValueSuccess = double.TryParse(valueString, out value);
 
-                KeyValuePair<string, double> newValue = new KeyValuePair<string, double>(key, value);
-                list.Add(newValue);
+                    KeyValuePair<string, double> newValue = new KeyValuePair<string, double>(key, value);
+                    list.Add(newValue);
+                }
+                else
+                {
+                    _logger.Warning(string.Format("Data has invalid length {0}, entry is {1}", data.Length, entry));
+                }
             }
 
             return list;

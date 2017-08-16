@@ -23,7 +23,7 @@ namespace Data.Services
         private const string TAG = "MovieService";
         private readonly Logger _logger;
 
-        private const int TIMEOUT = 15 * 60 * 1000;
+        private const int TIMEOUT = 6 * 60 * 60 * 1000;
 
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
@@ -58,8 +58,22 @@ namespace Data.Services
         }
 
         public event MovieDownloadEventHandler OnMovieDownloadFinished;
+        private void publishOnMovieDownloadFinished(IList<MovieDto> movieList, bool success, string response)
+        {
+            OnMovieDownloadFinished?.Invoke(movieList, success, response);
+        }
+
         public event MovieStartEventHandler OnMovieStartFinished;
+        private void publishOnMovieStartFinished(bool success, string response)
+        {
+            OnMovieStartFinished?.Invoke(success, response);
+        }
+
         public event MovieUpdateEventHandler OnMovieUpdateFinished;
+        private void publishOnMovieUpdateFinished(bool success, string response)
+        {
+            OnMovieUpdateFinished?.Invoke(success, response);
+        }
 
         public static MovieService Instance
         {
@@ -155,19 +169,19 @@ namespace Data.Services
             if (movieFiles.Length == 0)
             {
                 _logger.Error(string.Format("Found no files for movie {0} in directory {1}", movieTitle, moviePath));
-                OnMovieStartFinished(false, "No movie file found!");
+                publishOnMovieStartFinished(false, "No movie file found!");
             }
             else if (movieFiles.Length == 1)
             {
                 string path = string.Format("{0}\\{1}", moviePathString, movieFiles[0].Name);
                 _logger.Debug(string.Format("Opening {0} with associated programm", path));
                 Process.Start(@path);
-                OnMovieStartFinished(true, string.Empty);
+                publishOnMovieStartFinished(true, string.Empty);
             }
             else
             {
                 _logger.Error(string.Format("Please provide only one file in the given directory! Found {0} files in {1}", movieFiles.Length, moviePath));
-                OnMovieStartFinished(false, "Too many files found!");
+                publishOnMovieStartFinished(false, "Too many files found!");
             }
         }
 
@@ -178,7 +192,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnMovieDownloadFinished(null, false, "No user");
+                publishOnMovieDownloadFinished(null, false, "No user");
                 return;
             }
 
@@ -194,7 +208,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                OnMovieUpdateFinished(false, "No user");
+                publishOnMovieUpdateFinished(false, "No user");
                 return;
             }
 
@@ -222,7 +236,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnMovieDownloadFinished(null, false, response);
+                publishOnMovieDownloadFinished(null, false, response);
                 return;
             }
 
@@ -232,7 +246,7 @@ namespace Data.Services
             {
                 _logger.Error("Download was not successful!");
 
-                OnMovieDownloadFinished(null, false, response);
+                publishOnMovieDownloadFinished(null, false, response);
                 return;
             }
 
@@ -241,13 +255,13 @@ namespace Data.Services
             {
                 _logger.Error("Converted movieList is null!");
 
-                OnMovieDownloadFinished(null, false, response);
+                publishOnMovieDownloadFinished(null, false, response);
                 return;
             }
 
             _movieList = movieList;
 
-            OnMovieDownloadFinished(_movieList, true, response);
+            publishOnMovieDownloadFinished(_movieList, true, response);
         }
 
         private void _movieUpdateFinished(string response, bool success, DownloadType downloadType)
@@ -266,7 +280,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnMovieUpdateFinished(false, response);
+                publishOnMovieUpdateFinished(false, response);
                 return;
             }
 
@@ -276,11 +290,11 @@ namespace Data.Services
             {
                 _logger.Error("Updating was not successful!");
 
-                OnMovieUpdateFinished(false, response);
+                publishOnMovieUpdateFinished(false, response);
                 return;
             }
 
-            OnMovieUpdateFinished(true, response);
+            publishOnMovieUpdateFinished(true, response);
 
             loadMovieListAsync();
         }

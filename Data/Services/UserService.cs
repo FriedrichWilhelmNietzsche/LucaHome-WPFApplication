@@ -31,6 +31,10 @@ namespace Data.Services
         }
 
         public event UserCheckedEventHandler OnUserCheckedFinished;
+        private void publishOnUserCheckedFinished(string response, bool success)
+        {
+            OnUserCheckedFinished?.Invoke(response, success);
+        }
 
         public static UserService Instance
         {
@@ -118,7 +122,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                OnUserCheckedFinished(response, false);
+                publishOnUserCheckedFinished(response, false);
                 return;
             }
 
@@ -128,14 +132,14 @@ namespace Data.Services
             {
                 _logger.Error("Validation was not successful!");
 
-                OnUserCheckedFinished(response, false);
+                publishOnUserCheckedFinished(response, false);
                 return;
             }
 
             _settingsController.User = _tempUser;
             _tempUser = null;
 
-            OnUserCheckedFinished(response, true);
+            publishOnUserCheckedFinished(response, true);
         }
 
         public void Dispose()

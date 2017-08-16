@@ -32,6 +32,7 @@ namespace LucaHome.Pages
         private readonly OpenWeatherService _openWeatherService;
         private readonly ScheduleService _scheduleService;
         private readonly SecurityService _securityService;
+        private readonly SeriesService _seriesService;
         private readonly ShoppingListService _shoppingListService;
         private readonly TemperatureService _temperatureService;
         private readonly WirelessSocketService _wirelessSocketService;
@@ -50,6 +51,7 @@ namespace LucaHome.Pages
             _openWeatherService = OpenWeatherService.Instance;
             _scheduleService = ScheduleService.Instance;
             _securityService = SecurityService.Instance;
+            _seriesService = SeriesService.Instance;
             _shoppingListService = ShoppingListService.Instance;
             _temperatureService = TemperatureService.Instance;
             _wirelessSocketService = WirelessSocketService.Instance;
@@ -88,6 +90,7 @@ namespace LucaHome.Pages
             _openWeatherService.OnCurrentWeatherDownloadFinished += _currentWeatherDownloadFinished;
             _openWeatherService.OnForecastWeatherDownloadFinished += _forecastWeatherDownloadFinished;
             _securityService.OnSecurityDownloadFinished += _onSecurityDownloadFinished;
+            _seriesService.OnSeriesListDownloadFinished += _onSeriesListDownloadFinished;
             _shoppingListService.OnShoppingListDownloadFinished += _onShoppingListDownloadFinished;
             _wirelessSocketService.OnWirelessSocketDownloadFinished += _wirelessSocketDownloadFinished;
 
@@ -99,6 +102,7 @@ namespace LucaHome.Pages
             _openWeatherService.LoadCurrentWeather();
             _openWeatherService.LoadForecastModel();
             _securityService.LoadSecurity();
+            _seriesService.LoadSeriesList();
             _shoppingListService.LoadShoppingList();
             _wirelessSocketService.LoadWirelessSocketList();
         }
@@ -121,6 +125,7 @@ namespace LucaHome.Pages
             _openWeatherService.OnForecastWeatherDownloadFinished -= _forecastWeatherDownloadFinished;
             _scheduleService.OnScheduleDownloadFinished -= _scheduleDownloadFinished;
             _securityService.OnSecurityDownloadFinished -= _onSecurityDownloadFinished;
+            _seriesService.OnSeriesListDownloadFinished -= _onSeriesListDownloadFinished;
             _shoppingListService.OnShoppingListDownloadFinished -= _onShoppingListDownloadFinished;
             _temperatureService.OnTemperatureDownloadFinished -= _temperatureDownloadFinished;
             _wirelessSocketService.OnWirelessSocketDownloadFinished -= _wirelessSocketDownloadFinished;
@@ -201,6 +206,12 @@ namespace LucaHome.Pages
         private void _onSecurityDownloadFinished(SecurityDto security, bool success, string response)
         {
             _logger.Debug(string.Format("_onSecurityDownloadFinished with model {0} was successful: {1}", security, success));
+            checkDownloadCount();
+        }
+
+        private void _onSeriesListDownloadFinished(IList<SeriesDto> seriesList, bool success, string response)
+        {
+            _logger.Debug(string.Format("_onSeriesListDownloadFinished with model {0} was successful: {1}", seriesList, success));
             checkDownloadCount();
         }
 
