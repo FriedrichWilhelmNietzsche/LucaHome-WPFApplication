@@ -74,7 +74,7 @@
         <usercontrols:MainPageCard
             x:Name="WeatherCard"
             Grid.Row="1"
-            Grid.Column="2"
+            Grid.Column="3"
             CardImage="/OpenWeather;component/Assets/Images/weather_wallpaper_dummy.png"
             Title="Weather"
             Description="Get your weather for the next days"
@@ -85,7 +85,7 @@
         <usercontrols:MainPageCard
             x:Name="TemperatureCard"
             Grid.Row="1"
-            Grid.Column="3"
+            Grid.Column="4"
             CardImage="/Common;component/Assets/Icons/Others/temperature_hd.png"
             Title="Temperature"
             Description="Display local and city temperature"
@@ -162,13 +162,35 @@
         <usercontrols:MainPageCard
             x:Name="MagazinCard"
             Grid.Row="3"
-            Grid.Column="3"
+            Grid.Column="2"
             CardImage="/Common;component/Assets/Wallpaper/main_image_magazine.png"
             Title="Magazine"
             Description="Read some papers?"
             ButtonAddVisibility="Collapsed"
             ButtonMapVisibility="Collapsed"
             MouseUp="MagazinCard_MouseUp"/>
+
+        <usercontrols:MainPageCard
+            x:Name="NovelCard"
+            Grid.Row="3"
+            Grid.Column="3"
+            CardImage="/Common;component/Assets/Wallpaper/main_image_novel.png"
+            Title="Novel"
+            Description="Relax reading novels"
+            ButtonAddVisibility="Collapsed"
+            ButtonMapVisibility="Collapsed"
+            MouseUp="NovelCard_MouseUp"/>
+
+        <usercontrols:MainPageCard
+            x:Name="SpecialicedBookCard"
+            Grid.Row="3"
+            Grid.Column="4"
+            CardImage="/Common;component/Assets/Wallpaper/main_image_sachbuch.png"
+            Title="Specialiced books"
+            Description="Improve your knowledge"
+            ButtonAddVisibility="Collapsed"
+            ButtonMapVisibility="Collapsed"
+            MouseUp="SpecialicedBookCard_MouseUp"/>
 
         <usercontrols:MainPageCard
             x:Name="SecurityCard"

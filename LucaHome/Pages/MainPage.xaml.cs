@@ -187,6 +187,18 @@ namespace LucaHome.Pages
             _navigationService.Navigate(new MagazinPage(_navigationService));
         }
 
+        private void NovelCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        {
+            _logger.Debug(string.Format("NovelCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
+            _navigationService.Navigate(new NovelPage(_navigationService));
+        }
+
+        private void SpecialicedBookCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        {
+            _logger.Debug(string.Format("SpecialicedBookCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
+            _navigationService.Navigate(new SpecialicedBookPage(_navigationService));
+        }
+
         private void SecurityCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
             _logger.Debug(string.Format("SecurityCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));

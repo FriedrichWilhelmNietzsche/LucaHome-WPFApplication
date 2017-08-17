@@ -103,6 +103,7 @@
     <Compile Include="Dto\CoinDto.cs" />
     <Compile Include="Dto\ChangeDto.cs" />
     <Compile Include="Dto\ListedMenuDto.cs" />
+    <Compile Include="Dto\NovelDto.cs" />
     <Compile Include="Dto\SeasonDto.cs" />
     <Compile Include="Dto\SeriesDto.cs" />
     <Compile Include="Dto\MagazinDirDto.cs" />
@@ -263,6 +264,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Wallpaper\main_image_series.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Wallpaper\main_image_novel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Wallpaper\main_image_sachbuch.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

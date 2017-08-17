@@ -29,8 +29,8 @@
     <ProductName>LucaHome</ProductName>
     <PublisherName>GuepardoApps</PublisherName>
     <SuiteName>LucaHome</SuiteName>
-    <ApplicationRevision>17228</ApplicationRevision>
-    <ApplicationVersion>1.2.0.17228</ApplicationVersion>
+    <ApplicationRevision>17229</ApplicationRevision>
+    <ApplicationVersion>1.3.0.17229</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -151,6 +151,15 @@
     </Compile>
     <Compile Include="Dialogs\DeleteDialog.xaml.cs">
       <DependentUpon>DeleteDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\SpecialicedBookPage.xaml.cs">
+      <DependentUpon>SpecialicedBookPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\NovelListPage.xaml.cs">
+      <DependentUpon>NovelListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\NovelPage.xaml.cs">
+      <DependentUpon>NovelPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\SeriesListPage.xaml.cs">
       <DependentUpon>SeriesListPage.xaml</DependentUpon>
@@ -285,6 +294,18 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Pages\SpecialicedBookPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\NovelListPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\NovelPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Pages\SeriesListPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

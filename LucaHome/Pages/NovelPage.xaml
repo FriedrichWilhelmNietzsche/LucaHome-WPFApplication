@@ -1,0 +1,112 @@
+﻿<Page x:Class="LucaHome.Pages.NovelPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:LucaHome.Pages"
+      xmlns:usercontrols="clr-namespace:LucaHome.UserControls"
+      mc:Ignorable="d" 
+      Height="{DynamicResource PageHeight}" 
+      Width="{DynamicResource PageWidth}"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+      TextElement.FontWeight="Regular"
+      TextElement.FontSize="13"
+      TextOptions.TextFormattingMode="Ideal" 
+      TextOptions.TextRenderingMode="Auto"   
+      Background="{DynamicResource MaterialDesignPaper}"
+      FontFamily="{DynamicResource MaterialDesignFont}"
+      Title="LucaHome - Novels"
+      Loaded="Page_Loaded"
+      Unloaded="Page_Unloaded">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <usercontrols:ScrollableImage
+            Height="{DynamicResource TopWallpaperHeight}"
+            Grid.Column="0"
+            Grid.Row="0"
+            ImageWallpaperSource="/Common;component/Assets/Wallpaper/main_image_novel.png" />
+
+        <materialDesign:PackIcon 
+            Grid.Row="1" 
+            Grid.Column="0" 
+            Kind="AccountSearch" 
+            Margin="5 0 5 5" 
+            Foreground="{Binding ElementName=SearchNovelTextBox, Path=BorderBrush}" />
+        <TextBox 
+            Grid.Row="1" 
+            Grid.Column="0" 
+            x:Name="SearchNovelTextBox"
+            Margin="5 15 5 5" 
+            materialDesign:HintAssist.Hint="Search for keywords in the novels">
+            <TextBox.Text>
+                <Binding Path="NovelSearchKey" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay" />
+            </TextBox.Text>
+        </TextBox>
+
+        <ScrollViewer 
+            VerticalScrollBarVisibility="Auto" 
+            Grid.Column="0"
+            Grid.Row="2">
+            <ListView HorizontalAlignment="Center">
+                <Grid Name="NovelGrid">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                </Grid>
+            </ListView>
+        </ScrollViewer>
+
+        <Button 
+            Grid.Column="0"
+            Grid.Row="2"
+            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+            Margin="5"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            ToolTip="Go back"
+            Click="ButtonBack_Click">
+            <materialDesign:PackIcon 
+                Kind="KeyboardBackspace" 
+                Height="24" 
+                Width="24" />
+        </Button>
+
+        <Button 
+            Grid.Column="0"
+            Grid.Row="2"
+            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+            Margin="5"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            ToolTip="Reload"
+            Click="ButtonReload_Click">
+            <materialDesign:PackIcon 
+                Kind="Reload" 
+                Height="24" 
+                Width="24" />
+        </Button>
+    </Grid>
+</Page>
