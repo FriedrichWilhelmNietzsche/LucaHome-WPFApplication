@@ -161,6 +161,19 @@ namespace Data.Services
         {
             _logger.Debug(string.Format("startMovieOnPc with title {0}", movieTitle));
 
+            if (_videothekDrive == null)
+            {
+                _logger.Error("VideothekDrive is null! Trying to find...");
+                _videothekDrive = _localDriveController.GetVideothekDrive();
+
+                if (_videothekDrive == null)
+                {
+                    _logger.Error("VideothekDrive is still null! Aborting launch...");
+                    publishOnMovieStartFinished(false, "No movie drive found! Please check your attached storages!");
+                    return;
+                }
+            }
+
             string moviePathString = string.Format("{0}{1}{2}", _videothekDrive.Name, "Filme\\", movieTitle);
             DirectoryInfo moviePath = new DirectoryInfo(moviePathString);
 

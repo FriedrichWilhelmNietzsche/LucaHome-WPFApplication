@@ -95,7 +95,7 @@ namespace Data.Services
         {
             get
             {
-                return _openWeatherService?.CurrentWeather?.Condition?.Wallpaper;
+                return _openWeatherService?.CurrentWeather?.Condition?.WallpaperUri;
             }
         }
 
@@ -122,6 +122,18 @@ namespace Data.Services
                 }
 
                 _settingsController.OpenWeatherCity = value;
+            }
+        }
+
+        public bool SetWallpaperActive
+        {
+            get
+            {
+                return _settingsController.SetWallpaperActive;
+            }
+            set
+            {
+                _settingsController.SetWallpaperActive = value;
             }
         }
 

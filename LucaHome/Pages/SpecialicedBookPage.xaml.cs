@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
-using System.Diagnostics;
 
 namespace LucaHome.Pages
 {
@@ -109,9 +108,7 @@ namespace LucaHome.Pages
                 _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
 
                 string booktitle = (string)senderButton.Tag;
-
-                string command = string.Format(@"{0}\{1}", _specialicedBookService.SpecialicedBookDir, booktitle);
-                Process.Start(command);
+                _specialicedBookService.StartReading(booktitle);
             }
         }
 

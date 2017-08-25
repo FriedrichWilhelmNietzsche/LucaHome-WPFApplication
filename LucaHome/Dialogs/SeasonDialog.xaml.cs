@@ -4,7 +4,6 @@ using Common.Tools;
 using Data.Services;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -60,8 +59,8 @@ namespace LucaHome.Dialogs
                 Button senderButton = (Button)sender;
                 _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
 
-                string command = (string)senderButton.Tag;
-                Process.Start(command);
+                string episode = (string)senderButton.Tag;
+                _seriesService.WatchEpisode(episode);
                 Close();
             }
         }

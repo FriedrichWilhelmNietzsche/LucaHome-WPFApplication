@@ -82,5 +82,17 @@ namespace Data.Properties {
                 this["OpenWeatherCity"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SetWallpaperActive {
+            get {
+                return ((bool)(this["SetWallpaperActive"]));
+            }
+            set {
+                this["SetWallpaperActive"] = value;
+            }
+        }
     }
 }

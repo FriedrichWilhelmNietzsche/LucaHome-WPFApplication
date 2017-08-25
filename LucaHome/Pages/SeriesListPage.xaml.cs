@@ -3,12 +3,10 @@ using Common.Tools;
 using Data.Services;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 using Common.Dto;
-using System.Diagnostics;
 using System.Windows.Media.Imaging;
 using LucaHome.Dialogs;
 
@@ -101,9 +99,7 @@ namespace LucaHome.Pages
                 _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
 
                 string season = (string)senderButton.Tag;
-
-                string command = string.Format(@"{0}\{1}\{2}", _seriesService.SeriesDir, _seriesDto.SeriesName, season);
-                Process.Start(command);
+                _seriesService.OpenExplorer(_seriesDto.SeriesName, season);
             }
         }
 

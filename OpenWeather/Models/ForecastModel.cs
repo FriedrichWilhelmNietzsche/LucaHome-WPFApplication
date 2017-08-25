@@ -3,6 +3,7 @@ using Common.Tools;
 using OpenWeather.Common;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace OpenWeather.Models
@@ -53,6 +54,20 @@ namespace OpenWeather.Models
         }
 
         public Uri Wallpaper
+        {
+            get
+            {
+                WeatherCondition mostWeatherConditions = _list
+                    .GroupBy(v => v)
+                    .OrderByDescending(g => g.Count())
+                    .Select(g => g.Key.Condition)
+                    .FirstOrDefault();
+
+                return mostWeatherConditions?.WallpaperUri;
+            }
+        }
+
+        public Bitmap WallpaperBitmap
         {
             get
             {

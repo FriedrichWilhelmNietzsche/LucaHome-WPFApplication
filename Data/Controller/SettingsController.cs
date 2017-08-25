@@ -134,5 +134,20 @@ namespace Data.Controller
                 Properties.Settings.Default.Save();
             }
         }
+
+        public bool SetWallpaperActive
+        {
+            get
+            {
+                return Properties.Settings.Default.SetWallpaperActive;
+            }
+            set
+            {
+                Properties.Settings.Default.SetWallpaperActive = value;
+                _logger.Debug(string.Format("Received new SetWallpaperActive {0} to save to settings!", value));
+
+                Properties.Settings.Default.Save();
+            }
+        }
     }
 }

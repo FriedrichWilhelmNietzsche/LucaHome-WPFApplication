@@ -1,6 +1,7 @@
 ﻿using Common.Tools;
 using Data.Controller;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Timers;
@@ -10,6 +11,7 @@ namespace Data.Services
     public class SpecialicedBookService
     {
         public delegate void SpecialicedBookListDownloadEventHandler(IList<string> bookList, bool success, string response);
+        public delegate void SpecialicedBookServiceErrorEventHandler(string error);
 
         private const string TAG = "SpecialicedBookService";
         private readonly Logger _logger;
@@ -34,7 +36,14 @@ namespace Data.Services
             _localDriveController = new LocalDriveController();
 
             _libraryDrive = _localDriveController.GetLibraryDrive();
-            _specialicedBookDir = _libraryDrive.Name + "Books\\Sachbücher";
+            if (_libraryDrive == null)
+            {
+                _logger.Error("Found no library drive!");
+            }
+            else
+            {
+                _specialicedBookDir = _libraryDrive.Name + "Books\\Sachbücher";
+            }
 
             _reloadTimer = new Timer(TIMEOUT);
             _reloadTimer.Elapsed += _reloadTimer_Elapsed;
@@ -46,6 +55,12 @@ namespace Data.Services
         private void publishOnSpecialicedBookListDownloadEventHandler(IList<string> bookList, bool success, string response)
         {
             OnSpecialicedBookListDownloadEventHandler?.Invoke(bookList, success, response);
+        }
+
+        public event SpecialicedBookServiceErrorEventHandler OnSpecialicedBookServiceError;
+        private void publishOnSpecialicedBookServiceError(string error)
+        {
+            OnSpecialicedBookServiceError?.Invoke(error);
         }
 
         public static SpecialicedBookService Instance
@@ -91,10 +106,33 @@ namespace Data.Services
             return foundBooks;
         }
 
+        public void StartReading(string title)
+        {
+            if (!directoryAvailable())
+            {
+                return;
+            }
+
+            if (title == null || title == string.Empty)
+            {
+                _logger.Error("Title is null or empty!");
+                publishOnSpecialicedBookServiceError("Title is null or empty!");
+                return;
+            }
+
+            string command = string.Format(@"{0}\{1}", _specialicedBookDir, title);
+            Process.Start(command);
+        }
+
         public void LoadBookList()
         {
-            string[] extensionArray = new string[] { ".pdf", ".epub" };
+            if (!directoryAvailable())
+            {
+                publishOnSpecialicedBookListDownloadEventHandler(null, false, "Book directory is not available!");
+                return;
+            }
 
+            string[] extensionArray = new string[] { ".pdf", ".epub" };
             _bookList = _localDriveController.ReadFileNamesInDir(_specialicedBookDir, extensionArray);
 
             _bookList = _bookList
@@ -109,6 +147,28 @@ namespace Data.Services
         {
             _logger.Debug(string.Format("_reloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
             LoadBookList();
+        }
+
+        private bool directoryAvailable()
+        {
+            if (_specialicedBookDir == string.Empty)
+            {
+                _logger.Error("No directory for books! Trying to read again...");
+                _libraryDrive = _localDriveController.GetLibraryDrive();
+
+                if (_libraryDrive == null)
+                {
+                    _logger.Error("Found no library drive!");
+                    publishOnSpecialicedBookServiceError("Found no book drive! Please check your attached storages!");
+                    return false;
+                }
+                else
+                {
+                    _specialicedBookDir = _libraryDrive.Name + "Books\\Sachbücher";
+                }
+            }
+
+            return true;
         }
 
         public void Dispose()

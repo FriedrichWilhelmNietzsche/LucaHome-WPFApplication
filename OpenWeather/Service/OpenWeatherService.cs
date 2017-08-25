@@ -1,12 +1,15 @@
 ﻿using Common.Tools;
 using OpenWeather.Common;
+using OpenWeather.Controller;
 using OpenWeather.Converter;
 using OpenWeather.Downloader;
 using OpenWeather.Models;
+using OpenWeather.Properties;
 using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Timers;
 
 namespace OpenWeather.Service
 {
@@ -18,14 +21,20 @@ namespace OpenWeather.Service
         private const String TAG = "OpenWeatherService";
         private readonly Logger _logger;
 
+        private const int TIMEOUT = 5 * 60 * 1000;
+
         private static OpenWeatherService _instance = null;
         private static readonly object _padlock = new object();
 
         private readonly OpenWeatherDownloader _openWeatherDownloader;
         private readonly JsonToWeatherConverter _jsonToWeatherConverter;
 
+        private bool _setWallpaperActive = false;
+
         private WeatherModel _currentWeather = null;
         private ForecastModel _forecastWeather = null;
+
+        private Timer _downloadTimer;
 
         OpenWeatherService()
         {
@@ -34,6 +43,11 @@ namespace OpenWeather.Service
 
             _jsonToWeatherConverter = new JsonToWeatherConverter();
             _openWeatherDownloader = new OpenWeatherDownloader();
+
+            _downloadTimer = new Timer(TIMEOUT);
+            _downloadTimer.Elapsed += _downloadTimer_Elapsed;
+            _downloadTimer.AutoReset = true;
+            _downloadTimer.Start();
         }
 
         public event CurrentWeatherDownloadEventHandler OnCurrentWeatherDownloadFinished;
@@ -123,6 +137,22 @@ namespace OpenWeather.Service
                 }
 
                 _openWeatherDownloader.City = value;
+
+                LoadCurrentWeather();
+                LoadForecastModel();
+            }
+        }
+
+        public bool SetWallpaperActive
+        {
+            get
+            {
+                return _setWallpaperActive;
+            }
+            set
+            {
+                _setWallpaperActive = value;
+                setWallpaper();
             }
         }
 
@@ -170,6 +200,13 @@ namespace OpenWeather.Service
             task.Start();
         }
 
+        private void _downloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            _logger.Debug(string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
+            loadCurrentWeather();
+            loadForecastModel();
+        }
+
         private void loadCurrentWeather()
         {
             _logger.Debug("loadCurrentWeather");
@@ -186,6 +223,7 @@ namespace OpenWeather.Service
             }
 
             OnCurrentWeatherDownloadFinishedHandler(_currentWeather, (newWeatherModel != null));
+            setWallpaper();
         }
 
         private void loadForecastModel()
@@ -204,6 +242,32 @@ namespace OpenWeather.Service
             }
 
             OnForecastWeatherDownloadFinishedHandler(_forecastWeather, (newForecastModel != null));
+        }
+
+        private void setWallpaper()
+        {
+            if (!_setWallpaperActive)
+            {
+                _logger.Debug("SetWallpaper is not active!");
+                return;
+            }
+
+            if (_currentWeather == null)
+            {
+                _logger.Error("CurrentWeather is null!");
+                return;
+            }
+
+            WallpaperController.SetDesktopWallpaperFromBitmap(_currentWeather.Condition.Wallpaper, Style.Center);
+        }
+
+        public void Dispose()
+        {
+            _logger.Debug("Dispose");
+
+            _downloadTimer.Elapsed -= _downloadTimer_Elapsed;
+            _downloadTimer.AutoReset = false;
+            _downloadTimer.Stop();
         }
     }
 }

@@ -3,6 +3,7 @@ using Common.Tools;
 using Data.Controller;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Timers;
@@ -13,6 +14,7 @@ namespace Data.Services
     public class LibraryService
     {
         public delegate void MagazinListDownloadEventHandler(IList<MagazinDirDto> magazinList, bool success, string response);
+        public delegate void LibraryServiceErrorEventHandler(string error);
 
         private const string TAG = "LibraryService";
         private readonly Logger _logger;
@@ -37,7 +39,14 @@ namespace Data.Services
             _localDriveController = new LocalDriveController();
 
             _libraryDrive = _localDriveController.GetLibraryDrive();
-            _magazineDir = _libraryDrive.Name + "Magazine";
+            if (_libraryDrive == null)
+            {
+                _logger.Error("Found no library drive!");
+            }
+            else
+            {
+                _magazineDir = _libraryDrive.Name + "Magazine";
+            }
 
             _reloadTimer = new Timer(TIMEOUT);
             _reloadTimer.Elapsed += _reloadTimer_Elapsed;
@@ -49,6 +58,12 @@ namespace Data.Services
         private void publishOnMagazinListDownloadFinished(IList<MagazinDirDto> magazinList, bool success, string response)
         {
             OnMagazinListDownloadFinished?.Invoke(magazinList, success, response);
+        }
+
+        public event LibraryServiceErrorEventHandler OnLibraryServiceError;
+        private void publishOnLibraryServiceErrord(string error)
+        {
+            OnLibraryServiceError?.Invoke(error);
         }
 
         public static LibraryService Instance
@@ -106,8 +121,33 @@ namespace Data.Services
             return foundMagazins;
         }
 
+        public void StartReading(string directory, string title)
+        {
+            if (!directoryAvailable())
+            {
+                return;
+            }
+
+            if (directory == null || title == null
+                || directory == string.Empty || title == string.Empty)
+            {
+                _logger.Error("Diretory or title is null or empty!");
+                publishOnLibraryServiceErrord("Diretory or title is null or empty!");
+                return;
+            }
+
+            string command = string.Format(@"{0}\{1}\{2}", _magazineDir, directory, title);
+            Process.Start(command);
+        }
+
         public void LoadMagazinList()
         {
+            if (!directoryAvailable())
+            {
+                publishOnMagazinListDownloadFinished(null, false, "Library directory is not available!");
+                return;
+            }
+
             string[] extensionArray = new string[] { ".pdf", ".epub" };
             _magazinList.Clear();
             string[] magazinSubDirList = _localDriveController.ReadDirInDir(_magazineDir);
@@ -138,6 +178,28 @@ namespace Data.Services
         {
             _logger.Debug(string.Format("_reloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
             LoadMagazinList();
+        }
+
+        private bool directoryAvailable()
+        {
+            if (_magazineDir == string.Empty)
+            {
+                _logger.Error("No directory for magazines! Trying to read again...");
+                _libraryDrive = _localDriveController.GetLibraryDrive();
+
+                if (_libraryDrive == null)
+                {
+                    _logger.Error("Found no library drive!");
+                    publishOnLibraryServiceErrord("Found no library drive! Please check your attached storages!");
+                    return false;
+                }
+                else
+                {
+                    _magazineDir = _libraryDrive.Name + "Magazine";
+                }
+            }
+
+            return true;
         }
 
         public void Dispose()

@@ -3,6 +3,7 @@ using Common.Tools;
 using Data.Controller;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Timers;
@@ -13,6 +14,7 @@ namespace Data.Services
     public class NovelService
     {
         public delegate void NovelListDownloadEventHandler(IList<NovelDto> novelList, bool success, string response);
+        public delegate void NovelServiceErrorEventHandler(string error);
 
         private const string TAG = "NovelService";
         private readonly Logger _logger;
@@ -37,7 +39,14 @@ namespace Data.Services
             _localDriveController = new LocalDriveController();
 
             _libraryDrive = _localDriveController.GetLibraryDrive();
-            _novelDir = _libraryDrive.Name + "Books\\Romane";
+            if (_libraryDrive == null)
+            {
+                _logger.Error("Found no library drive!");
+            }
+            else
+            {
+                _novelDir = _libraryDrive.Name + "Books\\Romane";
+            }
 
             _reloadTimer = new Timer(TIMEOUT);
             _reloadTimer.Elapsed += _reloadTimer_Elapsed;
@@ -49,6 +58,12 @@ namespace Data.Services
         private void publishOnNovelListDownloadFinished(IList<NovelDto> novelList, bool success, string response)
         {
             OnNovelListDownloadFinished?.Invoke(novelList, success, response);
+        }
+
+        public event NovelServiceErrorEventHandler OnNovelServiceError;
+        private void publishOnNovelServiceError(string error)
+        {
+            OnNovelServiceError?.Invoke(error);
         }
 
         public static NovelService Instance
@@ -106,8 +121,33 @@ namespace Data.Services
             return foundNovelDtos;
         }
 
+        public void StartReading(string directory, string title)
+        {
+            if (!directoryAvailable())
+            {
+                return;
+            }
+
+            if (directory == null || title == null
+                || directory == string.Empty || title == string.Empty)
+            {
+                _logger.Error("Diretory or title is null or empty!");
+                publishOnNovelServiceError("Diretory or title is null or empty!");
+                return;
+            }
+
+            string command = string.Format(@"{0}\{1}\{2}", _novelDir, directory, title);
+            Process.Start(command);
+        }
+
         public void LoadNovelList()
         {
+            if (!directoryAvailable())
+            {
+                publishOnNovelListDownloadFinished(null, false, "Novel directory is not available!");
+                return;
+            }
+
             string[] extensionArray = new string[] { ".pdf", ".epub" };
             _novelList.Clear();
             string[] authorList = _localDriveController.ReadDirInDir(_novelDir);
@@ -138,6 +178,28 @@ namespace Data.Services
         {
             _logger.Debug(string.Format("_reloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
             LoadNovelList();
+        }
+
+        private bool directoryAvailable()
+        {
+            if (_novelDir == string.Empty)
+            {
+                _logger.Error("No directory for novels! Trying to read again...");
+                _libraryDrive = _localDriveController.GetLibraryDrive();
+
+                if (_libraryDrive == null)
+                {
+                    _logger.Error("Found no library drive!");
+                    publishOnNovelServiceError("Found no library drive! Please check your attached storages!");
+                    return false;
+                }
+                else
+                {
+                    _novelDir = _libraryDrive.Name + "Books\\Romane";
+                }
+            }
+
+            return true;
         }
 
         public void Dispose()

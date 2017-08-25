@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 using Common.Dto;
-using System.Diagnostics;
 using System.Windows.Media.Imaging;
 
 namespace LucaHome.Pages
@@ -107,9 +106,7 @@ namespace LucaHome.Pages
                 _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
 
                 string magazinTitle = (string)senderButton.Tag;
-
-                string command = string.Format(@"{0}\{1}\{2}", _libraryService.MagazinDir, _magazinDirDto.DirName, magazinTitle);
-                Process.Start(command);
+                _libraryService.StartReading(_magazinDirDto.DirName, magazinTitle);
             }
         }
 

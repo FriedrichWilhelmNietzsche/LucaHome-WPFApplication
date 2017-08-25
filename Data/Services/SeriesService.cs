@@ -3,6 +3,7 @@ using Common.Tools;
 using Data.Controller;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Timers;
@@ -13,6 +14,7 @@ namespace Data.Services
     public class SeriesService
     {
         public delegate void SeriesListDownloadEventHandler(IList<SeriesDto> seriesList, bool success, string response);
+        public delegate void SeriesServiceErrorEventHandler(string error);
 
         private const string TAG = "SeriesService";
         private readonly Logger _logger;
@@ -37,7 +39,14 @@ namespace Data.Services
             _localDriveController = new LocalDriveController();
 
             _seriesDrive = _localDriveController.GetVideothekDrive();
-            _seriesDir = _seriesDrive.Name + "Serien";
+            if (_seriesDrive == null)
+            {
+                _logger.Error("Found no videothek drive!");
+            }
+            else
+            {
+                _seriesDir = _seriesDrive.Name + "Serien";
+            }
 
             _reloadTimer = new Timer(TIMEOUT);
             _reloadTimer.Elapsed += _reloadTimer_Elapsed;
@@ -49,6 +58,12 @@ namespace Data.Services
         private void publishOnSeriesListDownloadFinished(IList<SeriesDto> seriesList, bool success, string response)
         {
             OnSeriesListDownloadFinished?.Invoke(seriesList, success, response);
+        }
+
+        public event SeriesServiceErrorEventHandler OnSeriesServiceError;
+        private void publishOnSeriesServiceError(string error)
+        {
+            OnSeriesServiceError?.Invoke(error);
         }
 
         public static SeriesService Instance
@@ -105,8 +120,50 @@ namespace Data.Services
             return foundSeries;
         }
 
+        public void OpenExplorer(string series, string season)
+        {
+            if (!directoryAvailable())
+            {
+                return;
+            }
+
+            if (series == null || season == null
+                || series == string.Empty || season == string.Empty)
+            {
+                _logger.Error("Series or season is null or empty!");
+                publishOnSeriesServiceError("Series or season is null or empty!");
+                return;
+            }
+
+            string command = string.Format(@"{0}\{1}\{2}", _seriesDir, series, season);
+            Process.Start(command);
+        }
+
+        public void WatchEpisode(string episode)
+        {
+            if (!directoryAvailable())
+            {
+                return;
+            }
+
+            if (episode == null || episode == string.Empty)
+            {
+                _logger.Error("Episode is null or empty!");
+                publishOnSeriesServiceError("Episode is null or empty!");
+                return;
+            }
+
+            Process.Start(episode);
+        }
+
         public void LoadSeriesList()
         {
+            if (!directoryAvailable())
+            {
+                publishOnSeriesListDownloadFinished(null, false, "Series directory is not available!");
+                return;
+            }
+
             string[] extensionArray = new string[] { ".mp4", ".mkv" };
             _seriesList.Clear();
 
@@ -153,6 +210,28 @@ namespace Data.Services
         {
             _logger.Debug(string.Format("_reloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
             LoadSeriesList();
+        }
+
+        private bool directoryAvailable()
+        {
+            if (_seriesDir == string.Empty)
+            {
+                _logger.Error("No directory for series! Trying to read again...");
+                _seriesDrive = _localDriveController.GetVideothekDrive();
+
+                if (_seriesDrive == null)
+                {
+                    _logger.Error("Found no series drive!");
+                    publishOnSeriesServiceError("Found no series drive! Please check your attached storages!");
+                    return false;
+                }
+                else
+                {
+                    _seriesDir = _seriesDrive.Name + "Serien";
+                }
+            }
+
+            return true;
         }
 
         public void Dispose()

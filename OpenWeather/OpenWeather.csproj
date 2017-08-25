@@ -48,6 +48,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -66,6 +67,7 @@
     <Compile Include="Common\OWDefinitions.cs" />
     <Compile Include="Common\OWEnables.cs" />
     <Compile Include="Common\OWKeys.cs" />
+    <Compile Include="Controller\WallpaperController.cs" />
     <Compile Include="Converter\JsonToWeatherConverter.cs" />
     <Compile Include="Downloader\OpenWeatherDownloader.cs" />
     <Compile Include="Enums\WeatherCondition.cs" />
@@ -87,7 +89,7 @@
     </Compile>
     <Compile Include="Service\OpenWeatherService.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="lucahome_key.snk" />
@@ -112,18 +114,42 @@
     <Resource Include="Assets\Images\weather_thunderstorm.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\Images\weather_wallpaper_clear.png" />
-    <Resource Include="Assets\Images\weather_wallpaper_cloud.png" />
-    <Resource Include="Assets\Images\weather_wallpaper_drizzle.png" />
-    <Resource Include="Assets\Images\weather_wallpaper_dummy.png" />
-    <Resource Include="Assets\Images\weather_wallpaper_fog.png" />
-    <Resource Include="Assets\Images\weather_wallpaper_haze.png" />
-    <Resource Include="Assets\Images\weather_wallpaper_mist.png" />
-    <Resource Include="Assets\Images\weather_wallpaper_rain.png" />
-    <Resource Include="Assets\Images\weather_wallpaper_sleet.png" />
-    <Resource Include="Assets\Images\weather_wallpaper_snow.png" />
-    <Resource Include="Assets\Images\weather_wallpaper_sun.png" />
-    <Resource Include="Assets\Images\weather_wallpaper_thunderstorm.png" />
+    <Resource Include="Assets\Images\weather_wallpaper_clear.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Images\weather_wallpaper_cloud.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Images\weather_wallpaper_drizzle.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Images\weather_wallpaper_dummy.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Images\weather_wallpaper_fog.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Images\weather_wallpaper_haze.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Images\weather_wallpaper_mist.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Images\weather_wallpaper_rain.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Images\weather_wallpaper_sleet.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Images\weather_wallpaper_snow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Images\weather_wallpaper_sun.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Images\weather_wallpaper_thunderstorm.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

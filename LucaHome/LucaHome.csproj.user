@@ -6,7 +6,7 @@
     <SupportUrlHistory>https://github.com/Gu3pardo/LucaHome-WPFApplication</SupportUrlHistory>
     <UpdateUrlHistory />
     <BootstrapperUrlHistory />
-    <ErrorReportUrlHistory />
+    <ErrorReportUrlHistory>https://github.com/Gu3pardo/LucaHome-WPFApplication</ErrorReportUrlHistory>
     <FallbackCulture>en-US</FallbackCulture>
     <VerifyUploadedFiles>false</VerifyUploadedFiles>
   </PropertyGroup>

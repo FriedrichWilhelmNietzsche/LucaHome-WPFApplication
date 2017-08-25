@@ -160,6 +160,26 @@ namespace LucaHome.Pages
             }
         }
 
+        public bool SetWallpaperActive
+        {
+            get
+            {
+                _logger.Debug("Get SetWallpaperActive");
+                return _temperatureService.SetWallpaperActive;
+            }
+            set
+            {
+                _temperatureService.SetWallpaperActive = value;
+                _openWeatherService.SetWallpaperActive = value;
+
+                string message = "Set new value for SetWallpaperActive in settings and OpenWeatherService";
+                _logger.Debug(message);
+                _notifier.ShowInformation(message);
+
+                OnPropertyChanged("SetWallpaperActive");
+            }
+        }
+
         public string HomeSSID
         {
             get

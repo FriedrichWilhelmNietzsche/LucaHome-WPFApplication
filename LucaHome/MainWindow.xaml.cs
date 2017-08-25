@@ -2,7 +2,6 @@
 using Common.Tools;
 using Data.Services;
 using LucaHome.Pages;
-using OpenWeather.Models;
 using OpenWeather.Service;
 using System.ComponentModel;
 using System.Windows;
@@ -62,8 +61,7 @@ namespace LucaHome
             _wirelessSocketService = WirelessSocketService.Instance;
 
             _openWeatherService.City = _temperatureService.OpenWeatherCity;
-
-            _openWeatherService.OnForecastWeatherDownloadFinished += _onForecastWeatherDownloadFinished;
+            _openWeatherService.SetWallpaperActive = _temperatureService.SetWallpaperActive;
 
             // Check for user first
             if (!_userService.UserSaved())
@@ -76,13 +74,6 @@ namespace LucaHome
                 _userService.OnUserCheckedFinished += _onUserCheckedFinished;
                 _userService.ValidateUser();
             }
-        }
-
-        private void _onForecastWeatherDownloadFinished(ForecastModel forecastWeather, bool success)
-        {
-            _logger.Debug(string.Format("_onForecastWeatherDownloadFinished with model {0} was successful: {1}", forecastWeather, success));
-
-            // TODO
         }
 
         private void _onUserCheckedFinished(string response, bool success)
@@ -116,6 +107,7 @@ namespace LucaHome
             _menuService.Dispose();
             _movieService.Dispose();
             _novelService.Dispose();
+            _openWeatherService.Dispose();
             _scheduleService.Dispose();
             _securityService.Dispose();
             _seriesService.Dispose();
