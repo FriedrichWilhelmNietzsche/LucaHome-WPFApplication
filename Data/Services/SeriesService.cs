@@ -120,6 +120,24 @@ namespace Data.Services
             return foundSeries;
         }
 
+        public void OpenExplorer(string series)
+        {
+            if (!directoryAvailable())
+            {
+                return;
+            }
+
+            if (series == null || series == string.Empty)
+            {
+                _logger.Error("Series is null or empty!");
+                publishOnSeriesServiceError("Series is null or empty!");
+                return;
+            }
+
+            string command = string.Format(@"{0}\{1}", _seriesDir, series);
+            Process.Start(command);
+        }
+
         public void OpenExplorer(string series, string season)
         {
             if (!directoryAvailable())

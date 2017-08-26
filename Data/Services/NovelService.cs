@@ -140,6 +140,24 @@ namespace Data.Services
             Process.Start(command);
         }
 
+        public void OpenExplorer(string directory)
+        {
+            if (!directoryAvailable())
+            {
+                return;
+            }
+
+            if (directory == null || directory == string.Empty)
+            {
+                _logger.Error("Diretory is null or empty!");
+                publishOnNovelServiceError("Diretory is null or empty!");
+                return;
+            }
+
+            string command = string.Format(@"{0}\{1}", _novelDir, directory);
+            Process.Start(command);
+        }
+
         public void LoadNovelList()
         {
             if (!directoryAvailable())

@@ -9,7 +9,6 @@ using System.Windows.Controls;
 using System.Windows.Navigation;
 using LucaHome.UserControls;
 using Microsoft.Practices.Prism.Commands;
-using System.Diagnostics;
 
 namespace LucaHome.Pages
 {
@@ -120,8 +119,7 @@ namespace LucaHome.Pages
                 newSeriesCard.ButtonOpenExplorerCommand = new DelegateCommand(
                     () =>
                     {
-                        string command = string.Format(@"{0}\{1}", _seriesService.SeriesDir, entry.SeriesName);
-                        Process.Start(command);
+                        _seriesService.OpenExplorer(entry.SeriesName);
                     });
                 newSeriesCard.MouseUpCommand = new DelegateCommand(
                     () =>
@@ -135,7 +133,7 @@ namespace LucaHome.Pages
                 SeriesGrid.Children.Add(newSeriesCard);
 
                 column++;
-                if (column > MAX_GRID_COLUMNS)
+                if (column >= MAX_GRID_COLUMNS)
                 {
                     column = 0;
                     row++;
