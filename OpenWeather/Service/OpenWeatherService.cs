@@ -258,7 +258,7 @@ namespace OpenWeather.Service
                 return;
             }
 
-            WallpaperController.SetDesktopWallpaperFromBitmap(_currentWeather.Condition.Wallpaper, Style.Center);
+            WallpaperController.SetDesktopWallpaperFromBitmap(_currentWeather.Condition.Wallpaper, Style.Fill);
         }
 
         public void Dispose()

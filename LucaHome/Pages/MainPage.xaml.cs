@@ -10,6 +10,7 @@ using Data.Services;
 using Common.Dto;
 using System.Collections.Generic;
 using OpenWeather.Models;
+using System.Deployment.Application;
 
 namespace LucaHome.Pages
 {
@@ -62,6 +63,8 @@ namespace LucaHome.Pages
                 TemperatureCard.BottomDataText.Text = _temperatureService.TemperatureList[0]?.TemperatureString;
             }
             _temperatureService.OnTemperatureDownloadFinished += _onTemperatureDownloadFinished;
+
+            readApplicationVersion();
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
@@ -209,6 +212,22 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("SettingsCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
             _navigationService.Navigate(new SettingsPage(_navigationService));
+        }
+
+        private void readApplicationVersion()
+        {
+            string version = "";
+
+            try
+            {
+                version = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+            }
+            catch (InvalidDeploymentException exception)
+            {
+                _logger.Error(exception.Message);
+            }
+
+            VersionTextBlock.Text = "";
         }
     }
 }

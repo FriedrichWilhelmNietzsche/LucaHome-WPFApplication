@@ -27,6 +27,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -213,6 +214,22 @@
             ButtonAddVisibility="Collapsed"
             ButtonMapVisibility="Collapsed"
             MouseUp="SettingsCard_MouseUp"/>
+
+        <TextBlock
+            x:Name="VersionTextBlock"
+            TextAlignment="Left"
+            Grid.Row="5"
+            Grid.Column="0">
+            Version
+        </TextBlock>
+
+        <TextBlock
+            x:Name="CopyrightTextBlock"
+            TextAlignment="Right"
+            Grid.Row="5"
+            Grid.Column="4">
+            © 2017 GuepardoApps
+        </TextBlock>
 
     </Grid>
 </Page>
