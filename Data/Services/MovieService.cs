@@ -272,7 +272,7 @@ namespace Data.Services
                 return;
             }
 
-            _movieList = movieList;
+            _movieList = movieList.OrderBy(x => x.Title).ToList();
 
             publishOnMovieDownloadFinished(_movieList, true, response);
         }

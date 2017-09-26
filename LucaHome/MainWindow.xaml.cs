@@ -13,6 +13,9 @@ namespace LucaHome
     {
         private const string APP_ID = "guepardoapps.LucaHome";
 
+        private int _failedUserCheck;
+        private const int MAX_FAILED_USER_CHECK = 3;
+
         private const string TAG = "MainWindow";
         private readonly Logger _logger;
 
@@ -34,13 +37,15 @@ namespace LucaHome
         private readonly UserService _userService;
         private readonly WirelessSocketService _wirelessSocketService;
 
-        private readonly BootPage _bootPage;
+        //private readonly BootPage _bootPage;
 
         public MainWindow()
         {
             _logger = new Logger(TAG, Enables.LOGGING);
 
             InitializeComponent();
+
+            _failedUserCheck = 0;
 
             _birthdayService = BirthdayService.Instance;
             _coinService = CoinService.Instance;
@@ -85,12 +90,23 @@ namespace LucaHome
             if (success)
             {
                 _logger.Debug("Validated user! Navigating to BootPage");
+                _failedUserCheck = 0;
                 _navigationService.Navigate(new BootPage(_navigationService));
             }
             else
             {
-                _logger.Debug("Failed to validate user! Navigating to LoginPage");
-                _navigationService.Navigate(new LoginPage(_navigationService));
+                _logger.Debug("Failed to validate user! Increasing _failedUserCheck!");
+                _failedUserCheck++;
+                if(_failedUserCheck < MAX_FAILED_USER_CHECK)
+                {
+                    _userService.OnUserCheckedFinished += _onUserCheckedFinished;
+                    _userService.ValidateUser();
+                }
+                else
+                {
+                    _logger.Debug("Too many failed checks! Navigating to LoginPage");
+                    _navigationService.Navigate(new LoginPage(_navigationService));
+                }
             }
         }
 

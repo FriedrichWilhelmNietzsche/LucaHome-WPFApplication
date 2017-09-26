@@ -217,9 +217,7 @@ namespace Data.Services
                 _seriesList.Add(newEntry);
             }
 
-            _seriesList = _seriesList
-                .OrderBy(entry => entry.SeriesName)
-                .ToArray();
+            _seriesList = _seriesList.OrderBy(entry => entry.SeriesName).ToList();
 
             publishOnSeriesListDownloadFinished(_seriesList, true, "Success");
         }

@@ -189,6 +189,8 @@ namespace Data.Services
                 _novelList.Add(newEntry);
             }
 
+            _novelList = _novelList.OrderBy(x => x.Author).ToList();
+
             publishOnNovelListDownloadFinished(_novelList, true, "Success");
         }
 

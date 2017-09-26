@@ -189,6 +189,8 @@ namespace Data.Services
                 _magazinList.Add(newEntry);
             }
 
+            _magazinList = _magazinList.OrderBy(x => x.DirName).ToList();
+
             publishOnMagazinListDownloadFinished(_magazinList, true, "Success");
         }
 
