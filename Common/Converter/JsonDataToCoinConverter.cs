@@ -1,6 +1,7 @@
 ﻿using Common.Dto;
 using Common.Tools;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Common.Converter
@@ -91,7 +92,8 @@ namespace Common.Converter
 
                     string type = data[2].Replace("{Type:", "").Replace("};", "");
 
-                    string amountString = data[3].Replace("{Amount:", "").Replace("};", "").Replace(".", ",");
+                    string numberDecimalSeparator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+                    string amountString = data[3].Replace("{Amount:", "").Replace("};", "").Replace(".", numberDecimalSeparator);
                     double amount = -1;
                     bool parseSuccessAmount = double.TryParse(amountString, out amount);
                     if (!parseSuccessAmount)

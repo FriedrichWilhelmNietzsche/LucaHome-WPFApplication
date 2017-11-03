@@ -100,6 +100,7 @@
     <Compile Include="Converter\JsonDataToTimerConverter.cs" />
     <Compile Include="Converter\JsonDataToWirelessSocketConverter.cs" />
     <Compile Include="Converter\UnixToDateTimeConverter.cs" />
+    <Compile Include="Dto\MediaMirrorDto.cs" />
     <Compile Include="Dto\BirthdayDto.cs" />
     <Compile Include="Dto\CoinDto.cs" />
     <Compile Include="Dto\ChangeDto.cs" />
@@ -271,6 +272,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Wallpaper\main_image_sachbuch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Wallpaper\main_image_mediamirror.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -194,9 +194,21 @@
             MouseUp="SpecialicedBookCard_MouseUp"/>
 
         <usercontrols:MainPageCard
-            x:Name="SecurityCard"
+            Visibility="Collapsed"
+            x:Name="MediaMirrorCard"
             Grid.Row="4"
             Grid.Column="0"
+            CardImage="/Common;component/Assets/Wallpaper/main_image_mediamirror.png"
+            Title="MediaMirror"
+            Description="Control your media mirror!"
+            ButtonAddVisibility="Collapsed"
+            ButtonMapVisibility="Collapsed"
+            MouseUp="MediaMirrorCard_MouseUp"/>
+
+        <usercontrols:MainPageCard
+            x:Name="SecurityCard"
+            Grid.Row="4"
+            Grid.Column="2"
             CardImage="/Common;component/Assets/Wallpaper/main_image_security.png"
             Title="Security"
             Description="Secure your flat!"

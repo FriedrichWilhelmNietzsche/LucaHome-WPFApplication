@@ -39,6 +39,8 @@ namespace LucaHome.Pages
 
         private MapPage _mapPage;
 
+        private MediaMirrorPage _mediaMirrorPage;
+
         private MenuPage _menuPage;
         //private MenuUpdatePage _menuUpdatePage;
 
@@ -298,6 +300,13 @@ namespace LucaHome.Pages
             _navigationService.Navigate(_specialicedBookPage);
         }
 
+        private void MediaMirrorCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        {
+            _logger.Debug(string.Format("MediaMirrorCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
+            _mediaMirrorPage = new MediaMirrorPage(_navigationService);
+            _navigationService.Navigate(_mediaMirrorPage);
+        }
+
         private void SecurityCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
             _logger.Debug(string.Format("SecurityCard_MouseUp: Received click of sender {0} with mouseButtonEventArgs {1}", sender, mouseButtonEventArgs));
@@ -318,7 +327,14 @@ namespace LucaHome.Pages
 
             try
             {
-                version = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+                if (System.Diagnostics.Debugger.IsAttached)
+                {
+                    version = "Debug Mode";
+                }
+                else
+                {
+                    version = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+                }
             }
             catch (InvalidDeploymentException exception)
             {

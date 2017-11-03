@@ -30,8 +30,8 @@
     <ProductName>LucaHome</ProductName>
     <PublisherName>GuepardoApps</PublisherName>
     <SuiteName>LucaHome</SuiteName>
-    <ApplicationRevision>17269</ApplicationRevision>
-    <ApplicationVersion>1.3.4.17269</ApplicationVersion>
+    <ApplicationRevision>17307</ApplicationRevision>
+    <ApplicationVersion>1.3.5.17307</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -154,6 +154,9 @@
     </Compile>
     <Compile Include="Dialogs\DeleteDialog.xaml.cs">
       <DependentUpon>DeleteDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\MediaMirrorPage.xaml.cs">
+      <DependentUpon>MediaMirrorPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\SpecialicedBookPage.xaml.cs">
       <DependentUpon>SpecialicedBookPage.xaml</DependentUpon>
@@ -297,6 +300,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Pages\MediaMirrorPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\SpecialicedBookPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

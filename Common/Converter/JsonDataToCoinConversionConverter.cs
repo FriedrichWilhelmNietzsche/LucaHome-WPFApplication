@@ -1,6 +1,7 @@
 ﻿using Common.Interfaces;
 using Common.Tools;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Common.Converter
@@ -47,7 +48,9 @@ namespace Common.Converter
                 if (data.Length == 3)
                 {
                     string key = data[0].Replace("\"", "");
-                    string valueString = data[2].Replace(".", ",");
+
+                    string numberDecimalSeparator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+                    string valueString = data[2].Replace(".", numberDecimalSeparator);
                     double value = 0;
                     bool parseValueSuccess = double.TryParse(valueString, out value);
 

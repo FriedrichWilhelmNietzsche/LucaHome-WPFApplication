@@ -3,6 +3,7 @@ using Common.Interfaces;
 using Common.Tools;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using static Common.Dto.TemperatureDto;
 
@@ -88,7 +89,8 @@ namespace Common.Converter
                     && data[2].Contains("{sensorPath:")
                     && data[3].Contains("{graphPath:"))
                 {
-                    string temperatureString = data[0].Replace("{value:", "").Replace("};", "").Replace(".", ",");
+                    string numberDecimalSeparator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+                    string temperatureString = data[0].Replace("{value:", "").Replace("};", "").Replace(".", numberDecimalSeparator);
                     double temperature = -1;
                     bool parseSuccessTemperature = double.TryParse(temperatureString, out temperature);
                     if (!parseSuccessTemperature)
