@@ -232,7 +232,7 @@ namespace Data.Services
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.ShoppingListDelete);
         }
 
-        private void _shoppingListDownloadFinished(string response, bool success, DownloadType downloadType)
+        private void _shoppingListDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_shoppingListDownloadFinished");
 
@@ -274,7 +274,7 @@ namespace Data.Services
             publishOnShoppingListDownloadFinished(_shoppingList, true, response);
         }
 
-        private void _shoppingEntryAddFinished(string response, bool success, DownloadType downloadType)
+        private void _shoppingEntryAddFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_shoppingEntryAddFinished");
 
@@ -309,7 +309,7 @@ namespace Data.Services
             loadShoppingListAsync();
         }
 
-        private void _shoppingEntryUpdateFinished(string response, bool success, DownloadType downloadType)
+        private void _shoppingEntryUpdateFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_shoppingEntryUpdateFinished");
 
@@ -344,7 +344,7 @@ namespace Data.Services
             loadShoppingListAsync();
         }
 
-        private void _shoppingEntryDeleteFinished(string response, bool success, DownloadType downloadType)
+        private void _shoppingEntryDeleteFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_shoppingEntryDeleteFinished");
 

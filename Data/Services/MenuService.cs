@@ -226,7 +226,7 @@ namespace Data.Services
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.MenuClear);
         }
 
-        private void _listedMenuDownloadFinished(string response, bool success, DownloadType downloadType)
+        private void _listedMenuDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_listedMenuDownloadFinished");
 
@@ -268,7 +268,7 @@ namespace Data.Services
             publishOnListedMenuDownloadFinished(_listedMenuList, true, response);
         }
 
-        private void _menuDownloadFinished(string response, bool success, DownloadType downloadType)
+        private void _menuDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_menuDownloadFinished");
 
@@ -310,7 +310,7 @@ namespace Data.Services
             publishOnMenuDownloadFinished(_menuList, true, response);
         }
 
-        private void _menuUpdateFinished(string response, bool success, DownloadType downloadType)
+        private void _menuUpdateFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_menuUpdateFinished");
 
@@ -345,7 +345,7 @@ namespace Data.Services
             loadMenuListAsync();
         }
 
-        private void _menuClearFinished(string response, bool success, DownloadType downloadType)
+        private void _menuClearFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_menuUpdateFinished");
 

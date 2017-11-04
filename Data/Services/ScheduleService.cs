@@ -295,7 +295,7 @@ namespace Data.Services
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.ScheduleDelete);
         }
 
-        private void _scheduleDownloadFinished(string response, bool success, DownloadType downloadType)
+        private void _scheduleDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_scheduleDownloadFinished");
 
@@ -337,7 +337,7 @@ namespace Data.Services
             publishOnScheduleDownloadFinished(_scheduleList, true, response);
         }
 
-        private void _setScheduleFinished(string response, bool success, DownloadType downloadType)
+        private void _setScheduleFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_setScheduleFinished");
 
@@ -371,7 +371,7 @@ namespace Data.Services
             loadScheduleListAsync();
         }
 
-        private void _addScheduleFinished(string response, bool success, DownloadType downloadType)
+        private void _addScheduleFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_addScheduleFinished");
 
@@ -405,7 +405,7 @@ namespace Data.Services
             loadScheduleListAsync();
         }
 
-        private void _updateScheduleFinished(string response, bool success, DownloadType downloadType)
+        private void _updateScheduleFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_updateScheduleFinished");
 
@@ -439,7 +439,7 @@ namespace Data.Services
             loadScheduleListAsync();
         }
 
-        private void _deleteScheduleFinished(string response, bool success, DownloadType downloadType)
+        private void _deleteScheduleFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_deleteScheduleFinished");
 

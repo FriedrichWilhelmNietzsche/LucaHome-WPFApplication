@@ -235,7 +235,7 @@ namespace Data.Services
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.MovieUpdate);
         }
 
-        private void _movieDownloadFinished(string response, bool success, DownloadType downloadType)
+        private void _movieDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_movieDownloadFinished");
 
@@ -277,7 +277,7 @@ namespace Data.Services
             publishOnMovieDownloadFinished(_movieList, true, response);
         }
 
-        private void _movieUpdateFinished(string response, bool success, DownloadType downloadType)
+        private void _movieUpdateFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_movieUpdateFinished");
 

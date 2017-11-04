@@ -8,7 +8,7 @@ namespace Data.Controller
     public enum DownloadType
     {
         Birthday, BirthdayAdd, BirthdayUpdate, BirthdayDelete,
-        CoinConversion, Coin, CoinAdd, CoinUpdate, CoinDelete,
+        CoinConversion, Coin, CoinAdd, CoinUpdate, CoinDelete, CoinTrend,
         MapContent,
         ListedMenu,
         Menu, MenuUpdate, MenuClear,
@@ -22,7 +22,7 @@ namespace Data.Controller
         WirelessSocket, WirelessSocketSet, WirelessSocketAdd, WirelessSocketUpdate, WirelessSocketDelete
     };
 
-    public delegate void DownloadFinishedEventHandler(string response, bool success, DownloadType downloadType);
+    public delegate void DownloadFinishedEventHandler(string response, bool success, DownloadType downloadType, object additionalData);
 
     public class DownloadController
     {
@@ -35,40 +35,46 @@ namespace Data.Controller
         }
 
         public event DownloadFinishedEventHandler OnDownloadFinished;
-        private void publishOnDownloadFinished(string response, bool success, DownloadType downloadType)
+        private void publishOnDownloadFinished(string response, bool success, DownloadType downloadType, object additionalData)
         {
-            OnDownloadFinished?.Invoke(response, success, downloadType);
+            OnDownloadFinished?.Invoke(response, success, downloadType, additionalData);
         }
 
-        public async void SendCommandToWebsite(string requestUrl, DownloadType downloadType)
+        public async void SendCommandToWebsite(string requestUrl, DownloadType downloadType, object additional)
         {
             _logger.Debug("SendCommandToWebsite");
             try
             {
-                await sendCommandToWebsiteAsync(requestUrl, downloadType);
+                await sendCommandToWebsiteAsync(requestUrl, downloadType, additional);
             }
             catch (Exception exception)
             {
                 _logger.Error(exception.Message);
-                publishOnDownloadFinished(exception.Message, false, downloadType);
+                publishOnDownloadFinished(exception.Message, false, downloadType, additional);
             }
         }
 
-        private async Task sendCommandToWebsiteAsync(string requestUrl, DownloadType downloadType)
+        public void SendCommandToWebsite(string requestUrl, DownloadType downloadType)
+        {
+            _logger.Debug("SendCommandToWebsite without additional");
+            SendCommandToWebsite(requestUrl, downloadType, null);
+        }
+
+        private async Task sendCommandToWebsiteAsync(string requestUrl, DownloadType downloadType, object additional)
         {
             _logger.Debug("sendCommandToWebsiteAsync");
 
             if (requestUrl == null)
             {
                 _logger.Error("RequestUrl may not be null!");
-                publishOnDownloadFinished("ERROR: RequestUrl may not be null!", false, downloadType);
+                publishOnDownloadFinished("ERROR: RequestUrl may not be null!", false, downloadType, additional);
                 return;
             }
 
             if (requestUrl.Length < 15)
             {
                 _logger.Error("Invalid requestUrl length!");
-                publishOnDownloadFinished("ERROR: Invalid requestUrl length!", false, downloadType);
+                publishOnDownloadFinished("ERROR: Invalid requestUrl length!", false, downloadType, additional);
                 return;
             }
 
@@ -80,7 +86,7 @@ namespace Data.Controller
 
             _logger.Debug(string.Format("ResponseData: {0}", data));
 
-            publishOnDownloadFinished(data, (data != null), downloadType);
+            publishOnDownloadFinished(data, (data != null), downloadType, additional);
         }
 
         public void Dispose()

@@ -23,12 +23,14 @@ namespace Data.Services
         private const string TAG = "CoinService";
         private readonly Logger _logger;
 
-        private const int TIMEOUT = 15 * 60 * 1000;
+        private const int TIMEOUT = 30 * 60 * 1000;
 
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
+
         private readonly JsonDataToCoinConverter _jsonDataToCoinConverter;
         private readonly IJsonDataConverter<KeyValuePair<string, double>> _jsonDataToCoinConversionConverter;
+        private readonly JsonDataToCoinTrendConverter _jsonDataToCoinTrendConverter;
 
         private static CoinService _instance = null;
         private static readonly object _padlock = new object();
@@ -44,10 +46,13 @@ namespace Data.Services
 
             _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
+
             _jsonDataToCoinConverter = new JsonDataToCoinConverter();
             _jsonDataToCoinConversionConverter = new JsonDataToCoinConversionConverter();
+            _jsonDataToCoinTrendConverter = new JsonDataToCoinTrendConverter();
 
             _downloadController.OnDownloadFinished += _coinConversionDownloadFinished;
+            _downloadController.OnDownloadFinished += _coinTrendDownloadFinished;
 
             _downloadTimer = new Timer(TIMEOUT);
             _downloadTimer.Elapsed += _downloadTimer_Elapsed;
@@ -195,6 +200,15 @@ namespace Data.Services
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.CoinConversion);
         }
 
+        private async Task loadCoinTrendAsync(CoinDto coin)
+        {
+            _logger.Debug("loadCoinTrendAsync");
+
+            string requestUrl = string.Format("https://min-api.cryptocompare.com/data/histohour?fsym={0}&tsym={1}&limit={2}&aggregate=3&e=CCCAGG", coin.Type, "EUR", SettingsController.Instance.CoinHourTrend);
+            
+            _downloadController.SendCommandToWebsite(requestUrl, DownloadType.CoinTrend, coin);
+        }
+
         private async Task loadCoinListAsync()
         {
             _logger.Debug("loadCoinListAsync");
@@ -277,7 +291,7 @@ namespace Data.Services
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.CoinDelete);
         }
 
-        private void _coinConversionDownloadFinished(string response, bool success, DownloadType downloadType)
+        private void _coinConversionDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_coinConversionDownloadFinished");
 
@@ -331,7 +345,31 @@ namespace Data.Services
             publishOnCoinConversionDownloadFinished(_coinConversionList, true, response);
         }
 
-        private void _coinDownloadFinished(string response, bool success, DownloadType downloadType)
+        private void _coinTrendDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
+        {
+            _logger.Debug("_coinTrendDownloadFinished");
+
+            if (downloadType != DownloadType.CoinTrend)
+            {
+                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
+                return;
+            }
+
+            CoinDto currentCoin = (CoinDto)additional;
+            currentCoin = _jsonDataToCoinTrendConverter.UpdateTrend(currentCoin, response, "EUR");
+            for(int index = 0; index < _coinList.Count; index++)
+            {
+                if(currentCoin.Id == _coinList.ElementAt(index).Id)
+                {
+                    _coinList.RemoveAt(index);
+                    _coinList.Insert(index, currentCoin);
+                    publishOnCoinDownloadFinished(_coinList, true, response);
+                    break;
+                }
+            }
+        }
+
+        private void _coinDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_coinDownloadFinished");
 
@@ -373,9 +411,14 @@ namespace Data.Services
             _coinList = coinList;
 
             publishOnCoinDownloadFinished(_coinList, true, response);
+
+            foreach(CoinDto coin in _coinList)
+            {
+                loadCoinTrendAsync(coin);
+            }
         }
 
-        private void _coinAddFinished(string response, bool success, DownloadType downloadType)
+        private void _coinAddFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_coinAddFinished");
 
@@ -410,7 +453,7 @@ namespace Data.Services
             loadCoinListAsync();
         }
 
-        private void _coinUpdateFinished(string response, bool success, DownloadType downloadType)
+        private void _coinUpdateFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_coinUpdateFinished");
 
@@ -445,7 +488,7 @@ namespace Data.Services
             loadCoinListAsync();
         }
 
-        private void _coinDeleteFinished(string response, bool success, DownloadType downloadType)
+        private void _coinDeleteFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_coinDeleteFinished");
 
@@ -485,6 +528,7 @@ namespace Data.Services
             _logger.Debug("Dispose");
 
             _downloadController.OnDownloadFinished -= _coinConversionDownloadFinished;
+            _downloadController.OnDownloadFinished -= _coinTrendDownloadFinished;
             _downloadController.OnDownloadFinished -= _coinDownloadFinished;
             _downloadController.OnDownloadFinished -= _coinAddFinished;
             _downloadController.OnDownloadFinished -= _coinUpdateFinished;

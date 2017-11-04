@@ -169,7 +169,7 @@ namespace Data.Services
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.Temperature);
         }
 
-        private void _temperatureDownloadFinished(string response, bool success, DownloadType downloadType)
+        private void _temperatureDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_temperatureDownloadFinished");
 

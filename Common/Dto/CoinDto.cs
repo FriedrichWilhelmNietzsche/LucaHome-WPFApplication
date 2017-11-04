@@ -7,14 +7,17 @@ namespace Common.Dto
     {
         private const string TAG = "CoinDto";
 
+        public enum Trend { NULL, FALL, RISE }
+
         private int _id;
         private string _user;
         private string _type;
         private double _amount;
 
         private double _currentConversion;
+        private Trend _trend;
 
-        public CoinDto(int id, string user, string type, double amount, double currentConversion)
+        public CoinDto(int id, string user, string type, double amount, double currentConversion, Trend trend)
         {
             _id = id;
             _user = user;
@@ -22,6 +25,7 @@ namespace Common.Dto
             _amount = amount;
 
             _currentConversion = currentConversion;
+            _trend = trend;
         }
 
         public int Id
@@ -80,6 +84,18 @@ namespace Common.Dto
             }
         }
 
+        public Trend CurrentTrend
+        {
+            get
+            {
+                return _trend;
+            }
+            set
+            {
+                _trend = value;
+            }
+        }
+
         public string CurrentConversionString
         {
             get
@@ -112,6 +128,23 @@ namespace Common.Dto
             }
         }
 
+        public Uri TrendIcon
+        {
+            get
+            {
+                switch (_trend)
+                {
+                    case Trend.RISE:
+                        return new Uri("/Common;component/Assets/Icons/Others/trending_up.png", UriKind.Relative);
+                    case Trend.FALL:
+                        return new Uri("/Common;component/Assets/Icons/Others/trending_down.png", UriKind.Relative);
+                    default:
+                        return new Uri("/Common;component/Assets/Icons/Others/trending_flat.png", UriKind.Relative);
+
+                }
+            }
+        }
+
         public string CommandAdd
         {
             get
@@ -138,7 +171,7 @@ namespace Common.Dto
 
         public override string ToString()
         {
-            return string.Format("( {0}: (User: {1} );( Type: {2});(Amount: {3} );(CurrentConversion: {4} );(Value: {5} ))", TAG, _user, _type, _amount, _currentConversion, Value);
+            return string.Format("( {0}: (User: {1} );( Type: {2});(Amount: {3} );(CurrentConversion: {4} );(Value: {5} );(Trend: {6} ))", TAG, _user, _type, _amount, _currentConversion, Value, _trend);
         }
     }
 }

@@ -94,5 +94,17 @@ namespace Data.Properties {
                 this["SetWallpaperActive"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("24")]
+        public int CoinHourTrend {
+            get {
+                return ((int)(this["CoinHourTrend"]));
+            }
+            set {
+                this["CoinHourTrend"] = value;
+            }
+        }
     }
 }

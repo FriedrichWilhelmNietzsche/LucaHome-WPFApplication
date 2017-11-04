@@ -35,7 +35,7 @@ namespace LucaHome.Pages
             _coinService = CoinService.Instance;
             _navigationService = navigationService;
 
-            _newCoin = new CoinDto(_coinService.CoinList.Count, "", "", 0, 0);
+            _newCoin = new CoinDto(_coinService.CoinList.Count, "", "", 0, 0, CoinDto.Trend.NULL);
 
             InitializeComponent();
             DataContext = this;

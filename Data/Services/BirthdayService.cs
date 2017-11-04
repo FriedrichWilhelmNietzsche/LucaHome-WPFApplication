@@ -233,7 +233,7 @@ namespace Data.Services
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.BirthdayDelete);
         }
 
-        private void _birthdayDownloadFinished(string response, bool success, DownloadType downloadType)
+        private void _birthdayDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_birthdayDownloadFinished");
 
@@ -275,7 +275,7 @@ namespace Data.Services
             publishOnBirthdayDownloadFinished(_birthdayList, true, response);
         }
 
-        private void _birthdayAddFinished(string response, bool success, DownloadType downloadType)
+        private void _birthdayAddFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_birthdayAddFinished");
 
@@ -310,7 +310,7 @@ namespace Data.Services
             loadBirthdayListAsync();
         }
 
-        private void _birthdayUpdateFinished(string response, bool success, DownloadType downloadType)
+        private void _birthdayUpdateFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_birthdayUpdateinished");
 
@@ -345,7 +345,7 @@ namespace Data.Services
             loadBirthdayListAsync();
         }
 
-        private void _birthdayDeleteFinished(string response, bool success, DownloadType downloadType)
+        private void _birthdayDeleteFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_birthdayDeleteFinished");
 

@@ -112,7 +112,7 @@ namespace Common.Converter
                         }
                     }
 
-                    return new CoinDto(id, user, type, amount, currentConversion);
+                    return new CoinDto(id, user, type, amount, currentConversion, CoinDto.Trend.NULL);
                 }
                 else
                 {

@@ -149,5 +149,20 @@ namespace Data.Controller
                 Properties.Settings.Default.Save();
             }
         }
+
+        public int CoinHourTrend
+        {
+            get
+            {
+                return Properties.Settings.Default.CoinHourTrend;
+            }
+            set
+            {
+                Properties.Settings.Default.CoinHourTrend = value;
+                _logger.Debug(string.Format("Received new CoinHourTrend {0} to save to settings!", value));
+
+                Properties.Settings.Default.Save();
+            }
+        }
     }
 }

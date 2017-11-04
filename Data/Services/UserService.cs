@@ -106,7 +106,7 @@ namespace Data.Services
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.User);
         }
 
-        private void _validateUserFinished(string response, bool success, DownloadType downloadType)
+        private void _validateUserFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_validateUserFinished");
 

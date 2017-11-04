@@ -201,7 +201,7 @@ namespace Data.Services
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.SecurityCameraControl);
         }
 
-        private void _securityDownloadFinished(string response, bool success, DownloadType downloadType)
+        private void _securityDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_securityDownloadFinished");
 
@@ -243,7 +243,7 @@ namespace Data.Services
             publishOnSecurityDownloadFinished(_security, true, response);
         }
 
-        private void _setCameraStateFinished(string response, bool success, DownloadType downloadType)
+        private void _setCameraStateFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_securityDownloadFinished");
 
@@ -276,7 +276,7 @@ namespace Data.Services
             loadSecurityAsync();
         }
 
-        private void _setCameraControlStateFinished(string response, bool success, DownloadType downloadType)
+        private void _setCameraControlStateFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_securityDownloadFinished");
 

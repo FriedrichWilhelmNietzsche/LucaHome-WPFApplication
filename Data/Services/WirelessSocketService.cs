@@ -294,7 +294,7 @@ namespace Data.Services
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.WirelessSocketDelete);
         }
 
-        private void _wirelessSocketDownloadFinished(string response, bool success, DownloadType downloadType)
+        private void _wirelessSocketDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_wirelessSocketDownloadFinished");
 
@@ -336,7 +336,7 @@ namespace Data.Services
             publishOnWirelessSocketDownloadFinished(_wirelessSocketList, true, response);
         }
 
-        private void _setWirelessSocketFinished(string response, bool success, DownloadType downloadType)
+        private void _setWirelessSocketFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_setWirelessSocketFinished");
 
@@ -370,7 +370,7 @@ namespace Data.Services
             loadWirelessSocketListAsync();
         }
 
-        private void _addWirelessSocketFinished(string response, bool success, DownloadType downloadType)
+        private void _addWirelessSocketFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_addWirelessSocketFinished");
 
@@ -404,7 +404,7 @@ namespace Data.Services
             loadWirelessSocketListAsync();
         }
 
-        private void _updateWirelessSocketFinished(string response, bool success, DownloadType downloadType)
+        private void _updateWirelessSocketFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_updateWirelessSocketFinished");
 
@@ -438,7 +438,7 @@ namespace Data.Services
             loadWirelessSocketListAsync();
         }
 
-        private void _deleteWirelessSocketFinished(string response, bool success, DownloadType downloadType)
+        private void _deleteWirelessSocketFinished(string response, bool success, DownloadType downloadType, object additional)
         {
             _logger.Debug("_deleteWirelessSocketFinished");
 
