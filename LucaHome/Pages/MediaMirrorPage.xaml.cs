@@ -1,5 +1,6 @@
 ﻿using Common.Common;
 using Common.Tools;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +14,10 @@ namespace LucaHome.Pages
         private readonly Logger _logger;
 
         private readonly NavigationService _navigationService;
+
+        private string _youtubeVideoTitle = "";
+        // TODO FIX generic
+        private IList<object> _youtubeVideoList;
 
         public MediaMirrorPage(NavigationService navigationService)
         {
@@ -90,6 +95,33 @@ namespace LucaHome.Pages
             }
         }
 
+        public string YoutubeVideoTitle
+        {
+            get
+            {
+                return _youtubeVideoTitle;
+            }
+            set
+            {
+                _youtubeVideoTitle = value;
+                OnPropertyChanged("YoutubeVideoTitle");
+            }
+        }
+
+        // TODO FIX generic
+        public IList<object> YoutubeVideoList
+        {
+            get
+            {
+                return _youtubeVideoList;
+            }
+            set
+            {
+                _youtubeVideoList = value;
+                OnPropertyChanged("YoutubeVideoList");
+            }
+        }
+
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Loaded with sender {0} with arguments {1}", sender, routedEventArgs));
@@ -130,6 +162,25 @@ namespace LucaHome.Pages
         {
             _logger.Debug(string.Format("ButtonReloadServer_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             // TODO
+        }
+
+        private void ButtonSearchYoutubeVideo_Click(object sender, RoutedEventArgs routedEventArgs)
+        {
+            _logger.Debug(string.Format("ButtonSearchYoutubeVideo_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+            // TODO
+        }
+
+        private void PlayYoutubeVideo_Click(object sender, RoutedEventArgs routedEventArgs)
+        {
+            _logger.Debug(string.Format("PlayYoutubeVideo_Click: Received click of sender {0} with arguments {1}", sender, routedEventArgs));
+            if (sender is Button)
+            {
+                Button senderButton = (Button)sender;
+                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
+
+                string youtubeVideoTitle = (string)senderButton.Tag;
+                // select youtube id and send it to the mediamirror
+            }
         }
 
         private void ButtonPlayYoutubeVideo_Click(object sender, RoutedEventArgs routedEventArgs)

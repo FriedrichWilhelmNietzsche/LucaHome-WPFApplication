@@ -78,7 +78,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}&day={2}&month={3}&year={4}&title={5}&description={6}", LucaServerAction.UPDATE_MENU.Action, _date.DayOfWeek, _date.Day, _date.Month, _date.Year, _title, _description);
+                return string.Format("{0}{1}&day={2}&month={3}&year={4}&title={5}&description={6}", LucaServerAction.UPDATE_MENU.Action, _date.DayOfWeek.ToString().ToLower(), _date.Day, _date.Month, _date.Year, _title, _description);
             }
         }
 
@@ -86,7 +86,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}", LucaServerAction.UPDATE_MENU.Action, _date.DayOfWeek);
+                return string.Format("{0}{1}", LucaServerAction.UPDATE_MENU.Action, _date.DayOfWeek.ToString().ToLower());
             }
         }
 

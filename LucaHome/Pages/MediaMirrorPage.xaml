@@ -209,10 +209,75 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Add image for current youtube video -->
-                <!-- Add selection for current youtube video title -->
-                <!-- Add search button for youtube video -->
-                <!-- Add selection list for youtube video with play button -->
+                <Image 
+                    x:Name="YoutubeImage"
+                    Grid.Column="0"
+                    Grid.Row="0"
+                    Margin="15"
+                    Source="/Common;component/Assets/Icons/Movie/youtube_icon.png"/>
+
+                <TextBox 
+                    Grid.Row="0" 
+                    Grid.Column="1" 
+                    Grid.ColumnSpan="2"
+                    x:Name="YoutubeTextBox"
+                    VerticalAlignment="Center"
+                    Margin="5 5 60 5" 
+                    materialDesign:HintAssist.Hint="Current played youtubevideo or enter a search term">
+                    <TextBox.Text>
+                        <Binding Path="YoutubeVideoTitle" UpdateSourceTrigger="PropertyChanged" />
+                    </TextBox.Text>
+                </TextBox>
+
+                <Button 
+                    Grid.Column="2"
+                    Grid.Row="0"
+                    Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                    Margin="5"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    ToolTip="Search Youtube Video"
+                    Click="ButtonSearchYoutubeVideo_Click">
+                    <materialDesign:PackIcon 
+                            Kind="YoutubePlay" 
+                            Height="24" 
+                            Width="24" />
+                </Button>
+
+                <ListView 
+                    Grid.Column="0"
+                    Grid.ColumnSpan="3"
+                    Grid.Row="1"
+                    Margin="5"
+                    VerticalAlignment="Stretch"
+                    HorizontalAlignment="Stretch"
+                    ItemsSource="{Binding Path=YoutubeVideoList, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn 
+                                Header="Title"
+                                DisplayMemberBinding="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                                Width="350"/>
+                            <GridViewColumn Width="150" >
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid HorizontalAlignment="Center">
+                                            <Button
+                                                Style="{DynamicResource MaterialDesignRaisedButton}"
+                                                Margin="5 5 5 5" 
+                                                Width="105"
+                                                ToolTip="Start video on mediamirror"
+                                                Tag="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                                                Click="PlayYoutubeVideo_Click">
+                                                Play
+                                            </Button>
+                                        </Grid>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
 
                 <Button 
                     Grid.Column="0"
