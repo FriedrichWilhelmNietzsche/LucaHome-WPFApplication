@@ -40,7 +40,7 @@ namespace Common.Converter
         {
             if (!value.Contains("Error"))
             {
-                if (StringHelper.GetStringCount(value, _searchParameter) > 1)
+                if (StringHelper.GetStringCount(value, _searchParameter) > 0)
                 {
                     if (value.Contains(_searchParameter))
                     {

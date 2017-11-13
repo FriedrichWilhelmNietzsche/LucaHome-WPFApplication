@@ -21,6 +21,7 @@ namespace LucaHome.Pages
         private int _downloadCount = 0;
         private int _progressPercent = 0;
         private string _progressText = "Loading LucaHome WPF Application ... {0} %";
+        private IList<string> _objectFinishedList = new List<string>();
 
         private readonly BirthdayService _birthdayService;
         private readonly CoinService _coinService;
@@ -144,13 +145,13 @@ namespace LucaHome.Pages
         private void _birthdayDownloadFinished(IList<BirthdayDto> birthdayList, bool success, string response)
         {
             _logger.Debug(string.Format("_birthdayDownloadFinished with model {0} was successful: {1}", birthdayList, success));
-            checkDownloadCount();
+            checkDownloadCount("_birthdayDownloadFinished");
         }
 
         private void _currentWeatherDownloadFinished(WeatherModel currentWeather, bool success)
         {
             _logger.Debug(string.Format("_currentWeatherDownloadFinished with model {0} was successful: {1}", currentWeather, success));
-            checkDownloadCount();
+            checkDownloadCount("_currentWeatherDownloadFinished");
 
             // Start download of temperatures after downloading current weather
             _temperatureService.OnTemperatureDownloadFinished += _temperatureDownloadFinished;
@@ -160,25 +161,25 @@ namespace LucaHome.Pages
         private void _forecastWeatherDownloadFinished(ForecastModel forecastWeather, bool success)
         {
             _logger.Debug(string.Format("_forecastWeatherDownloadFinished with model {0} was successful: {1}", forecastWeather, success));
-            checkDownloadCount();
+            checkDownloadCount("_forecastWeatherDownloadFinished");
         }
 
         private void _mapContentDownloadFinished(IList<MapContentDto> mapContentList, bool success, string response)
         {
             _logger.Debug(string.Format("_mapContentDownloadFinished with model {0} was successful: {1}", mapContentList, success));
-            checkDownloadCount();
+            checkDownloadCount("_mapContentDownloadFinished");
         }
 
         private void _movieDownloadFinished(IList<MovieDto> movieList, bool success, string response)
         {
             _logger.Debug(string.Format("_movieDownloadFinished with model {0} was successful: {1}", movieList, success));
-            checkDownloadCount();
+            checkDownloadCount("_movieDownloadFinished");
         }
 
         private void _onCoinConversionDownloadFinished(IList<KeyValuePair<string, double>> coinConversionList, bool success, string response)
         {
             _logger.Debug(string.Format("_onCoinConversionDownloadFinished with model {0} was successful: {1}", coinConversionList, success));
-            checkDownloadCount();
+            checkDownloadCount("_onCoinConversionDownloadFinished");
 
             // Start download of coins after downloading coin conversion
             _coinService.OnCoinDownloadFinished += _onCoinDownloadFinished;
@@ -188,13 +189,13 @@ namespace LucaHome.Pages
         private void _onCoinDownloadFinished(IList<CoinDto> coinList, bool success, string response)
         {
             _logger.Debug(string.Format("_onCoinDownloadFinished with model {0} was successful: {1}", coinList, success));
-            checkDownloadCount();
+            checkDownloadCount("_onCoinDownloadFinished");
         }
 
         private void _onListedMenuDownloadFinished(IList<ListedMenuDto> listedMenuList, bool success, string response)
         {
             _logger.Debug(string.Format("_onListedMenuDownloadFinished with model {0} was successful: {1}", listedMenuList, success));
-            checkDownloadCount();
+            checkDownloadCount("_onListedMenuDownloadFinished");
 
             // Start download of menu after downloading listed menu entries
             _menuService.OnMenuDownloadFinished += _onMenuDownloadFinished;
@@ -204,49 +205,49 @@ namespace LucaHome.Pages
         private void _onMagazinListDownloadFinished(IList<MagazinDirDto> magazinList, bool success, string response)
         {
             _logger.Debug(string.Format("_onMagazinListDownloadFinished with model {0} was successful: {1}", magazinList, success));
-            checkDownloadCount();
+            checkDownloadCount("_onMagazinListDownloadFinished");
         }
 
         private void _onMenuDownloadFinished(IList<MenuDto> menuList, bool success, string response)
         {
             _logger.Debug(string.Format("_onMenuDownloadFinished with model {0} was successful: {1}", menuList, success));
-            checkDownloadCount();
+            checkDownloadCount("_onMenuDownloadFinished");
         }
 
         private void _onNovelListDownloadFinished(IList<NovelDto> novelList, bool success, string response)
         {
             _logger.Debug(string.Format("_onNovelListDownloadFinished with model {0} was successful: {1}", novelList, success));
-            checkDownloadCount();
+            checkDownloadCount("_onNovelListDownloadFinished");
         }
 
         private void _onSecurityDownloadFinished(SecurityDto security, bool success, string response)
         {
             _logger.Debug(string.Format("_onSecurityDownloadFinished with model {0} was successful: {1}", security, success));
-            checkDownloadCount();
+            checkDownloadCount("_onSecurityDownloadFinished");
         }
 
         private void _onSeriesListDownloadFinished(IList<SeriesDto> seriesList, bool success, string response)
         {
             _logger.Debug(string.Format("_onSeriesListDownloadFinished with model {0} was successful: {1}", seriesList, success));
-            checkDownloadCount();
+            checkDownloadCount("_onSeriesListDownloadFinished");
         }
 
         private void _onShoppingListDownloadFinished(IList<ShoppingEntryDto> shoppingList, bool success, string response)
         {
             _logger.Debug(string.Format("_onShoppingListDownloadFinished with model {0} was successful: {1}", shoppingList, success));
-            checkDownloadCount();
+            checkDownloadCount("_onShoppingListDownloadFinished");
         }
 
         private void _onSpecialicedBookListDownloadEventHandler(IList<string> bookList, bool success, string response)
         {
             _logger.Debug(string.Format("_onSpecialicedBookListDownloadEventHandler with model {0} was successful: {1}", bookList, success));
-            checkDownloadCount();
+            checkDownloadCount("_onSpecialicedBookListDownloadEventHandler");
         }
 
         private void _scheduleDownloadFinished(IList<ScheduleDto> scheduleList, bool success, string response)
         {
             _logger.Debug(string.Format("_scheduleDownloadFinished with model {0} was successful: {1}", scheduleList, success));
-            checkDownloadCount();
+            checkDownloadCount("_scheduleDownloadFinished");
 
             // Start download of mapcontent after downloading wirelesssockets AND schedules
             _mapContentService.OnMapContentDownloadFinished += _mapContentDownloadFinished;
@@ -256,23 +257,26 @@ namespace LucaHome.Pages
         private void _temperatureDownloadFinished(IList<TemperatureDto> temperatureList, bool success, string response)
         {
             _logger.Debug(string.Format("_temperatureDownloadFinished with model {0} was successful: {1}", temperatureList, success));
-            checkDownloadCount();
+            checkDownloadCount("_temperatureDownloadFinished");
         }
 
         private void _wirelessSocketDownloadFinished(IList<WirelessSocketDto> wirelessSocketList, bool success, string response)
         {
             _logger.Debug(string.Format("_wirelessSocketDownloadFinished with model {0} was successful: {1}", wirelessSocketList, success));
-            checkDownloadCount();
+            checkDownloadCount("_wirelessSocketDownloadFinished");
 
             // Start download of schedules after downloading wirelesssockets
             _scheduleService.OnScheduleDownloadFinished += _scheduleDownloadFinished;
             _scheduleService.LoadScheduleList();
         }
 
-        private void checkDownloadCount()
+        private void checkDownloadCount(string objectFinished)
         {
             _downloadCount++;
             _logger.Debug(string.Format("checkDownloadCount: Download {0}/{1}", _downloadCount, Constants.DOWNLOAD_STEPS));
+
+            _objectFinishedList.Add(objectFinished);
+            _logger.Debug(string.Format("_objectFinishedList: {0}", String.Join(", ", _objectFinishedList)));
 
             _progressPercent = (_downloadCount * 100) / Constants.DOWNLOAD_STEPS;
             OnPropertyChanged("ProgressText");

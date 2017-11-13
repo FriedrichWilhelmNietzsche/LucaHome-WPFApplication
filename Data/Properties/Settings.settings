@@ -15,7 +15,7 @@
       <Value Profile="(Default)">192.168.178.22</Value>
     </Setting>
     <Setting Name="OpenWeatherCity" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Munich, DE</Value>
+      <Value Profile="(Default)">Muenchen</Value>
     </Setting>
     <Setting Name="SetWallpaperActive" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

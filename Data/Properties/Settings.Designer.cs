@@ -73,7 +73,7 @@ namespace Data.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Munich, DE")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Muenchen")]
         public string OpenWeatherCity {
             get {
                 return ((string)(this["OpenWeatherCity"]));

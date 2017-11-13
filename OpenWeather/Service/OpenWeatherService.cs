@@ -1,4 +1,5 @@
-﻿using Common.Tools;
+﻿using Common.Enums;
+using Common.Tools;
 using OpenWeather.Common;
 using OpenWeather.Controller;
 using OpenWeather.Converter;
@@ -160,6 +161,11 @@ namespace OpenWeather.Service
         {
             get
             {
+                if (_currentWeather == null)
+                {
+                    return new WeatherModel("Null", "Null", "Null", -273.15, -1, -1, DateTime.Now, DateTime.Now, DateTime.Now, WeatherCondition.NULL);
+                }
+
                 return _currentWeather;
             }
         }

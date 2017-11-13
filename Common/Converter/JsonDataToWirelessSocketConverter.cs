@@ -45,42 +45,28 @@ namespace Common.Converter
             if (!value.Contains("Error"))
             {
                 _logger.Debug("ParseStringToList value has no Error!");
-
-                int stringCount = StringHelper.GetStringCount(value, _searchParameter);
-                if (stringCount > 1)
+                
+                if (StringHelper.GetStringCount(value, _searchParameter) > 0)
                 {
-                    _logger.Debug("ParseStringToList stringCount is larger then 1!");
+                    _logger.Debug(string.Format("ParseStringToList value Contains _searchParameter {0}", _searchParameter));
 
-                    if (value.Contains(_searchParameter))
+                    IList<WirelessSocketDto> list = new List<WirelessSocketDto>();
+
+                    string[] entries = Regex.Split(value, "\\" + _searchParameter);
+                    for (int index = 1; index < entries.Length; index++)
                     {
-                        _logger.Debug(string.Format("ParseStringToList value Contains _searchParameter {0}", _searchParameter));
+                        string entry = entries[index];
+                        string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
 
-                        IList<WirelessSocketDto> list = new List<WirelessSocketDto>();
-
-                        string[] entries = Regex.Split(value, "\\" + _searchParameter);
-                        for (int index = 1; index < entries.Length; index++)
+                        string[] data = Regex.Split(replacedEntry, "\\};");
+                        WirelessSocketDto newValue = parseStringToValue(index, data);
+                        if (newValue != null)
                         {
-                            string entry = entries[index];
-                            string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
-
-                            string[] data = Regex.Split(replacedEntry, "\\};");
-                            WirelessSocketDto newValue = parseStringToValue(index, data);
-                            if (newValue != null)
-                            {
-                                list.Add(newValue);
-                            }
+                            list.Add(newValue);
                         }
+                    }
 
-                        return list;
-                    }
-                    else
-                    {
-                        _logger.Error(string.Format("Value {0} doesnot contain searchparameter {1}", value, _searchParameter));
-                    }
-                }
-                else
-                {
-                    _logger.Error(string.Format("Value {0} has invalid stringCount {1}", value, stringCount));
+                    return list;
                 }
             }
 
