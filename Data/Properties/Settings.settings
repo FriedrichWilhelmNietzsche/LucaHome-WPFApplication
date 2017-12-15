@@ -9,13 +9,13 @@
       <Value Profile="(Default)">NA</Value>
     </Setting>
     <Setting Name="HomeSSID" Type="System.String" Scope="User">
-      <Value Profile="(Default)">BellaPeca</Value>
+      <Value Profile="(Default)">GuepardoHome</Value>
     </Setting>
     <Setting Name="ServerIpAddress" Type="System.String" Scope="User">
-      <Value Profile="(Default)">192.168.178.22</Value>
+      <Value Profile="(Default)">192.168.178.25</Value>
     </Setting>
     <Setting Name="OpenWeatherCity" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Muenchen</Value>
+      <Value Profile="(Default)">Nuremberg</Value>
     </Setting>
     <Setting Name="SetWallpaperActive" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

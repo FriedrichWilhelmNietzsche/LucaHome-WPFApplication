@@ -15,7 +15,7 @@ namespace TestProject
             SettingsController settingsController = SettingsController.Instance;
             string openWeatherCity = settingsController.OpenWeatherCity;
 
-            Assert.AreEqual(openWeatherCity, "Munich, DE");
+            Assert.AreEqual(openWeatherCity, "Nuremberg");
         }
 
         [TestMethod]

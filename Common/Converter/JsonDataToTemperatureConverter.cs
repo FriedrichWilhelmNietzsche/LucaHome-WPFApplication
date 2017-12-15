@@ -1,18 +1,16 @@
 ﻿using Common.Dto;
 using Common.Interfaces;
 using Common.Tools;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Text.RegularExpressions;
-using static Common.Dto.TemperatureDto;
 
 namespace Common.Converter
 {
     public class JsonDataToTemperatureConverter : IJsonDataConverter<TemperatureDto>
     {
         private const string TAG = "JsonDataToTemperatureConverter";
-        private static string _searchParameter = "{temperature:";
+        private static string _searchParameter = "{\"Temperature\":";
 
         private readonly Logger _logger;
 
@@ -43,82 +41,27 @@ namespace Common.Converter
         {
             if (!value.Contains("Error"))
             {
-                if (StringHelper.GetStringCount(value, _searchParameter) > 0)
-                {
-                    if (value.Contains(_searchParameter))
-                    {
-                        IList<TemperatureDto> list = new List<TemperatureDto>();
+                IList<TemperatureDto> temperatureList = new List<TemperatureDto>();
 
-                        string[] entries = Regex.Split(value, "\\" + _searchParameter);
-                        foreach (string entry in entries)
-                        {
-                            string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
+                JObject jsonObject = JObject.Parse(value);
+                JToken jsonObjectData = jsonObject.GetValue("Temperature");
 
-                            string[] data = Regex.Split(replacedEntry, "\\};");
-                            TemperatureDto newValue = parseStringToValue(data);
-                            if (newValue != null)
-                            {
-                                list.Add(newValue);
-                            }
-                        }
+                double temperatureValue = double.Parse(jsonObjectData["Value"].ToString());
 
-                        return list;
-                    }
-                    else
-                    {
-                        _logger.Error(string.Format("Found no _searchParameter {0} in value {1}", _searchParameter, value));
-                    }
-                }
-                else
-                {
-                    _logger.Error(string.Format("Count for _searchParameter {0} in value {1} is {2}", _searchParameter, value, StringHelper.GetStringCount(value, _searchParameter)));
-                }
+                string area = jsonObjectData["Area"].ToString();
+
+                string sensorPath = jsonObjectData["SensorPath"].ToString();
+                string graphPath = jsonObjectData["GraphPath"].ToString();
+
+                TemperatureDto security = new TemperatureDto(temperatureValue, area, DateTime.Now, sensorPath, TemperatureDto.TemperatureType.RASPBERRY, graphPath);
+                temperatureList.Add(security);
+
+                return temperatureList;
             }
 
             _logger.Error(string.Format("{0} has an error!", value));
 
             return new List<TemperatureDto>();
-        }
-
-        private TemperatureDto parseStringToValue(string[] data)
-        {
-            if (data.Length == 4)
-            {
-                if (data[0].Contains("{value:")
-                    && data[1].Contains("{area:")
-                    && data[2].Contains("{sensorPath:")
-                    && data[3].Contains("{graphPath:"))
-                {
-                    string numberDecimalSeparator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
-                    string temperatureString = data[0].Replace("{value:", "").Replace("};", "").Replace(".", numberDecimalSeparator);
-                    double temperature = -1;
-                    bool parseSuccessTemperature = double.TryParse(temperatureString, out temperature);
-                    if (!parseSuccessTemperature)
-                    {
-                        _logger.Warning("Failed to parse temperature from data!");
-                    }
-
-                    string area = data[1].Replace("{area:", "").Replace("};", "");
-                    string sensorPath = data[2].Replace("{sensorPath:", "").Replace("};", "");
-                    string graphPath = data[3].Replace("{graphPath:", "").Replace("};", "");
-
-                    DateTime lastUpdate = DateTime.Now;
-
-                    return new TemperatureDto(temperature, area, lastUpdate, sensorPath, TemperatureType.RASPBERRY, graphPath);
-                }
-                else
-                {
-                    _logger.Error("data contains invalid entries!");
-                }
-            }
-            else
-            {
-                _logger.Error(string.Format("Data has invalid length {0}", data.Length));
-            }
-
-            _logger.Error(string.Format("{0} has an error!", data));
-
-            return null;
         }
     }
 }

@@ -31,17 +31,22 @@ namespace Common.Enums
         //INFORMATION
         public static readonly LucaServerAction GET_INFORMATIONS = new LucaServerAction(40, "getinformationsrest");
 
-        //MAP_CONTENT
-        public static readonly LucaServerAction GET_MAP_CONTENTS = new LucaServerAction(50, "getmapcontents");
-        public static readonly LucaServerAction ADD_MAP_CONTENT = new LucaServerAction(51, "addmapcontent&id=");
-        public static readonly LucaServerAction UPDATE_MAP_CONTENT = new LucaServerAction(52, "updatemapcontent&id=");
-        public static readonly LucaServerAction DELETE_MAP_CONTENT = new LucaServerAction(53, "deletemapcontent&id=");
+        //LISTEDMENU
+        public static readonly LucaServerAction GET_LISTEDMENU = new LucaServerAction(50, "getlistedmenu");
+        public static readonly LucaServerAction ADD_LISTEDMENU = new LucaServerAction(51, "addlistedmenu&id=");
+        public static readonly LucaServerAction UPDATE_LISTEDMENU = new LucaServerAction(52, "updatelistedmenu&id=");
+        public static readonly LucaServerAction DELETE_LISTEDMENU = new LucaServerAction(53, "deletelistedmenu&id=");
 
         //MENU
-        public static readonly LucaServerAction GET_MENU = new LucaServerAction(60, "getmenu");
-        public static readonly LucaServerAction UPDATE_MENU = new LucaServerAction(61, "updatemenu&weekday=");
-        public static readonly LucaServerAction CLEAR_MENU = new LucaServerAction(62, "clearmenu&weekday=");
-        public static readonly LucaServerAction GET_LISTED_MENU = new LucaServerAction(63, "getlistedmenu");
+        public static readonly LucaServerAction GET_MENU = new LucaServerAction(54, "getmenu");
+        public static readonly LucaServerAction UPDATE_MENU = new LucaServerAction(55, "updatemenu&weekday=");
+        public static readonly LucaServerAction CLEAR_MENU = new LucaServerAction(56, "clearmenu&weekday=");
+
+        //MAP_CONTENT
+        public static readonly LucaServerAction GET_MAP_CONTENTS = new LucaServerAction(60, "getmapcontents");
+        public static readonly LucaServerAction ADD_MAP_CONTENT = new LucaServerAction(61, "addmapcontent&id=");
+        public static readonly LucaServerAction UPDATE_MAP_CONTENT = new LucaServerAction(62, "updatemapcontent&id=");
+        public static readonly LucaServerAction DELETE_MAP_CONTENT = new LucaServerAction(63, "deletemapcontent&id=");
 
         //MOVIE
         public static readonly LucaServerAction GET_MOVIES = new LucaServerAction(70, "getmovies");
@@ -71,11 +76,19 @@ namespace Common.Enums
         public static readonly LucaServerAction DELETE_SOCKET = new LucaServerAction(104, "deletesocket&socket=");
         public static readonly LucaServerAction DEACTIVATE_ALL_SOCKETS = new LucaServerAction(105, "deactivateAllSockets");
 
+        //SWITCH
+        public static readonly LucaServerAction GET_SWITCHES = new LucaServerAction(110, "getswitches");
+        public static readonly LucaServerAction ADD_SWITCH = new LucaServerAction(111, "addswitch&name=");
+        public static readonly LucaServerAction UPDATE_SWITCH = new LucaServerAction(112, "updateswitch&name=");
+        public static readonly LucaServerAction DELETE_SWITCH = new LucaServerAction(113, "deleteswitch&name=");
+        public static readonly LucaServerAction TOGGLE_SWITCH = new LucaServerAction(114, "toggleswitch&name=");
+        public static readonly LucaServerAction TOGGLE_ALL_SWITCHES = new LucaServerAction(115, "toggleallswitches");
+
         //TEMPERATURE
-        public static readonly LucaServerAction GET_TEMPERATURES = new LucaServerAction(110, "getcurrenttemperaturerest");
+        public static readonly LucaServerAction GET_TEMPERATURES = new LucaServerAction(120, "getcurrenttemperature");
 
         //USER
-        public static readonly LucaServerAction VALIDATE_USER = new LucaServerAction(120, "validateuser");
+        public static readonly LucaServerAction VALIDATE_USER = new LucaServerAction(130, "validateuser");
 
         public static IEnumerable<LucaServerAction> Values
         {
@@ -102,10 +115,14 @@ namespace Common.Enums
                 yield return UPDATE_MAP_CONTENT;
                 yield return DELETE_MAP_CONTENT;
 
+                yield return GET_LISTEDMENU;
+                yield return ADD_LISTEDMENU;
+                yield return UPDATE_LISTEDMENU;
+                yield return DELETE_LISTEDMENU;
+
                 yield return GET_MENU;
                 yield return UPDATE_MENU;
                 yield return CLEAR_MENU;
-                yield return GET_LISTED_MENU;
 
                 yield return GET_MOVIES;
                 yield return START_MOVIE;
@@ -130,6 +147,13 @@ namespace Common.Enums
                 yield return UPDATE_SOCKET;
                 yield return DELETE_SOCKET;
                 yield return DEACTIVATE_ALL_SOCKETS;
+
+                yield return GET_SWITCHES;
+                yield return ADD_SWITCH;
+                yield return UPDATE_SWITCH;
+                yield return DELETE_SWITCH;
+                yield return TOGGLE_SWITCH;
+                yield return TOGGLE_ALL_SWITCHES;
 
                 yield return GET_TEMPERATURES;
 

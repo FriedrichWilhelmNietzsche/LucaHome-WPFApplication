@@ -132,10 +132,11 @@ namespace Data.Services
                         .Where(schedule =>
                             schedule.Name.Contains(searchKey)
                             || schedule.Socket.ToString().Contains(searchKey)
-                            || schedule.Information.Contains(searchKey)
-                            || schedule.WeekDay.ToString().Contains(searchKey)
+                            || schedule.WirelessSwitch.ToString().Contains(searchKey)
+                            || schedule.Time.ToString().Contains(searchKey)
+                            || schedule.Action.ToString().Contains(searchKey)
                             || schedule.IsActive.ToString().Contains(searchKey)
-                            || schedule.Time.ToString().Contains(searchKey))
+                            || schedule.ActiveString.Contains(searchKey))
                         .Select(schedule => schedule)
                         .ToList();
 
@@ -323,7 +324,8 @@ namespace Data.Services
                 return;
             }
 
-            IList<ScheduleDto> scheduleList = _jsonDataToScheduleConverter.GetList(response, _wirelessSocketService.WirelessSocketList);
+            // TODO add wirelessSwitchList
+            IList<ScheduleDto> scheduleList = _jsonDataToScheduleConverter.GetList(response, _wirelessSocketService.WirelessSocketList, null);
             if (scheduleList == null)
             {
                 _logger.Error("Converted scheduleList is null!");

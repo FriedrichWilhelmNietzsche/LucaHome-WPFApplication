@@ -30,8 +30,8 @@
     <ProductName>LucaHome</ProductName>
     <PublisherName>GuepardoApps</PublisherName>
     <SuiteName>LucaHome</SuiteName>
-    <ApplicationRevision>17317</ApplicationRevision>
-    <ApplicationVersion>1.3.9.17317</ApplicationVersion>
+    <ApplicationRevision>17349</ApplicationRevision>
+    <ApplicationVersion>5.0.0.17349</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -148,6 +148,9 @@
     </Compile>
     <Compile Include="Dialogs\SeasonDialog.xaml.cs">
       <DependentUpon>SeasonDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ToggleDialog.xaml.cs">
+      <DependentUpon>ToggleDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\SetDialog.xaml.cs">
       <DependentUpon>SetDialog.xaml</DependentUpon>
@@ -277,6 +280,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\SeasonDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\ToggleDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

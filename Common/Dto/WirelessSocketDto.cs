@@ -9,16 +9,19 @@ namespace Common.Dto
     {
         private const string TAG = "WirelessSocketDto";
 
-        private int _id;
+        protected int _id;
 
-        private string _name;
-        private string _area;
-        private string _code;
-        private bool _isActivated;
+        protected string _name;
+        protected string _area;
+        protected string _code;
+        protected bool _isActivated;
 
-        private string _shortName;
+        protected DateTime _lastTriggerDate;
+        protected string _lastTriggerUser;
 
-        public WirelessSocketDto(int id, string name, string area, string code, bool isActivated)
+        protected string _shortName;
+
+        public WirelessSocketDto(int id, string name, string area, string code, bool isActivated, DateTime lastTriggerDate, string lastTriggerUser)
         {
             _id = id;
 
@@ -26,6 +29,9 @@ namespace Common.Dto
             _area = area;
             _code = code;
             _isActivated = isActivated;
+
+            _lastTriggerDate = lastTriggerDate;
+            _lastTriggerUser = lastTriggerUser;
 
             _shortName = createShortName(_name);
         }
@@ -96,6 +102,30 @@ namespace Common.Dto
             }
         }
 
+        public DateTime LastTriggerDate
+        {
+            get
+            {
+                return _lastTriggerDate;
+            }
+            set
+            {
+                _lastTriggerDate = value;
+            }
+        }
+
+        public string LastTriggerUser
+        {
+            get
+            {
+                return _lastTriggerUser;
+            }
+            set
+            {
+                _lastTriggerUser = value;
+            }
+        }
+
         public string ActivationString
         {
             get
@@ -112,7 +142,7 @@ namespace Common.Dto
             }
         }
 
-        public string CommandSet
+        public virtual string CommandSet
         {
             get
             {
@@ -120,7 +150,7 @@ namespace Common.Dto
             }
         }
 
-        public string CommandAdd
+        public virtual string CommandAdd
         {
             get
             {
@@ -128,15 +158,15 @@ namespace Common.Dto
             }
         }
 
-        public string CommandUpdate
+        public virtual string CommandUpdate
         {
             get
             {
-                return string.Format("{0}{1}&area={2}&code={3}&isactivated={4}", LucaServerAction.ADD_SOCKET.Action, _name, _area, _code, (_isActivated ? "1" : "0"));
+                return string.Format("{0}{1}&area={2}&code={3}&isactivated={4}", LucaServerAction.UPDATE_SOCKET.Action, _name, _area, _code, (_isActivated ? "1" : "0"));
             }
         }
 
-        public string CommandDelete
+        public virtual string CommandDelete
         {
             get
             {
@@ -144,7 +174,7 @@ namespace Common.Dto
             }
         }
 
-        public Uri Drawable
+        public virtual Uri Drawable
         {
             get
             {
@@ -299,7 +329,7 @@ namespace Common.Dto
             return string.Format("( {0}: (Name: {1} );(Area: {2} );(Code: {3} );(IsActivated: {4} ))", TAG, _name, _area, _code, (_isActivated ? "1" : "0"));
         }
 
-        private string createShortName(string name)
+        protected string createShortName(string name)
         {
             string shortName;
 

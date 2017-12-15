@@ -1,16 +1,15 @@
 ﻿using Common.Dto;
 using Common.Tools;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Windows;
-using static Common.Dto.MapContentDto;
 
 namespace Common.Converter
 {
     public class JsonDataToMapContentConverter
     {
         private const string TAG = "JsonDataToMapContentConverter";
-        private static string _searchParameter = "{mapcontent:";
+        private static string _searchParameter = "{\"Data\":";
 
         private readonly Logger _logger;
 
@@ -19,187 +18,142 @@ namespace Common.Converter
             _logger = new Logger(TAG);
         }
 
-        public IList<MapContentDto> GetList(string[] stringArray, IList<TemperatureDto> temperatureList, IList<WirelessSocketDto> socketList, IList<ScheduleDto> scheduleList)
+        public IList<MapContentDto> GetList(
+            string[] stringArray,
+            IList<ListedMenuDto> listedMenuList, IList<MenuDto> menuList, IList<ShoppingEntryDto> shoppingList,
+            IList<MediaServerDto> mediaServerList, IList<SecurityDto> securityList, IList<TemperatureDto> temperatureList,
+            IList<WirelessSocketDto> wirelessSocketList, IList<WirelessSwitchDto> wirelessSwitchList)
         {
             if (StringHelper.StringsAreEqual(stringArray))
             {
-                return parseStringToList(stringArray[0], temperatureList, socketList, scheduleList);
+                return parseStringToList(
+                    stringArray[0],
+                    listedMenuList, menuList, shoppingList,
+                    mediaServerList, securityList, temperatureList,
+                    wirelessSocketList, wirelessSwitchList);
             }
             else
             {
                 string usedEntry = StringHelper.SelectString(stringArray, _searchParameter);
-                return parseStringToList(usedEntry, temperatureList, socketList, scheduleList);
+                return parseStringToList(
+                    usedEntry,
+                    listedMenuList, menuList, shoppingList,
+                    mediaServerList, securityList, temperatureList,
+                    wirelessSocketList, wirelessSwitchList);
             }
         }
 
-        public IList<MapContentDto> GetList(string jsonString, IList<TemperatureDto> temperatureList, IList<WirelessSocketDto> socketList, IList<ScheduleDto> scheduleList)
+        public IList<MapContentDto> GetList(
+            string jsonString,
+            IList<ListedMenuDto> listedMenuList, IList<MenuDto> menuList, IList<ShoppingEntryDto> shoppingList,
+            IList<MediaServerDto> mediaServerList, IList<SecurityDto> securityList, IList<TemperatureDto> temperatureList,
+            IList<WirelessSocketDto> wirelessSocketList, IList<WirelessSwitchDto> wirelessSwitchList)
         {
-            return parseStringToList(jsonString, temperatureList, socketList, scheduleList);
+            return parseStringToList(
+                jsonString,
+                listedMenuList, menuList, shoppingList,
+                mediaServerList, securityList, temperatureList,
+                wirelessSocketList, wirelessSwitchList);
         }
 
-        private IList<MapContentDto> parseStringToList(string value, IList<TemperatureDto> temperatureList, IList<WirelessSocketDto> socketList, IList<ScheduleDto> scheduleList)
+        private IList<MapContentDto> parseStringToList(
+            string value,
+            IList<ListedMenuDto> listedMenuList, IList<MenuDto> menuList, IList<ShoppingEntryDto> shoppingList,
+            IList<MediaServerDto> mediaServerList, IList<SecurityDto> securityList, IList<TemperatureDto> temperatureList,
+            IList<WirelessSocketDto> wirelessSocketList, IList<WirelessSwitchDto> wirelessSwitchList)
         {
             if (!value.Contains("Error"))
             {
-                if (StringHelper.GetStringCount(value, _searchParameter) > 0)
+                IList<MapContentDto> mapContentList = new List<MapContentDto>();
+
+                JObject jsonObject = JObject.Parse(value);
+                JToken jsonObjectData = jsonObject.GetValue("Data");
+
+                foreach (JToken child in jsonObjectData.Children())
                 {
-                    if (value.Contains(_searchParameter))
+                    JToken mapContentJsonData = child["MapContent"];
+
+                    int id = int.Parse(mapContentJsonData["ID"].ToString());
+
+                    string type = mapContentJsonData["Type"].ToString();
+                    MapContentDto.DrawingType drawingType;
+                    switch (type)
                     {
-                        IList<MapContentDto> list = new List<MapContentDto>();
-
-                        string[] entries = Regex.Split(value, "\\" + _searchParameter);
-                        for (int index = 0; index < entries.Length; index++)
-                        {
-                            string entry = entries[index];
-                            string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
-
-                            string[] data = Regex.Split(replacedEntry, "\\};");
-                            MapContentDto newValue = parseStringToValue(data, temperatureList, socketList, scheduleList);
-                            if (newValue != null)
-                            {
-                                list.Add(newValue);
-                            }
-                        }
-
-                        return list;
+                        case "WirelessSocket":
+                            drawingType = MapContentDto.DrawingType.Socket;
+                            break;
+                        case "LAN":
+                            drawingType = MapContentDto.DrawingType.LAN;
+                            break;
+                        case "MediaServer":
+                            drawingType = MapContentDto.DrawingType.MediaServer;
+                            break;
+                        case "RaspberryPi":
+                            drawingType = MapContentDto.DrawingType.RaspberryPi;
+                            break;
+                        case "NAS":
+                            drawingType = MapContentDto.DrawingType.NAS;
+                            break;
+                        case "LightSwitch":
+                            drawingType = MapContentDto.DrawingType.LightSwitch;
+                            break;
+                        case "Temperature":
+                            drawingType = MapContentDto.DrawingType.Temperature;
+                            break;
+                        case "PuckJS":
+                            drawingType = MapContentDto.DrawingType.PuckJS;
+                            break;
+                        case "Menu":
+                            drawingType = MapContentDto.DrawingType.Menu;
+                            break;
+                        case "ShoppingList":
+                            drawingType = MapContentDto.DrawingType.ShoppingList;
+                            break;
+                        case "Camera":
+                            drawingType = MapContentDto.DrawingType.Camera;
+                            break;
+                        default:
+                            drawingType = MapContentDto.DrawingType.Null;
+                            break;
                     }
+                    int typeId = int.Parse(mapContentJsonData["TypeId"].ToString());
+
+                    string name = mapContentJsonData["Name"].ToString();
+                    string shortName = mapContentJsonData["ShortName"].ToString();
+                    string area = mapContentJsonData["Area"].ToString();
+
+                    Visibility visibility = mapContentJsonData["Visibility"].ToString() == "1" ? Visibility.Visible : Visibility.Collapsed;
+
+                    JToken positionJsonData = mapContentJsonData["Position"];
+                    JToken pointJsonData = positionJsonData["Point"];
+
+                    int positionX = int.Parse(pointJsonData["X"].ToString());
+                    int positionY = int.Parse(pointJsonData["Y"].ToString());
+
+                    int[] position = { positionX, positionY };
+
+                    IList<ListedMenuDto> _listedMenuList = ((name == "ListedMenu" && drawingType == MapContentDto.DrawingType.Menu) ? listedMenuList : null);
+                    IList<MenuDto> _menuList = ((name == "Menu" && drawingType == MapContentDto.DrawingType.Menu) ? menuList : null);
+                    IList<ShoppingEntryDto> _shoppingList = ((name == "ShoppingList" && drawingType == MapContentDto.DrawingType.ShoppingList) ? shoppingList : null);
+
+                    MediaServerDto mediaServer = drawingType == MapContentDto.DrawingType.MediaServer ? (mediaServerList.Count > 0 ? mediaServerList[typeId - 1] : null) : null;
+                    SecurityDto security = drawingType == MapContentDto.DrawingType.Camera ? (securityList.Count > 0 ? securityList[typeId - 1] : null) : null;
+                    TemperatureDto temperature = drawingType == MapContentDto.DrawingType.Temperature ? (temperatureList.Count > 0 ? temperatureList[typeId - 1] : null) : null;
+                    WirelessSocketDto wirelessSocket = drawingType == MapContentDto.DrawingType.Socket ? (wirelessSocketList.Count > 0 ? wirelessSocketList[typeId - 1] : null) : null;
+                    WirelessSwitchDto wirelessSwitch = drawingType == MapContentDto.DrawingType.LightSwitch ? (wirelessSwitchList.Count > 0 ? wirelessSwitchList[typeId - 1] : null) : null;
+
+                    MapContentDto newMapContent = new MapContentDto(id, drawingType, typeId, position, name, shortName, area, visibility,
+                        _listedMenuList, _menuList, _shoppingList, mediaServer, security, temperature, wirelessSocket, wirelessSwitch);
+
+                    mapContentList.Add(newMapContent);
                 }
+
+                return mapContentList;
             }
 
             _logger.Error(string.Format("{0} has an error!", value));
 
             return new List<MapContentDto>();
-        }
-
-        private MapContentDto parseStringToValue(string[] data, IList<TemperatureDto> temperatureList, IList<WirelessSocketDto> socketList, IList<ScheduleDto> scheduleList)
-        {
-            if (data.Length == 8)
-            {
-                _logger.Warning("Length is 8! trying to fix!");
-                if (data[0].Length == 0)
-                {
-                    _logger.Warning("Value at index 0 is null! Trying to fix...");
-                    string[] fixedData = new string[7];
-                    for (int index = 1; index < data.Length; index++)
-                    {
-                        fixedData[index - 1] = data[index];
-                    }
-                    data = fixedData;
-                }
-            }
-
-            if (data.Length == 7)
-            {
-                if (data[0].Contains("{id:")
-                    && data[1].Contains("{position:")
-                    && data[2].Contains("{type:")
-                    && data[3].Contains("{schedules:")
-                    && data[4].Contains("{sockets:")
-                    && data[5].Contains("{temperatureArea:")
-                    && data[6].Contains("{visibility:"))
-                {
-                    string idString = data[0].Replace("{id:", "").Replace("};", "");
-                    int id = -1;
-                    bool parseSuccessId = int.TryParse(idString, out id);
-                    if (!parseSuccessId)
-                    {
-                        _logger.Error("Failed to parse id from data!");
-                        return null;
-                    }
-
-                    string positionString = data[1].Replace("{position:", "").Replace("};", "");
-                    string[] coordinates = Regex.Split(positionString, "\\|");
-                    int x = -1;
-                    int y = -1;
-                    bool parseSuccessX = int.TryParse(coordinates[0], out x);
-                    bool parseSuccessY = int.TryParse(coordinates[1], out y);
-                    if (!parseSuccessX || !parseSuccessY)
-                    {
-                        _logger.Error("Failed to parse position from data!");
-                        return null;
-                    }
-                    int[] position = { x, y };
-
-                    string typeString = data[2].Replace("{type:", "").Replace("};", "");
-                    int typeInteger = 0;
-                    bool parseSuccessType = int.TryParse(typeString, out typeInteger);
-                    if (!parseSuccessType)
-                    {
-                        _logger.Error("Failed to parse type from data!");
-                        return null;
-                    }
-                    DrawingType type = (DrawingType)typeInteger;
-
-                    IList<ScheduleDto> mapContentScheduleList = new List<ScheduleDto>();
-                    string scheduleListString = data[3].Replace("{schedules:", "").Replace("};", "");
-                    string[] scheduleStringList = Regex.Split(scheduleListString, "\\|");
-                    foreach (string entry in scheduleStringList)
-                    {
-                        foreach (ScheduleDto schedule in scheduleList)
-                        {
-                            if (entry.Contains(schedule.Name))
-                            {
-                                mapContentScheduleList.Add(schedule);
-                                break;
-                            }
-                        }
-                    }
-
-                    WirelessSocketDto mapContentSocket = null;
-                    string socketListString = data[4].Replace("{sockets:", "").Replace("};", "");
-                    string[] socketStringList = Regex.Split(socketListString, "\\|");
-                    bool foundSocket = false;
-                    foreach (string entry in socketStringList)
-                    {
-                        foreach (WirelessSocketDto socket in socketList)
-                        {
-                            if (entry.Contains(socket.Name))
-                            {
-                                mapContentSocket = socket;
-                                foundSocket = true;
-                                break;
-                            }
-                        }
-
-                        if (foundSocket)
-                        {
-                            break;
-                        }
-                    }
-                    
-                    string temperatureArea = data[5].Replace("{temperatureArea:", "").Replace("};", "");
-
-                    TemperatureDto temperature = null;
-                    if (type == DrawingType.Temperature)
-                    {
-                        foreach (TemperatureDto entry in temperatureList)
-                        {
-                            if (entry.Area.Contains(temperatureArea))
-                            {
-                                temperature = entry;
-                                break;
-                            }
-                        }
-                    }
-
-                    string visibilityString = data[6].Replace("{visibility:", "").Replace("};", "");
-                    Visibility visibility = visibilityString.Contains("1") ? Visibility.Visible : Visibility.Collapsed;
-
-                    return new MapContentDto(id, position, type, temperatureArea, temperature, mapContentSocket, mapContentScheduleList, visibility);
-                }
-                else
-                {
-                    _logger.Error("data contains invalid entries!");
-                }
-            }
-            else
-            {
-                _logger.Error(string.Format("Data has invalid length {0}", data.Length));
-            }
-
-            _logger.Error(string.Format("{0} has an error!", data));
-
-            return null;
         }
     }
 }

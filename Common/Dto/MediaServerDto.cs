@@ -1,8 +1,8 @@
 ﻿namespace Common.Dto
 {
-    public class MediaMirrorDto
+    public class MediaServerDto
     {
-        private const string TAG = "MediaMirrorDto";
+        private const string TAG = "MediaServerDto";
 
         private int _batteryLevel;
 
@@ -27,7 +27,7 @@
 
         private int _screenBrightness;
 
-        public MediaMirrorDto(
+        public MediaServerDto(
             //MediaServerSelection mediaServerSelection,
             int batteryLevel,
             string socketName,

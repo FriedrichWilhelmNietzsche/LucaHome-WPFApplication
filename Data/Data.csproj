@@ -91,6 +91,7 @@
     <Compile Include="Services\MovieService.cs" />
     <Compile Include="Services\BirthdayService.cs" />
     <Compile Include="Services\ScheduleService.cs" />
+    <Compile Include="Services\WirelessSwitchService.cs" />
     <Compile Include="Services\WirelessSocketService.cs" />
   </ItemGroup>
   <ItemGroup>

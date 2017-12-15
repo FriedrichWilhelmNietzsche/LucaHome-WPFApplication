@@ -89,9 +89,6 @@
                     <GridViewColumn Header="Name"
                                     DisplayMemberBinding="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
                                     Width="150"/>
-                    <GridViewColumn Header="Information"
-                                    DisplayMemberBinding="{Binding Information, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="125"/>
                     <GridViewColumn Header="WeekDay"
                                     DisplayMemberBinding="{Binding WeekDay, UpdateSourceTrigger=PropertyChanged}"
                                     Width="125"/>
@@ -100,6 +97,9 @@
                                     Width="125"/>
                     <GridViewColumn Header="Socket"
                                     DisplayMemberBinding="{Binding SocketName, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="100"/>
+                    <GridViewColumn Header="Switch"
+                                    DisplayMemberBinding="{Binding SwitchName, UpdateSourceTrigger=PropertyChanged}"
                                     Width="100"/>
                     <GridViewColumn Header="Action"
                                     DisplayMemberBinding="{Binding Action, UpdateSourceTrigger=PropertyChanged}"

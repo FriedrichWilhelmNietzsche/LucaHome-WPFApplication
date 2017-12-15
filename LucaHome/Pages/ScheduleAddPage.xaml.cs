@@ -1,5 +1,6 @@
 ﻿using Common.Common;
 using Common.Dto;
+using Common.Enums;
 using Common.Tools;
 using Data.Services;
 using System;
@@ -25,10 +26,12 @@ namespace LucaHome.Pages
         private readonly NavigationService _navigationService;
         private readonly ScheduleService _schedulService;
         private readonly WirelessSocketService _wirelessSocketService;
+        private readonly WirelessSwitchService _wirelessSwitchService;
 
         private readonly Notifier _notifier;
 
         private readonly IList<WirelessSocketDto> _wirelessSocketList;
+        private readonly IList<WirelessSwitchDto> _wirelessSwitchList;
         private ScheduleDto _newSchedule;
 
         public ScheduleAddPage(NavigationService navigationService)
@@ -38,9 +41,12 @@ namespace LucaHome.Pages
             _navigationService = navigationService;
             _schedulService = ScheduleService.Instance;
             _wirelessSocketService = WirelessSocketService.Instance;
+            _wirelessSwitchService = WirelessSwitchService.Instance;
 
             _wirelessSocketList = _wirelessSocketService.WirelessSocketList;
-            _newSchedule = new ScheduleDto(_schedulService.ScheduleList.Count, "", null, (Weekday)DateTime.Now.DayOfWeek, DateTime.Now, SocketAction.Null, true);
+            _wirelessSwitchList = _wirelessSwitchService.WirelessSwitchList;
+
+            _newSchedule = new ScheduleDto(_schedulService.ScheduleList.Count, "", null, null, DateTime.Now, WirelessAction.Null, true);
 
             InitializeComponent();
             DataContext = this;
@@ -72,19 +78,16 @@ namespace LucaHome.Pages
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public CollectionView WeekdayList
+        public CollectionView DayOfWeekList
         {
             get
             {
-                IList<Weekday> weekdayList = new List<Weekday>();
-                foreach (Weekday entry in Enum.GetValues(typeof(Weekday)))
+                IList<DayOfWeek> dayOfWeekList = new List<DayOfWeek>();
+                foreach (DayOfWeek entry in Enum.GetValues(typeof(DayOfWeek)))
                 {
-                    if (entry > Weekday.Null)
-                    {
-                        weekdayList.Add(entry);
-                    }
+                    dayOfWeekList.Add(entry);
                 }
-                return new CollectionView(weekdayList);
+                return new CollectionView(dayOfWeekList);
             }
         }
 
@@ -101,19 +104,32 @@ namespace LucaHome.Pages
             }
         }
 
+        public CollectionView SwitchList
+        {
+            get
+            {
+                IList<string> switchList = new List<string>();
+                foreach (WirelessSwitchDto entry in _wirelessSwitchList)
+                {
+                    switchList.Add(entry.Name);
+                }
+                return new CollectionView(switchList);
+            }
+        }
+
         public CollectionView ActionList
         {
             get
             {
-                IList<SocketAction> actionList = new List<SocketAction>();
-                foreach (SocketAction entry in Enum.GetValues(typeof(SocketAction)))
+                IList<WirelessAction> wirelessActionList = new List<WirelessAction>();
+                foreach (WirelessAction entry in Enum.GetValues(typeof(WirelessAction)))
                 {
-                    if (entry > SocketAction.Null)
+                    if (entry > WirelessAction.Null)
                     {
-                        actionList.Add(entry);
+                        wirelessActionList.Add(entry);
                     }
                 }
-                return new CollectionView(actionList);
+                return new CollectionView(wirelessActionList);
             }
         }
 
@@ -127,19 +143,6 @@ namespace LucaHome.Pages
             {
                 _newSchedule.Name = value;
                 OnPropertyChanged("ScheduleName");
-            }
-        }
-
-        public string ScheduleInformation
-        {
-            get
-            {
-                return _newSchedule.Information;
-            }
-            set
-            {
-                _newSchedule.Information = value;
-                OnPropertyChanged("ScheduleInformation");
             }
         }
 
@@ -157,15 +160,38 @@ namespace LucaHome.Pages
             }
         }
 
-        public Weekday ScheduleWeekday
+        public string ScheduleSwitch
         {
             get
             {
-                return _newSchedule.WeekDay;
+                return _newSchedule.WirelessSwitch != null ? _newSchedule.WirelessSwitch.Name : string.Empty;
             }
             set
             {
-                _newSchedule.WeekDay = value;
+                WirelessSwitchDto scheduleSwitch = _wirelessSwitchService.GetByName(value);
+                _newSchedule.WirelessSwitch = scheduleSwitch;
+                OnPropertyChanged("ScheduleSwitch");
+            }
+        }
+
+        public DayOfWeek ScheduleWeekday
+        {
+            get
+            {
+                return _newSchedule.Time.DayOfWeek;
+            }
+            set
+            {
+                DateTime scheduleDateTime = _newSchedule.Time;
+
+                int scheduleDayOfWeekInteger = (int)scheduleDateTime.DayOfWeek;
+                int newScheduleDayOfWeekInteger = (int)value;
+
+                int difference = scheduleDayOfWeekInteger - newScheduleDayOfWeekInteger;
+
+                DateTime newScheduleDateTime = scheduleDateTime.AddDays(difference);
+                _newSchedule.Time = newScheduleDateTime;
+
                 OnPropertyChanged("ScheduleWeekday");
             }
         }
@@ -183,7 +209,7 @@ namespace LucaHome.Pages
             }
         }
 
-        public SocketAction ScheduleAction
+        public WirelessAction ScheduleAction
         {
             get
             {

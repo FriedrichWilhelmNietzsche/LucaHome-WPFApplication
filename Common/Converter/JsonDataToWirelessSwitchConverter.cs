@@ -7,19 +7,19 @@ using System.Collections.Generic;
 
 namespace Common.Converter
 {
-    public class JsonDataToWirelessSocketConverter : IJsonDataConverter<WirelessSocketDto>
+    public class JsonDataToWirelessSwitchConverter : IJsonDataConverter<WirelessSwitchDto>
     {
-        private const string TAG = "JsonDataToWirelessSocketConverter";
+        private const string TAG = "JsonDataToWirelessSwitchConverter";
         private static string _searchParameter = "{\"Data\":";
 
         private readonly Logger _logger;
 
-        public JsonDataToWirelessSocketConverter()
+        public JsonDataToWirelessSwitchConverter()
         {
             _logger = new Logger(TAG);
         }
 
-        public IList<WirelessSocketDto> GetList(string[] jsonStringArray)
+        public IList<WirelessSwitchDto> GetList(string[] jsonStringArray)
         {
             if (StringHelper.StringsAreEqual(jsonStringArray))
             {
@@ -32,18 +32,18 @@ namespace Common.Converter
             }
         }
 
-        public IList<WirelessSocketDto> GetList(string jsonString)
+        public IList<WirelessSwitchDto> GetList(string jsonString)
         {
             _logger.Debug(string.Format("GetList with jsonString {0}", jsonString));
 
             return parseStringToList(jsonString);
         }
 
-        private IList<WirelessSocketDto> parseStringToList(string value)
+        private IList<WirelessSwitchDto> parseStringToList(string value)
         {
             if (!value.Contains("Error"))
             {
-                IList<WirelessSocketDto> wirelessSocketList = new List<WirelessSocketDto>();
+                IList<WirelessSwitchDto> wirelessSwitchList = new List<WirelessSwitchDto>();
 
                 JObject jsonObject = JObject.Parse(value);
                 JToken jsonObjectData = jsonObject.GetValue("Data");
@@ -51,15 +51,17 @@ namespace Common.Converter
                 int id = 0;
                 foreach (JToken child in jsonObjectData.Children())
                 {
-                    JToken wirelessSocketJsonData = child["WirelessSocket"];
+                    JToken wirelessSwitchJsonData = child["WirelessSwitch"];
 
-                    string name = wirelessSocketJsonData["Name"].ToString();
-                    string area = wirelessSocketJsonData["Area"].ToString();
-                    string code = wirelessSocketJsonData["Code"].ToString();
+                    string name = wirelessSwitchJsonData["Name"].ToString();
+                    string area = wirelessSwitchJsonData["Area"].ToString();
 
-                    bool isActivated = wirelessSocketJsonData["State"].ToString() == "1";
+                    int remoteId = int.Parse(wirelessSwitchJsonData["RemoteId"].ToString());
+                    char keyCode = char.Parse(wirelessSwitchJsonData["KeyCode"].ToString());
 
-                    JToken lastTriggerJsonData = wirelessSocketJsonData["LastTrigger"];
+                    bool action = wirelessSwitchJsonData["Action"].ToString() == "1";
+
+                    JToken lastTriggerJsonData = wirelessSwitchJsonData["LastTrigger"];
 
                     int year = int.Parse(lastTriggerJsonData["Year"].ToString());
                     int month = int.Parse(lastTriggerJsonData["Month"].ToString());
@@ -80,18 +82,18 @@ namespace Common.Converter
 
                     string lastTriggerUser = lastTriggerJsonData["UserName"].ToString();
 
-                    WirelessSocketDto newMenu = new WirelessSocketDto(id, name, area, code, isActivated, lastTriggerDate, lastTriggerUser);
-                    wirelessSocketList.Add(newMenu);
+                    WirelessSwitchDto newMenu = new WirelessSwitchDto(id, name, area, remoteId, keyCode, false, action, lastTriggerDate, lastTriggerUser);
+                    wirelessSwitchList.Add(newMenu);
 
                     id++;
                 }
 
-                return wirelessSocketList;
+                return wirelessSwitchList;
             }
 
             _logger.Error(string.Format("{0} has an error!", value));
 
-            return new List<WirelessSocketDto>();
+            return new List<WirelessSwitchDto>();
         }
     }
 }

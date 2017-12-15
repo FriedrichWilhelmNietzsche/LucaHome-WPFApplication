@@ -1,16 +1,16 @@
 ﻿using Common.Dto;
 using Common.Interfaces;
 using Common.Tools;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 namespace Common.Converter
 {
     public class JsonDataToChangeConverter : IJsonDataConverter<ChangeDto>
     {
         private const string TAG = "JsonDataToChangeConverter";
-        private static string _searchParameter = "{change:";
+        private static string _searchParameter = "{\"Data\":";
 
         private readonly Logger _logger;
 
@@ -41,115 +41,39 @@ namespace Common.Converter
         {
             if (!value.Contains("Error"))
             {
-                if (StringHelper.GetStringCount(value, _searchParameter) > 0)
+                IList<ChangeDto> changeList = new List<ChangeDto>();
+
+                JObject jsonObject = JObject.Parse(value);
+                JToken jsonObjectData = jsonObject.GetValue("Data");
+
+                int id = 0;
+                foreach (JToken child in jsonObjectData.Children())
                 {
-                    if (value.Contains(_searchParameter))
-                    {
-                        IList<ChangeDto> list = new List<ChangeDto>();
+                    JToken changeJsonData = child["Change"];
 
-                        string[] entries = Regex.Split(value, "\\" + _searchParameter);
-                        for (int index = 0; index < entries.Length; index++)
-                        {
-                            string entry = entries[index];
-                            string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
+                    string type = changeJsonData["Type"].ToString();
+                    string user = changeJsonData["UserName"].ToString(); 
+                    
+                    JToken changeJsonDate = changeJsonData["Date"];
 
-                            string[] data = Regex.Split(replacedEntry, "\\};");
-                            ChangeDto newValue = parseStringToValue(index, data);
-                            if (newValue != null)
-                            {
-                                list.Add(newValue);
-                            }
-                        }
+                    int day = int.Parse(changeJsonDate["Day"].ToString());
+                    int month = int.Parse(changeJsonDate["Month"].ToString());
+                    int year = int.Parse(changeJsonDate["Year"].ToString());
 
-                        return list;
-                    }
+                    DateTime dateTime = new DateTime(year, month, day);
+
+                    ChangeDto newChange = new ChangeDto(id, type, dateTime, user);
+                    changeList.Add(newChange);
+
+                    id++;
                 }
+
+                return changeList;
             }
 
             _logger.Error(string.Format("{0} has an error!", value));
 
             return new List<ChangeDto>();
-        }
-
-        private ChangeDto parseStringToValue(int id, string[] data)
-        {
-            if (data.Length == 7)
-            {
-                if (data[0].Contains("{Type:")
-                        && data[1].Contains("{Hour:")
-                        && data[2].Contains("{Minute:")
-                        && data[3].Contains("{Day:")
-                        && data[4].Contains("{Month:")
-                        && data[5].Contains("{Year:")
-                        && data[6].Contains("{User:"))
-                {
-
-                    string type = data[0].Replace("{Type:", "").Replace("};", "");
-
-                    string dayString = data[3].Replace("{Day:", "").Replace("};", "");
-                    int day = -1;
-                    bool parseSuccessDay = int.TryParse(dayString, out day);
-                    if (!parseSuccessDay)
-                    {
-                        _logger.Error("Failed to parse day from data!");
-                        return null;
-                    }
-
-                    string monthString = data[4].Replace("{Month:", "").Replace("};", "");
-                    int month = -1;
-                    bool parseSuccessMonth = int.TryParse(dayString, out month);
-                    if (!parseSuccessMonth)
-                    {
-                        _logger.Error("Failed to parse month from data!");
-                        return null;
-                    }
-
-                    string yearString = data[5].Replace("{Year:", "").Replace("};", "");
-                    int year = -1;
-                    bool parseSuccessYear = int.TryParse(dayString, out year);
-                    if (!parseSuccessYear)
-                    {
-                        _logger.Error("Failed to parse year from data!");
-                        return null;
-                    }
-
-                    string hourString = data[1].Replace("{Hour:", "").Replace("};", "");
-                    int hour = -1;
-                    bool parseSuccessHour = int.TryParse(hourString, out hour);
-                    if (!parseSuccessHour)
-                    {
-                        _logger.Error("Failed to parse hour from data!");
-                        return null;
-                    }
-
-                    string minuteString = data[2].Replace("{Minute:", "").Replace("};", "");
-                    int minute = -1;
-                    bool parseSuccessMinute = int.TryParse(minuteString, out minute);
-                    if (!parseSuccessMinute)
-                    {
-                        _logger.Error("Failed to parse minute from data!");
-                        return null;
-                    }
-
-                    DateTime dateTime = new DateTime(year, month, day, hour, minute, 0);
-
-                    string user = data[6].Replace("{User:", "").Replace("};", "");
-
-                    return new ChangeDto(id, type, dateTime, user);
-                }
-                else
-                {
-                    _logger.Error("data contains invalid entries!");
-                }
-            }
-            else
-            {
-                _logger.Error(string.Format("Data has invalid length {0}", data.Length));
-            }
-
-            _logger.Error(string.Format("{0} has an error!", data));
-
-            return null;
         }
     }
 }

@@ -34,7 +34,7 @@ namespace LucaHome.Pages
             _navigationService = navigationService;
             _wirelessSocketService = WirelessSocketService.Instance;
 
-            _newWirelessSocket = new WirelessSocketDto(_wirelessSocketService.WirelessSocketList.Count, "", "", "", false);
+            _newWirelessSocket = new WirelessSocketDto(_wirelessSocketService.WirelessSocketList.Count, "", "", "", false, new DateTime(), "");
 
             InitializeComponent();
             DataContext = this;

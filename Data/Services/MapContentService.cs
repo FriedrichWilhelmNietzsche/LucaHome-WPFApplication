@@ -22,10 +22,17 @@ namespace Data.Services
 
         private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
+
         private readonly JsonDataToMapContentConverter _jsonDataToMapContentConverter;
+
+        private readonly MediaMirrorService _mediaMirrorService;
+        private readonly MenuService _menuService;
         private readonly ScheduleService _scheduleService;
+        private readonly SecurityService _securityService;
+        private readonly ShoppingListService _shoppingListService;
         private readonly TemperatureService _temperatureService;
         private readonly WirelessSocketService _wirelessSocketService;
+        // TODO add WirelessSwitchService
 
         private static MapContentService _instance = null;
         private static readonly object _padlock = new object();
@@ -40,10 +47,17 @@ namespace Data.Services
 
             _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
+
             _jsonDataToMapContentConverter = new JsonDataToMapContentConverter();
+
+            _mediaMirrorService = MediaMirrorService.Instance;
+            _menuService = MenuService.Instance;
             _scheduleService = ScheduleService.Instance;
+            _securityService = SecurityService.Instance;
+            _shoppingListService = ShoppingListService.Instance;
             _temperatureService = TemperatureService.Instance;
             _wirelessSocketService = WirelessSocketService.Instance;
+            // TODO add WirelessSwitchService
 
             _downloadTimer = new Timer(TIMEOUT);
             _downloadTimer.Elapsed += _downloadTimer_Elapsed;
@@ -96,13 +110,22 @@ namespace Data.Services
             List<MapContentDto> foundMapContents = _mapContentList
                         .Where(mapContent =>
                             mapContent.Id.ToString().Contains(searchKey)
-                            || mapContent.Position.ToString().Contains(searchKey)
                             || mapContent.MapDrawingType.ToString().Contains(searchKey)
+                            || mapContent.DrawingTypeId.ToString().Contains(searchKey)
+                            || mapContent.Position.ToString().Contains(searchKey)
+                            || mapContent.Name.Contains(searchKey)
+                            || mapContent.ShortName.Contains(searchKey)
                             || mapContent.Area.Contains(searchKey)
+                            || mapContent.ButtonVisibility.ToString().Contains(searchKey)
+                            || mapContent.ListedMenuList.ToString().Contains(searchKey)
+                            || mapContent.MenuList.ToString().Contains(searchKey)
+                            || mapContent.ShoppingList.ToString().Contains(searchKey)
+                            || mapContent.MediaServer.ToString().Contains(searchKey)
+                            || mapContent.Security.ToString().Contains(searchKey)
                             || mapContent.Temperature.ToString().Contains(searchKey)
-                            || mapContent.Socket.ToString().Contains(searchKey)
-                            || mapContent.ScheduleList.ToString().Contains(searchKey)
-                            || mapContent.ButtonVisibility.ToString().Contains(searchKey))
+                            || mapContent.WirelessSocket.ToString().Contains(searchKey)
+                            || mapContent.WirelessSwitch.ToString().Contains(searchKey)
+                            || mapContent.ButtonToolTip.Contains(searchKey))
                         .Select(mapContent => mapContent)
                         .ToList();
 
@@ -169,7 +192,13 @@ namespace Data.Services
                 return;
             }
 
-            IList<MapContentDto> mapContentList = _jsonDataToMapContentConverter.GetList(response, _temperatureService.TemperatureList, _wirelessSocketService.WirelessSocketList, _scheduleService.ScheduleList);
+            IList<MapContentDto> mapContentList = _jsonDataToMapContentConverter.GetList(
+                response,
+                _menuService.ListedMenuList, _menuService.MenuList, _shoppingListService.ShoppingList,
+                null, null, _temperatureService.TemperatureList, 
+                _wirelessSocketService.WirelessSocketList, null);
+            // TODO add MediaMirrorData, SecurityData and WirelessSwitchData
+
             if (mapContentList == null)
             {
                 _logger.Error("Converted mapContentList is null!");

@@ -8,6 +8,7 @@ namespace Common.Dto
         private const string TAG = "MenuDto";
 
         private int _id;
+
         private string _title;
         private string _description;
         private DateTime _date;

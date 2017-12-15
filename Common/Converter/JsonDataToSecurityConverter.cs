@@ -1,8 +1,8 @@
 ﻿using Common.Dto;
 using Common.Interfaces;
 using Common.Tools;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using static Common.Dto.SecurityDto;
 
 namespace Common.Converter
@@ -10,7 +10,7 @@ namespace Common.Converter
     public class JsonDataToSecurityConverter : IJsonDataConverter<SecurityDto>
     {
         private const string TAG = "JsonDataToSecurityConverter";
-        private static string _searchParameter = "{MotionData:";
+        private static string _searchParameter = "{\"MotionData\":";
 
         private readonly Logger _logger;
 
@@ -41,80 +41,41 @@ namespace Common.Converter
         {
             if (!value.Contains("Error"))
             {
-                if (StringHelper.GetStringCount(value, _searchParameter) > 0)
+                IList<SecurityDto> securityList = new List<SecurityDto>();
+
+                JObject jsonObject = JObject.Parse(value);
+                JToken jsonObjectData = jsonObject.GetValue("MotionData");
+
+                bool state = jsonObjectData["State"].ToString() == "ON";
+                bool control = jsonObjectData["Control"].ToString() == "ON";
+
+                string url = jsonObjectData["URL"].ToString();
+
+                JToken eventsJsonData = jsonObjectData["Events"];
+                IList<RegisteredEventDto> registeredEventList = new List<RegisteredEventDto>();
+                int id = 0;
+
+                foreach (JToken child in eventsJsonData.Children())
                 {
-                    if (value.Contains(_searchParameter))
-                    {
-                        IList<SecurityDto> list = new List<SecurityDto>();
+                    JToken changeJsonData = child["Change"];
 
-                        string[] entries = Regex.Split(value, "\\" + _searchParameter);
-                        for (int index = 1; index < entries.Length; index++)
-                        {
-                            string entry = entries[index];
-                            string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
+                    string name = child["FileName"].ToString();
 
-                            string[] data = Regex.Split(replacedEntry, "\\};");
-                            SecurityDto newValue = parseStringToValue(data);
-                            if (newValue != null)
-                            {
-                                list.Add(newValue);
-                            }
-                        }
+                    RegisteredEventDto registeredEvent = new RegisteredEventDto(id, name);
+                    registeredEventList.Add(registeredEvent);
 
-                        return list;
-                    }
+                    id++;
                 }
+
+                SecurityDto security = new SecurityDto(state, control, url, registeredEventList);
+                securityList.Add(security);
+
+                return securityList;
             }
 
             _logger.Error(string.Format("{0} has an error!", value));
 
             return new List<SecurityDto>();
-        }
-
-        private SecurityDto parseStringToValue(string[] data)
-        {
-            if (data.Length == 4)
-            {
-                if (data[0].Contains("{State:")
-                    && data[1].Contains("{URL:")
-                    && data[2].Contains("{MotionEvents:")
-                    && data[3].Contains("{Control:"))
-                {
-
-                    string stateString = data[0].Replace("{State:", "").Replace("};", "");
-                    bool isCameraActive = stateString.Contains("1");
-
-                    string controlStateString = data[3].Replace("{Control:", "").Replace("};", "");
-                    bool isCameraControlActive = controlStateString.Contains("1");
-
-                    string url = data[1].Replace("{URL:", "").Replace("};", "");
-
-                    string motionEvents = data[2].Replace("{MotionEvents:", "").Replace("};", "");
-                    string[] registeredMotionEventStringArray = Regex.Split(motionEvents, "\\};");
-
-                    IList<RegisteredEventDto> registeredMotionEvents = new List<RegisteredEventDto>();
-                    for (int index = 0; index < registeredMotionEventStringArray.Length; index++)
-                    {
-                        string registeredMotionEventString = registeredMotionEventStringArray[index];
-                        string registeredMotionEvent = registeredMotionEventString.Replace("{Event:", "").Replace("},", "");
-                        registeredMotionEvents.Add(new RegisteredEventDto(index, registeredMotionEvent));
-                    }
-
-                    return new SecurityDto(isCameraActive, isCameraControlActive, url, registeredMotionEvents);
-                }
-                else
-                {
-                    _logger.Error("data contains invalid entries!");
-                }
-            }
-            else
-            {
-                _logger.Error(string.Format("Data has invalid length {0}", data.Length));
-            }
-
-            _logger.Error(string.Format("{0} has an error!", data));
-
-            return null;
         }
     }
 }

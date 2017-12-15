@@ -98,6 +98,12 @@
                     <GridViewColumn Header="State"
                                     DisplayMemberBinding="{Binding ActivationString, UpdateSourceTrigger=PropertyChanged}"
                                     Width="100"/>
+                    <GridViewColumn Header="Last trigger"
+                                    DisplayMemberBinding="{Binding LastTriggerDate, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="125"/>
+                    <GridViewColumn Header="Last user"
+                                    DisplayMemberBinding="{Binding LastTriggerUser, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="100"/>
                     <GridViewColumn 
                         Width="150" >
                         <GridViewColumn.CellTemplate>

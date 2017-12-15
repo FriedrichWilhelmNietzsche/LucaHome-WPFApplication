@@ -7,36 +7,39 @@ namespace Common.Dto
     {
         private const string TAG = "ScheduleDto";
 
-        public enum Weekday { Null = -1, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday }
-        public enum SocketAction { Null = -1, Deactivate, Activate }
+        public enum WirelessAction { Null = -1, Deactivate, Activate }
 
         protected int _id;
 
         protected string _name;
-        protected string _information;
+
         protected WirelessSocketDto _socket;
-        protected Weekday _weekday;
+        protected WirelessSwitchDto _wirelessSwitch;
+
         protected DateTime _time;
-        protected SocketAction _action;
+
+        protected WirelessAction _wirelessAction;
+
         protected bool _isActive;
 
-        public ScheduleDto(int id, string name, string information, WirelessSocketDto socket, Weekday weekday, DateTime time, SocketAction action, bool isActive)
+        public ScheduleDto(int id, string name, WirelessSocketDto socket, WirelessSwitchDto wirelessSwitch, DateTime time, WirelessAction wirelessAction, bool isActive)
         {
             _id = id;
+
             _name = name;
-            _information = information;
+
             _socket = socket;
-            _weekday = weekday;
+            _wirelessSwitch = wirelessSwitch;
+
             _time = time;
-            _action = action;
+
+            _wirelessAction = wirelessAction;
+
             _isActive = isActive;
         }
 
-        public ScheduleDto(int id, string name, WirelessSocketDto socket, Weekday weekday, DateTime time, SocketAction action, bool isActive)
-            : this(id, name, "", socket, weekday, time, action, isActive) { }
-
-        public ScheduleDto(int id, string name, string information, SocketAction action, bool isActive)
-            : this(id, name, information, null, Weekday.Sunday, DateTime.Now, action, isActive) { }
+        public ScheduleDto(int id, string name, WirelessAction wirelessAction, bool isActive)
+            : this(id, name, null, null, DateTime.Now, wirelessAction, isActive) { }
 
         public int Id
         {
@@ -58,18 +61,6 @@ namespace Common.Dto
             }
         }
 
-        public string Information
-        {
-            get
-            {
-                return _information;
-            }
-            set
-            {
-                _information = value;
-            }
-        }
-
         public WirelessSocketDto Socket
         {
             get
@@ -82,7 +73,7 @@ namespace Common.Dto
             }
         }
 
-        public string SocketString
+        public string SocketName
         {
             get
             {
@@ -90,15 +81,23 @@ namespace Common.Dto
             }
         }
 
-        public Weekday WeekDay
+        public WirelessSwitchDto WirelessSwitch
         {
             get
             {
-                return _weekday;
+                return _wirelessSwitch;
             }
             set
             {
-                _weekday = value;
+                _wirelessSwitch = value;
+            }
+        }
+
+        public string SwitchName
+        {
+            get
+            {
+                return _wirelessSwitch.Name;
             }
         }
 
@@ -114,23 +113,15 @@ namespace Common.Dto
             }
         }
 
-        public string TimeString
+        public WirelessAction Action
         {
             get
             {
-                return _time.ToShortTimeString();
-            }
-        }
-
-        public SocketAction Action
-        {
-            get
-            {
-                return _action;
+                return _wirelessAction;
             }
             set
             {
-                _action = value;
+                _wirelessAction = value;
             }
         }
 
@@ -166,7 +157,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}&socket={2}&gpio={3}&weekday={4}&hour={5}&minute={6}&onoff={7}&isTimer={8}&playSound={9}&playRaspberry={10}", LucaServerAction.ADD_SCHEDULE.Action, _name, _socket.Name, "", _weekday, _time.Hour, _time.Minute, (_action == SocketAction.Activate ? "1" : "0"), "0", "0", "1");
+                return string.Format("{0}{1}&socket={2}&gpio={3}&switch={4}&weekday={5}&hour={6}&minute={7}&onoff={8}&isTimer={9}", LucaServerAction.ADD_SCHEDULE.Action, _name, _socket.Name, "", _wirelessSwitch.Name, _time.DayOfWeek, _time.Hour, _time.Minute, (_wirelessAction == WirelessAction.Activate ? "1" : "0"), "0");
             }
         }
 
@@ -174,7 +165,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}&socket={2}&gpio={3}&weekday={4}&hour={5}&minute={6}&onoff={7}&isTimer={8}&playSound={9}&playRaspberry={10}&isactive={11}", LucaServerAction.UPDATE_SCHEDULE.Action, _name, _socket.Name, "", _weekday, _time.Hour, _time.Minute, (_action == SocketAction.Activate ? "1" : "0"), "0", "0", "1", (_isActive ? "1" : "0"));
+                return string.Format("{0}{1}&socket={2}&gpio={3}&switch={4}&weekday={5}&hour={6}&minute={7}&onoff={8}&isTimer={9}&isactive={10}", LucaServerAction.UPDATE_SCHEDULE.Action, _name, _socket.Name, "", _wirelessSwitch.Name, _time.DayOfWeek, _time.Hour, _time.Minute, (_wirelessAction == WirelessAction.Activate ? "1" : "0"), "0", (_isActive ? "1" : "0"));
             }
         }
 
@@ -192,9 +183,9 @@ namespace Common.Dto
                 + ": {Id: " + _id.ToString()
                 + "};{Name: " + _name
                 + "};{WirelessSocket: " + (_socket == null ? "" : _socket.ToString())
-                + "};{Weekday: " + _weekday.ToString()
+                + "};{WirelessSwitch: " + (_wirelessSwitch == null ? "" : _wirelessSwitch.ToString())
                 + "};{Time: " + _time.ToString()
-                + "};{Action: " + _action.ToString()
+                + "};{WirelessAction: " + _wirelessAction.ToString()
                 + "};{IsActive: " + (_isActive ? "1" : "0")
                 + "}}";
         }

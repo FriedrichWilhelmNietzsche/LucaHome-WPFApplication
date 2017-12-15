@@ -102,6 +102,22 @@ namespace LucaHome.Pages
             _birthdayService.OnBirthdayDownloadFinished -= _birthdayListDownloadFinished;
         }
 
+        private void ButtonRemindMeBirthday_Click(object sender, RoutedEventArgs routedEventArgs)
+        {
+            _logger.Debug(string.Format("ButtonRemindMeBirthday_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+            if (sender is Button)
+            {
+                CheckBox senderCheckBox = (CheckBox)sender;
+                _logger.Debug(string.Format("Tag is {0}", senderCheckBox.Tag));
+
+                int birthdayId = (int)senderCheckBox.Tag;
+                BirthdayDto updateBirthday = _birthdayService.GetById(birthdayId);
+
+                updateBirthday.RemindMe = (bool)senderCheckBox.IsChecked;
+                _birthdayService.UpdateBirthday(updateBirthday);
+            }
+        }
+
         private void ButtonUpdateBirthday_Click(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("ButtonUpdateBirthday_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));

@@ -1,15 +1,15 @@
 ﻿using Common.Dto;
 using Common.Interfaces;
 using Common.Tools;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 namespace Common.Converter
 {
     public class JsonDataToListedMenuConverter : IJsonDataConverter<ListedMenuDto>
     {
         private const string TAG = "JsonDataToListedMenuConverter";
-        private static string _searchParameter = "{listedmenu:";
+        private static string _searchParameter = "{\"Data\":";
 
         private readonly Logger _logger;
 
@@ -40,87 +40,33 @@ namespace Common.Converter
         {
             if (!value.Contains("Error"))
             {
-                if (StringHelper.GetStringCount(value, _searchParameter) > 0)
+                IList<ListedMenuDto> listedMenuList = new List<ListedMenuDto>();
+
+                JObject jsonObject = JObject.Parse(value);
+                JToken jsonObjectData = jsonObject.GetValue("Data");
+
+                foreach (JToken child in jsonObjectData.Children())
                 {
-                    if (value.Contains(_searchParameter))
-                    {
-                        IList<ListedMenuDto> list = new List<ListedMenuDto>();
+                    JToken listedMenuJsonData = child["ListedMenu"];
 
-                        string[] entries = Regex.Split(value, "\\" + _searchParameter);
-                        for (int index = 0; index < entries.Length; index++)
-                        {
-                            string entry = entries[index];
-                            string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
+                    int id = int.Parse(listedMenuJsonData["ID"].ToString());
 
-                            string[] data = Regex.Split(replacedEntry, "\\};");
-                            ListedMenuDto newValue = parseStringToValue(data);
-                            if (newValue != null)
-                            {
-                                list.Add(newValue);
-                            }
-                        }
+                    string title = listedMenuJsonData["Title"].ToString();
+                    string description = listedMenuJsonData["Description"].ToString();
 
-                        return list;
-                    }
+                    int rating = int.Parse(listedMenuJsonData["Rating"].ToString());
+                    int useCounter = int.Parse(listedMenuJsonData["UseCounter"].ToString());
+
+                    ListedMenuDto newListedMenu = new ListedMenuDto(id, title, description, rating, useCounter);
+                    listedMenuList.Add(newListedMenu);
                 }
+
+                return listedMenuList;
             }
 
             _logger.Error(string.Format("{0} has an error!", value));
 
             return new List<ListedMenuDto>();
-        }
-
-        private ListedMenuDto parseStringToValue(string[] data)
-        {
-            if (data.Length == 4)
-            {
-                if (data[0].Contains("{id:")
-                    && data[1].Contains("{description:")
-                    && data[2].Contains("{rating:")
-                    && data[3].Contains("{lastSuggestion:"))
-                {
-                    string idString = data[0].Replace("{id:", "").Replace("};", "");
-                    int id = -1;
-                    bool parseSuccessId = int.TryParse(idString, out id);
-                    if (!parseSuccessId)
-                    {
-                        _logger.Error("Failed to parse id from data!");
-                        return null;
-                    }
-
-                    string description = data[1].Replace("{description:", "").Replace("};", "");
-                    if (description.Length == 0)
-                    {
-                        description = " ";
-                    }
-
-                    string ratingString = data[2].Replace("{rating:", "").Replace("};", "");
-                    int rating = -1;
-                    bool parseSuccessRating = int.TryParse(ratingString, out rating);
-                    if (!parseSuccessRating)
-                    {
-                        _logger.Error("Failed to parse rating from data!");
-                        return null;
-                    }
-
-                    string lastSuggestionString = data[3].Replace("{lastSuggestion:", "").Replace("};", "");
-                    bool lastSuggestion = lastSuggestionString.Contains("1");
-
-                    return new ListedMenuDto(id, description, rating, lastSuggestion);
-                }
-                else
-                {
-                    _logger.Error("data contains invalid entries!");
-                }
-            }
-            else
-            {
-                _logger.Error(string.Format("Data has invalid length {0}", data.Length));
-            }
-
-            _logger.Error(string.Format("{0} has an error!", data));
-
-            return null;
         }
     }
 }

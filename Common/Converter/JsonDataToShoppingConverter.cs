@@ -2,15 +2,15 @@
 using Common.Enums;
 using Common.Interfaces;
 using Common.Tools;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 namespace Common.Converter
 {
     public class JsonDataToShoppingConverter : IJsonDataConverter<ShoppingEntryDto>
     {
         private const string TAG = "JsonDataToShoppingConverter";
-        private static string _searchParameter = "{shopping_entry:";
+        private static string _searchParameter = "{\"Data\":";
 
         private readonly Logger _logger;
 
@@ -41,88 +41,32 @@ namespace Common.Converter
         {
             if (!value.Contains("Error"))
             {
-                if (StringHelper.GetStringCount(value, _searchParameter) > 0)
+                IList<ShoppingEntryDto> shoppingList = new List<ShoppingEntryDto>();
+
+                JObject jsonObject = JObject.Parse(value);
+                JToken jsonObjectData = jsonObject.GetValue("Data");
+
+                foreach (JToken child in jsonObjectData.Children())
                 {
-                    if (value.Contains(_searchParameter))
-                    {
-                        IList<ShoppingEntryDto> list = new List<ShoppingEntryDto>();
+                    JToken shoppingJsonData = child["ShoppingEntry"];
 
-                        string[] entries = Regex.Split(value, "\\" + _searchParameter);
-                        foreach (string entry in entries)
-                        {
-                            string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
+                    int id = int.Parse(shoppingJsonData["ID"].ToString());
 
-                            string[] data = Regex.Split(replacedEntry, "\\};");
-                            ShoppingEntryDto newValue = parseStringToValue(data);
-                            if (newValue != null)
-                            {
-                                list.Add(newValue);
-                            }
-                        }
+                    string name = shoppingJsonData["Name"].ToString();
+                    string group = shoppingJsonData["Group"].ToString();
 
-                        return list;
-                    }
+                    int quantity = int.Parse(shoppingJsonData["Quantity"].ToString());
+
+                    ShoppingEntryDto newMenu = new ShoppingEntryDto(id, name, ShoppingEntryGroup.GetByDescription(group), quantity);
+                    shoppingList.Add(newMenu);
                 }
+
+                return shoppingList;
             }
 
             _logger.Error(string.Format("{0} has an error!", value));
 
             return new List<ShoppingEntryDto>();
-        }
-
-        private ShoppingEntryDto parseStringToValue(string[] data)
-        {
-            if (data.Length == 4)
-            {
-                if (data[0].Contains("{id:") && data[1].Contains("{name:") && data[2].Contains("{group:")
-                        && data[3].Contains("{quantity:"))
-                {
-
-                    string idString = data[0].Replace("{id:", "").Replace("};", "");
-                    int id = -1;
-                    bool parseSuccessId = int.TryParse(idString, out id);
-                    if (!parseSuccessId)
-                    {
-                        _logger.Warning("Failed to parse id from data!");
-                    }
-
-                    string name = data[1].Replace("{name:", "").Replace("};", "");
-
-                    string groupString = data[2].Replace("{group:", "").Replace("};", "");
-                    ShoppingEntryGroup shoppingEntryGroup = ShoppingEntryGroup.OTHER;
-                    foreach (ShoppingEntryGroup entry in ShoppingEntryGroup.Values)
-                    {
-                        if (entry.Description.Contains(groupString))
-                        {
-                            shoppingEntryGroup = entry;
-                            break;
-                        }
-                    }
-
-                    string quantityString = data[3].Replace("{quantity:", "").Replace("};", "");
-                    int quantity = -1;
-                    bool parseSuccessQuantity = int.TryParse(quantityString, out quantity);
-                    if (!parseSuccessQuantity)
-                    {
-                        _logger.Warning("Failed to parse quantity from data!");
-                    }
-
-                    ShoppingEntryDto newValue = new ShoppingEntryDto(id, name, shoppingEntryGroup, quantity);
-                    return newValue;
-                }
-                else
-                {
-                    _logger.Error("data contains invalid entries!");
-                }
-            }
-            else
-            {
-                _logger.Error(string.Format("Data has invalid length {0}", data.Length));
-            }
-
-            _logger.Error(string.Format("{0} has an error!", data));
-
-            return null;
         }
     }
 }

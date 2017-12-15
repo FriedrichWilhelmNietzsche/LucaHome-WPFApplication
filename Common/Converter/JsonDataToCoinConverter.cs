@@ -1,15 +1,14 @@
 ﻿using Common.Dto;
 using Common.Tools;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Text.RegularExpressions;
 
 namespace Common.Converter
 {
     public class JsonDataToCoinConverter
     {
         private const string TAG = "JsonDataToCoinConverter";
-        private static string _searchParameter = "{coin:";
+        private static string _searchParameter = "{\"Data\":";
 
         private readonly Logger _logger;
 
@@ -40,67 +39,21 @@ namespace Common.Converter
         {
             if (!value.Contains("Error"))
             {
-                if (StringHelper.GetStringCount(value, _searchParameter) > 0)
+                IList<CoinDto> coinList = new List<CoinDto>();
+
+                JObject jsonObject = JObject.Parse(value);
+                JToken jsonObjectData = jsonObject.GetValue("Data");
+                
+                foreach (JToken child in jsonObjectData.Children())
                 {
-                    if (value.Contains(_searchParameter))
-                    {
-                        IList<CoinDto> list = new List<CoinDto>();
+                    JToken coinJsonData = child["Coin"];
 
-                        string[] entries = Regex.Split(value, "\\" + _searchParameter);
-                        for (int index = 1; index < entries.Length; index++)
-                        {
-                            string entry = entries[index];
-                            string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
+                    int id = int.Parse(coinJsonData["ID"].ToString());
 
-                            string[] data = Regex.Split(replacedEntry, "\\};");
-                            CoinDto newValue = parseStringToValue(data, conversionList);
-                            if (newValue != null)
-                            {
-                                list.Add(newValue);
-                            }
-                        }
+                    string user = coinJsonData["User"].ToString();
+                    string type = coinJsonData["Type"].ToString();
 
-                        return list;
-                    }
-                }
-            }
-
-            _logger.Error(string.Format("{0} has an error!", value));
-
-            return new List<CoinDto>();
-        }
-
-        private CoinDto parseStringToValue(string[] data, IList<KeyValuePair<string, double>> conversionList)
-        {
-            if (data.Length == 4)
-            {
-                if (data[0].Contains("{Id:")
-                    && data[1].Contains("{User:")
-                    && data[2].Contains("{Type:")
-                    && data[3].Contains("{Amount:"))
-                {
-
-                    string idString = data[0].Replace("{Id:", "").Replace("};", "");
-                    int id = -1;
-                    bool parseSuccessId = int.TryParse(idString, out id);
-                    if (!parseSuccessId)
-                    {
-                        _logger.Warning("Failed to parse id from data!");
-                    }
-
-                    string user = data[1].Replace("{User:", "").Replace("};", "");
-
-                    string type = data[2].Replace("{Type:", "").Replace("};", "");
-
-                    string numberDecimalSeparator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
-                    string amountString = data[3].Replace("{Amount:", "").Replace("};", "").Replace(".", numberDecimalSeparator);
-                    double amount = -1;
-                    bool parseSuccessAmount = double.TryParse(amountString, out amount);
-                    if (!parseSuccessAmount)
-                    {
-                        _logger.Error("Failed to parse amount from data!");
-                        return null;
-                    }
+                    int amount = int.Parse(coinJsonData["Amount"].ToString());
 
                     double currentConversion = 0;
                     foreach (KeyValuePair<string, double> entry in conversionList)
@@ -111,22 +64,17 @@ namespace Common.Converter
                             break;
                         }
                     }
+                    
+                    CoinDto newCoin = new CoinDto(id, user, type, amount, currentConversion, CoinDto.Trend.NULL);
+                    coinList.Add(newCoin);
+                }
 
-                    return new CoinDto(id, user, type, amount, currentConversion, CoinDto.Trend.NULL);
-                }
-                else
-                {
-                    _logger.Error("data contains invalid entries!");
-                }
-            }
-            else
-            {
-                _logger.Error(string.Format("Data has invalid length {0}", data.Length));
+                return coinList;
             }
 
-            _logger.Error(string.Format("{0} has an error!", data));
+            _logger.Error(string.Format("{0} has an error!", value));
 
-            return null;
+            return new List<CoinDto>();
         }
     }
 }

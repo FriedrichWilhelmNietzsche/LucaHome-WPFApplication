@@ -10,14 +10,17 @@ namespace Common.Dto
         enum BirthdayType { PREVIOUS, TODAY, UPCOMING };
 
         private int _id;
-
         private string _name;
+        private bool _remindMe;
+        private bool _sendMail;
         private DateTime _birthday;
 
-        public BirthdayDto(int id, string name, DateTime birthday)
+        public BirthdayDto(int id, string name, bool remindMe, bool sendMail, DateTime birthday)
         {
             _id = id;
             _name = name;
+            _remindMe = remindMe;
+            _sendMail = sendMail;
             _birthday = birthday;
         }
 
@@ -38,6 +41,26 @@ namespace Common.Dto
             set
             {
                 _name = value;
+            }
+        }
+
+        public bool RemindMe
+        {
+            get
+            {
+                return _remindMe;
+            }
+            set
+            {
+                _remindMe = value;
+            }
+        }
+
+        public bool SendMail
+        {
+            get
+            {
+                return _sendMail;
             }
         }
 
@@ -133,7 +156,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}&name={2}&day={3}&month={4}&year={5}", LucaServerAction.ADD_BIRTHDAY.Action, _id, _name, _birthday.Day, _birthday.Month, _birthday.Year);
+                return string.Format("{0}{1}&name={2}&day={3}&month={4}&year={5}&remindme={6}", LucaServerAction.ADD_BIRTHDAY.Action, _id, _name, _birthday.Day, _birthday.Month, _birthday.Year, (_remindMe ? "1" : "0"));
             }
         }
 
@@ -141,7 +164,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}&name={2}&day={3}&month={4}&year={5}", LucaServerAction.UPDATE_BIRTHDAY.Action, _id, _name, _birthday.Day, _birthday.Month, _birthday.Year);
+                return string.Format("{0}{1}&name={2}&day={3}&month={4}&year={5}&remindme={6}", LucaServerAction.UPDATE_BIRTHDAY.Action, _id, _name, _birthday.Day, _birthday.Month, _birthday.Year, (_remindMe ? "1" : "0"));
             }
         }
 
@@ -155,7 +178,7 @@ namespace Common.Dto
 
         public override string ToString()
         {
-            return string.Format("( {0}: (Name: {1} );(Birthday: {2} );(Age: {3} );(HasBirthday: {4} ))", TAG, _name, _birthday, Age, HasBirthday);
+            return string.Format("( {0}: (Name: {1} );(Birthday: {2} );(Age: {3} );(HasBirthday: {4} );(RemindMe: {5} );(SendMail: {6} ))", TAG, _name, _birthday, Age, HasBirthday, (_remindMe ? "1" : "0"), (_sendMail ? "1" : "0"));
         }
     }
 }

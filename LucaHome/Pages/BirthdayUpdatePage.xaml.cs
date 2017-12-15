@@ -92,6 +92,19 @@ namespace LucaHome.Pages
             }
         }
 
+        public bool BirthdayRemindMe
+        {
+            get
+            {
+                return _updateBirthday.RemindMe;
+            }
+            set
+            {
+                _updateBirthday.RemindMe = value;
+                OnPropertyChanged("BirthdayRemindMe");
+            }
+        }
+
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
             _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));

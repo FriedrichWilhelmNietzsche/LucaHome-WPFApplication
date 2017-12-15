@@ -34,7 +34,7 @@ namespace LucaHome.Pages
             _birthdayService = BirthdayService.Instance;
             _navigationService = navigationService;
 
-            _newBirthday = new BirthdayDto(_birthdayService.BirthdayList.Count, "", DateTime.Now);
+            _newBirthday = new BirthdayDto(_birthdayService.BirthdayList.Count, "", true, false, DateTime.Now);
 
             InitializeComponent();
             DataContext = this;
@@ -89,6 +89,19 @@ namespace LucaHome.Pages
             {
                 _newBirthday.Birthday = value;
                 OnPropertyChanged("BirthdayDate");
+            }
+        }
+
+        public bool BirthdayRemindMe
+        {
+            get
+            {
+                return _newBirthday.RemindMe;
+            }
+            set
+            {
+                _newBirthday.RemindMe = value;
+                OnPropertyChanged("BirthdayRemindMe");
             }
         }
 

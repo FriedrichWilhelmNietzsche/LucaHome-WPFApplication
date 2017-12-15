@@ -96,33 +96,25 @@
             Margin="15 5 5 5">
             <TextBlock 
                 HorizontalAlignment="Right" >
-                Information
+                Socket
             </TextBlock>
         </materialDesign:Card>
 
         <materialDesign:PackIcon 
             Grid.Row="2" 
             Grid.Column="1" 
-            Kind="Map" 
+            Kind="PowerSocket" 
             Margin="5 0 5 5" 
-            Foreground="{Binding ElementName=InformationTextBox, Path=BorderBrush}" />
-        <TextBox 
+            Foreground="{Binding ElementName=SocketComboBox, Path=BorderBrush}" />
+        <ComboBox 
+            x:Name="SocketComboBox"
             Grid.Row="2" 
             Grid.Column="1" 
-            x:Name="InformationTextBox"
             Margin="5 15 35 5" 
-            materialDesign:HintAssist.Hint="Enter an information" >
-            <TextBox.Text>
-                <Binding 
-                    Path="ScheduleInformation"
-                    UpdateSourceTrigger="PropertyChanged"
-                    Mode="TwoWay">
-                    <Binding.ValidationRules>
-                        <validationrules:TextBoxNotEmptyRule/>
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
+            materialDesign:HintAssist.Hint="Select a socket" 
+            Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
+            ItemsSource="{Binding SocketList, UpdateSourceTrigger=PropertyChanged}"
+            SelectedItem="{Binding ScheduleSocket, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
         <materialDesign:Card 
             Grid.Row="3" 
@@ -131,25 +123,25 @@
             Margin="15 5 5 5">
             <TextBlock 
                 HorizontalAlignment="Right" >
-                Socket
+                Switch
             </TextBlock>
         </materialDesign:Card>
 
         <materialDesign:PackIcon 
             Grid.Row="3" 
             Grid.Column="1" 
-            Kind="PowerSocket" 
+            Kind="Switch" 
             Margin="5 0 5 5" 
-            Foreground="{Binding ElementName=SocketComboBox, Path=BorderBrush}" />
+            Foreground="{Binding ElementName=SwitchComboBox, Path=BorderBrush}" />
         <ComboBox 
-            x:Name="SocketComboBox"
+            x:Name="SwitchComboBox"
             Grid.Row="3" 
             Grid.Column="1" 
             Margin="5 15 35 5" 
-            materialDesign:HintAssist.Hint="Select a socket" 
+            materialDesign:HintAssist.Hint="Select a switch" 
             Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
-            ItemsSource="{Binding SocketList, UpdateSourceTrigger=PropertyChanged}"
-            SelectedItem="{Binding ScheduleSocket, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            ItemsSource="{Binding SwitchList, UpdateSourceTrigger=PropertyChanged}"
+            SelectedItem="{Binding ScheduleSwitch, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
         <materialDesign:Card 
             Grid.Row="4" 
@@ -175,7 +167,7 @@
             Margin="5 15 35 5" 
             materialDesign:HintAssist.Hint="Select a weekday" 
             Style="{StaticResource MaterialDesignFloatingHintComboBox}" 
-            ItemsSource="{Binding WeekdayList, UpdateSourceTrigger=PropertyChanged}"
+            ItemsSource="{Binding DayOfWeekList, UpdateSourceTrigger=PropertyChanged}"
             SelectedItem="{Binding Path=ScheduleWeekday, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
         <materialDesign:Card 

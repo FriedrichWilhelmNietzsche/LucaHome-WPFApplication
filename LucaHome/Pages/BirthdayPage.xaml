@@ -95,6 +95,27 @@
                     <GridViewColumn Header="Age"
                                     DisplayMemberBinding="{Binding Age, UpdateSourceTrigger=PropertyChanged}"
                                     Width="150"/>
+                    <GridViewColumn Header="RemindMe"
+                                    Width="150">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox 
+                                    Height="40" 
+                                    Width="40"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                    Margin="5 5 5 5"
+                                    Checked="{Binding RemindMe, UpdateSourceTrigger=PropertyChanged}"
+                                    ToolTip="Remind me about this birthday"
+                                    Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
+                                    Click="ButtonRemindMeBirthday_Click">
+                                    <materialDesign:PackIcon 
+                                        Kind="Alarm" 
+                                        Height="25" 
+                                        Width="25" />
+                                </CheckBox>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn 
                         Width="65" >
                         <GridViewColumn.CellTemplate>

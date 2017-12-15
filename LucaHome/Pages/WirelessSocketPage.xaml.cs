@@ -216,7 +216,7 @@ namespace LucaHome.Pages
             WirelessSocketList = _wirelessSocketService.WirelessSocketList;
         }
 
-        private void _setWirelessSocketFinished(IList<WirelessSocketDto> wirelessSocketList, bool success, string response)
+        private void _setWirelessSocketFinished(bool success, string response)
         {
             _logger.Debug(string.Format("_setWirelessSocketFinished was successful: {0}", success));
             if (success)

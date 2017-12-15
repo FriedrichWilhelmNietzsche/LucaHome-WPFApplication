@@ -13,6 +13,7 @@ using System.Timers;
 namespace Data.Services
 {
     public delegate void WirelessSocketDownloadEventHandler(IList<WirelessSocketDto> wirelessSocketList, bool success, string response);
+    public delegate void WirelessSocketSetEventHandler(bool success, string response);
     public delegate void WirelessSocketAddEventHandler(bool success, string response);
     public delegate void WirelessSocketUpdateEventHandler(bool success, string response);
     public delegate void WirelessSocketDeleteEventHandler(bool success, string response);
@@ -57,10 +58,10 @@ namespace Data.Services
             OnWirelessSocketDownloadFinished?.Invoke(wirelessSocketList, success, response);
         }
 
-        public event WirelessSocketDownloadEventHandler OnSetWirelessSocketFinished;
-        private void publishOnSetWirelessSocketFinished(IList<WirelessSocketDto> wirelessSocketList, bool success, string response)
+        public event WirelessSocketSetEventHandler OnSetWirelessSocketFinished;
+        private void publishOnSetWirelessSocketFinished(bool success, string response)
         {
-            OnSetWirelessSocketFinished?.Invoke(wirelessSocketList, success, response);
+            OnSetWirelessSocketFinished?.Invoke(success, response);
         }
 
         public event WirelessSocketAddEventHandler OnAddWirelessSocketFinished;
@@ -156,8 +157,7 @@ namespace Data.Services
         public void SetWirelessSocket(string wirelessSocketName, bool state)
         {
             _logger.Debug(string.Format("Set socket {0} to {1}", wirelessSocketName, state));
-            WirelessSocketDto wirelessSocket = GetByName(wirelessSocketName);
-            setWirelessSocketAsync(wirelessSocket.Name, state);
+            setWirelessSocketAsync(wirelessSocketName, state);
         }
 
         public void ChangeWirelessSocketState(WirelessSocketDto wirelessSocket)
@@ -199,7 +199,7 @@ namespace Data.Services
 
         private async Task loadWirelessSocketListAsync()
         {
-            _logger.Debug("loadWirelessSocketList");
+            _logger.Debug("loadWirelessSocketListAsync");
 
             UserDto user = _settingsController.User;
             if (user == null)
@@ -220,7 +220,7 @@ namespace Data.Services
             UserDto user = _settingsController.User;
             if (user == null)
             {
-                publishOnWirelessSocketDownloadFinished(null, false, "No user");
+                publishOnSetWirelessSocketFinished(false, "No user");
                 return;
             }
 
@@ -351,7 +351,7 @@ namespace Data.Services
             {
                 _logger.Error(response);
 
-                publishOnSetWirelessSocketFinished(null, false, response);
+                publishOnSetWirelessSocketFinished(false, response);
                 return;
             }
 
@@ -361,11 +361,11 @@ namespace Data.Services
             {
                 _logger.Error("Setting was not successful!");
 
-                publishOnSetWirelessSocketFinished(null, false, response);
+                publishOnSetWirelessSocketFinished(false, response);
                 return;
             }
 
-            publishOnSetWirelessSocketFinished(null, true, response);
+            publishOnSetWirelessSocketFinished(true, response);
 
             loadWirelessSocketListAsync();
         }

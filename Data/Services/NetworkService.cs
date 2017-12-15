@@ -1,7 +1,5 @@
-﻿using Common.Dto;
-using Common.Tools;
+﻿using Common.Tools;
 using Data.Controller;
-using System.Collections.Generic;
 using System.Net.NetworkInformation;
 
 namespace Data.Services
@@ -15,8 +13,6 @@ namespace Data.Services
 
         private static NetworkService _instance = null;
         private static readonly object _padlock = new object();
-
-        private IList<MenuDto> _menuList = new List<MenuDto>();
 
         NetworkService()
         {

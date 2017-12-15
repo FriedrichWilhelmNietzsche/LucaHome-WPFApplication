@@ -101,9 +101,10 @@
     <Compile Include="Converter\JsonDataToShoppingConverter.cs" />
     <Compile Include="Converter\JsonDataToTemperatureConverter.cs" />
     <Compile Include="Converter\JsonDataToTimerConverter.cs" />
+    <Compile Include="Converter\JsonDataToWirelessSwitchConverter.cs" />
     <Compile Include="Converter\JsonDataToWirelessSocketConverter.cs" />
     <Compile Include="Converter\UnixToDateTimeConverter.cs" />
-    <Compile Include="Dto\MediaMirrorDto.cs" />
+    <Compile Include="Dto\MediaServerDto.cs" />
     <Compile Include="Dto\BirthdayDto.cs" />
     <Compile Include="Dto\CoinDto.cs" />
     <Compile Include="Dto\ChangeDto.cs" />
@@ -121,6 +122,7 @@
     <Compile Include="Dto\TemperatureDto.cs" />
     <Compile Include="Dto\TimerDto.cs" />
     <Compile Include="Dto\UserDto.cs" />
+    <Compile Include="Dto\WirelessSwitchDto.cs" />
     <Compile Include="Dto\WirelessSocketDto.cs" />
     <Compile Include="Interfaces\IJsonDataConverter.cs" />
     <Compile Include="Converter\JsonDataToCoinTrendConverter.cs" />
@@ -284,6 +286,19 @@
     <Resource Include="Assets\Icons\Others\trending_down.png" />
     <Resource Include="Assets\Icons\Others\trending_flat.png" />
     <Resource Include="Assets\Icons\Others\trending_up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Icons\Coins\IOTA.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Icons\Others\switch_hd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Icons\Sockets\switch_off.png" />
+    <Resource Include="Assets\Icons\Sockets\switch_on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Wallpaper\main_image_switches.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

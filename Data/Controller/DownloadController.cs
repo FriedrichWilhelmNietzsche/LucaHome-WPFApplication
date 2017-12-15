@@ -10,7 +10,7 @@ namespace Data.Controller
         Birthday, BirthdayAdd, BirthdayUpdate, BirthdayDelete,
         CoinConversion, Coin, CoinAdd, CoinUpdate, CoinDelete, CoinTrend,
         MapContent,
-        ListedMenu,
+        ListedMenu, ListedMenuAdd, ListedMenuUpdate, ListedMenuDelete,
         Menu, MenuUpdate, MenuClear,
         Movie, MovieUpdate,
         Schedule, ScheduleSet, ScheduleAdd, ScheduleUpdate, ScheduleDelete,
@@ -19,7 +19,8 @@ namespace Data.Controller
         Temperature,
         TimerAdd, TimerUpdate, TimerDelete,
         User,
-        WirelessSocket, WirelessSocketSet, WirelessSocketAdd, WirelessSocketUpdate, WirelessSocketDelete
+        WirelessSocket, WirelessSocketSet, WirelessSocketAdd, WirelessSocketUpdate, WirelessSocketDelete,
+        WirelessSwitch, WirelessSwitchToggle, WirelessSwitchAdd, WirelessSwitchUpdate, WirelessSwitchDelete
     };
 
     public delegate void DownloadFinishedEventHandler(string response, bool success, DownloadType downloadType, object additionalData);

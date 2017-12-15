@@ -178,7 +178,7 @@ namespace LucaHome.Pages
                 _logger.Warning(string.Format("Asking for deleting schedule {0}!", deleteSchedule));
 
                 DeleteDialog scheduleDeleteDialog = new DeleteDialog("Delete socket?",
-                    string.Format("Schedule: {0}\nInformation: {1}", deleteSchedule.Name, deleteSchedule.Information));
+                    string.Format("Schedule: {0}", deleteSchedule.Name));
                 scheduleDeleteDialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                 scheduleDeleteDialog.ShowDialog();
 

@@ -1,16 +1,16 @@
 ﻿using Common.Dto;
 using Common.Interfaces;
 using Common.Tools;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 namespace Common.Converter
 {
     public class JsonDataToBirthdayConverter : IJsonDataConverter<BirthdayDto>
     {
         private const string TAG = "JsonDataToBirthdayConverter";
-        private static string _searchParameter = "{birthday:";
+        private static string _searchParameter = "{\"Data\":";
 
         private readonly Logger _logger;
         
@@ -41,101 +41,40 @@ namespace Common.Converter
         {
             if (!value.Contains("Error"))
             {
-                if (StringHelper.GetStringCount(value, _searchParameter) > 0)
+                IList<BirthdayDto> birthdayList = new List<BirthdayDto>();
+
+                JObject jsonObject = JObject.Parse(value);
+                JToken jsonObjectData = jsonObject.GetValue("Data");
+
+                foreach (JToken child in jsonObjectData.Children())
                 {
-                    if (value.Contains(_searchParameter))
-                    {
-                        IList<BirthdayDto> list = new List<BirthdayDto>();
+                    JToken birthdayJsonData = child["Birthday"];
 
-                        string[] entries = Regex.Split(value, "\\" + _searchParameter);
-                        for (int index = 1; index < entries.Length; index++)
-                        {
-                            string entry = entries[index];
-                            string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
+                    int id = int.Parse(birthdayJsonData["ID"].ToString());
 
-                            string[] data = Regex.Split(replacedEntry, "\\};");
-                            BirthdayDto newValue = parseStringToValue(data);
-                            if (newValue != null)
-                            {
-                                list.Add(newValue);
-                            }
-                        }
+                    string name = birthdayJsonData["Name"].ToString();
 
-                        return list;
-                    }
+                    bool remindMe = birthdayJsonData["RemindMe"].ToString() == "1";
+                    bool sendMail = birthdayJsonData["SendMail"].ToString() == "1";
+
+                    JToken birthdayJsonDate = birthdayJsonData["Date"];
+
+                    int day = int.Parse(birthdayJsonDate["Day"].ToString());
+                    int month = int.Parse(birthdayJsonDate["Month"].ToString());
+                    int year = int.Parse(birthdayJsonDate["Year"].ToString());
+
+                    DateTime birthdayDate = new DateTime(year, month, day);
+
+                    BirthdayDto newBirthday = new BirthdayDto(id, name, remindMe, sendMail, birthdayDate);
+                    birthdayList.Add(newBirthday);
                 }
+
+                return birthdayList;
             }
 
             _logger.Error(string.Format("{0} has an error!", value));
 
             return new List<BirthdayDto>();
-        }
-
-        private BirthdayDto parseStringToValue(string[] data)
-        {
-            if (data.Length == 5)
-            {
-                if (data[0].Contains("{id:") 
-                    && data[1].Contains("{name:") 
-                    && data[2].Contains("{day:")
-                    && data[3].Contains("{month:") 
-                    && data[4].Contains("{year:"))
-                {
-
-                    string idString = data[0].Replace("{id:", "").Replace("};", "");
-                    int id = -1;
-                    bool parseSuccessId = int.TryParse(idString, out id);
-                    if (!parseSuccessId)
-                    {
-                        _logger.Warning("Failed to parse id from data!");
-                    }
-
-                    string name = data[1].Replace("{name:", "").Replace("};", "");
-
-                    string dayString = data[2].Replace("{day:", "").Replace("};", "");
-                    int day = -1;
-                    bool parseSuccessDay = int.TryParse(dayString, out day);
-                    if (!parseSuccessDay)
-                    {
-                        _logger.Error("Failed to parse day from data!");
-                        return null;
-                    }
-
-                    string monthString = data[3].Replace("{month:", "").Replace("};", "");
-                    int month = -1;
-                    bool parseSuccessMonth = int.TryParse(monthString, out month);
-                    if (!parseSuccessMonth)
-                    {
-                        _logger.Error("Failed to parse month from data!");
-                        return null;
-                    }
-
-                    string yearString = data[4].Replace("{year:", "").Replace("};", "");
-                    int year = -1;
-                    bool parseSuccessYear = int.TryParse(yearString, out year);
-                    if (!parseSuccessYear)
-                    {
-                        _logger.Error("Failed to parse year from data!");
-                        return null;
-                    }
-
-                    DateTime birthday = new DateTime(year, month, day);
-                    
-                    return new BirthdayDto(id, name, birthday);
-                }
-                else
-                {
-                    _logger.Error("data contains invalid entries!");
-                }
-            }
-            else
-            {
-                _logger.Error(string.Format("Data has invalid length {0}", data.Length));
-            }
-
-            _logger.Error(string.Format("{0} has an error!", data));
-
-            return null;
         }
     }
 }

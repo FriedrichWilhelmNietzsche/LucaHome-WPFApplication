@@ -1,16 +1,16 @@
 ﻿using Common.Dto;
 using Common.Interfaces;
 using Common.Tools;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 namespace Common.Converter
 {
     public class JsonDataToMenuConverter : IJsonDataConverter<MenuDto>
     {
         private const string TAG = "JsonDataToMenuConverter";
-        private static string _searchParameter = "{menu:";
+        private static string _searchParameter = "{\"Data\":";
 
         private readonly Logger _logger;
 
@@ -41,102 +41,41 @@ namespace Common.Converter
         {
             if (!value.Contains("Error"))
             {
-                if (StringHelper.GetStringCount(value, _searchParameter) > 0)
+                IList<MenuDto> menuList = new List<MenuDto>();
+
+                JObject jsonObject = JObject.Parse(value);
+                JToken jsonObjectData = jsonObject.GetValue("Data");
+
+                int id = 0;
+                foreach (JToken child in jsonObjectData.Children())
                 {
-                    if (value.Contains(_searchParameter))
-                    {
-                        IList<MenuDto> list = new List<MenuDto>();
+                    JToken menuJsonData = child["Menu"];
+                    
+                    string title = menuJsonData["Title"].ToString();
+                    string description = menuJsonData["Description"].ToString();
 
-                        string[] entries = Regex.Split(value, "\\" + _searchParameter);
-                        for (int index = 0; index < entries.Length; index++)
-                        {
-                            string entry = entries[index];
-                            string replacedEntry = entry.Replace(_searchParameter, "").Replace("};};", "");
+                    string weekday = menuJsonData["Weekday"].ToString();
 
-                            string[] data = Regex.Split(replacedEntry, "\\};");
-                            MenuDto newValue = parseStringToValue(index, data);
-                            if (newValue != null)
-                            {
-                                list.Add(newValue);
-                            }
-                        }
+                    JToken dateJsonData = menuJsonData["Date"];
 
-                        return list;
-                    }
+                    int day = int.Parse(dateJsonData["Day"].ToString());
+                    int month = int.Parse(dateJsonData["Month"].ToString());
+                    int year = int.Parse(dateJsonData["Year"].ToString());
+
+                    DateTime date = new DateTime(year, month, day);
+
+                    MenuDto newMenu = new MenuDto(id, title, description, date);
+                    menuList.Add(newMenu);
+
+                    id++;
                 }
+
+                return menuList;
             }
 
             _logger.Error(string.Format("{0} has an error!", value));
 
             return new List<MenuDto>();
-        }
-
-        private MenuDto parseStringToValue(int id, string[] data)
-        {
-            if (data.Length == 6)
-            {
-                if (data[0].Contains("{weekday:")
-                    && data[1].Contains("{day:")
-                    && data[2].Contains("{month:")
-                    && data[3].Contains("{year:")
-                    && data[4].Contains("{title:")
-                    && data[5].Contains("{description:"))
-                {
-
-                    string weekday = data[0].Replace("{weekday:", "").Replace("};", "");
-
-                    string dayString = data[1].Replace("{day:", "").Replace("};", "");
-                    int day = -1;
-                    bool parseSuccessDay = int.TryParse(dayString, out day);
-                    if (!parseSuccessDay)
-                    {
-                        _logger.Error("Failed to parse day from data!");
-                        return null;
-                    }
-
-                    string monthString = data[2].Replace("{month:", "").Replace("};", "");
-                    int month = -1;
-                    bool parseSuccessMonth = int.TryParse(monthString, out month);
-                    if (!parseSuccessMonth)
-                    {
-                        _logger.Error("Failed to parse month from data!");
-                        return null;
-                    }
-
-                    string yearString = data[3].Replace("{year:", "").Replace("};", "");
-                    int year = -1;
-                    bool parseSuccessYear = int.TryParse(yearString, out year);
-                    if (!parseSuccessYear)
-                    {
-                        _logger.Error("Failed to parse year from data!");
-                        return null;
-                    }
-
-                    DateTime date = new DateTime(year, month, day);
-
-                    string title = data[4].Replace("{title:", "").Replace("};", "");
-
-                    string description = data[5].Replace("{description:", "").Replace("};", "");
-                    if (description.Length == 0)
-                    {
-                        description = " ";
-                    }
-
-                    return new MenuDto(id, title, description, date);
-                }
-                else
-                {
-                    _logger.Error("data contains invalid entries!");
-                }
-            }
-            else
-            {
-                _logger.Error(string.Format("Data has invalid length {0}", data.Length));
-            }
-
-            _logger.Error(string.Format("{0} has an error!", data));
-
-            return null;
         }
     }
 }

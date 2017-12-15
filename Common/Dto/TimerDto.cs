@@ -7,20 +7,17 @@ namespace Common.Dto
     {
         private const string TAG = "TimerDto";
 
-        public TimerDto(int id, string name, string information, WirelessSocketDto socket, Weekday weekday, DateTime time, SocketAction action, bool isActive)
-            : base(id, name, information, socket, weekday, time, action, isActive) { }
+        public TimerDto(int id, string name, WirelessSocketDto socket, WirelessSwitchDto wirelessSwitch, DateTime time, WirelessAction action, bool isActive)
+            : base(id, name, socket, wirelessSwitch, time, action, isActive) { }
 
-        public TimerDto(int id, string name, WirelessSocketDto socket, Weekday weekday, DateTime time, SocketAction action, bool isActive)
-            : base(id, name, "", socket, weekday, time, action, isActive) { }
-
-        public TimerDto(int id, string name, string information, SocketAction action, bool isActive)
-            : base(id, name, information, null, Weekday.Sunday, new DateTime(), action, isActive) { }
+        public TimerDto(int id, string name, WirelessAction action, bool isActive)
+            : base(id, name, null, null, new DateTime(), action, isActive) { }
 
         public override string CommandAdd
         {
             get
             {
-                return string.Format("{0}{1}&socket={2}&gpio={3}&weekday={4}&hour={5}&minute={6}&onoff={7}&isTimer={8}&playSound={9}&playRaspberry={10}", LucaServerAction.ADD_SCHEDULE.Action, _name, _socket.Name, "", _weekday, _time.Hour, _time.Minute, (_action == SocketAction.Activate ? "1" : "0"), "1", "0", "1");
+                return string.Format("{0}{1}&socket={2}&gpio={3}&switch={4}&weekday={5}&hour={6}&minute={7}&onoff={8}&isTimer={9}", LucaServerAction.ADD_SCHEDULE.Action, _name, _socket.Name, "", _wirelessSwitch.Name, _time.DayOfWeek, _time.Hour, _time.Minute, (_wirelessAction == WirelessAction.Activate ? "1" : "0"), "1");
             }
         }
 
@@ -28,7 +25,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}&socket={2}&gpio={3}&weekday={4}&hour={5}&minute={6}&onoff={7}&isTimer={8}&playSound={9}&playRaspberry={10}&isactive={11}", LucaServerAction.UPDATE_SCHEDULE.Action, _name, _socket.Name, "", _weekday, _time.Hour, _time.Minute, (_action == SocketAction.Activate ? "1" : "0"), "1", "0", "1", (_isActive ? "1" : "0"));
+                return string.Format("{0}{1}&socket={2}&gpio={3}&switch={4}&weekday={5}&hour={6}&minute={7}&onoff={8}&isTimer={9}&isactive={10}", LucaServerAction.UPDATE_SCHEDULE.Action, _name, _socket.Name, "", _wirelessSwitch.Name, _time.DayOfWeek, _time.Hour, _time.Minute, (_wirelessAction == WirelessAction.Activate ? "1" : "0"), "1", (_isActive ? "1" : "0"));
             }
         }
 
@@ -38,9 +35,9 @@ namespace Common.Dto
                 + ": {Id: " + _id.ToString()
                 + "};{Name: " + _name
                 + "};{WirelessSocket: " + (_socket == null ? "" : _socket.ToString())
-                + "};{Weekday: " + _weekday.ToString()
+                + "};{WirelessSwitch: " + (_wirelessSwitch == null ? "" : _wirelessSwitch.ToString())
                 + "};{Time: " + _time.ToString()
-                + "};{Action: " + _action.ToString()
+                + "};{Action: " + _wirelessAction.ToString()
                 + "};{IsActive: " + (_isActive ? "1" : "0")
                 + "}}";
         }

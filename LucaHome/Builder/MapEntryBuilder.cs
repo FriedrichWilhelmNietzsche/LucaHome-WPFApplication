@@ -19,7 +19,7 @@ namespace LucaHome.Builder
         {
             MapContentControl mapContentControl = new MapContentControl();
 
-            mapContentControl.ButtonText = entry.ButtonText;
+            mapContentControl.ButtonText = entry.ShortName;
             mapContentControl.ButtonToolTip = entry.ButtonToolTip;
             mapContentControl.ButtonVisibility = entry.ButtonVisibility;
 
@@ -27,7 +27,7 @@ namespace LucaHome.Builder
             {
                 mapContentControl.ButtonCommand = new DelegateCommand(() =>
                 {
-                    WirelessSocketDto socket = entry.Socket;
+                    WirelessSocketDto socket = entry.WirelessSocket;
 
                     SetDialog setDialog = new SetDialog(string.Format("Set socket {0}", socket.Name),
                         string.Format("Current State: {0}\nArea: {1}\nCode: {2}", socket.ActivationString, socket.Area, socket.Code));
@@ -43,6 +43,21 @@ namespace LucaHome.Builder
                     {
                         WirelessSocketService.Instance.SetWirelessSocket(socket, false);
                     }
+                });
+            }
+            else if (entry.MapDrawingType == DrawingType.LightSwitch)
+            {
+                mapContentControl.ButtonCommand = new DelegateCommand(() =>
+                {
+                    WirelessSwitchDto wirelessSwitch = entry.WirelessSwitch;
+
+                    ToggleDialog toggleDialog = new ToggleDialog(
+                        string.Format("Toggle switch {0}", wirelessSwitch.Name),
+                        string.Format("Current Action: {0}\nArea: {1}\nKeyCode: {2}", wirelessSwitch.Action.ToString(), wirelessSwitch.Area, wirelessSwitch.KeyCode));
+                    toggleDialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    toggleDialog.ShowDialog();
+
+                    WirelessSwitchService.Instance.ToggleWirelessSwitch(wirelessSwitch);
                 });
             }
             else if (entry.MapDrawingType == DrawingType.Temperature)
