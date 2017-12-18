@@ -1,6 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
-using Common.Tools;
+﻿using Common.Dto;
 using Data.Services;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,10 +13,8 @@ namespace LucaHome.Pages
     public partial class SeriesPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "SeriesPage";
-        private readonly Logger _logger;
 
         private readonly NavigationService _navigationService;
-        private readonly SeriesService _seriesService;
 
         private string _seriesSearchKey = string.Empty;
 
@@ -27,10 +23,7 @@ namespace LucaHome.Pages
 
         public SeriesPage(NavigationService navigationService)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
             _navigationService = navigationService;
-            _seriesService = SeriesService.Instance;
 
             InitializeComponent();
             DataContext = this;
@@ -52,60 +45,45 @@ namespace LucaHome.Pages
             {
                 _seriesSearchKey = value;
                 OnPropertyChanged("SeriesSearchKey");
-
-                if (_seriesSearchKey != string.Empty)
-                {
-                    createUI(_seriesService.FoundSeries(_seriesSearchKey));
-                }
-                else
-                {
-                    createUI(_seriesService.SeriesList);
-                }
+                createUI(SeriesService.Instance.FoundSeries(_seriesSearchKey));
             }
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+            SeriesService.Instance.OnSeriesListDownloadFinished += _onSeriesListDownloadFinished;
 
-            _seriesService.OnSeriesListDownloadFinished += _onSeriesListDownloadFinished;
-
-            if (_seriesService.SeriesList == null)
+            if (SeriesService.Instance.SeriesList == null)
             {
-                _seriesService.LoadSeriesList();
+                SeriesService.Instance.LoadSeriesList();
                 return;
             }
 
-            createUI(_seriesService.SeriesList);
+            createUI(SeriesService.Instance.SeriesList);
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _seriesService.OnSeriesListDownloadFinished -= _onSeriesListDownloadFinished;
+            SeriesService.Instance.OnSeriesListDownloadFinished -= _onSeriesListDownloadFinished;
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.GoBack();
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _seriesService.LoadSeriesList();
+            SeriesService.Instance.LoadSeriesList();
         }
 
         private void _onSeriesListDownloadFinished(IList<SeriesDto> seriesList, bool success, string response)
         {
-            _logger.Debug(string.Format("_onSeriesListDownloadFinished with object {0} and response {1} was successful {2}", seriesList, response, success));
-            createUI(_seriesService.SeriesList);
+            createUI(SeriesService.Instance.SeriesList);
         }
 
         private void createUI(IList<SeriesDto> seriesList)
         {
-            _logger.Debug(string.Format("createUI with list {0}", seriesList));
             SeriesGrid.Children.Clear();
 
             int row = 0;
@@ -119,7 +97,7 @@ namespace LucaHome.Pages
                 newSeriesCard.ButtonOpenExplorerCommand = new DelegateCommand(
                     () =>
                     {
-                        _seriesService.OpenExplorer(entry.SeriesName);
+                        SeriesService.Instance.OpenExplorer(entry.SeriesName);
                     });
                 newSeriesCard.MouseUpCommand = new DelegateCommand(
                     () =>

@@ -2,7 +2,6 @@
 using Common.Converter;
 using Common.Dto;
 using Common.Enums;
-using Common.Interfaces;
 using Common.Tools;
 using Data.Controller;
 using System.Collections.Generic;
@@ -21,13 +20,9 @@ namespace Data.Services
     public class WirelessSocketService
     {
         private const string TAG = "WirelessSocketService";
-        private readonly Logger _logger;
-
         private const int TIMEOUT = 5 * 60 * 1000;
 
-        private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
-        private readonly IJsonDataConverter<WirelessSocketDto> _jsonDataToWirelessSocketConverter;
 
         private static WirelessSocketService _instance = null;
         private static readonly object _padlock = new object();
@@ -38,12 +33,7 @@ namespace Data.Services
 
         WirelessSocketService()
         {
-            _logger = new Logger(TAG);
-
-            _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
-            _jsonDataToWirelessSocketConverter = new JsonDataToWirelessSocketConverter();
-
             _downloadController.OnDownloadFinished += _wirelessSocketDownloadFinished;
 
             _downloadTimer = new Timer(TIMEOUT);
@@ -128,6 +118,11 @@ namespace Data.Services
 
         public IList<WirelessSocketDto> FoundWirelessSockets(string searchKey)
         {
+            if (searchKey == string.Empty)
+            {
+                return _wirelessSocketList;
+            }
+
             List<WirelessSocketDto> foundWirelessSockets = _wirelessSocketList
                         .Where(wirelessSocket =>
                             wirelessSocket.Name.Contains(searchKey)
@@ -144,98 +139,96 @@ namespace Data.Services
 
         public void LoadWirelessSocketList()
         {
-            _logger.Debug("LoadWirelessSocketList");
             loadWirelessSocketListAsync();
         }
 
         public void SetWirelessSocket(WirelessSocketDto wirelessSocket, bool state)
         {
-            _logger.Debug(string.Format("Set socket {0} to {1}", wirelessSocket, state));
+            Logger.Instance.Debug(TAG, string.Format("Set socket {0} to {1}", wirelessSocket, state));
             setWirelessSocketAsync(wirelessSocket.Name, state);
         }
 
         public void SetWirelessSocket(string wirelessSocketName, bool state)
         {
-            _logger.Debug(string.Format("Set socket {0} to {1}", wirelessSocketName, state));
+            Logger.Instance.Debug(TAG, string.Format("Set socket {0} to {1}", wirelessSocketName, state));
             setWirelessSocketAsync(wirelessSocketName, state);
         }
 
         public void ChangeWirelessSocketState(WirelessSocketDto wirelessSocket)
         {
-            _logger.Debug(string.Format("Change state for socket {0}", wirelessSocket));
+            Logger.Instance.Debug(TAG, string.Format("Change state for socket {0}", wirelessSocket));
             setWirelessSocketAsync(wirelessSocket.Name, !wirelessSocket.IsActivated);
         }
 
         public void ChangeWirelessSocketState(string wirelessSocketName)
         {
-            _logger.Debug(string.Format("Change state for socket {0}", wirelessSocketName));
+            Logger.Instance.Debug(TAG, string.Format("Change state for socket {0}", wirelessSocketName));
             WirelessSocketDto wirelessSocket = GetByName(wirelessSocketName);
             setWirelessSocketAsync(wirelessSocket.Name, !wirelessSocket.IsActivated);
         }
 
         public void AddWirelessSocket(WirelessSocketDto newWirelessSocket)
         {
-            _logger.Debug(string.Format("AddWirelessSocket: add socket {0}", newWirelessSocket));
+            Logger.Instance.Debug(TAG, string.Format("AddWirelessSocket: add socket {0}", newWirelessSocket));
             addWirelessSocketAsync(newWirelessSocket);
         }
 
         public void UpdateWirelessSocket(WirelessSocketDto updateWirelessSocket)
         {
-            _logger.Debug(string.Format("UpdateWirelessSocket: updating socket {0}", updateWirelessSocket));
+            Logger.Instance.Debug(TAG, string.Format("UpdateWirelessSocket: updating socket {0}", updateWirelessSocket));
             updateWirelessSocketAsync(updateWirelessSocket);
         }
 
         public void DeleteWirelessSocket(WirelessSocketDto deleteWirelessSocket)
         {
-            _logger.Debug(string.Format("DeleteWirelessSocket: deleting socket {0}", deleteWirelessSocket));
+            Logger.Instance.Debug(TAG, string.Format("DeleteWirelessSocket: deleting socket {0}", deleteWirelessSocket));
             deleteWirelessSocketAsync(deleteWirelessSocket);
         }
 
         private void _downloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            _logger.Debug(string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
             loadWirelessSocketListAsync();
         }
 
         private async Task loadWirelessSocketListAsync()
         {
-            _logger.Debug("loadWirelessSocketListAsync");
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnWirelessSocketDownloadFinished(null, false, "No user");
                 return;
             }
 
-            string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_SOCKETS.Action;
+            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
+                user.Name, user.Passphrase,
+                LucaServerAction.GET_SOCKETS.Action);
 
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.WirelessSocket);
         }
 
         private async Task setWirelessSocketAsync(string socketName, bool state)
         {
-            _logger.Debug(string.Format("setWirelessSocketListAsync: socketName {0} state {1}", socketName, state));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnSetWirelessSocketFinished(false, "No user");
                 return;
             }
 
-            string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.SET_SOCKET.Action + socketName + (state ? Constants.STATE_ON : Constants.STATE_OFF);
+            string action = LucaServerAction.SET_SOCKET.Action + socketName + (state ? Constants.STATE_ON : Constants.STATE_OFF);
+            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
+                user.Name, user.Passphrase,
+                action);
 
             _downloadController.OnDownloadFinished += _setWirelessSocketFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.WirelessSocketSet);
         }
 
         private async Task addWirelessSocketAsync(WirelessSocketDto newWirelessSocket)
         {
-            _logger.Debug(string.Format("addWirelessSocketAsync: add new wirelessSocket {0}", newWirelessSocket));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnAddWirelessSocketFinished(false, "No user");
@@ -243,20 +236,17 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 newWirelessSocket.CommandAdd);
 
             _downloadController.OnDownloadFinished += _addWirelessSocketFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.WirelessSocketAdd);
         }
 
         private async Task updateWirelessSocketAsync(WirelessSocketDto updateWirelessSocket)
         {
-            _logger.Debug(string.Format("updateWirelessSocketAsync: updating wirelessSocket {0}", updateWirelessSocket));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnUpdateWirelessSocketFinished(false, "No user");
@@ -264,20 +254,17 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 updateWirelessSocket.CommandUpdate);
 
             _downloadController.OnDownloadFinished += _updateWirelessSocketFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.WirelessSocketUpdate);
         }
 
         private async Task deleteWirelessSocketAsync(WirelessSocketDto deleteWirelessSocket)
         {
-            _logger.Debug(string.Format("deleteWirelessSocketAsync: delete wirelessSocket {0}", deleteWirelessSocket));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnDeleteWirelessSocketFinished(false, "No user");
@@ -285,61 +272,49 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 deleteWirelessSocket.CommandDelete);
 
             _downloadController.OnDownloadFinished += _deleteWirelessSocketFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.WirelessSocketDelete);
         }
 
         private void _wirelessSocketDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_wirelessSocketDownloadFinished");
-
             if (downloadType != DownloadType.WirelessSocket)
             {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnWirelessSocketDownloadFinished(null, false, response);
                 return;
             }
-
-            _logger.Debug(string.Format("response: {0}", response));
 
             if (!success)
             {
-                _logger.Error("Download was not successful!");
-
+                Logger.Instance.Error(TAG, "Download was not successful!");
                 publishOnWirelessSocketDownloadFinished(null, false, response);
                 return;
             }
 
-            IList<WirelessSocketDto> wirelessSocketList = _jsonDataToWirelessSocketConverter.GetList(response);
+            IList<WirelessSocketDto> wirelessSocketList = JsonDataToWirelessSocketConverter.Instance.GetList(response);
             if (wirelessSocketList == null)
             {
-                _logger.Error("Converted wirelessSocketList is null!");
-
+                Logger.Instance.Error(TAG, "Converted wirelessSocketList is null!");
                 publishOnWirelessSocketDownloadFinished(null, false, response);
                 return;
             }
 
             _wirelessSocketList = wirelessSocketList;
-
             publishOnWirelessSocketDownloadFinished(_wirelessSocketList, true, response);
         }
 
         private void _setWirelessSocketFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_setWirelessSocketFinished");
-
             if (downloadType != DownloadType.WirelessSocketSet)
             {
                 return;
@@ -349,31 +324,24 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR") || response.Contains("0"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnSetWirelessSocketFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Setting was not successful!");
-
+                Logger.Instance.Error(TAG, "Setting was not successful!");
                 publishOnSetWirelessSocketFinished(false, response);
                 return;
             }
 
             publishOnSetWirelessSocketFinished(true, response);
-
             loadWirelessSocketListAsync();
         }
 
         private void _addWirelessSocketFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_addWirelessSocketFinished");
-
             if (downloadType != DownloadType.WirelessSocketAdd)
             {
                 return;
@@ -383,31 +351,24 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR") || response.Contains("0"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnAddWirelessSocketFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Adding was not successful!");
-
+                Logger.Instance.Error(TAG, "Adding was not successful!");
                 publishOnAddWirelessSocketFinished(false, response);
                 return;
             }
 
             publishOnAddWirelessSocketFinished(true, response);
-
             loadWirelessSocketListAsync();
         }
 
         private void _updateWirelessSocketFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_updateWirelessSocketFinished");
-
             if (downloadType != DownloadType.WirelessSocketUpdate)
             {
                 return;
@@ -417,31 +378,24 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR") || response.Contains("0"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnUpdateWirelessSocketFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Updating was not successful!");
-
+                Logger.Instance.Error(TAG, "Updating was not successful!");
                 publishOnUpdateWirelessSocketFinished(false, response);
                 return;
             }
 
             publishOnUpdateWirelessSocketFinished(true, response);
-
             loadWirelessSocketListAsync();
         }
 
         private void _deleteWirelessSocketFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_deleteWirelessSocketFinished");
-
             if (downloadType != DownloadType.WirelessSocketDelete)
             {
                 return;
@@ -451,42 +405,36 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR") || response.Contains("0"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnDeleteWirelessSocketFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Deleting was not successful!");
-
+                Logger.Instance.Error(TAG, "Deleting was not successful!");
                 publishOnDeleteWirelessSocketFinished(false, response);
                 return;
             }
 
             publishOnDeleteWirelessSocketFinished(true, response);
-
             loadWirelessSocketListAsync();
         }
 
         public void Dispose()
         {
-            _logger.Debug("Dispose");
+            Logger.Instance.Debug(TAG, "Dispose");
 
             _downloadController.OnDownloadFinished -= _wirelessSocketDownloadFinished;
             _downloadController.OnDownloadFinished -= _setWirelessSocketFinished;
             _downloadController.OnDownloadFinished -= _addWirelessSocketFinished;
             _downloadController.OnDownloadFinished -= _updateWirelessSocketFinished;
             _downloadController.OnDownloadFinished -= _deleteWirelessSocketFinished;
+            _downloadController.Dispose();
 
             _downloadTimer.Elapsed -= _downloadTimer_Elapsed;
             _downloadTimer.AutoReset = false;
             _downloadTimer.Stop();
-
-            _downloadController.Dispose();
         }
     }
 }

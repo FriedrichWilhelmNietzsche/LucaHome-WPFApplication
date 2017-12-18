@@ -10,7 +10,6 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Timers;
-using Common.Interfaces;
 
 namespace Data.Services
 {
@@ -21,13 +20,9 @@ namespace Data.Services
     public class MovieService
     {
         private const string TAG = "MovieService";
-        private readonly Logger _logger;
-
         private const int TIMEOUT = 6 * 60 * 60 * 1000;
 
-        private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
-        private readonly IJsonDataConverter<MovieDto> _jsonDataToMovieConverter;
         private readonly LocalDriveController _localDriveController;
 
         private static MovieService _instance = null;
@@ -40,16 +35,15 @@ namespace Data.Services
 
         MovieService()
         {
-            _logger = new Logger(TAG);
-
-            _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
-            _jsonDataToMovieConverter = new JsonDataToMovieConverter();
-            _localDriveController = new LocalDriveController();
-
-            _videothekDrive = _localDriveController.GetVideothekDrive();
-
             _downloadController.OnDownloadFinished += _movieDownloadFinished;
+
+            _localDriveController = new LocalDriveController();
+            _videothekDrive = _localDriveController.GetVideothekDrive();
+            if (_videothekDrive == null)
+            {
+                Logger.Instance.Error(TAG, "Found no videothek drive!");
+            }
 
             _downloadTimer = new Timer(TIMEOUT);
             _downloadTimer.Elapsed += _downloadTimer_Elapsed;
@@ -111,6 +105,11 @@ namespace Data.Services
 
         public IList<MovieDto> FoundMovies(string searchKey)
         {
+            if (searchKey == string.Empty)
+            {
+                return _movieList;
+            }
+
             List<MovieDto> foundMovies = _movieList
                         .Where(movie =>
                             movie.Title.Contains(searchKey)
@@ -127,48 +126,40 @@ namespace Data.Services
 
         public void LoadMovieList()
         {
-            _logger.Debug("LoadMovieList");
             loadMovieListAsync();
         }
 
         public void StartMovieOnPc(MovieDto movie)
         {
-            _logger.Debug(string.Format("Start movie {0}", movie));
-
             startMovieOnPc(movie.Title);
         }
 
         public void StartMovieOnPc(string movieTitle)
         {
-            _logger.Debug(string.Format("Start movie {0}", movieTitle));
-
             startMovieOnPc(movieTitle);
         }
 
         public void UpdateMovie(MovieDto updateMovie)
         {
-            _logger.Debug(string.Format("UpdateMovie: updating movie {0}", updateMovie));
+            Logger.Instance.Debug(TAG, string.Format("UpdateMovie: updating movie {0}", updateMovie));
             updateMovieAsync(updateMovie);
         }
 
         private void _downloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            _logger.Debug(string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
             loadMovieListAsync();
         }
 
         private void startMovieOnPc(string movieTitle)
         {
-            _logger.Debug(string.Format("startMovieOnPc with title {0}", movieTitle));
-
             if (_videothekDrive == null)
             {
-                _logger.Error("VideothekDrive is null! Trying to find...");
+                Logger.Instance.Error(TAG, "VideothekDrive is null! Trying to find...");
                 _videothekDrive = _localDriveController.GetVideothekDrive();
 
                 if (_videothekDrive == null)
                 {
-                    _logger.Error("VideothekDrive is still null! Aborting launch...");
+                    Logger.Instance.Error(TAG, "VideothekDrive is still null! Aborting launch...");
                     publishOnMovieStartFinished(false, "No movie drive found! Please check your attached storages!");
                     return;
                 }
@@ -181,44 +172,43 @@ namespace Data.Services
             FileInfo[] movieFiles = _localDriveController.ReadFilesInDir(moviePath, extensionArray);
             if (movieFiles.Length == 0)
             {
-                _logger.Error(string.Format("Found no files for movie {0} in directory {1}", movieTitle, moviePath));
+                Logger.Instance.Error(TAG, string.Format("Found no files for movie {0} in directory {1}", movieTitle, moviePath));
                 publishOnMovieStartFinished(false, "No movie file found!");
             }
             else if (movieFiles.Length == 1)
             {
                 string path = string.Format("{0}\\{1}", moviePathString, movieFiles[0].Name);
-                _logger.Debug(string.Format("Opening {0} with associated programm", path));
+                Logger.Instance.Debug(TAG, string.Format("Opening {0} with associated programm", path));
                 Process.Start(@path);
                 publishOnMovieStartFinished(true, string.Empty);
             }
             else
             {
-                _logger.Error(string.Format("Please provide only one file in the given directory! Found {0} files in {1}", movieFiles.Length, moviePath));
+                Logger.Instance.Error(TAG, string.Format("Please provide only one file in the given directory! Found {0} files in {1}", movieFiles.Length, moviePath));
                 publishOnMovieStartFinished(false, "Too many files found!");
             }
         }
 
         private async Task loadMovieListAsync()
         {
-            _logger.Debug("loadMovieListAsync");
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnMovieDownloadFinished(null, false, "No user");
                 return;
             }
 
-            string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_MOVIES.Action;
+            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
+                user.Name, user.Passphrase,
+                LucaServerAction.GET_MOVIES.Action);
 
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.Movie);
         }
 
         private async Task updateMovieAsync(MovieDto updateMovie)
         {
-            _logger.Debug(string.Format("updateMovieAsync: updating movie {0}", updateMovie));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnMovieUpdateFinished(false, "No user");
@@ -226,64 +216,52 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 updateMovie.CommandUpdate);
 
             _downloadController.OnDownloadFinished += _movieUpdateFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.MovieUpdate);
         }
 
         private void _movieDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_movieDownloadFinished");
-
             if (downloadType != DownloadType.Movie)
             {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnMovieDownloadFinished(null, false, response);
                 return;
             }
-
-            _logger.Debug(string.Format("response: {0}", response));
 
             if (!success)
             {
-                _logger.Error("Download was not successful!");
-
+                Logger.Instance.Error(TAG, "Download was not successful!");
                 publishOnMovieDownloadFinished(null, false, response);
                 return;
             }
 
-            IList<MovieDto> movieList = _jsonDataToMovieConverter.GetList(response);
+            IList<MovieDto> movieList = JsonDataToMovieConverter.Instance.GetList(response);
             if (movieList == null)
             {
-                _logger.Error("Converted movieList is null!");
-
+                Logger.Instance.Error(TAG, "Converted movieList is null!");
                 publishOnMovieDownloadFinished(null, false, response);
                 return;
             }
 
             _movieList = movieList.OrderBy(x => x.Title).ToList();
-
             publishOnMovieDownloadFinished(_movieList, true, response);
         }
 
         private void _movieUpdateFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_movieUpdateFinished");
-
             if (downloadType != DownloadType.MovieUpdate)
             {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
+                Logger.Instance.Debug(TAG, string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
 
@@ -291,39 +269,33 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnMovieUpdateFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Updating was not successful!");
-
+                Logger.Instance.Error(TAG, "Updating was not successful!");
                 publishOnMovieUpdateFinished(false, response);
                 return;
             }
 
             publishOnMovieUpdateFinished(true, response);
-
             loadMovieListAsync();
         }
 
         public void Dispose()
         {
-            _logger.Debug("Dispose");
+            Logger.Instance.Debug(TAG, "Dispose");
 
             _downloadController.OnDownloadFinished -= _movieDownloadFinished;
             _downloadController.OnDownloadFinished -= _movieUpdateFinished;
+            _downloadController.Dispose();
 
             _downloadTimer.Elapsed -= _downloadTimer_Elapsed;
             _downloadTimer.AutoReset = false;
             _downloadTimer.Stop();
-
-            _downloadController.Dispose();
         }
     }
 }

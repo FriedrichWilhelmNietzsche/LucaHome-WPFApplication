@@ -1,6 +1,4 @@
 ﻿using Common.Enums;
-using Common.Tools;
-using OpenWeather.Common;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -11,7 +9,6 @@ namespace OpenWeather.Models
     public class ForecastModel
     {
         private const string TAG = "ForecastModel";
-        private Logger _logger;
 
         private string _city;
         private string _country;
@@ -22,8 +19,6 @@ namespace OpenWeather.Models
             string country,
             IList<ForecastPartModel> list)
         {
-            _logger = new Logger(TAG, OWEnables.LOGGING);
-
             _city = city;
             _country = country;
             _list = list;

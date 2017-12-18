@@ -15,8 +15,7 @@ namespace TestProject
             double unix = 1498845600;
             DateTime dateTime = new DateTime(2017, 6, 30, 20, 0, 0);
 
-            UnixToDateTimeConverter unixToDateTimeConverter = new UnixToDateTimeConverter();
-            DateTime convertedDateTime = unixToDateTimeConverter.UnixTimeStampToDateTime(unix);
+            DateTime convertedDateTime = UnixToDateTimeConverter.Instance.UnixTimeStampToDateTime(unix);
 
             Assert.AreEqual(convertedDateTime, dateTime);
         }
@@ -27,8 +26,7 @@ namespace TestProject
             string unixString = "1498845600";
             DateTime dateTime = new DateTime(2017, 6, 30, 20, 0, 0);
 
-            UnixToDateTimeConverter unixToDateTimeConverter = new UnixToDateTimeConverter();
-            DateTime convertedDateTime = unixToDateTimeConverter.UnixTimeStampToDateTime(unixString);
+            DateTime convertedDateTime = UnixToDateTimeConverter.Instance.UnixTimeStampToDateTime(unixString);
 
             Assert.AreEqual(convertedDateTime, dateTime);
         }

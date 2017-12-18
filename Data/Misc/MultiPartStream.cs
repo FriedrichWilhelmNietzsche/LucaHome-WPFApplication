@@ -10,7 +10,6 @@ namespace Data.Misc
     public class MultiPartStream
     {
         private const string TAG = "MultiPartStream";
-        private readonly Logger _logger;
 
         private byte[] _seperatorBytes = Encoding.UTF8.GetBytes("\r\n\r\n");
         private byte[] _headerbytes = new byte[100];
@@ -21,7 +20,6 @@ namespace Data.Misc
 
         public MultiPartStream(Stream stream)
         {
-            _logger = new Logger(TAG);
             _binaryReader = new BinaryReader(new BufferedStream(stream));
         }
 
@@ -74,7 +72,7 @@ namespace Data.Misc
             }
             catch (Exception exception)
             {
-                _logger.Error(exception.Message);
+                Logger.Instance.Error(TAG, exception.Message);
                 return string.Empty;
             }
         }
@@ -88,7 +86,7 @@ namespace Data.Misc
             }
             catch (Exception exception)
             {
-                _logger.Error(exception.Message);
+                Logger.Instance.Error(TAG, exception.Message);
                 return 0;
             }
         }

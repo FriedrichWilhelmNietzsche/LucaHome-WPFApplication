@@ -2,7 +2,6 @@
 using Common.Converter;
 using Common.Dto;
 using Common.Enums;
-using Common.Interfaces;
 using Common.Tools;
 using Data.Controller;
 using System.Collections.Generic;
@@ -21,13 +20,9 @@ namespace Data.Services
     public class WirelessSwitchService
     {
         private const string TAG = "WirelessSwitchService";
-        private readonly Logger _logger;
-
         private const int TIMEOUT = 5 * 60 * 1000;
 
-        private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
-        private readonly IJsonDataConverter<WirelessSwitchDto> _jsonDataToWirelessSwitchConverter;
 
         private static WirelessSwitchService _instance = null;
         private static readonly object _padlock = new object();
@@ -38,12 +33,7 @@ namespace Data.Services
 
         WirelessSwitchService()
         {
-            _logger = new Logger(TAG);
-
-            _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
-            _jsonDataToWirelessSwitchConverter = new JsonDataToWirelessSwitchConverter();
-
             _downloadController.OnDownloadFinished += _wirelessSwitchDownloadFinished;
 
             _downloadTimer = new Timer(TIMEOUT);
@@ -128,6 +118,11 @@ namespace Data.Services
 
         public IList<WirelessSwitchDto> FoundWirelessSwitches(string searchKey)
         {
+            if (searchKey == string.Empty)
+            {
+                return _wirelessSwitchList;
+            }
+
             List<WirelessSwitchDto> foundWirelessSwitches = _wirelessSwitchList
                         .Where(wirelessSwitch =>
                             wirelessSwitch.Name.Contains(searchKey)
@@ -147,85 +142,83 @@ namespace Data.Services
 
         public void LoadWirelessSwitchList()
         {
-            _logger.Debug("LoadWirelessSwitchList");
             loadWirelessSwitchListAsync();
         }
 
         public void ToggleWirelessSwitch(WirelessSwitchDto wirelessSwitch)
         {
-            _logger.Debug(string.Format("Toggle switch {0}", wirelessSwitch));
+            Logger.Instance.Debug(TAG, string.Format("Toggle switch {0}", wirelessSwitch));
             toggleWirelessSwitchAsync(wirelessSwitch.Name);
         }
 
         public void ToggleWirelessSwitch(string wirelessSwitchName)
         {
-            _logger.Debug(string.Format("Toggle switch {0}", wirelessSwitchName));
+            Logger.Instance.Debug(TAG, string.Format("Toggle switch {0}", wirelessSwitchName));
             toggleWirelessSwitchAsync(wirelessSwitchName);
         }
 
         public void AddWirelessSwitch(WirelessSwitchDto wirelessSwitch)
         {
-            _logger.Debug(string.Format("AddWirelessSwitch: add switch {0}", wirelessSwitch));
+            Logger.Instance.Debug(TAG, string.Format("AddWirelessSwitch: add switch {0}", wirelessSwitch));
             addWirelessSwitchAsync(wirelessSwitch);
         }
 
         public void UpdateWirelessSwitch(WirelessSwitchDto wirelessSwitch)
         {
-            _logger.Debug(string.Format("UpdateWirelessSwitch: update switch {0}", wirelessSwitch));
+            Logger.Instance.Debug(TAG, string.Format("UpdateWirelessSwitch: update switch {0}", wirelessSwitch));
             updateWirelessSwitchAsync(wirelessSwitch);
         }
 
         public void DeleteWirelessSwitch(WirelessSwitchDto wirelessSwitch)
         {
-            _logger.Debug(string.Format("DeleteWirelessSwitch: delete switch {0}", wirelessSwitch));
+            Logger.Instance.Debug(TAG, string.Format("DeleteWirelessSwitch: delete switch {0}", wirelessSwitch));
             deleteWirelessSwitchAsync(wirelessSwitch);
         }
 
         private void _downloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            _logger.Debug(string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
             loadWirelessSwitchListAsync();
         }
 
         private async Task loadWirelessSwitchListAsync()
         {
-            _logger.Debug("loadWirelessSwitchListAsync");
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnWirelessSwitchDownloadFinished(null, false, "No user");
                 return;
             }
 
-            string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_SWITCHES.Action;
+            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
+                user.Name, user.Passphrase,
+                LucaServerAction.GET_SWITCHES.Action);
 
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.WirelessSwitch);
         }
 
         private async Task toggleWirelessSwitchAsync(string switchName)
         {
-            _logger.Debug(string.Format("toggleWirelessSwitchAsync: switchName {0}", switchName));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnWirelessSwitchToggleFinished(false, "No user");
                 return;
             }
 
-            string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.TOGGLE_SWITCH.Action + switchName;
+            string action = LucaServerAction.TOGGLE_SWITCH.Action + switchName;
+            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
+                user.Name, user.Passphrase,
+                action);
 
             _downloadController.OnDownloadFinished += _toggleWirelessSwitchFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.WirelessSwitchToggle);
         }
 
         private async Task addWirelessSwitchAsync(WirelessSwitchDto wirelessSwitch)
         {
-            _logger.Debug(string.Format("addWirelessSwitchAsync: add new WirelessSwitchDto {0}", wirelessSwitch));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnWirelessSwitchAddFinished(false, "No user");
@@ -233,20 +226,17 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 wirelessSwitch.CommandAdd);
 
             _downloadController.OnDownloadFinished += _addWirelessSwitchFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.WirelessSwitchAdd);
         }
 
         private async Task updateWirelessSwitchAsync(WirelessSwitchDto wirelessSwitch)
         {
-            _logger.Debug(string.Format("updateWirelessSwitchAsync: updating WirelessSwitchDto {0}", wirelessSwitch));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnWirelessSwitchUpdateFinished(false, "No user");
@@ -254,20 +244,17 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 wirelessSwitch.CommandUpdate);
 
             _downloadController.OnDownloadFinished += _updateWirelessSwitchFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.WirelessSwitchUpdate);
         }
 
         private async Task deleteWirelessSwitchAsync(WirelessSwitchDto wirelessSwitch)
         {
-            _logger.Debug(string.Format("deleteWirelessSwitchAsync: delete WirelessSwitchDto {0}", wirelessSwitch));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnWirelessSwitchDeleteFinished(false, "No user");
@@ -275,61 +262,49 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 wirelessSwitch.CommandDelete);
 
             _downloadController.OnDownloadFinished += _deleteWirelessSwitchFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.WirelessSwitchDelete);
         }
 
         private void _wirelessSwitchDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_wirelessSwitchDownloadFinished");
-
             if (downloadType != DownloadType.WirelessSwitch)
             {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnWirelessSwitchDownloadFinished(null, false, response);
                 return;
             }
-
-            _logger.Debug(string.Format("response: {0}", response));
 
             if (!success)
             {
-                _logger.Error("Download was not successful!");
-
+                Logger.Instance.Error(TAG, "Download was not successful!");
                 publishOnWirelessSwitchDownloadFinished(null, false, response);
                 return;
             }
 
-            IList<WirelessSwitchDto> wirelessSwitchList = _jsonDataToWirelessSwitchConverter.GetList(response);
+            IList<WirelessSwitchDto> wirelessSwitchList = JsonDataToWirelessSwitchConverter.Instance.GetList(response);
             if (wirelessSwitchList == null)
             {
-                _logger.Error("Converted wirelessSwitchList is null!");
-
+                Logger.Instance.Error(TAG, "Converted wirelessSwitchList is null!");
                 publishOnWirelessSwitchDownloadFinished(null, false, response);
                 return;
             }
 
             _wirelessSwitchList = wirelessSwitchList;
-
             publishOnWirelessSwitchDownloadFinished(_wirelessSwitchList, true, response);
         }
 
         private void _toggleWirelessSwitchFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_toggleWirelessSwitchFinished");
-
             if (downloadType != DownloadType.WirelessSwitchToggle)
             {
                 return;
@@ -339,31 +314,24 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR") || response.Contains("0"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnWirelessSwitchToggleFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Setting was not successful!");
-
+                Logger.Instance.Error(TAG, "Setting was not successful!");
                 publishOnWirelessSwitchToggleFinished(false, response);
                 return;
             }
 
             publishOnWirelessSwitchToggleFinished(true, response);
-
             loadWirelessSwitchListAsync();
         }
 
         private void _addWirelessSwitchFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_addWirelessSwitchFinished");
-
             if (downloadType != DownloadType.WirelessSwitchAdd)
             {
                 return;
@@ -373,31 +341,24 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR") || response.Contains("0"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnWirelessSwitchAddFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Adding was not successful!");
-
+                Logger.Instance.Error(TAG, "Adding was not successful!");
                 publishOnWirelessSwitchAddFinished(false, response);
                 return;
             }
 
             publishOnWirelessSwitchAddFinished(true, response);
-
             loadWirelessSwitchListAsync();
         }
 
         private void _updateWirelessSwitchFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_updateWirelessSwitchFinished");
-
             if (downloadType != DownloadType.WirelessSwitchUpdate)
             {
                 return;
@@ -407,31 +368,24 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR") || response.Contains("0"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnWirelessSwitchUpdateFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Updating was not successful!");
-
+                Logger.Instance.Error(TAG, "Updating was not successful!");
                 publishOnWirelessSwitchUpdateFinished(false, response);
                 return;
             }
 
             publishOnWirelessSwitchUpdateFinished(true, response);
-
             loadWirelessSwitchListAsync();
         }
 
         private void _deleteWirelessSwitchFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_deleteWirelessSwitchFinished");
-
             if (downloadType != DownloadType.WirelessSwitchDelete)
             {
                 return;
@@ -441,42 +395,36 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR") || response.Contains("0"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnWirelessSwitchDeleteFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Deleting was not successful!");
-
+                Logger.Instance.Error(TAG, "Deleting was not successful!");
                 publishOnWirelessSwitchDeleteFinished(false, response);
                 return;
             }
 
             publishOnWirelessSwitchDeleteFinished(true, response);
-
             loadWirelessSwitchListAsync();
         }
 
         public void Dispose()
         {
-            _logger.Debug("Dispose");
+            Logger.Instance.Debug(TAG, "Dispose");
 
             _downloadController.OnDownloadFinished -= _wirelessSwitchDownloadFinished;
             _downloadController.OnDownloadFinished -= _toggleWirelessSwitchFinished;
             _downloadController.OnDownloadFinished -= _addWirelessSwitchFinished;
             _downloadController.OnDownloadFinished -= _updateWirelessSwitchFinished;
             _downloadController.OnDownloadFinished -= _deleteWirelessSwitchFinished;
+            _downloadController.Dispose();
 
             _downloadTimer.Elapsed -= _downloadTimer_Elapsed;
             _downloadTimer.AutoReset = false;
             _downloadTimer.Stop();
-
-            _downloadController.Dispose();
         }
     }
 }

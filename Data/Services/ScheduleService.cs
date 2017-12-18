@@ -19,14 +19,9 @@ namespace Data.Services
     public class ScheduleService
     {
         private const string TAG = "ScheduleService";
-        private readonly Logger _logger;
-
         private const int TIMEOUT = 60 * 60 * 1000;
 
-        private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
-        private readonly JsonDataToScheduleConverter _jsonDataToScheduleConverter;
-        private readonly WirelessSocketService _wirelessSocketService;
 
         private static ScheduleService _instance = null;
         private static readonly object _padlock = new object();
@@ -37,13 +32,7 @@ namespace Data.Services
 
         ScheduleService()
         {
-            _logger = new Logger(TAG);
-
-            _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
-            _jsonDataToScheduleConverter = new JsonDataToScheduleConverter();
-            _wirelessSocketService = WirelessSocketService.Instance;
-
             _downloadController.OnDownloadFinished += _scheduleDownloadFinished;
 
             _downloadTimer = new Timer(TIMEOUT);
@@ -128,6 +117,11 @@ namespace Data.Services
 
         public IList<ScheduleDto> FoundSchedules(string searchKey)
         {
+            if (searchKey == string.Empty)
+            {
+                return _scheduleList;
+            }
+
             List<ScheduleDto> foundSchedules = _scheduleList
                         .Where(schedule =>
                             schedule.Name.Contains(searchKey)
@@ -145,99 +139,98 @@ namespace Data.Services
 
         public void LoadScheduleList()
         {
-            _logger.Debug("LoadScheduleList");
             loadScheduleListAsync();
         }
 
         public void SetSchedule(ScheduleDto schedule, bool state)
         {
-            _logger.Debug(string.Format("Set Schedule {0} to {1}", schedule, state));
+            Logger.Instance.Debug(TAG, string.Format("Set Schedule {0} to {1}", schedule, state));
             setScheduleAsync(schedule.Name, state);
         }
 
         public void SetSchedule(string scheduleName, bool state)
         {
-            _logger.Debug(string.Format("Set Schedule {0} to {1}", scheduleName, state));
+            Logger.Instance.Debug(TAG, string.Format("Set Schedule {0} to {1}", scheduleName, state));
             ScheduleDto schedule = GetByName(scheduleName);
             setScheduleAsync(schedule.Name, state);
         }
 
         public void ChangeScheduleState(ScheduleDto schedule)
         {
-            _logger.Debug(string.Format("Change state for schedule {0}", schedule));
+            Logger.Instance.Debug(TAG, string.Format("Change state for schedule {0}", schedule));
             setScheduleAsync(schedule.Name, !schedule.IsActive);
         }
 
         public void ChangeScheduleState(string scheduleName)
         {
-            _logger.Debug(string.Format("Change state for schedule {0}", scheduleName));
+            Logger.Instance.Debug(TAG, string.Format("Change state for schedule {0}", scheduleName));
             ScheduleDto schedule = GetByName(scheduleName);
             setScheduleAsync(schedule.Name, !schedule.IsActive);
         }
 
         public void AddSchedule(ScheduleDto newSchedule)
         {
-            _logger.Debug(string.Format("AddSchedule: add schedule {0}", newSchedule));
+            Logger.Instance.Debug(TAG, string.Format("AddSchedule: add schedule {0}", newSchedule));
             addScheduleAsync(newSchedule);
         }
 
         public void UpdateSchedule(ScheduleDto updateSchedule)
         {
-            _logger.Debug(string.Format("UpdateSchedule: updating schedule {0}", updateSchedule));
+            Logger.Instance.Debug(TAG, string.Format("UpdateSchedule: updating schedule {0}", updateSchedule));
             updateScheduleAsync(updateSchedule);
         }
 
         public void DeleteSchedule(ScheduleDto deleteSchedule)
         {
-            _logger.Debug(string.Format("DeleteSchedule: deleting schedule {0}", deleteSchedule));
+            Logger.Instance.Debug(TAG, string.Format("DeleteSchedule: deleting schedule {0}", deleteSchedule));
             deleteScheduleAsync(deleteSchedule);
         }
 
         private void _downloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            _logger.Debug(string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
             loadScheduleListAsync();
         }
 
         private async Task loadScheduleListAsync()
         {
-            _logger.Debug("loadScheduleListAsync");
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnScheduleDownloadFinished(null, false, "No user");
                 return;
             }
 
-            string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_SCHEDULES.Action;
+            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
+                user.Name, user.Passphrase,
+                LucaServerAction.GET_SCHEDULES.Action);
 
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.Schedule);
         }
 
         private async Task setScheduleAsync(string scheduleName, bool state)
         {
-            _logger.Debug(string.Format("setScheduleListAsync: socketName {0} state {1}", scheduleName, state));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnScheduleDownloadFinished(null, false, "No user");
                 return;
             }
 
-            string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.SET_SCHEDULE.Action + scheduleName + (state ? Constants.STATE_ON : Constants.STATE_OFF);
+            string action = LucaServerAction.SET_SCHEDULE.Action + scheduleName + (state ? Constants.STATE_ON : Constants.STATE_OFF);
+
+            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
+                user.Name, user.Passphrase,
+                action);
 
             _downloadController.OnDownloadFinished += _setScheduleFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.ScheduleSet);
         }
 
         private async Task addScheduleAsync(ScheduleDto newSchedule)
         {
-            _logger.Debug(string.Format("addScheduleAsync: add new schedule {0}", newSchedule));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnAddScheduleFinished(false, "No user");
@@ -245,20 +238,17 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 newSchedule.CommandAdd);
 
             _downloadController.OnDownloadFinished += _addScheduleFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.ScheduleAdd);
         }
 
         private async Task updateScheduleAsync(ScheduleDto updateSchedule)
         {
-            _logger.Debug(string.Format("updateScheduleAsync: updating schedule {0}", updateSchedule));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnUpdateScheduleFinished(false, "No user");
@@ -266,20 +256,17 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 updateSchedule.CommandUpdate);
 
             _downloadController.OnDownloadFinished += _updateScheduleFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.ScheduleUpdate);
         }
 
         private async Task deleteScheduleAsync(ScheduleDto deleteSchedule)
         {
-            _logger.Debug(string.Format("deleteScheduleAsync: delete schedule {0}", deleteSchedule));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnDeleteScheduleFinished(false, "No user");
@@ -287,62 +274,54 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 deleteSchedule.CommandDelete);
 
             _downloadController.OnDownloadFinished += _deleteScheduleFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.ScheduleDelete);
         }
 
         private void _scheduleDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_scheduleDownloadFinished");
-
             if (downloadType != DownloadType.Schedule)
             {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnScheduleDownloadFinished(null, false, response);
                 return;
             }
-
-            _logger.Debug(string.Format("response: {0}", response));
 
             if (!success)
             {
-                _logger.Error("Download was not successful!");
-
+                Logger.Instance.Error(TAG, "Download was not successful!");
                 publishOnScheduleDownloadFinished(null, false, response);
                 return;
             }
 
-            // TODO add wirelessSwitchList
-            IList<ScheduleDto> scheduleList = _jsonDataToScheduleConverter.GetList(response, _wirelessSocketService.WirelessSocketList, null);
+            IList<ScheduleDto> scheduleList = JsonDataToScheduleConverter.Instance.GetList(
+                response,
+                WirelessSocketService.Instance.WirelessSocketList,
+                /* TODO add wirelessSwitchList */
+                null);
+
             if (scheduleList == null)
             {
-                _logger.Error("Converted scheduleList is null!");
-
+                Logger.Instance.Error(TAG, "Converted scheduleList is null!");
                 publishOnScheduleDownloadFinished(null, false, response);
                 return;
             }
 
             _scheduleList = scheduleList;
-
             publishOnScheduleDownloadFinished(_scheduleList, true, response);
         }
 
         private void _setScheduleFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_setScheduleFinished");
-
             if (downloadType != DownloadType.ScheduleSet)
             {
                 return;
@@ -352,31 +331,24 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR") || response.Contains("0"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnSetScheduleFinished(null, false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Setting was not successful!");
-
+                Logger.Instance.Error(TAG, "Setting was not successful!");
                 publishOnSetScheduleFinished(null, false, response);
                 return;
             }
 
             publishOnSetScheduleFinished(null, true, response);
-
             loadScheduleListAsync();
         }
 
         private void _addScheduleFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_addScheduleFinished");
-
             if (downloadType != DownloadType.ScheduleAdd)
             {
                 return;
@@ -386,31 +358,24 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR") || response.Contains("0"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnAddScheduleFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Adding was not successful!");
-
+                Logger.Instance.Error(TAG, "Adding was not successful!");
                 publishOnAddScheduleFinished(false, response);
                 return;
             }
 
             publishOnAddScheduleFinished(true, response);
-
             loadScheduleListAsync();
         }
 
         private void _updateScheduleFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_updateScheduleFinished");
-
             if (downloadType != DownloadType.ScheduleUpdate)
             {
                 return;
@@ -420,31 +385,24 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR") || response.Contains("0"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnUpdateScheduleFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Updating was not successful!");
-
+                Logger.Instance.Error(TAG, "Updating was not successful!");
                 publishOnUpdateScheduleFinished(false, response);
                 return;
             }
 
             publishOnUpdateScheduleFinished(true, response);
-
             loadScheduleListAsync();
         }
 
         private void _deleteScheduleFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_deleteScheduleFinished");
-
             if (downloadType != DownloadType.ScheduleDelete)
             {
                 return;
@@ -454,42 +412,36 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR") || response.Contains("0"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnDeleteScheduleFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Deleting was not successful!");
-
+                Logger.Instance.Error(TAG, "Deleting was not successful!");
                 publishOnDeleteScheduleFinished(false, response);
                 return;
             }
 
             publishOnDeleteScheduleFinished(true, response);
-
             loadScheduleListAsync();
         }
 
         public void Dispose()
         {
-            _logger.Debug("Dispose");
+            Logger.Instance.Debug(TAG, "Dispose");
 
             _downloadController.OnDownloadFinished -= _scheduleDownloadFinished;
             _downloadController.OnDownloadFinished -= _setScheduleFinished;
             _downloadController.OnDownloadFinished -= _addScheduleFinished;
             _downloadController.OnDownloadFinished -= _updateScheduleFinished;
             _downloadController.OnDownloadFinished -= _deleteScheduleFinished;
+            _downloadController.Dispose();
 
             _downloadTimer.Elapsed -= _downloadTimer_Elapsed;
             _downloadTimer.AutoReset = false;
             _downloadTimer.Stop();
-
-            _downloadController.Dispose();
         }
     }
 }

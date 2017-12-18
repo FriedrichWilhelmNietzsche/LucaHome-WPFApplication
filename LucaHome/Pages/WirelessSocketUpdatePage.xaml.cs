@@ -1,6 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
-using Common.Tools;
+﻿using Common.Dto;
 using Data.Services;
 using System;
 using System.Collections.Generic;
@@ -18,10 +16,8 @@ namespace LucaHome.Pages
     public partial class WirelessSocketUpdatePage : Page, INotifyPropertyChanged
     {
         private const string TAG = "WirelessSocketUpdatePage";
-        private readonly Logger _logger;
 
         private readonly NavigationService _navigationService;
-        private readonly WirelessSocketService _wirelessSocketService;
 
         private readonly Notifier _notifier;
 
@@ -29,10 +25,7 @@ namespace LucaHome.Pages
 
         public WirelessSocketUpdatePage(NavigationService navigationService, WirelessSocketDto updateWirelessSocket)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
             _navigationService = navigationService;
-            _wirelessSocketService = WirelessSocketService.Instance;
 
             _updateWirelessSocket = updateWirelessSocket;
 
@@ -107,29 +100,26 @@ namespace LucaHome.Pages
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-            _wirelessSocketService.OnUpdateWirelessSocketFinished -= _onUpdateWirelessSocketFinished;
-            _wirelessSocketService.OnWirelessSocketDownloadFinished -= _onWirelessSocketDownloadFinished;
+            WirelessSocketService.Instance.OnUpdateWirelessSocketFinished -= _onUpdateWirelessSocketFinished;
+            WirelessSocketService.Instance.OnWirelessSocketDownloadFinished -= _onWirelessSocketDownloadFinished;
         }
 
         private void UpdateWirelessSocket_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("UpdateWirelessSocket_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-            _wirelessSocketService.OnUpdateWirelessSocketFinished += _onUpdateWirelessSocketFinished;
-            _wirelessSocketService.UpdateWirelessSocket(_updateWirelessSocket);
+            WirelessSocketService.Instance.OnUpdateWirelessSocketFinished += _onUpdateWirelessSocketFinished;
+            WirelessSocketService.Instance.UpdateWirelessSocket(_updateWirelessSocket);
         }
 
         private void _onUpdateWirelessSocketFinished(bool success, string response)
         {
-            _logger.Debug(string.Format("_onUpdateWirelessSocketFinished was successful {0}", success));
-            _wirelessSocketService.OnUpdateWirelessSocketFinished -= _onUpdateWirelessSocketFinished;
+            WirelessSocketService.Instance.OnUpdateWirelessSocketFinished -= _onUpdateWirelessSocketFinished;
 
             if (success)
             {
                 _notifier.ShowSuccess("Updated wireless socket!");
 
-                _wirelessSocketService.OnWirelessSocketDownloadFinished += _onWirelessSocketDownloadFinished;
-                _wirelessSocketService.LoadWirelessSocketList();
+                WirelessSocketService.Instance.OnWirelessSocketDownloadFinished += _onWirelessSocketDownloadFinished;
+                WirelessSocketService.Instance.LoadWirelessSocketList();
             }
             else
             {
@@ -139,14 +129,12 @@ namespace LucaHome.Pages
 
         private void _onWirelessSocketDownloadFinished(IList<WirelessSocketDto> wirelessSocketList, bool success, string response)
         {
-            _logger.Debug(string.Format("_onWirelessSocketDownloadFinished with model {0} was successful {1}", wirelessSocketList, success));
-            _wirelessSocketService.OnWirelessSocketDownloadFinished -= _onWirelessSocketDownloadFinished;
+            WirelessSocketService.Instance.OnWirelessSocketDownloadFinished -= _onWirelessSocketDownloadFinished;
             _navigationService.GoBack();
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.GoBack();
         }
     }

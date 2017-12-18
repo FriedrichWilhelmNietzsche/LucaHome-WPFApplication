@@ -1,6 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
-using Common.Tools;
+﻿using Common.Dto;
 using Data.Services;
 using System;
 using System.Collections.Generic;
@@ -20,30 +18,16 @@ namespace LucaHome.Pages
     public partial class ScheduleUpdatePage : Page, INotifyPropertyChanged
     {
         private const string TAG = "ScheduleUpdatePage";
-        private readonly Logger _logger;
 
         private readonly NavigationService _navigationService;
-        private readonly ScheduleService _schedulService;
-        private readonly WirelessSocketService _wirelessSocketService;
-        private readonly WirelessSwitchService _wirelessSwitchService;
 
         private readonly Notifier _notifier;
 
-        private readonly IList<WirelessSocketDto> _wirelessSocketList;
-        private readonly IList<WirelessSwitchDto> _wirelessSwitchList;
         private ScheduleDto _updateSchedule;
 
         public ScheduleUpdatePage(NavigationService navigationService, ScheduleDto updateSchedule)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
             _navigationService = navigationService;
-            _schedulService = ScheduleService.Instance;
-            _wirelessSocketService = WirelessSocketService.Instance;
-            _wirelessSwitchService = WirelessSwitchService.Instance;
-
-            _wirelessSocketList = _wirelessSocketService.WirelessSocketList;
-            _wirelessSwitchList = _wirelessSwitchService.WirelessSwitchList;
 
             _updateSchedule = updateSchedule;
 
@@ -95,7 +79,7 @@ namespace LucaHome.Pages
             get
             {
                 IList<string> socketList = new List<string>();
-                foreach (WirelessSocketDto entry in _wirelessSocketList)
+                foreach (WirelessSocketDto entry in WirelessSocketService.Instance.WirelessSocketList)
                 {
                     socketList.Add(entry.Name);
                 }
@@ -108,7 +92,7 @@ namespace LucaHome.Pages
             get
             {
                 IList<string> switchList = new List<string>();
-                foreach (WirelessSwitchDto entry in _wirelessSwitchList)
+                foreach (WirelessSwitchDto entry in WirelessSwitchService.Instance.WirelessSwitchList)
                 {
                     switchList.Add(entry.Name);
                 }
@@ -153,7 +137,7 @@ namespace LucaHome.Pages
             }
             set
             {
-                WirelessSocketDto scheduleSocket = _wirelessSocketService.GetByName(value);
+                WirelessSocketDto scheduleSocket = WirelessSocketService.Instance.GetByName(value);
                 _updateSchedule.Socket = scheduleSocket;
                 OnPropertyChanged("ScheduleSocket");
             }
@@ -167,7 +151,7 @@ namespace LucaHome.Pages
             }
             set
             {
-                WirelessSwitchDto scheduleSwitch = _wirelessSwitchService.GetByName(value);
+                WirelessSwitchDto scheduleSwitch = WirelessSwitchService.Instance.GetByName(value);
                 _updateSchedule.WirelessSwitch = scheduleSwitch;
                 OnPropertyChanged("ScheduleSwitch");
             }
@@ -223,28 +207,25 @@ namespace LucaHome.Pages
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-            _schedulService.OnUpdateScheduleFinished -= _onUpdateScheduleFinished;
-            _schedulService.OnScheduleDownloadFinished -= _onScheduleDownloadFinished;
+            ScheduleService.Instance.OnUpdateScheduleFinished -= _onUpdateScheduleFinished;
+            ScheduleService.Instance.OnScheduleDownloadFinished -= _onScheduleDownloadFinished;
         }
 
         private void UpdateSchedule_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("UpdateSchedule_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-            _schedulService.OnUpdateScheduleFinished += _onUpdateScheduleFinished;
-            _schedulService.UpdateSchedule(_updateSchedule);
+            ScheduleService.Instance.OnUpdateScheduleFinished += _onUpdateScheduleFinished;
+            ScheduleService.Instance.UpdateSchedule(_updateSchedule);
         }
 
         private void _onUpdateScheduleFinished(bool success, string response)
         {
-            _logger.Debug(string.Format("_onUpdateScheduleFinished was successful {0}", success));
-            _schedulService.OnUpdateScheduleFinished -= _onUpdateScheduleFinished;
+            ScheduleService.Instance.OnUpdateScheduleFinished -= _onUpdateScheduleFinished;
 
             if (success)
             {
                 _notifier.ShowSuccess("Added new schedule!");
-                _schedulService.OnScheduleDownloadFinished += _onScheduleDownloadFinished;
-                _schedulService.LoadScheduleList();
+                ScheduleService.Instance.OnScheduleDownloadFinished += _onScheduleDownloadFinished;
+                ScheduleService.Instance.LoadScheduleList();
             }
             else
             {
@@ -254,14 +235,12 @@ namespace LucaHome.Pages
 
         private void _onScheduleDownloadFinished(IList<ScheduleDto> scheduleDto, bool success, string response)
         {
-            _logger.Debug(string.Format("_onScheduleDownloadFinished with model {0} was successful {1}", scheduleDto, success));
-            _schedulService.OnScheduleDownloadFinished -= _onScheduleDownloadFinished;
+            ScheduleService.Instance.OnScheduleDownloadFinished -= _onScheduleDownloadFinished;
             _navigationService.GoBack();
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.GoBack();
         }
     }

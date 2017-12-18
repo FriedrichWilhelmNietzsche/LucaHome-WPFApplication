@@ -1,9 +1,6 @@
-﻿using Common.Common;
-using Common.Dto;
+﻿using Common.Dto;
 using Common.Enums;
-using Common.Tools;
 using Data.Services;
-using LucaHome.Rules;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,10 +18,8 @@ namespace LucaHome.Pages
     public partial class ShoppingEntryAddPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "ShoppingEntryAddPage";
-        private readonly Logger _logger;
 
         private readonly NavigationService _navigationService;
-        private readonly ShoppingListService _shoppingListService;
 
         private readonly Notifier _notifier;
 
@@ -32,12 +27,9 @@ namespace LucaHome.Pages
 
         public ShoppingEntryAddPage(NavigationService navigationService)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
             _navigationService = navigationService;
-            _shoppingListService = ShoppingListService.Instance;
 
-            _newShoppingEntry = new ShoppingEntryDto(_shoppingListService.ShoppingList.Count, "", ShoppingEntryGroup.OTHER, 1);
+            _newShoppingEntry = new ShoppingEntryDto(ShoppingListService.Instance.ShoppingList.Count, "", ShoppingEntryGroup.OTHER, 1);
 
             InitializeComponent();
             DataContext = this;
@@ -125,29 +117,25 @@ namespace LucaHome.Pages
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-            _shoppingListService.OnShoppingEntryAddFinished -= _shoppingEntryAddFinished;
-            _shoppingListService.OnShoppingListDownloadFinished -= _onShoppingListDownloadFinished;
+            ShoppingListService.Instance.OnShoppingEntryAddFinished -= _shoppingEntryAddFinished;
+            ShoppingListService.Instance.OnShoppingListDownloadFinished -= _onShoppingListDownloadFinished;
         }
 
         private void SaveShoppingEntry_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("SaveShoppingEntry_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-            _shoppingListService.OnShoppingEntryAddFinished += _shoppingEntryAddFinished;
-            _shoppingListService.AddShoppingEntry(_newShoppingEntry);
+            ShoppingListService.Instance.OnShoppingEntryAddFinished += _shoppingEntryAddFinished;
+            ShoppingListService.Instance.AddShoppingEntry(_newShoppingEntry);
         }
 
         private void _shoppingEntryAddFinished(bool success, string response)
         {
-            _logger.Debug(string.Format("_ShoppingEntryAddFinished was successful {0}", success));
-            _shoppingListService.OnShoppingEntryAddFinished -= _shoppingEntryAddFinished;
+            ShoppingListService.Instance.OnShoppingEntryAddFinished -= _shoppingEntryAddFinished;
 
             if (success)
             {
                 _notifier.ShowSuccess("Added new shopping entry!");
-
-                _shoppingListService.OnShoppingListDownloadFinished += _onShoppingListDownloadFinished;
-                _shoppingListService.LoadShoppingList();
+                ShoppingListService.Instance.OnShoppingListDownloadFinished += _onShoppingListDownloadFinished;
+                ShoppingListService.Instance.LoadShoppingList();
             }
             else
             {
@@ -157,26 +145,22 @@ namespace LucaHome.Pages
 
         private void _onShoppingListDownloadFinished(IList<ShoppingEntryDto> shoppingList, bool success, string response)
         {
-            _logger.Debug(string.Format("_onShoppingListDownloadFinished with model {0} was successful {1}", shoppingList, success));
-            _shoppingListService.OnShoppingListDownloadFinished -= _onShoppingListDownloadFinished;
+            ShoppingListService.Instance.OnShoppingListDownloadFinished -= _onShoppingListDownloadFinished;
             _navigationService.GoBack();
         }
 
         private void ButtonCountIncrease_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonCountIncrease_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             ShoppingEntryQuantity++;
         }
 
         private void ButtonCountDecrease_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonCountDecrease_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             ShoppingEntryQuantity--;
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.GoBack();
         }
     }

@@ -12,11 +12,28 @@ namespace Common.Converter
         private const string TAG = "JsonDataToTimerConverter";
         private static string _searchParameter = "{\"Data\":";
 
-        private readonly Logger _logger;
+        private static JsonDataToTimerConverter _instance = null;
+        private static readonly object _padlock = new object();
 
-        public JsonDataToTimerConverter()
+        JsonDataToTimerConverter()
         {
-            _logger = new Logger(TAG);
+            // Empty constructor, nothing needed here
+        }
+
+        public static JsonDataToTimerConverter Instance
+        {
+            get
+            {
+                lock (_padlock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new JsonDataToTimerConverter();
+                    }
+
+                    return _instance;
+                }
+            }
         }
 
         public IList<TimerDto> GetList(string[] stringArray, IList<WirelessSocketDto> socketList, IList<WirelessSwitchDto> switchList)
@@ -107,7 +124,7 @@ namespace Common.Converter
                 return timerList;
             }
 
-            _logger.Error(string.Format("{0} has an error!", value));
+            Logger.Instance.Error(TAG, string.Format("{0} has an error!", value));
 
             return new List<TimerDto>();
         }

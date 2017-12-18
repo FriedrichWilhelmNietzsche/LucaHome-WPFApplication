@@ -28,11 +28,10 @@ namespace Data.Controller
     public class DownloadController
     {
         private const string TAG = "DownloadController";
-        private readonly Logger _logger;
 
         public DownloadController()
         {
-            _logger = new Logger(TAG);
+            // Empty constructor, nothing needed here
         }
 
         public event DownloadFinishedEventHandler OnDownloadFinished;
@@ -43,38 +42,34 @@ namespace Data.Controller
 
         public async void SendCommandToWebsite(string requestUrl, DownloadType downloadType, object additional)
         {
-            _logger.Debug("SendCommandToWebsite");
             try
             {
                 await sendCommandToWebsiteAsync(requestUrl, downloadType, additional);
             }
             catch (Exception exception)
             {
-                _logger.Error(exception.Message);
+                Logger.Instance.Error(TAG, exception.Message);
                 publishOnDownloadFinished(exception.Message, false, downloadType, additional);
             }
         }
 
         public void SendCommandToWebsite(string requestUrl, DownloadType downloadType)
         {
-            _logger.Debug("SendCommandToWebsite without additional");
             SendCommandToWebsite(requestUrl, downloadType, null);
         }
 
         private async Task sendCommandToWebsiteAsync(string requestUrl, DownloadType downloadType, object additional)
         {
-            _logger.Debug("sendCommandToWebsiteAsync");
-
             if (requestUrl == null)
             {
-                _logger.Error("RequestUrl may not be null!");
+                Logger.Instance.Error(TAG, "RequestUrl may not be null!");
                 publishOnDownloadFinished("ERROR: RequestUrl may not be null!", false, downloadType, additional);
                 return;
             }
 
             if (requestUrl.Length < 15)
             {
-                _logger.Error("Invalid requestUrl length!");
+                Logger.Instance.Error(TAG, "Invalid requestUrl length!");
                 publishOnDownloadFinished("ERROR: Invalid requestUrl length!", false, downloadType, additional);
                 return;
             }
@@ -85,14 +80,12 @@ namespace Data.Controller
             httpClient.Timeout = TimeSpan.FromMilliseconds(3000);
             data = await httpClient.GetStringAsync(requestUrl);
 
-            _logger.Debug(string.Format("ResponseData: {0}", data));
-
             publishOnDownloadFinished(data, (data != null), downloadType, additional);
         }
 
         public void Dispose()
         {
-            _logger.Debug("Dispose");
+            Logger.Instance.Debug(TAG, "Dispose");
         }
     }
 }

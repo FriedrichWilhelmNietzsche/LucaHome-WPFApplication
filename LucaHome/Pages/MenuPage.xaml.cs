@@ -1,6 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
-using Common.Tools;
+﻿using Common.Dto;
 using Data.Services;
 using System;
 using System.Collections.Generic;
@@ -23,9 +21,7 @@ namespace LucaHome.Pages
     public partial class MenuPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "MenuPage";
-        private readonly Logger _logger;
 
-        private readonly MenuService _menuService;
         private readonly NavigationService _navigationService;
 
         private readonly Notifier _notifier;
@@ -34,9 +30,6 @@ namespace LucaHome.Pages
 
         public MenuPage(NavigationService navigationService)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
-            _menuService = MenuService.Instance;
             _navigationService = navigationService;
 
             InitializeComponent();
@@ -84,41 +77,35 @@ namespace LucaHome.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+            MenuService.Instance.OnMenuDownloadFinished += _onMenuListDownloadFinished;
 
-            _menuService.OnMenuDownloadFinished += _onMenuListDownloadFinished;
-
-            if (_menuService.MenuList == null)
+            if (MenuService.Instance.MenuList == null)
             {
-                _menuService.LoadMenuList();
+                MenuService.Instance.LoadMenuList();
                 return;
             }
 
-            MenuList = _menuService.MenuList;
+            MenuList = MenuService.Instance.MenuList;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _menuService.OnMenuDownloadFinished -= _onMenuListDownloadFinished;
+            MenuService.Instance.OnMenuDownloadFinished -= _onMenuListDownloadFinished;
         }
 
         private void _onMenuListDownloadFinished(IList<MenuDto> menuList, bool success, string response)
         {
-            _logger.Debug(string.Format("_onMenuListDownloadFinished with model {0} was successful {1}", menuList, success));
-            MenuList = _menuService.MenuList;
+            MenuList = MenuService.Instance.MenuList;
         }
 
         private void MenuButton_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Received click of sender {0} with arguments {1}", sender, routedEventArgs));
             if (sender is Button)
             {
                 Button senderButton = (Button)sender;
-                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
 
                 int menuId = (int)senderButton.Tag;
-                MenuDto updateMenu = _menuService.GetById(menuId);
+                MenuDto updateMenu = MenuService.Instance.GetById(menuId);
 
                 if (updateMenu != null)
                 {
@@ -126,7 +113,6 @@ namespace LucaHome.Pages
                 }
                 else
                 {
-                    _logger.Error(string.Format("Found no menu with menuId {0}!", menuId));
                     _notifier.ShowError("Error while trying to update menu! MenuIdNotFoundError!");
                 }
             }
@@ -134,15 +120,13 @@ namespace LucaHome.Pages
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.GoBack();
         }
 
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _menuService.LoadMenuList();
+            MenuService.Instance.LoadMenuList();
         }
     }
 }

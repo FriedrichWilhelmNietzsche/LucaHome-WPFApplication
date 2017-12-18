@@ -9,28 +9,24 @@ namespace Data.Controller
     public class LocalDriveController
     {
         private const string TAG = "LocalDriveController";
-        private readonly Logger _logger;
 
         public LocalDriveController()
         {
-            _logger = new Logger(TAG);
+            // Empty constructor, nothing needed here
         }
 
         public DriveInfo GetLibraryDrive()
         {
-            _logger.Debug("GetLibraryDrive");
             return getDriveByLabel("Bibliothek");
         }
 
         public DriveInfo GetVideothekDrive()
         {
-            _logger.Debug("GetVideothekDrive");
             return getDriveByLabel("Filme&Serien");
         }
 
         public DriveInfo GetRaspberryDrive()
         {
-            _logger.Debug("GetRaspberryDrive");
             return getDriveByLabel("raspberryStore");
         }
 
@@ -51,7 +47,7 @@ namespace Data.Controller
             }
             catch (Exception exception)
             {
-                _logger.Error(exception.Message);
+                Logger.Instance.Error(TAG, exception.Message);
             }
 
             return foundFiles;
@@ -69,7 +65,7 @@ namespace Data.Controller
             }
             catch (Exception exception)
             {
-                _logger.Error(exception.Message);
+                Logger.Instance.Error(TAG, exception.Message);
             }
 
             return foundFiles;
@@ -77,8 +73,6 @@ namespace Data.Controller
 
         private DriveInfo getDriveByLabel(string label)
         {
-            _logger.Debug(string.Format("getDriveByLabel: {0}", label));
-
             DriveInfo[] localDrives = DriveInfo.GetDrives();
             foreach (DriveInfo localDrive in localDrives)
             {
@@ -91,7 +85,7 @@ namespace Data.Controller
                 }
                 catch (Exception exception)
                 {
-                    _logger.Error(exception.Message);
+                    Logger.Instance.Error(TAG, exception.Message);
                     continue;
                 }
             }

@@ -12,11 +12,28 @@ namespace Common.Converter
         private const string TAG = "JsonDataToChangeConverter";
         private static string _searchParameter = "{\"Data\":";
 
-        private readonly Logger _logger;
+        private static JsonDataToChangeConverter _instance = null;
+        private static readonly object _padlock = new object();
 
-        public JsonDataToChangeConverter()
+        JsonDataToChangeConverter()
         {
-            _logger = new Logger(TAG);
+            // Empty constructor, nothing needed here
+        }
+
+        public static JsonDataToChangeConverter Instance
+        {
+            get
+            {
+                lock (_padlock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new JsonDataToChangeConverter();
+                    }
+
+                    return _instance;
+                }
+            }
         }
 
         public IList<ChangeDto> GetList(string[] stringArray)
@@ -52,8 +69,8 @@ namespace Common.Converter
                     JToken changeJsonData = child["Change"];
 
                     string type = changeJsonData["Type"].ToString();
-                    string user = changeJsonData["UserName"].ToString(); 
-                    
+                    string user = changeJsonData["UserName"].ToString();
+
                     JToken changeJsonDate = changeJsonData["Date"];
 
                     int day = int.Parse(changeJsonDate["Day"].ToString());
@@ -71,7 +88,7 @@ namespace Common.Converter
                 return changeList;
             }
 
-            _logger.Error(string.Format("{0} has an error!", value));
+            Logger.Instance.Error(TAG, string.Format("{0} has an error!", value));
 
             return new List<ChangeDto>();
         }

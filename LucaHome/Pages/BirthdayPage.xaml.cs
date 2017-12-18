@@ -1,6 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
-using Common.Tools;
+﻿using Common.Dto;
 using Data.Services;
 using LucaHome.Dialogs;
 using System.Collections.Generic;
@@ -21,9 +19,7 @@ namespace LucaHome.Pages
     public partial class BirthdayPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "BirthdayPage";
-        private readonly Logger _logger;
 
-        private readonly BirthdayService _birthdayService;
         private readonly NavigationService _navigationService;
 
         private string _birthdaySearchKey = string.Empty;
@@ -31,9 +27,6 @@ namespace LucaHome.Pages
 
         public BirthdayPage(NavigationService navigationService)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
-            _birthdayService = BirthdayService.Instance;
             _navigationService = navigationService;
 
             InitializeComponent();
@@ -56,15 +49,7 @@ namespace LucaHome.Pages
             {
                 _birthdaySearchKey = value;
                 OnPropertyChanged("BirthdaySearchKey");
-
-                if (_birthdaySearchKey != string.Empty)
-                {
-                    BirthdayList = _birthdayService.FoundBirthdays(_birthdaySearchKey);
-                }
-                else
-                {
-                    BirthdayList = _birthdayService.BirthdayList;
-                }
+                BirthdayList = BirthdayService.Instance.FoundBirthdays(_birthdaySearchKey);
             }
         }
 
@@ -83,52 +68,44 @@ namespace LucaHome.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+            BirthdayService.Instance.OnBirthdayDownloadFinished += _birthdayListDownloadFinished;
 
-            _birthdayService.OnBirthdayDownloadFinished += _birthdayListDownloadFinished;
-
-            if (_birthdayService.BirthdayList == null)
+            if (BirthdayService.Instance.BirthdayList == null)
             {
-                _birthdayService.LoadBirthdayList();
+                BirthdayService.Instance.LoadBirthdayList();
                 return;
             }
 
-            BirthdayList = _birthdayService.BirthdayList;
+            BirthdayList = BirthdayService.Instance.BirthdayList;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _birthdayService.OnBirthdayDownloadFinished -= _birthdayListDownloadFinished;
+            BirthdayService.Instance.OnBirthdayDownloadFinished -= _birthdayListDownloadFinished;
         }
 
         private void ButtonRemindMeBirthday_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonRemindMeBirthday_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            if (sender is Button)
+            if (sender is CheckBox)
             {
                 CheckBox senderCheckBox = (CheckBox)sender;
-                _logger.Debug(string.Format("Tag is {0}", senderCheckBox.Tag));
 
                 int birthdayId = (int)senderCheckBox.Tag;
-                BirthdayDto updateBirthday = _birthdayService.GetById(birthdayId);
+                BirthdayDto updateBirthday = BirthdayService.Instance.GetById(birthdayId);
 
                 updateBirthday.RemindMe = (bool)senderCheckBox.IsChecked;
-                _birthdayService.UpdateBirthday(updateBirthday);
+                BirthdayService.Instance.UpdateBirthday(updateBirthday);
             }
         }
 
         private void ButtonUpdateBirthday_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonUpdateBirthday_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             if (sender is Button)
             {
                 Button senderButton = (Button)sender;
-                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
 
                 int birthdayId = (int)senderButton.Tag;
-                BirthdayDto updateBirthday = _birthdayService.GetById(birthdayId);
-                _logger.Warning(string.Format("Updating birthday {0}!", updateBirthday));
+                BirthdayDto updateBirthday = BirthdayService.Instance.GetById(birthdayId);
 
                 BirthdayUpdatePage birthdayUpdatePage = new BirthdayUpdatePage(_navigationService, updateBirthday);
                 _navigationService.Navigate(birthdayUpdatePage);
@@ -137,15 +114,12 @@ namespace LucaHome.Pages
 
         private void ButtonDeleteBirthday_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonDeleteBirthday_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             if (sender is Button)
             {
                 Button senderButton = (Button)sender;
-                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
 
                 int birthdayId = (int)senderButton.Tag;
-                BirthdayDto deleteBirthday = _birthdayService.GetById(birthdayId);
-                _logger.Warning(string.Format("Asking for deleting birthday {0}!", deleteBirthday));
+                BirthdayDto deleteBirthday = BirthdayService.Instance.GetById(birthdayId);
 
                 DeleteDialog birthdayDeleteDialog = new DeleteDialog("Delete birthday?",
                     string.Format("Birthday: {0}\nAge: {1}\nDate: {2}", deleteBirthday.Name, deleteBirthday.Age, deleteBirthday.Birthday));
@@ -155,33 +129,29 @@ namespace LucaHome.Pages
                 var confirmDelete = birthdayDeleteDialog.DialogResult;
                 if (confirmDelete == true)
                 {
-                    _birthdayService.DeleteBirthday(deleteBirthday);
+                    BirthdayService.Instance.DeleteBirthday(deleteBirthday);
                 }
             }
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.GoBack();
         }
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonAdd_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.Navigate(new BirthdayAddPage(_navigationService));
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _birthdayService.LoadBirthdayList();
+            BirthdayService.Instance.LoadBirthdayList();
         }
 
         private void _birthdayListDownloadFinished(IList<BirthdayDto> birthdayList, bool success, string response)
         {
-            _logger.Debug(string.Format("_birthdayListDownloadFinished with model {0} was successful: {1}", birthdayList, success));
-            BirthdayList = _birthdayService.BirthdayList;
+            BirthdayList = BirthdayService.Instance.BirthdayList;
         }
     }
 }

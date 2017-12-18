@@ -1,5 +1,4 @@
 ﻿using Common.Dto;
-using Common.Tools;
 using Newtonsoft.Json.Linq;
 
 namespace Common.Converter
@@ -7,11 +6,29 @@ namespace Common.Converter
     public class JsonDataToCoinTrendConverter
     {
         private const string TAG = "JsonDataToCoinTrendConverter";
-        private readonly Logger _logger;
 
-        public JsonDataToCoinTrendConverter()
+        private static JsonDataToCoinTrendConverter _instance = null;
+        private static readonly object _padlock = new object();
+
+        JsonDataToCoinTrendConverter()
         {
-            _logger = new Logger(TAG);
+            // Empty constructor, nothing needed here
+        }
+
+        public static JsonDataToCoinTrendConverter Instance
+        {
+            get
+            {
+                lock (_padlock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new JsonDataToCoinTrendConverter();
+                    }
+
+                    return _instance;
+                }
+            }
         }
 
         public CoinDto UpdateTrend(CoinDto coin, string responseString, string currency)

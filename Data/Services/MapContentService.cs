@@ -16,23 +16,9 @@ namespace Data.Services
     public class MapContentService
     {
         private const string TAG = "MapContentService";
-        private readonly Logger _logger;
-
         private const int TIMEOUT = 6 * 60 * 60 * 1000;
 
-        private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
-
-        private readonly JsonDataToMapContentConverter _jsonDataToMapContentConverter;
-
-        private readonly MediaMirrorService _mediaMirrorService;
-        private readonly MenuService _menuService;
-        private readonly ScheduleService _scheduleService;
-        private readonly SecurityService _securityService;
-        private readonly ShoppingListService _shoppingListService;
-        private readonly TemperatureService _temperatureService;
-        private readonly WirelessSocketService _wirelessSocketService;
-        // TODO add WirelessSwitchService
 
         private static MapContentService _instance = null;
         private static readonly object _padlock = new object();
@@ -43,21 +29,8 @@ namespace Data.Services
 
         MapContentService()
         {
-            _logger = new Logger(TAG);
-
-            _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
-
-            _jsonDataToMapContentConverter = new JsonDataToMapContentConverter();
-
-            _mediaMirrorService = MediaMirrorService.Instance;
-            _menuService = MenuService.Instance;
-            _scheduleService = ScheduleService.Instance;
-            _securityService = SecurityService.Instance;
-            _shoppingListService = ShoppingListService.Instance;
-            _temperatureService = TemperatureService.Instance;
-            _wirelessSocketService = WirelessSocketService.Instance;
-            // TODO add WirelessSwitchService
+            _downloadController.OnDownloadFinished += _mapContentDownloadFinished;
 
             _downloadTimer = new Timer(TIMEOUT);
             _downloadTimer.Elapsed += _downloadTimer_Elapsed;
@@ -134,74 +107,78 @@ namespace Data.Services
 
         public void LoadMapContentList()
         {
-            _logger.Debug("LoadMapContentList");
+            Logger.Instance.Debug(TAG, "LoadMapContentList");
             loadMapContentListAsync();
         }
 
         private void _downloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            _logger.Debug(string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
+            Logger.Instance.Debug(TAG, string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
             loadMapContentListAsync();
         }
 
         private async Task loadMapContentListAsync()
         {
-            _logger.Debug("loadMapContentListAsync");
+            Logger.Instance.Debug(TAG, "loadMapContentListAsync");
 
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnMapContentDownloadFinished(null, false, "No user");
                 return;
             }
 
-            string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_MAP_CONTENTS.Action;
-
-            _downloadController.OnDownloadFinished += _mapContentDownloadFinished;
+            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
+                user.Name, user.Passphrase,
+                LucaServerAction.GET_MAP_CONTENTS.Action);
 
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.MapContent);
         }
 
         private void _mapContentDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_mapContentDownloadFinished");
+            Logger.Instance.Debug(TAG, "_mapContentDownloadFinished");
 
             if (downloadType != DownloadType.MapContent)
             {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
+                Logger.Instance.Debug(TAG, string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
-
-            _downloadController.OnDownloadFinished -= _mapContentDownloadFinished;
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
-                _logger.Error(response);
+                Logger.Instance.Error(TAG, response);
 
                 publishOnMapContentDownloadFinished(null, false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
+            Logger.Instance.Debug(TAG, string.Format("response: {0}", response));
 
             if (!success)
             {
-                _logger.Error("Download was not successful!");
+                Logger.Instance.Error(TAG, "Download was not successful!");
 
                 publishOnMapContentDownloadFinished(null, false, response);
                 return;
             }
 
-            IList<MapContentDto> mapContentList = _jsonDataToMapContentConverter.GetList(
+            IList<MapContentDto> mapContentList = JsonDataToMapContentConverter.Instance.GetList(
                 response,
-                _menuService.ListedMenuList, _menuService.MenuList, _shoppingListService.ShoppingList,
-                null, null, _temperatureService.TemperatureList, 
-                _wirelessSocketService.WirelessSocketList, null);
-            // TODO add MediaMirrorData, SecurityData and WirelessSwitchData
+                MenuService.Instance.ListedMenuList,
+                MenuService.Instance.MenuList,
+                ShoppingListService.Instance.ShoppingList,
+                /* TODO add MediaServerData */
+                new List<MediaServerDto>(),
+                SecurityService.Instance.Security,
+                TemperatureService.Instance.TemperatureList,
+                WirelessSocketService.Instance.WirelessSocketList,
+                WirelessSwitchService.Instance.WirelessSwitchList);
 
             if (mapContentList == null)
             {
-                _logger.Error("Converted mapContentList is null!");
+                Logger.Instance.Error(TAG, "Converted mapContentList is null!");
 
                 publishOnMapContentDownloadFinished(null, false, response);
                 return;
@@ -214,15 +191,14 @@ namespace Data.Services
 
         public void Dispose()
         {
-            _logger.Debug("Dispose");
+            Logger.Instance.Debug(TAG, "Dispose");
 
             _downloadController.OnDownloadFinished -= _mapContentDownloadFinished;
+            _downloadController.Dispose();
 
             _downloadTimer.Elapsed -= _downloadTimer_Elapsed;
             _downloadTimer.AutoReset = false;
             _downloadTimer.Stop();
-
-            _downloadController.Dispose();
         }
     }
 }

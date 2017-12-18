@@ -1,5 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
+﻿using Common.Dto;
 using Common.Tools;
 using Data.Services;
 using System;
@@ -17,10 +16,8 @@ namespace LucaHome.Pages
     public partial class LoginPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "LoginPage";
-        private readonly Logger _logger;
 
         private readonly NavigationService _navigationService;
-        private readonly UserService _userService;
 
         private readonly Notifier _notifier;
 
@@ -28,10 +25,7 @@ namespace LucaHome.Pages
 
         public LoginPage(NavigationService navigationService)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
             _navigationService = navigationService;
-            _userService = UserService.Instance;
 
             _newUser = new UserDto("", "");
 
@@ -80,15 +74,12 @@ namespace LucaHome.Pages
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} with arguments {1}", sender, routedEventArgs));
-            _userService.OnUserCheckedFinished -= _onUserCheckedFinished;
+            UserService.Instance.OnUserCheckedFinished -= _onUserCheckedFinished;
             _notifier.Dispose();
         }
 
         private void Button_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Received click of sender {0} with arguments {1}", sender, routedEventArgs));
-
             if (_newUser.Name == null || _newUser.Name == string.Empty)
             {
                 _notifier.ShowWarning("Please enter a username");
@@ -103,18 +94,17 @@ namespace LucaHome.Pages
             }
             _newUser.Passphrase = password;
 
-            _userService.OnUserCheckedFinished += _onUserCheckedFinished;
-            _userService.ValidateUser(_newUser);
+            UserService.Instance.OnUserCheckedFinished += _onUserCheckedFinished;
+            UserService.Instance.ValidateUser(_newUser);
         }
 
         private void _onUserCheckedFinished(string response, bool success)
         {
-            _logger.Debug(string.Format("_onUserCheckedFinished with response {0} was successful {1}", response, success));
-            _userService.OnUserCheckedFinished -= _onUserCheckedFinished;
+            UserService.Instance.OnUserCheckedFinished -= _onUserCheckedFinished;
 
             if (!success)
             {
-                _logger.Error(response);
+                Logger.Instance.Error(TAG, response);
                 _notifier.ShowError(response);
                 return;
             }

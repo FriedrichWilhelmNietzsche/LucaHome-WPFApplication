@@ -1,5 +1,4 @@
-﻿using Common.Common;
-using Common.Tools;
+﻿using Common.Tools;
 using System;
 
 /*
@@ -13,33 +12,51 @@ namespace Common.Converter
     public class UnixToDateTimeConverter
     {
         private const string TAG = "UnixToDateTimeConverter";
-        private readonly Logger _logger;
 
-        public UnixToDateTimeConverter()
+        private static UnixToDateTimeConverter _instance = null;
+        private static readonly object _padlock = new object();
+
+        UnixToDateTimeConverter()
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
+            // Empty constructor, nothing needed here
+        }
+
+        public static UnixToDateTimeConverter Instance
+        {
+            get
+            {
+                lock (_padlock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new UnixToDateTimeConverter();
+                    }
+
+                    return _instance;
+                }
+            }
         }
 
         public DateTime UnixTimeStampToDateTime(string unixTimeStampString)
         {
-            _logger.Debug(string.Format("Trying to convert string UnixTimeStamp %s to DateTime!", unixTimeStampString));
+            Logger.Instance.Debug(TAG, string.Format("Trying to convert string UnixTimeStamp %s to DateTime!", unixTimeStampString));
 
             double unixTimeStamp = 0;
             try
             {
                 unixTimeStamp = Convert.ToDouble(unixTimeStampString);
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
-                _logger.Error(exception.ToString());
+                Logger.Instance.Error(TAG, exception.ToString());
             }
-            
+
             return UnixTimeStampToDateTime(unixTimeStamp);
         }
 
         public DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
-            _logger.Debug(string.Format("Trying to convert double UnixTimeStamp %d to DateTime!", unixTimeStamp));
+            Logger.Instance.Debug(TAG, string.Format("Trying to convert double UnixTimeStamp %d to DateTime!", unixTimeStamp));
 
             // Unix timestamp is seconds past epoch
             DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);

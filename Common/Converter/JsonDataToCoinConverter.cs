@@ -10,11 +10,28 @@ namespace Common.Converter
         private const string TAG = "JsonDataToCoinConverter";
         private static string _searchParameter = "{\"Data\":";
 
-        private readonly Logger _logger;
+        private static JsonDataToCoinConverter _instance = null;
+        private static readonly object _padlock = new object();
 
-        public JsonDataToCoinConverter()
+        JsonDataToCoinConverter()
         {
-            _logger = new Logger(TAG);
+            // Empty constructor, nothing needed here
+        }
+
+        public static JsonDataToCoinConverter Instance
+        {
+            get
+            {
+                lock (_padlock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new JsonDataToCoinConverter();
+                    }
+
+                    return _instance;
+                }
+            }
         }
 
         public IList<CoinDto> GetList(string[] stringArray, IList<KeyValuePair<string, double>> conversionList)
@@ -43,7 +60,7 @@ namespace Common.Converter
 
                 JObject jsonObject = JObject.Parse(value);
                 JToken jsonObjectData = jsonObject.GetValue("Data");
-                
+
                 foreach (JToken child in jsonObjectData.Children())
                 {
                     JToken coinJsonData = child["Coin"];
@@ -64,7 +81,7 @@ namespace Common.Converter
                             break;
                         }
                     }
-                    
+
                     CoinDto newCoin = new CoinDto(id, user, type, amount, currentConversion, CoinDto.Trend.NULL);
                     coinList.Add(newCoin);
                 }
@@ -72,7 +89,7 @@ namespace Common.Converter
                 return coinList;
             }
 
-            _logger.Error(string.Format("{0} has an error!", value));
+            Logger.Instance.Error(TAG, string.Format("{0} has an error!", value));
 
             return new List<CoinDto>();
         }

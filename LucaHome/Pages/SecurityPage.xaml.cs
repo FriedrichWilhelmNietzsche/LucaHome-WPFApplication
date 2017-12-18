@@ -1,5 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
+﻿using Common.Dto;
 using Common.Tools;
 using Data.CustomEventArgs;
 using Data.Services;
@@ -26,7 +25,6 @@ namespace LucaHome.Pages
         private readonly Logger _logger;
 
         private readonly NavigationService _navigationService;
-        private readonly SecurityService _securityService;
 
         private readonly CameraController _cameraController;
 
@@ -39,13 +37,9 @@ namespace LucaHome.Pages
 
         public SecurityPage(NavigationService navigationService)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
             _navigationService = navigationService;
-            _securityService = SecurityService.Instance;
 
             _cameraController = new CameraController();
-
             _cameraControlButtonEnabled = false;
 
             InitializeComponent();
@@ -68,15 +62,7 @@ namespace LucaHome.Pages
             {
                 _registeredEventSearchKey = value;
                 OnPropertyChanged("RegisteredEventSearchKey");
-
-                if (_registeredEventSearchKey != string.Empty)
-                {
-                    RegisteredEventList = _securityService.FoundRegisteredEvents(_registeredEventSearchKey);
-                }
-                else
-                {
-                    RegisteredEventList = _securityService.Security.RegisteredMotionEvents;
-                }
+                RegisteredEventList = SecurityService.Instance.FoundRegisteredEvents(_registeredEventSearchKey);
             }
         }
 
@@ -134,76 +120,64 @@ namespace LucaHome.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _securityService.OnSecurityDownloadFinished += _securityDownloadFinished;
-            setUI(_securityService.Security);
+            SecurityService.Instance.OnSecurityDownloadFinished += _securityDownloadFinished;
+            setUI(SecurityService.Instance.Security);
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _securityService.OnSecurityDownloadFinished -= _securityDownloadFinished;
-
+            SecurityService.Instance.OnSecurityDownloadFinished -= _securityDownloadFinished;
             _cameraController.StopProcessing();
             _cameraController.ImageReady -= _cameraControllerImageReady;
         }
 
         private void ButtonViewEvent_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonViewEvent_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             if (sender is Button)
             {
                 Button senderButton = (Button)sender;
-                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
 
                 string eventName = (string)senderButton.Tag;
-                _securityService.OpenFile(eventName);
+                SecurityService.Instance.OpenFile(eventName);
             }
         }
 
         private void ButtonCamera_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonCamera_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            if (_securityService.Security.IsCameraActive)
+            if (SecurityService.Instance.Security.IsCameraActive)
             {
                 _cameraController.StopProcessing();
             }
-            _securityService.ToggleCameraState();
+            SecurityService.Instance.ToggleCameraState();
         }
 
         private void ButtonCameraControl_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonCameraControl_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _securityService.ToggleCameraControlState();
+            SecurityService.Instance.ToggleCameraControlState();
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.GoBack();
         }
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonAdd_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.Navigate(new BirthdayAddPage(_navigationService));
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _securityService.LoadSecurity();
+            SecurityService.Instance.LoadSecurity();
         }
 
         private void _securityDownloadFinished(SecurityDto security, bool success, string response)
         {
-            _logger.Debug(string.Format("_securityDownloadFinished with model {0} was successful: {1}", security, success));
             setUI(security);
         }
 
         private void _cameraControllerImageReady(object sender, ImageReadyEventArsgs imageReadyEventArsgs)
         {
-            _logger.Debug(string.Format("_cameraControllerImageReady with sender {0} has imageReadyEventArsgs: {1}", sender, imageReadyEventArsgs));
             SecurityImage.Source = imageReadyEventArsgs.Image;
         }
 
@@ -213,7 +187,7 @@ namespace LucaHome.Pages
 
             if (security == null)
             {
-                _logger.Error("security is null!");
+                Logger.Instance.Error(TAG, "security is null!");
                 return;
             }
 

@@ -1,6 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
-using Common.Tools;
+﻿using Common.Dto;
 using Data.Services;
 using System;
 using System.Collections.Generic;
@@ -19,9 +17,7 @@ namespace LucaHome.Pages
     public partial class CoinUpdatePage : Page, INotifyPropertyChanged
     {
         private const string TAG = "CoinUpdatePage";
-        private readonly Logger _logger;
 
-        private readonly CoinService _coinService;
         private readonly NavigationService _navigationService;
 
         private readonly Notifier _notifier;
@@ -30,9 +26,6 @@ namespace LucaHome.Pages
 
         public CoinUpdatePage(NavigationService navigationService, CoinDto updateCoin)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
-            _coinService = CoinService.Instance;
             _navigationService = navigationService;
 
             _updateCoin = updateCoin;
@@ -71,15 +64,7 @@ namespace LucaHome.Pages
         {
             get
             {
-                IList<string> typeList = new List<string>();
-                typeList.Add("BTC");
-                typeList.Add("DASH");
-                typeList.Add("ETC");
-                typeList.Add("ETH");
-                typeList.Add("LTC");
-                typeList.Add("XMR");
-                typeList.Add("ZEC");
-                return new CollectionView(typeList);
+                return new CollectionView(CoinService.Instance.TypeList);
             }
         }
 
@@ -124,33 +109,26 @@ namespace LucaHome.Pages
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-
-            _coinService.OnCoinUpdateFinished -= _onCoinUpdateFinished;
-            _coinService.OnCoinDownloadFinished -= _onCoinDownloadFinished;
+            CoinService.Instance.OnCoinUpdateFinished -= _onCoinUpdateFinished;
+            CoinService.Instance.OnCoinDownloadFinished -= _onCoinDownloadFinished;
         }
 
         private void UpdateCoin_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("UpdateCoin_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-            _coinService.OnCoinUpdateFinished += _onCoinUpdateFinished;
-
-            _logger.Debug(string.Format("Trying to update coin {0}", _updateCoin));
-            _coinService.UpdateCoin(_updateCoin);
+            CoinService.Instance.OnCoinUpdateFinished += _onCoinUpdateFinished;
+            CoinService.Instance.UpdateCoin(_updateCoin);
         }
 
         private void _onCoinUpdateFinished(bool success, string response)
         {
-            _logger.Debug(string.Format("_onCoinUpdateFinished was successful {0}", success));
-
-            _coinService.OnCoinAddFinished -= _onCoinUpdateFinished;
+            CoinService.Instance.OnCoinAddFinished -= _onCoinUpdateFinished;
 
             if (success)
             {
                 _notifier.ShowSuccess("Updated coin!");
 
-                _coinService.OnCoinDownloadFinished += _onCoinDownloadFinished;
-                _coinService.LoadCoinList();
+                CoinService.Instance.OnCoinDownloadFinished += _onCoinDownloadFinished;
+                CoinService.Instance.LoadCoinList();
             }
             else
             {
@@ -160,15 +138,12 @@ namespace LucaHome.Pages
 
         private void _onCoinDownloadFinished(IList<CoinDto> coinList, bool success, string response)
         {
-            _logger.Debug(string.Format("_onCoinDownloadFinished with model {0} was successful {1}", coinList, success));
-
-            _coinService.OnCoinDownloadFinished -= _onCoinDownloadFinished;
+            CoinService.Instance.OnCoinDownloadFinished -= _onCoinDownloadFinished;
             _navigationService.GoBack();
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.GoBack();
         }
     }

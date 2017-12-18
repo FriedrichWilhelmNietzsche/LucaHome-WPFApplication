@@ -11,7 +11,6 @@ namespace LucaHome.UserControls
     public partial class MainPageCard : UserControl, INotifyPropertyChanged
     {
         private const string TAG = "MainPageCard";
-        private readonly Logger _logger;
 
         // Help: https://social.msdn.microsoft.com/Forums/vstudio/en-US/8a1648fc-ddd7-427b-a7cd-99f04c506b7c/a-binding-cannot-be-set-on-the-text-property-of-type-webhyperlink-a-binding-can-only-be-set?forum=wpf
         private static readonly DependencyProperty BottomTitleProperty = DependencyProperty.Register("BottomTitle", typeof(string), typeof(MainPageCard));
@@ -34,8 +33,6 @@ namespace LucaHome.UserControls
 
         public MainPageCard()
         {
-            _logger = new Logger(TAG);
-
             _cardImage = new Uri("/Common;component/Assets/Wallpaper/wallpaper.png", UriKind.Relative);
 
             _title = "Example";
@@ -63,13 +60,11 @@ namespace LucaHome.UserControls
         {
             get
             {
-                _logger.Debug(string.Format("Get CardImage: {0}", _cardImage));
                 return _cardImage;
             }
             set
             {
                 _cardImage = value;
-                _logger.Debug(string.Format("Set CardImage: {0}", _cardImage));
                 OnPropertyChanged("CardImage");
             }
         }
@@ -78,13 +73,11 @@ namespace LucaHome.UserControls
         {
             get
             {
-                _logger.Debug(string.Format("Get Title: {0}", _title));
                 return _title;
             }
             set
             {
                 _title = value;
-                _logger.Debug(string.Format("Set Title: {0}", _title));
                 OnPropertyChanged("Title");
             }
         }
@@ -93,13 +86,11 @@ namespace LucaHome.UserControls
         {
             get
             {
-                _logger.Debug(string.Format("Get Description: {0}", _description));
                 return _description;
             }
             set
             {
                 _description = value;
-                _logger.Debug(string.Format("Set Description: {0}", _description));
                 OnPropertyChanged("Description");
             }
         }
@@ -108,13 +99,11 @@ namespace LucaHome.UserControls
         {
             get
             {
-                _logger.Debug(string.Format("Get ButtonMapCommand: {0}", _buttonMapCommand));
                 return _buttonMapCommand;
             }
             set
             {
                 _buttonMapCommand = value;
-                _logger.Debug(string.Format("Set ButtonMapCommand: {0}", _buttonMapCommand));
                 OnPropertyChanged("ButtonMapCommand");
             }
         }
@@ -123,13 +112,11 @@ namespace LucaHome.UserControls
         {
             get
             {
-                _logger.Debug(string.Format("Get ButtonMapVisibility: {0}", _buttonMapVisibility));
                 return _buttonMapVisibility;
             }
             set
             {
                 _buttonMapVisibility = value;
-                _logger.Debug(string.Format("Set ButtonMapVisibility: {0}", _buttonMapVisibility));
                 OnPropertyChanged("ButtonMapVisibility");
             }
         }
@@ -138,13 +125,11 @@ namespace LucaHome.UserControls
         {
             get
             {
-                _logger.Debug(string.Format("Get ButtonAddCommand: {0}", _buttonAddCommand));
                 return _buttonAddCommand;
             }
             set
             {
                 _buttonAddCommand = value;
-                _logger.Debug(string.Format("Set ButtonAddCommand: {0}", _buttonAddCommand));
                 OnPropertyChanged("ButtonAddCommand");
             }
         }
@@ -153,13 +138,11 @@ namespace LucaHome.UserControls
         {
             get
             {
-                _logger.Debug(string.Format("Get ButtonAddVisibility: {0}", _buttonAddVisibility));
                 return _buttonAddVisibility;
             }
             set
             {
                 _buttonAddVisibility = value;
-                _logger.Debug(string.Format("Set ButtonAddVisibility: {0}", _buttonAddVisibility));
                 OnPropertyChanged("ButtonAddVisibility");
             }
         }
@@ -168,13 +151,11 @@ namespace LucaHome.UserControls
         {
             get
             {
-                _logger.Debug(string.Format("Get BottomTitle: {0}", _bottomTitle));
                 return _bottomTitle;
             }
             set
             {
                 _bottomTitle = value;
-                _logger.Debug(string.Format("Set BottomTitle: {0}", _bottomTitle));
                 OnPropertyChanged("BottomTitle");
             }
         }
@@ -183,20 +164,18 @@ namespace LucaHome.UserControls
         {
             get
             {
-                _logger.Debug(string.Format("Get BottomData: {0}", _bottomData));
                 return _bottomData;
             }
             set
             {
                 _bottomData = value;
-                _logger.Debug(string.Format("Set BottomData: {0}", _bottomData));
                 OnPropertyChanged("BottomData");
             }
         }
 
         private void dummyCommand()
         {
-            _logger.Error("Please bind a command to this button!");
+            Logger.Instance.Error(TAG, "Please bind a command to this button!");
         }
     }
 }

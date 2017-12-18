@@ -1,6 +1,4 @@
-﻿using Common.Common;
-using Common.Tools;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,7 +9,6 @@ namespace LucaHome.Pages
     public partial class MediaMirrorPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "MediaMirrorPage";
-        private readonly Logger _logger;
 
         private readonly NavigationService _navigationService;
 
@@ -21,8 +18,6 @@ namespace LucaHome.Pages
 
         public MediaMirrorPage(NavigationService navigationService)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
             _navigationService = navigationService;
             DataContext = this;
 
@@ -124,59 +119,49 @@ namespace LucaHome.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} with arguments {1}", sender, routedEventArgs));
             // TODO
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} with arguments {1}", sender, routedEventArgs));
             // TODO
         }
 
         private void ButtonVolumeIncrease_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonVolumeIncrease_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             // TODO
         }
 
         private void ButtonVolumeDecrease_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonVolumeDecrease_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             // TODO
         }
 
         private void ButtonBrightnessIncrease_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBrightnessIncrease_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             // TODO
         }
 
         private void ButtonBrightnessDecrease_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBrightnessDecrease_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             // TODO
         }
 
         private void ButtonReloadServer_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonReloadServer_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             // TODO
         }
 
         private void ButtonSearchYoutubeVideo_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonSearchYoutubeVideo_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             // TODO
         }
 
         private void PlayYoutubeVideo_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("PlayYoutubeVideo_Click: Received click of sender {0} with arguments {1}", sender, routedEventArgs));
             if (sender is Button)
             {
                 Button senderButton = (Button)sender;
-                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
 
                 string youtubeVideoTitle = (string)senderButton.Tag;
                 // select youtube id and send it to the mediamirror
@@ -185,49 +170,41 @@ namespace LucaHome.Pages
 
         private void ButtonPlayYoutubeVideo_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonPlayYoutubeVideo_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             // TODO
         }
 
         private void ButtonPauseYoutubeVideo_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonPauseYoutubeVideo_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             // TODO
         }
 
         private void ButtonStopYoutubeVideo_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonStopYoutubeVideo_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             // TODO
         }
 
         private void ButtonSendRadioPlay_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonSendRadioPlay_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             // TODO
         }
 
         private void ButtonSendRadioStop_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonSendRadioStop_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             // TODO
         }
 
         private void ButtonSendText_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonSendText_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             // TODO
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.GoBack();
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             // TODO
         }
     }

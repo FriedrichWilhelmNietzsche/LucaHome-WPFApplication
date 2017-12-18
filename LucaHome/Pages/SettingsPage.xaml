@@ -56,6 +56,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -282,9 +284,83 @@
             </TextBox.Text>
         </TextBox>
 
+        <materialDesign:Card 
+            Grid.Row="7" 
+            Grid.Column="0"
+            Padding="5" 
+            Margin="15 5 5 5">
+            <TextBlock 
+                HorizontalAlignment="Right" >
+                MediaServer Port
+            </TextBlock>
+        </materialDesign:Card>
+
+        <materialDesign:PackIcon 
+            Grid.Row="7" 
+            Grid.Column="1" 
+            Kind="SerialPort"
+            Margin="5 0 5 5" 
+            Foreground="{Binding ElementName=MediaServerPortTextBox, Path=BorderBrush}" />
+        <TextBox 
+            Grid.Row="7" 
+            Grid.Column="1" 
+            x:Name="MediaServerPortTextBox"
+            Margin="5 15 35 5" 
+            materialDesign:HintAssist.Hint="Enter the port of the MediaServer here"
+            KeyDown = "MediaServerPortTextBox_KeyDown"
+            PreviewTextInput="MediaServerPortTextBox_PreviewTextInput">
+            <TextBox.Text>
+                <Binding 
+                    Path="MediaServerPort" 
+                    UpdateSourceTrigger="PropertyChanged" 
+                    Mode="TwoWay">
+                    <Binding.ValidationRules>
+                        <validationrules:TextBoxNotEmptyRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+
+        <materialDesign:Card 
+            Grid.Row="8" 
+            Grid.Column="0"
+            Padding="5" 
+            Margin="15 5 5 5">
+            <TextBlock 
+                HorizontalAlignment="Right" >
+                Youtube search count results
+            </TextBlock>
+        </materialDesign:Card>
+
+        <materialDesign:PackIcon 
+            Grid.Row="8" 
+            Grid.Column="1" 
+            Kind="YoutubePlay"
+            Margin="5 0 5 5" 
+            Foreground="{Binding ElementName=YoutubeSearchCountTextBox, Path=BorderBrush}" />
+        <TextBox 
+            Grid.Row="8" 
+            Grid.Column="1" 
+            x:Name="YoutubeSearchCountTextBox"
+            Margin="5 15 35 5" 
+            materialDesign:HintAssist.Hint="Enter the number of results for youtube searches here"
+            KeyDown = "YoutubeSearchCountTextBox_KeyDown"
+            PreviewTextInput="YoutubeSearchCountTextBox_PreviewTextInput">
+            <TextBox.Text>
+                <Binding 
+                    Path="YoutubeSearchCount" 
+                    UpdateSourceTrigger="PropertyChanged" 
+                    Mode="TwoWay">
+                    <Binding.ValidationRules>
+                        <validationrules:TextBoxNotEmptyRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+
         <Button 
             Grid.Column="0"
-            Grid.Row="8"
+            Grid.Row="10"
             Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
             Margin="5"
             HorizontalAlignment="Left"

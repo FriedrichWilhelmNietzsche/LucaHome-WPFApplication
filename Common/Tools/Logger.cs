@@ -1,41 +1,34 @@
-﻿using Common.Common;
-
-namespace Common.Tools
+﻿namespace Common.Tools
 {
     public class Logger
     {
-        private const string TAG = "Logger";
+        public enum Level { DEBUG, INFORMATION, WARNING, ERROR };
 
-        enum Level { DEBUG, INFORMATION, WARNING, ERROR};
-
-        private string _tag;
         private bool _enabled;
-        private int _logLevel;
+        private Level _logLevel;
 
-        public Logger(string tag, bool enabled, int logLevel)
+        private static Logger _instance = null;
+        private static readonly object _padlock = new object();
+
+        Logger()
         {
-            _tag = tag;
-            _enabled = enabled;
-            _logLevel = logLevel;
+            _enabled = true;
+            _logLevel = Level.DEBUG;
         }
 
-        public Logger(string tag, bool enabled) : this(tag, enabled, (int)Level.DEBUG)
-        {
-        }
-
-        public Logger(string tag) : this(tag, Enables.LOGGING, (int)Level.DEBUG)
-        {
-        }
-
-        public Logger() : this(TAG, Enables.LOGGING, (int)Level.DEBUG)
-        {
-        }
-
-        public string Tag
+        public static Logger Instance
         {
             get
             {
-                return _tag;
+                lock (_padlock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new Logger();
+                    }
+
+                    return _instance;
+                }
             }
         }
 
@@ -51,7 +44,7 @@ namespace Common.Tools
             }
         }
 
-        public int LogLevel
+        public Level LogLevel
         {
             get
             {
@@ -59,11 +52,11 @@ namespace Common.Tools
             }
             set
             {
-                _logLevel = (int)value;
+                _logLevel = value;
             }
         }
 
-        public void Debug(string message)
+        public void Debug(string tag, string message)
         {
             if (!_enabled)
             {
@@ -76,55 +69,55 @@ namespace Common.Tools
             }
 
             // TODO add write to file, colored output, etc.
-            System.Diagnostics.Debug.WriteLine(string.Format("TAG: {0} | Message: {1}", _tag, message));
+            System.Diagnostics.Debug.WriteLine(string.Format("TAG: {0} | Message: {1}", tag, message));
         }
 
-        public void Information(string message)
+        public void Information(string tag, string message)
         {
             if (!_enabled)
             {
                 return;
             }
 
-            if(_logLevel > (int)Level.INFORMATION)
+            if (_logLevel > Level.INFORMATION)
             {
                 return;
             }
 
             // TODO add write to file, colored output, etc.
-            System.Diagnostics.Debug.WriteLine(string.Format("TAG: {0} | Message: {1}", _tag, message));
+            System.Diagnostics.Debug.WriteLine(string.Format("TAG: {0} | Message: {1}", tag, message));
         }
 
-        public void Warning(string message)
+        public void Warning(string tag, string message)
         {
             if (!_enabled)
             {
                 return;
             }
 
-            if (_logLevel > (int)Level.WARNING)
+            if (_logLevel > Level.WARNING)
             {
                 return;
             }
 
             // TODO add write to file, colored output, etc.
-            System.Diagnostics.Debug.WriteLine(string.Format("TAG: {0} | Message: {1}", _tag, message));
+            System.Diagnostics.Debug.WriteLine(string.Format("TAG: {0} | Message: {1}", tag, message));
         }
 
-        public void Error(string message)
+        public void Error(string tag, string message)
         {
             if (!_enabled)
             {
                 return;
             }
 
-            if (_logLevel > (int)Level.ERROR)
+            if (_logLevel > Level.ERROR)
             {
                 return;
             }
 
             // TODO add write to file, colored output, etc.
-            System.Diagnostics.Debug.WriteLine(string.Format("TAG: {0} | Message: {1}", _tag, message));
+            System.Diagnostics.Debug.WriteLine(string.Format("TAG: {0} | Message: {1}", tag, message));
         }
     }
 }

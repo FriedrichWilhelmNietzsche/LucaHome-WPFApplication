@@ -8,14 +8,12 @@ using System.Timers;
 
 namespace Data.Services
 {
+    public delegate void SpecialicedBookListDownloadEventHandler(IList<string> bookList, bool success, string response);
+    public delegate void SpecialicedBookServiceErrorEventHandler(string error);
+
     public class SpecialicedBookService
     {
-        public delegate void SpecialicedBookListDownloadEventHandler(IList<string> bookList, bool success, string response);
-        public delegate void SpecialicedBookServiceErrorEventHandler(string error);
-
         private const string TAG = "SpecialicedBookService";
-        private readonly Logger _logger;
-
         private const int TIMEOUT = 6 * 60 * 60 * 1000;
 
         private readonly LocalDriveController _localDriveController;
@@ -31,14 +29,11 @@ namespace Data.Services
 
         SpecialicedBookService()
         {
-            _logger = new Logger(TAG);
-
             _localDriveController = new LocalDriveController();
-
             _libraryDrive = _localDriveController.GetLibraryDrive();
             if (_libraryDrive == null)
             {
-                _logger.Error("Found no library drive!");
+                Logger.Instance.Error(TAG, "Found no library drive!");
             }
             else
             {
@@ -95,8 +90,13 @@ namespace Data.Services
             }
         }
 
-        public List<string> FoundBooks(string searchKey)
+        public IList<string> FoundBooks(string searchKey)
         {
+            if (searchKey == string.Empty)
+            {
+                return _bookList;
+            }
+
             List<string> foundBooks = _bookList
                         .Where(entry =>
                             entry.Contains(searchKey))
@@ -115,7 +115,7 @@ namespace Data.Services
 
             if (title == null || title == string.Empty)
             {
-                _logger.Error("Title is null or empty!");
+                Logger.Instance.Error(TAG, "Title is null or empty!");
                 publishOnSpecialicedBookServiceError("Title is null or empty!");
                 return;
             }
@@ -145,7 +145,6 @@ namespace Data.Services
 
         private void _reloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            _logger.Debug(string.Format("_reloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
             LoadBookList();
         }
 
@@ -153,12 +152,12 @@ namespace Data.Services
         {
             if (_specialicedBookDir == string.Empty)
             {
-                _logger.Error("No directory for books! Trying to read again...");
+                Logger.Instance.Error(TAG, "No directory for books! Trying to read again...");
                 _libraryDrive = _localDriveController.GetLibraryDrive();
 
                 if (_libraryDrive == null)
                 {
-                    _logger.Error("Found no library drive!");
+                    Logger.Instance.Error(TAG, "Found no library drive!");
                     publishOnSpecialicedBookServiceError("Found no book drive! Please check your attached storages!");
                     return false;
                 }
@@ -173,7 +172,7 @@ namespace Data.Services
 
         public void Dispose()
         {
-            _logger.Debug("Dispose");
+            Logger.Instance.Debug(TAG, "Dispose");
 
             _reloadTimer.Elapsed -= _reloadTimer_Elapsed;
             _reloadTimer.AutoReset = false;

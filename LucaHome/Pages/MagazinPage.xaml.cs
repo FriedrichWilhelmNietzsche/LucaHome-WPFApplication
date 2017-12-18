@@ -1,6 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
-using Common.Tools;
+﻿using Common.Dto;
 using Data.Services;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,9 +13,7 @@ namespace LucaHome.Pages
     public partial class MagazinPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "MagazinPage";
-        private readonly Logger _logger;
 
-        private readonly LibraryService _libraryService;
         private readonly NavigationService _navigationService;
 
         private string _magazinSearchKey = string.Empty;
@@ -27,9 +23,6 @@ namespace LucaHome.Pages
 
         public MagazinPage(NavigationService navigationService)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
-            _libraryService = LibraryService.Instance;
             _navigationService = navigationService;
 
             InitializeComponent();
@@ -52,60 +45,45 @@ namespace LucaHome.Pages
             {
                 _magazinSearchKey = value;
                 OnPropertyChanged("MagazinSearchKey");
-
-                if (_magazinSearchKey != string.Empty)
-                {
-                    createUI(_libraryService.FoundMagazins(_magazinSearchKey));
-                }
-                else
-                {
-                    createUI(_libraryService.MagazinList);
-                }
+                createUI(LibraryService.Instance.FoundMagazins(_magazinSearchKey));
             }
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+            LibraryService.Instance.OnMagazinListDownloadFinished += _onMagazinListDownloadFinished;
 
-            _libraryService.OnMagazinListDownloadFinished += _onMagazinListDownloadFinished;
-
-            if (_libraryService.MagazinList == null)
+            if (LibraryService.Instance.MagazinList == null)
             {
-                _libraryService.LoadMagazinList();
+                LibraryService.Instance.LoadMagazinList();
                 return;
             }
 
-            createUI(_libraryService.MagazinList);
+            createUI(LibraryService.Instance.MagazinList);
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _libraryService.OnMagazinListDownloadFinished -= _onMagazinListDownloadFinished;
+            LibraryService.Instance.OnMagazinListDownloadFinished -= _onMagazinListDownloadFinished;
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.GoBack();
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _libraryService.LoadMagazinList();
+            LibraryService.Instance.LoadMagazinList();
         }
 
         private void _onMagazinListDownloadFinished(IList<MagazinDirDto> magazinList, bool success, string response)
         {
-            _logger.Debug(string.Format("_onMagazinListDownloadFinished with object {0} and response {1} was successful {2}", magazinList, response, success));
-            createUI(_libraryService.MagazinList);
+            createUI(LibraryService.Instance.MagazinList);
         }
 
         private void createUI(IList<MagazinDirDto> magazinList)
         {
-            _logger.Debug(string.Format("createUI with list {0}", magazinList));
             MagazinGrid.Children.Clear();
 
             int row = 0;
@@ -119,7 +97,7 @@ namespace LucaHome.Pages
                 newMagazinCard.ButtonOpenExplorerCommand = new DelegateCommand(
                     () =>
                     {
-                        _libraryService.OpenExplorer(entry.DirName);
+                        LibraryService.Instance.OpenExplorer(entry.DirName);
                     });
                 newMagazinCard.MouseUpCommand = new DelegateCommand(
                     () =>

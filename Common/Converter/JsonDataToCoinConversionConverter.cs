@@ -9,11 +9,29 @@ namespace Common.Converter
     public class JsonDataToCoinConversionConverter : IJsonDataConverter<KeyValuePair<string, double>>
     {
         private const string TAG = "JsonDataToCoinConversionConverter";
-        private readonly Logger _logger;
 
-        public JsonDataToCoinConversionConverter()
+        private static JsonDataToCoinConversionConverter _instance = null;
+        private static readonly object _padlock = new object();
+
+        JsonDataToCoinConversionConverter()
         {
-            _logger = new Logger(TAG);
+            // Empty constructor, nothing needed here
+        }
+
+        public static JsonDataToCoinConversionConverter Instance
+        {
+            get
+            {
+                lock (_padlock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new JsonDataToCoinConversionConverter();
+                    }
+
+                    return _instance;
+                }
+            }
         }
 
         public IList<KeyValuePair<string, double>> GetList(string[] stringArray)
@@ -59,7 +77,7 @@ namespace Common.Converter
                 }
                 else
                 {
-                    _logger.Warning(string.Format("Data has invalid length {0}, entry is {1}", data.Length, entry));
+                    Logger.Instance.Warning(TAG, string.Format("Data has invalid length {0}, entry is {1}", data.Length, entry));
                 }
             }
 

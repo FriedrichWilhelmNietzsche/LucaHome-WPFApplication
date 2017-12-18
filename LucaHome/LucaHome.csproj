@@ -30,8 +30,8 @@
     <ProductName>LucaHome</ProductName>
     <PublisherName>GuepardoApps</PublisherName>
     <SuiteName>LucaHome</SuiteName>
-    <ApplicationRevision>17349</ApplicationRevision>
-    <ApplicationVersion>5.0.0.17349</ApplicationVersion>
+    <ApplicationRevision>17352</ApplicationRevision>
+    <ApplicationVersion>5.0.0.17352</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -141,6 +141,7 @@
     <Compile Include="Builder\MapEntryBuilder.cs" />
     <Compile Include="Controller\CameraController.cs" />
     <Compile Include="Converter\SixValueConverter.cs" />
+    <Compile Include="Converter\FourValueConverter.cs" />
     <Compile Include="Converter\ThreeValueConverter.cs" />
     <Compile Include="Converter\TwoValueConverter.cs" />
     <Compile Include="Dialogs\ConfirmDialog.xaml.cs">
@@ -148,9 +149,6 @@
     </Compile>
     <Compile Include="Dialogs\SeasonDialog.xaml.cs">
       <DependentUpon>SeasonDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\ToggleDialog.xaml.cs">
-      <DependentUpon>ToggleDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\SetDialog.xaml.cs">
       <DependentUpon>SetDialog.xaml</DependentUpon>
@@ -227,6 +225,15 @@
     <Compile Include="Pages\ScheduleAddPage.xaml.cs">
       <DependentUpon>ScheduleAddPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\WirelessSwitchAddPage.xaml.cs">
+      <DependentUpon>WirelessSwitchAddPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WirelessSwitchUpdatePage.xaml.cs">
+      <DependentUpon>WirelessSwitchUpdatePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WirelessSwitchPage.xaml.cs">
+      <DependentUpon>WirelessSwitchPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\WirelessSocketUpdatePage.xaml.cs">
       <DependentUpon>WirelessSocketUpdatePage.xaml</DependentUpon>
     </Compile>
@@ -260,6 +267,7 @@
     <Compile Include="Pages\WeatherPage.xaml.cs">
       <DependentUpon>WeatherPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Rules\TextBoxIntegerRule.cs" />
     <Compile Include="Rules\TextBoxLengthRule.cs" />
     <Compile Include="Rules\WirelessSocketCodeFormatRule.cs" />
     <Compile Include="Rules\TextBoxNotEmptyRule.cs" />
@@ -280,10 +288,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\SeasonDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Dialogs\ToggleDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -396,6 +400,18 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\ScheduleAddPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\WirelessSwitchAddPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\WirelessSwitchUpdatePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\WirelessSwitchPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

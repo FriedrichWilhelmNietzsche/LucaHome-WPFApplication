@@ -13,14 +13,13 @@ namespace OpenWeather.Downloader
     public class OpenWeatherDownloader
     {
         private const String TAG = "OpenWeatherDownloader";
-        private readonly Logger _logger;
 
         private String _city;
         private bool _initialized;
 
         public OpenWeatherDownloader()
         {
-            _logger = new Logger(TAG, OWEnables.LOGGING);
+            // Nothing to do here
         }
 
         public string City
@@ -33,7 +32,7 @@ namespace OpenWeather.Downloader
             {
                 if (value == null || value == string.Empty)
                 {
-                    _logger.Error("Cannot set null value to City!");
+                    Logger.Instance.Error(TAG, "Cannot set null value to City!");
                     return;
                 }
 
@@ -54,7 +53,7 @@ namespace OpenWeather.Downloader
         {
             if (!_initialized || _city == null || _city.Length == 0)
             {
-                _logger.Warning("You have to set the city before calling the weather!");
+                Logger.Instance.Warning(TAG, "You have to set the city before calling the weather!");
                 return string.Empty;
             }
 
@@ -68,7 +67,7 @@ namespace OpenWeather.Downloader
         {
             if (!_initialized || _city == null || _city.Length == 0)
             {
-                _logger.Warning("You have to set the city before calling the weather!");
+                Logger.Instance.Warning(TAG, "You have to set the city before calling the weather!");
                 return string.Empty;
             }
 

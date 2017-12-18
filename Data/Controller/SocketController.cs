@@ -11,11 +11,10 @@ namespace Data.Controller
     public class SocketController
     {
         private const string TAG = "SocketController";
-        private readonly Logger _logger;
 
         public SocketController()
         {
-            _logger = new Logger(TAG);
+            // Empty constructor, nothing needed here
         }
 
         public event SocketFinishedEventHandler OnSocketFinished;
@@ -26,39 +25,36 @@ namespace Data.Controller
 
         public async void SendCommandToWebsite(string url, int port, string command)
         {
-            _logger.Debug("SendCommandToWebsite");
             try
             {
                 await sendCommandToWebsiteAsync(url, port, command);
             }
             catch (Exception exception)
             {
-                _logger.Error(exception.Message);
+                Logger.Instance.Error(TAG, exception.Message);
                 publishOnSocketFinished(exception.Message, false);
             }
         }
 
         private async Task sendCommandToWebsiteAsync(string url, int port, string command)
         {
-            _logger.Debug("sendCommandToWebsiteAsync");
-
             if (url == null)
             {
-                _logger.Error("URL may not be null!");
+                Logger.Instance.Error(TAG, "URL may not be null!");
                 publishOnSocketFinished("ERROR: URL may not be null!", false);
                 return;
             }
 
             if (port == -1)
             {
-                _logger.Error("Invalid port!");
+                Logger.Instance.Error(TAG, "Invalid port!");
                 publishOnSocketFinished("ERROR: Invalid port!", false);
                 return;
             }
 
             if (command == null)
             {
-                _logger.Error("Command may not be null!");
+                Logger.Instance.Error(TAG, "Command may not be null!");
                 publishOnSocketFinished("ERROR: Command may not be null!", false);
                 return;
             }
@@ -81,7 +77,7 @@ namespace Data.Controller
             }
             catch (Exception exception)
             {
-                _logger.Error(exception.Message);
+                Logger.Instance.Error(TAG, exception.Message);
             }
 
             publishOnSocketFinished(data, (data != null));
@@ -89,7 +85,7 @@ namespace Data.Controller
 
         public void Dispose()
         {
-            _logger.Debug("Dispose");
+            Logger.Instance.Debug(TAG, "Dispose");
         }
     }
 }

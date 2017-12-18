@@ -1,6 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
-using Common.Tools;
+﻿using Common.Dto;
 using Data.Services;
 using System;
 using System.Collections.Generic;
@@ -18,10 +16,8 @@ namespace LucaHome.Pages
     public partial class WirelessSocketAddPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "WirelessSocketAddPage";
-        private readonly Logger _logger;
 
         private readonly NavigationService _navigationService;
-        private readonly WirelessSocketService _wirelessSocketService;
 
         private readonly Notifier _notifier;
 
@@ -29,12 +25,9 @@ namespace LucaHome.Pages
 
         public WirelessSocketAddPage(NavigationService navigationService)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
             _navigationService = navigationService;
-            _wirelessSocketService = WirelessSocketService.Instance;
 
-            _newWirelessSocket = new WirelessSocketDto(_wirelessSocketService.WirelessSocketList.Count, "", "", "", false, new DateTime(), "");
+            _newWirelessSocket = new WirelessSocketDto(WirelessSocketService.Instance.WirelessSocketList.Count, "", "", "", false, new DateTime(), "");
 
             InitializeComponent();
             DataContext = this;
@@ -107,29 +100,26 @@ namespace LucaHome.Pages
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-            _wirelessSocketService.OnAddWirelessSocketFinished -= _onAddWirelessSocketFinished;
-            _wirelessSocketService.OnWirelessSocketDownloadFinished -= _onWirelessSocketDownloadFinished;
+            WirelessSocketService.Instance.OnAddWirelessSocketFinished -= _onAddWirelessSocketFinished;
+            WirelessSocketService.Instance.OnWirelessSocketDownloadFinished -= _onWirelessSocketDownloadFinished;
         }
 
         private void SaveWirelessSocket_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("SaveWirelessSocket_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-            _wirelessSocketService.OnAddWirelessSocketFinished += _onAddWirelessSocketFinished;
-            _wirelessSocketService.AddWirelessSocket(_newWirelessSocket);
+            WirelessSocketService.Instance.OnAddWirelessSocketFinished += _onAddWirelessSocketFinished;
+            WirelessSocketService.Instance.AddWirelessSocket(_newWirelessSocket);
         }
 
         private void _onAddWirelessSocketFinished(bool success, string response)
         {
-            _logger.Debug(string.Format("_onAddWirelessSocketFinished was successful {0}", success));
-            _wirelessSocketService.OnAddWirelessSocketFinished -= _onAddWirelessSocketFinished;
+            WirelessSocketService.Instance.OnAddWirelessSocketFinished -= _onAddWirelessSocketFinished;
 
             if (success)
             {
                 _notifier.ShowSuccess("Added new wireless socket!");
 
-                _wirelessSocketService.OnWirelessSocketDownloadFinished += _onWirelessSocketDownloadFinished;
-                _wirelessSocketService.LoadWirelessSocketList();
+                WirelessSocketService.Instance.OnWirelessSocketDownloadFinished += _onWirelessSocketDownloadFinished;
+                WirelessSocketService.Instance.LoadWirelessSocketList();
             }
             else
             {
@@ -139,14 +129,12 @@ namespace LucaHome.Pages
 
         private void _onWirelessSocketDownloadFinished(IList<WirelessSocketDto> wirelessSocketList, bool success, string response)
         {
-            _logger.Debug(string.Format("_onWirelessSocketDownloadFinished with model {0} was successful {1}", wirelessSocketList, success));
-            _wirelessSocketService.OnWirelessSocketDownloadFinished -= _onWirelessSocketDownloadFinished;
+            WirelessSocketService.Instance.OnWirelessSocketDownloadFinished -= _onWirelessSocketDownloadFinished;
             _navigationService.GoBack();
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.GoBack();
         }
     }

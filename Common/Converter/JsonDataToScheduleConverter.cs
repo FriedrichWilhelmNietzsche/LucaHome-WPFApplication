@@ -12,11 +12,28 @@ namespace Common.Converter
         private const string TAG = "JsonDataToScheduleConverter";
         private static string _searchParameter = "{\"Data\":";
 
-        private readonly Logger _logger;
+        private static JsonDataToScheduleConverter _instance = null;
+        private static readonly object _padlock = new object();
 
-        public JsonDataToScheduleConverter()
+        JsonDataToScheduleConverter()
         {
-            _logger = new Logger(TAG);
+            // Empty constructor, nothing needed here
+        }
+
+        public static JsonDataToScheduleConverter Instance
+        {
+            get
+            {
+                lock (_padlock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new JsonDataToScheduleConverter();
+                    }
+
+                    return _instance;
+                }
+            }
         }
 
         public IList<ScheduleDto> GetList(string[] stringArray, IList<WirelessSocketDto> socketList, IList<WirelessSwitchDto> switchList)
@@ -107,7 +124,7 @@ namespace Common.Converter
                 return scheduleList;
             }
 
-            _logger.Error(string.Format("{0} has an error!", value));
+            Logger.Instance.Error(TAG, string.Format("{0} has an error!", value));
 
             return new List<ScheduleDto>();
         }

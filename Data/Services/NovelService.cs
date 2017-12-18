@@ -11,14 +11,12 @@ using System.Windows.Media.Imaging;
 
 namespace Data.Services
 {
+    public delegate void NovelListDownloadEventHandler(IList<NovelDto> novelList, bool success, string response);
+    public delegate void NovelServiceErrorEventHandler(string error);
+
     public class NovelService
     {
-        public delegate void NovelListDownloadEventHandler(IList<NovelDto> novelList, bool success, string response);
-        public delegate void NovelServiceErrorEventHandler(string error);
-
         private const string TAG = "NovelService";
-        private readonly Logger _logger;
-
         private const int TIMEOUT = 6 * 60 * 60 * 1000;
 
         private readonly LocalDriveController _localDriveController;
@@ -34,14 +32,11 @@ namespace Data.Services
 
         NovelService()
         {
-            _logger = new Logger(TAG);
-
             _localDriveController = new LocalDriveController();
-
             _libraryDrive = _localDriveController.GetLibraryDrive();
             if (_libraryDrive == null)
             {
-                _logger.Error("Found no library drive!");
+                Logger.Instance.Error(TAG, "Found no library drive!");
             }
             else
             {
@@ -110,6 +105,11 @@ namespace Data.Services
 
         public IList<NovelDto> FoundNovelDtos(string searchKey)
         {
+            if (searchKey == string.Empty)
+            {
+                return _novelList;
+            }
+
             List<NovelDto> foundNovelDtos = _novelList
                         .Where(entry =>
                             entry.Author.Contains(searchKey)
@@ -131,7 +131,7 @@ namespace Data.Services
             if (directory == null || title == null
                 || directory == string.Empty || title == string.Empty)
             {
-                _logger.Error("Diretory or title is null or empty!");
+                Logger.Instance.Error(TAG, "Diretory or title is null or empty!");
                 publishOnNovelServiceError("Diretory or title is null or empty!");
                 return;
             }
@@ -149,7 +149,7 @@ namespace Data.Services
 
             if (directory == null || directory == string.Empty)
             {
-                _logger.Error("Diretory is null or empty!");
+                Logger.Instance.Error(TAG, "Diretory is null or empty!");
                 publishOnNovelServiceError("Diretory is null or empty!");
                 return;
             }
@@ -196,7 +196,6 @@ namespace Data.Services
 
         private void _reloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            _logger.Debug(string.Format("_reloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
             LoadNovelList();
         }
 
@@ -204,12 +203,12 @@ namespace Data.Services
         {
             if (_novelDir == string.Empty)
             {
-                _logger.Error("No directory for novels! Trying to read again...");
+                Logger.Instance.Error(TAG, "No directory for novels! Trying to read again...");
                 _libraryDrive = _localDriveController.GetLibraryDrive();
 
                 if (_libraryDrive == null)
                 {
-                    _logger.Error("Found no library drive!");
+                    Logger.Instance.Error(TAG, "Found no library drive!");
                     publishOnNovelServiceError("Found no library drive! Please check your attached storages!");
                     return false;
                 }
@@ -224,7 +223,7 @@ namespace Data.Services
 
         public void Dispose()
         {
-            _logger.Debug("Dispose");
+            Logger.Instance.Debug(TAG, "Dispose");
 
             _reloadTimer.Elapsed -= _reloadTimer_Elapsed;
             _reloadTimer.AutoReset = false;

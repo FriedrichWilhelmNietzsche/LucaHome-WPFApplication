@@ -239,7 +239,7 @@ namespace Common.Dto
                         }
                     }
                 }
-                else if (_name.Contains("PC"))
+                else if (_name.Contains("PC") || _name.Contains("WorkStation"))
                 {
                     if (_isActivated)
                     {
@@ -297,15 +297,15 @@ namespace Common.Dto
                         return new Uri("/Common;component/Assets/Icons/Sockets/watering_off.png", UriKind.Relative);
                     }
                 }
-                else if (_name.Contains("MediaMirror"))
+                else if (_name.Contains("MediaServer"))
                 {
                     if (_isActivated)
                     {
-                        return new Uri("/Common;component/Assets/Icons/Sockets/mediamirror_on.png", UriKind.Relative);
+                        return new Uri("/Common;component/Assets/Icons/Sockets/mediaserver_on.png", UriKind.Relative);
                     }
                     else
                     {
-                        return new Uri("/Common;component/Assets/Icons/Sockets/mediamirror_off.png", UriKind.Relative);
+                        return new Uri("/Common;component/Assets/Icons/Sockets/mediaserver_off.png", UriKind.Relative);
                     }
                 }
                 else if (_name.Contains("GameConsole"))
@@ -317,6 +317,17 @@ namespace Common.Dto
                     else
                     {
                         return new Uri("/Common;component/Assets/Icons/Sockets/gameconsole_off.png", UriKind.Relative);
+                    }
+                }
+                else if (_name.Contains("RaspberryPi"))
+                {
+                    if (_isActivated)
+                    {
+                        return new Uri("/Common;component/Assets/Icons/Sockets/raspberry_on.png", UriKind.Relative);
+                    }
+                    else
+                    {
+                        return new Uri("/Common;component/Assets/Icons/Sockets/raspberry_off.png", UriKind.Relative);
                     }
                 }
 

@@ -10,14 +10,13 @@ namespace Data.Controller
     public class SettingsController
     {
         private const string TAG = "SettingsController";
-        private readonly Logger _logger;
 
         private static SettingsController _instance = null;
         private static readonly object _padlock = new object();
 
         SettingsController()
         {
-            _logger = new Logger(TAG);
+            // Empty constructor, nothing needed here
         }
 
         public static SettingsController Instance
@@ -47,23 +46,23 @@ namespace Data.Controller
                     && userName != "NA" && passPhrase != "NA")
                 {
                     UserDto user = new UserDto(userName, passPhrase);
-                    _logger.Debug(string.Format("Returning user {0} from localSettings!", user));
+                    Logger.Instance.Debug(TAG, string.Format("Returning user {0} from localSettings!", user));
                     return user;
                 }
 
-                _logger.Warning("No user found!");
+                Logger.Instance.Warning(TAG, "No user found!");
                 return new UserDto("NA", "NA");
             }
             set
             {
                 if (value == null)
                 {
-                    _logger.Error("Cannot add null value for user!");
+                    Logger.Instance.Error(TAG, "Cannot add null value for user!");
                     return;
                 }
 
                 UserDto newUser = value;
-                _logger.Debug(string.Format("Received new user {0} to save to settings!", newUser));
+                Logger.Instance.Debug(TAG, string.Format("Received new user {0} to save to settings!", newUser));
 
                 Properties.Settings.Default.UserName = newUser.Name;
                 Properties.Settings.Default.PassPhrase = newUser.Passphrase;
@@ -82,12 +81,12 @@ namespace Data.Controller
             {
                 if (value == null)
                 {
-                    _logger.Error("Cannot add null value for HomeSSID!");
+                    Logger.Instance.Error(TAG, "Cannot add null value for HomeSSID!");
                     return;
                 }
 
                 Properties.Settings.Default.HomeSSID = value;
-                _logger.Debug(string.Format("Received new HomeSSID {0} to save to settings!", value));
+                Logger.Instance.Debug(TAG, string.Format("Received new HomeSSID {0} to save to settings!", value));
 
                 Properties.Settings.Default.Save();
             }
@@ -103,12 +102,12 @@ namespace Data.Controller
             {
                 if (value == null)
                 {
-                    _logger.Error("Cannot add null value for ServerIpAddress!");
+                    Logger.Instance.Error(TAG, "Cannot add null value for ServerIpAddress!");
                     return;
                 }
 
                 Properties.Settings.Default.ServerIpAddress = value;
-                _logger.Debug(string.Format("Received new ServerIpAddress {0} to save to settings!", value));
+                Logger.Instance.Debug(TAG, string.Format("Received new ServerIpAddress {0} to save to settings!", value));
 
                 Properties.Settings.Default.Save();
             }
@@ -124,12 +123,12 @@ namespace Data.Controller
             {
                 if (value == null)
                 {
-                    _logger.Error("Cannot add null value for OpenWeatherCity!");
+                    Logger.Instance.Error(TAG, "Cannot add null value for OpenWeatherCity!");
                     return;
                 }
 
                 Properties.Settings.Default.OpenWeatherCity = value;
-                _logger.Debug(string.Format("Received new OpenWeatherCity {0} to save to settings!", value));
+                Logger.Instance.Debug(TAG, string.Format("Received new OpenWeatherCity {0} to save to settings!", value));
 
                 Properties.Settings.Default.Save();
             }
@@ -144,7 +143,7 @@ namespace Data.Controller
             set
             {
                 Properties.Settings.Default.SetWallpaperActive = value;
-                _logger.Debug(string.Format("Received new SetWallpaperActive {0} to save to settings!", value));
+                Logger.Instance.Debug(TAG, string.Format("Received new SetWallpaperActive {0} to save to settings!", value));
 
                 Properties.Settings.Default.Save();
             }
@@ -159,7 +158,37 @@ namespace Data.Controller
             set
             {
                 Properties.Settings.Default.CoinHourTrend = value;
-                _logger.Debug(string.Format("Received new CoinHourTrend {0} to save to settings!", value));
+                Logger.Instance.Debug(TAG, string.Format("Received new CoinHourTrend {0} to save to settings!", value));
+
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        public int MediaServerPort
+        {
+            get
+            {
+                return Properties.Settings.Default.MediaServerPort;
+            }
+            set
+            {
+                Properties.Settings.Default.MediaServerPort = value;
+                Logger.Instance.Debug(TAG, string.Format("Received new MediaServerPort {0} to save to settings!", value));
+
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        public int YoutubeMaxCount
+        {
+            get
+            {
+                return Properties.Settings.Default.YoutubeMaxCount;
+            }
+            set
+            {
+                Properties.Settings.Default.YoutubeMaxCount = value;
+                Logger.Instance.Debug(TAG, string.Format("Received new YoutubeMaxCount {0} to save to settings!", value));
 
                 Properties.Settings.Default.Save();
             }

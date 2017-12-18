@@ -1,6 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
-using Common.Tools;
+﻿using Common.Dto;
 using Data.Services;
 using LucaHome.Dialogs;
 using System.Collections.Generic;
@@ -21,9 +19,7 @@ namespace LucaHome.Pages
     public partial class CoinPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "CoinPage";
-        private readonly Logger _logger;
 
-        private readonly CoinService _coinService;
         private readonly NavigationService _navigationService;
 
         private string _coinSearchKey = string.Empty;
@@ -31,9 +27,6 @@ namespace LucaHome.Pages
 
         public CoinPage(NavigationService navigationService)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
-            _coinService = CoinService.Instance;
             _navigationService = navigationService;
 
             InitializeComponent();
@@ -56,15 +49,7 @@ namespace LucaHome.Pages
             {
                 _coinSearchKey = value;
                 OnPropertyChanged("CoinSearchKey");
-
-                if (_coinSearchKey != string.Empty)
-                {
-                    CoinList = _coinService.FoundCoins(_coinSearchKey);
-                }
-                else
-                {
-                    CoinList = _coinService.CoinList;
-                }
+                CoinList = CoinService.Instance.FoundCoins(_coinSearchKey);
             }
         }
 
@@ -86,42 +71,36 @@ namespace LucaHome.Pages
         {
             get
             {
-                return _coinService.AllCoinsValue;
+                return CoinService.Instance.AllCoinsValue;
             }
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+            CoinService.Instance.OnCoinDownloadFinished += _coinListDownloadFinished;
 
-            _coinService.OnCoinDownloadFinished += _coinListDownloadFinished;
-
-            if (_coinService.CoinList == null)
+            if (CoinService.Instance.CoinList == null)
             {
-                _coinService.LoadCoinList();
+                CoinService.Instance.LoadCoinList();
                 return;
             }
 
-            CoinList = _coinService.CoinList;
+            CoinList = CoinService.Instance.CoinList;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _coinService.OnCoinDownloadFinished -= _coinListDownloadFinished;
+            CoinService.Instance.OnCoinDownloadFinished -= _coinListDownloadFinished;
         }
 
         private void ButtonUpdateCoin_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonUpdateCoin_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             if (sender is Button)
             {
                 Button senderButton = (Button)sender;
-                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
 
                 int coinId = (int)senderButton.Tag;
-                CoinDto updateCoin = _coinService.GetById(coinId);
-                _logger.Warning(string.Format("Updating coin {0}!", updateCoin));
+                CoinDto updateCoin = CoinService.Instance.GetById(coinId);
 
                 CoinUpdatePage coinUpdatePage = new CoinUpdatePage(_navigationService, updateCoin);
                 _navigationService.Navigate(coinUpdatePage);
@@ -130,15 +109,12 @@ namespace LucaHome.Pages
 
         private void ButtonDeleteCoin_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonDeleteCoin_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             if (sender is Button)
             {
                 Button senderButton = (Button)sender;
-                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
 
                 int coinId = (int)senderButton.Tag;
-                CoinDto deleteCoin = _coinService.GetById(coinId);
-                _logger.Warning(string.Format("Asking for deleting coin {0}!", deleteCoin));
+                CoinDto deleteCoin = CoinService.Instance.GetById(coinId);
 
                 DeleteDialog coinDeleteDialog = new DeleteDialog("Delete coin?",
                     string.Format("Coin: {0}\nAmount: {1}\nUser: {2}", deleteCoin.Type, deleteCoin.Amount, deleteCoin.User));
@@ -148,34 +124,30 @@ namespace LucaHome.Pages
                 var confirmDelete = coinDeleteDialog.DialogResult;
                 if (confirmDelete == true)
                 {
-                    _coinService.DeleteCoin(deleteCoin);
+                    CoinService.Instance.DeleteCoin(deleteCoin);
                 }
             }
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.GoBack();
         }
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonAdd_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.Navigate(new CoinAddPage(_navigationService));
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _coinService.LoadCoinConversionList();
-            _coinService.LoadCoinList();
+            CoinService.Instance.LoadCoinConversionList();
+            CoinService.Instance.LoadCoinList();
         }
 
         private void _coinListDownloadFinished(IList<CoinDto> coinList, bool success, string response)
         {
-            _logger.Debug(string.Format("_coinListDownloadFinished with model {0} was successful: {1}", coinList, success));
-            CoinList = _coinService.CoinList;
+            CoinList = CoinService.Instance.CoinList;
         }
     }
 }

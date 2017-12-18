@@ -11,14 +11,12 @@ using System.Windows.Media.Imaging;
 
 namespace Data.Services
 {
+    public delegate void SeriesListDownloadEventHandler(IList<SeriesDto> seriesList, bool success, string response);
+    public delegate void SeriesServiceErrorEventHandler(string error);
+
     public class SeriesService
     {
-        public delegate void SeriesListDownloadEventHandler(IList<SeriesDto> seriesList, bool success, string response);
-        public delegate void SeriesServiceErrorEventHandler(string error);
-
         private const string TAG = "SeriesService";
-        private readonly Logger _logger;
-
         private const int TIMEOUT = 6 * 60 * 60 * 1000;
 
         private readonly LocalDriveController _localDriveController;
@@ -34,14 +32,11 @@ namespace Data.Services
 
         SeriesService()
         {
-            _logger = new Logger(TAG);
-
             _localDriveController = new LocalDriveController();
-
             _seriesDrive = _localDriveController.GetVideothekDrive();
             if (_seriesDrive == null)
             {
-                _logger.Error("Found no videothek drive!");
+                Logger.Instance.Error(TAG, "Found no videothek drive!");
             }
             else
             {
@@ -110,6 +105,11 @@ namespace Data.Services
 
         public IList<SeriesDto> FoundSeries(string searchKey)
         {
+            if (searchKey == string.Empty)
+            {
+                return _seriesList;
+            }
+
             List<SeriesDto> foundSeries = _seriesList
                         .Where(series =>
                             series.SeriesName.Contains(searchKey)
@@ -129,7 +129,7 @@ namespace Data.Services
 
             if (series == null || series == string.Empty)
             {
-                _logger.Error("Series is null or empty!");
+                Logger.Instance.Error(TAG, "Series is null or empty!");
                 publishOnSeriesServiceError("Series is null or empty!");
                 return;
             }
@@ -148,7 +148,7 @@ namespace Data.Services
             if (series == null || season == null
                 || series == string.Empty || season == string.Empty)
             {
-                _logger.Error("Series or season is null or empty!");
+                Logger.Instance.Error(TAG, "Series or season is null or empty!");
                 publishOnSeriesServiceError("Series or season is null or empty!");
                 return;
             }
@@ -166,7 +166,7 @@ namespace Data.Services
 
             if (episode == null || episode == string.Empty)
             {
-                _logger.Error("Episode is null or empty!");
+                Logger.Instance.Error(TAG, "Episode is null or empty!");
                 publishOnSeriesServiceError("Episode is null or empty!");
                 return;
             }
@@ -218,13 +218,11 @@ namespace Data.Services
             }
 
             _seriesList = _seriesList.OrderBy(entry => entry.SeriesName).ToList();
-
             publishOnSeriesListDownloadFinished(_seriesList, true, "Success");
         }
 
         private void _reloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            _logger.Debug(string.Format("_reloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
             LoadSeriesList();
         }
 
@@ -232,12 +230,12 @@ namespace Data.Services
         {
             if (_seriesDir == string.Empty)
             {
-                _logger.Error("No directory for series! Trying to read again...");
+                Logger.Instance.Error(TAG, "No directory for series! Trying to read again...");
                 _seriesDrive = _localDriveController.GetVideothekDrive();
 
                 if (_seriesDrive == null)
                 {
-                    _logger.Error("Found no series drive!");
+                    Logger.Instance.Error(TAG, "Found no series drive!");
                     publishOnSeriesServiceError("Found no series drive! Please check your attached storages!");
                     return false;
                 }
@@ -252,7 +250,7 @@ namespace Data.Services
 
         public void Dispose()
         {
-            _logger.Debug("Dispose");
+            Logger.Instance.Debug(TAG, "Dispose");
 
             _reloadTimer.Elapsed -= _reloadTimer_Elapsed;
             _reloadTimer.AutoReset = false;

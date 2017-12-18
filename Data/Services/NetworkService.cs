@@ -7,18 +7,13 @@ namespace Data.Services
     public class NetworkService
     {
         private const string TAG = "NetworkService";
-        private readonly Logger _logger;
-
-        private readonly SettingsController _settingsController;
 
         private static NetworkService _instance = null;
         private static readonly object _padlock = new object();
 
         NetworkService()
         {
-            _logger = new Logger(TAG);
-
-            _settingsController = SettingsController.Instance;
+            // Empty constructor, nothing needed here
         }
 
         public static NetworkService Instance
@@ -41,17 +36,17 @@ namespace Data.Services
         {
             get
             {
-                return _settingsController.HomeSSID;
+                return SettingsController.Instance.HomeSSID;
             }
             set
             {
                 if (value == null)
                 {
-                    _logger.Error("Cannot add null value for HomeSSID!");
+                    Logger.Instance.Error(TAG, "Cannot add null value for HomeSSID!");
                     return;
                 }
 
-                _settingsController.HomeSSID = value;
+                SettingsController.Instance.HomeSSID = value;
             }
         }
 
@@ -59,17 +54,17 @@ namespace Data.Services
         {
             get
             {
-                return _settingsController.ServerIpAddress;
+                return SettingsController.Instance.ServerIpAddress;
             }
             set
             {
                 if (value == null)
                 {
-                    _logger.Error("Cannot add null value for ServerIpAddress!");
+                    Logger.Instance.Error(TAG, "Cannot add null value for ServerIpAddress!");
                     return;
                 }
 
-                _settingsController.ServerIpAddress = value;
+                SettingsController.Instance.ServerIpAddress = value;
             }
         }
 

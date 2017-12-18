@@ -11,7 +11,6 @@ namespace LucaHome.UserControls
     public partial class MagazinCard : UserControl, INotifyPropertyChanged
     {
         private const string TAG = "MagazinCard";
-        private readonly Logger _logger;
 
         private string _title;
         private BitmapImage _magazinIcon;
@@ -22,8 +21,6 @@ namespace LucaHome.UserControls
 
         public MagazinCard()
         {
-            _logger = new Logger(TAG);
-
             _title = "Example";
             _magazinIcon = new BitmapImage(new Uri("/Common;component/Assets/Wallpaper/main_image_magazine.png", UriKind.Relative));
 
@@ -44,13 +41,11 @@ namespace LucaHome.UserControls
         {
             get
             {
-                _logger.Debug(string.Format("Get MagazinIcon: {0}", _magazinIcon));
                 return _magazinIcon;
             }
             set
             {
                 _magazinIcon = value;
-                _logger.Debug(string.Format("Set MagazinIcon: {0}", _magazinIcon));
                 OnPropertyChanged("MagazinIcon");
             }
         }
@@ -59,13 +54,11 @@ namespace LucaHome.UserControls
         {
             get
             {
-                _logger.Debug(string.Format("Get Title: {0}", _title));
                 return _title;
             }
             set
             {
                 _title = value;
-                _logger.Debug(string.Format("Set Title: {0}", _title));
                 OnPropertyChanged("Title");
             }
         }
@@ -74,13 +67,11 @@ namespace LucaHome.UserControls
         {
             get
             {
-                _logger.Debug(string.Format("Get ButtonOpenExplorerCommand: {0}", _buttonOpenExplorerCommand));
                 return _buttonOpenExplorerCommand;
             }
             set
             {
                 _buttonOpenExplorerCommand = value;
-                _logger.Debug(string.Format("Set ButtonOpenExplorerCommand: {0}", _buttonOpenExplorerCommand));
                 OnPropertyChanged("ButtonOpenExplorerCommand");
             }
         }
@@ -89,13 +80,11 @@ namespace LucaHome.UserControls
         {
             get
             {
-                _logger.Debug(string.Format("Get MouseUpCommand: {0}", _mouseUpCommand));
                 return _mouseUpCommand;
             }
             set
             {
                 _mouseUpCommand = value;
-                _logger.Debug(string.Format("Set MouseUpCommand: {0}", _mouseUpCommand));
                 OnPropertyChanged("MouseUpCommand");
             }
         }
@@ -110,7 +99,7 @@ namespace LucaHome.UserControls
 
         private void dummyCommand()
         {
-            _logger.Error("Please bind a command to this button!");
+            Logger.Instance.Error(TAG, "Please bind a command to this button!");
         }
     }
 }

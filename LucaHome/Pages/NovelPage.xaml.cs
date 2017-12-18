@@ -1,6 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
-using Common.Tools;
+﻿using Common.Dto;
 using Data.Services;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,10 +13,8 @@ namespace LucaHome.Pages
     public partial class NovelPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "NovelPage";
-        private readonly Logger _logger;
-        
+
         private readonly NavigationService _navigationService;
-        private readonly NovelService _novelService;
 
         private string _novelSearchKey = string.Empty;
 
@@ -27,10 +23,7 @@ namespace LucaHome.Pages
 
         public NovelPage(NavigationService navigationService)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
             _navigationService = navigationService;
-            _novelService = NovelService.Instance;
 
             InitializeComponent();
             DataContext = this;
@@ -52,60 +45,45 @@ namespace LucaHome.Pages
             {
                 _novelSearchKey = value;
                 OnPropertyChanged("NovelSearchKey");
-
-                if (_novelSearchKey != string.Empty)
-                {
-                    createUI(_novelService.FoundNovelDtos(_novelSearchKey));
-                }
-                else
-                {
-                    createUI(_novelService.NovelList);
-                }
+                createUI(NovelService.Instance.FoundNovelDtos(_novelSearchKey));
             }
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+            NovelService.Instance.OnNovelListDownloadFinished += _onNovelListDownloadFinished;
 
-            _novelService.OnNovelListDownloadFinished += _onNovelListDownloadFinished;
-
-            if (_novelService.NovelList == null)
+            if (NovelService.Instance.NovelList == null)
             {
-                _novelService.LoadNovelList();
+                NovelService.Instance.LoadNovelList();
                 return;
             }
 
-            createUI(_novelService.NovelList);
+            createUI(NovelService.Instance.NovelList);
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _novelService.OnNovelListDownloadFinished -= _onNovelListDownloadFinished;
+            NovelService.Instance.OnNovelListDownloadFinished -= _onNovelListDownloadFinished;
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.GoBack();
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _novelService.LoadNovelList();
+            NovelService.Instance.LoadNovelList();
         }
 
         private void _onNovelListDownloadFinished(IList<NovelDto> novelList, bool success, string response)
         {
-            _logger.Debug(string.Format("_onNovelListDownloadFinished with object {0} and response {1} was successful {2}", novelList, response, success));
-            createUI(_novelService.NovelList);
+            createUI(NovelService.Instance.NovelList);
         }
 
         private void createUI(IList<NovelDto> novelList)
         {
-            _logger.Debug(string.Format("createUI with list {0}", novelList));
             NovelGrid.Children.Clear();
 
             int row = 0;
@@ -119,7 +97,7 @@ namespace LucaHome.Pages
                 newMagazinCard.ButtonOpenExplorerCommand = new DelegateCommand(
                     () =>
                     {
-                        _novelService.OpenExplorer(entry.Author);
+                        NovelService.Instance.OpenExplorer(entry.Author);
                     });
                 newMagazinCard.MouseUpCommand = new DelegateCommand(
                     () =>

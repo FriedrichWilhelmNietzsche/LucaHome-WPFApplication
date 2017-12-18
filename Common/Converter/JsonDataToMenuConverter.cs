@@ -12,11 +12,28 @@ namespace Common.Converter
         private const string TAG = "JsonDataToMenuConverter";
         private static string _searchParameter = "{\"Data\":";
 
-        private readonly Logger _logger;
+        private static JsonDataToMenuConverter _instance = null;
+        private static readonly object _padlock = new object();
 
-        public JsonDataToMenuConverter()
+        JsonDataToMenuConverter()
         {
-            _logger = new Logger(TAG);
+            // Empty constructor, nothing needed here
+        }
+
+        public static JsonDataToMenuConverter Instance
+        {
+            get
+            {
+                lock (_padlock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new JsonDataToMenuConverter();
+                    }
+
+                    return _instance;
+                }
+            }
         }
 
         public IList<MenuDto> GetList(string[] stringArray)
@@ -50,7 +67,7 @@ namespace Common.Converter
                 foreach (JToken child in jsonObjectData.Children())
                 {
                     JToken menuJsonData = child["Menu"];
-                    
+
                     string title = menuJsonData["Title"].ToString();
                     string description = menuJsonData["Description"].ToString();
 
@@ -73,7 +90,7 @@ namespace Common.Converter
                 return menuList;
             }
 
-            _logger.Error(string.Format("{0} has an error!", value));
+            Logger.Instance.Error(TAG, string.Format("{0} has an error!", value));
 
             return new List<MenuDto>();
         }

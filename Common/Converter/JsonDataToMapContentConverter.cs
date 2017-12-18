@@ -11,17 +11,34 @@ namespace Common.Converter
         private const string TAG = "JsonDataToMapContentConverter";
         private static string _searchParameter = "{\"Data\":";
 
-        private readonly Logger _logger;
+        private static JsonDataToMapContentConverter _instance = null;
+        private static readonly object _padlock = new object();
 
-        public JsonDataToMapContentConverter()
+        JsonDataToMapContentConverter()
         {
-            _logger = new Logger(TAG);
+            // Empty constructor, nothing needed here
+        }
+
+        public static JsonDataToMapContentConverter Instance
+        {
+            get
+            {
+                lock (_padlock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new JsonDataToMapContentConverter();
+                    }
+
+                    return _instance;
+                }
+            }
         }
 
         public IList<MapContentDto> GetList(
             string[] stringArray,
             IList<ListedMenuDto> listedMenuList, IList<MenuDto> menuList, IList<ShoppingEntryDto> shoppingList,
-            IList<MediaServerDto> mediaServerList, IList<SecurityDto> securityList, IList<TemperatureDto> temperatureList,
+            IList<MediaServerDto> mediaServerList, SecurityDto security, IList<TemperatureDto> temperatureList,
             IList<WirelessSocketDto> wirelessSocketList, IList<WirelessSwitchDto> wirelessSwitchList)
         {
             if (StringHelper.StringsAreEqual(stringArray))
@@ -29,7 +46,7 @@ namespace Common.Converter
                 return parseStringToList(
                     stringArray[0],
                     listedMenuList, menuList, shoppingList,
-                    mediaServerList, securityList, temperatureList,
+                    mediaServerList, security, temperatureList,
                     wirelessSocketList, wirelessSwitchList);
             }
             else
@@ -38,7 +55,7 @@ namespace Common.Converter
                 return parseStringToList(
                     usedEntry,
                     listedMenuList, menuList, shoppingList,
-                    mediaServerList, securityList, temperatureList,
+                    mediaServerList, security, temperatureList,
                     wirelessSocketList, wirelessSwitchList);
             }
         }
@@ -46,20 +63,20 @@ namespace Common.Converter
         public IList<MapContentDto> GetList(
             string jsonString,
             IList<ListedMenuDto> listedMenuList, IList<MenuDto> menuList, IList<ShoppingEntryDto> shoppingList,
-            IList<MediaServerDto> mediaServerList, IList<SecurityDto> securityList, IList<TemperatureDto> temperatureList,
+            IList<MediaServerDto> mediaServerList, SecurityDto security, IList<TemperatureDto> temperatureList,
             IList<WirelessSocketDto> wirelessSocketList, IList<WirelessSwitchDto> wirelessSwitchList)
         {
             return parseStringToList(
                 jsonString,
                 listedMenuList, menuList, shoppingList,
-                mediaServerList, securityList, temperatureList,
+                mediaServerList, security, temperatureList,
                 wirelessSocketList, wirelessSwitchList);
         }
 
         private IList<MapContentDto> parseStringToList(
             string value,
             IList<ListedMenuDto> listedMenuList, IList<MenuDto> menuList, IList<ShoppingEntryDto> shoppingList,
-            IList<MediaServerDto> mediaServerList, IList<SecurityDto> securityList, IList<TemperatureDto> temperatureList,
+            IList<MediaServerDto> mediaServerList, SecurityDto security, IList<TemperatureDto> temperatureList,
             IList<WirelessSocketDto> wirelessSocketList, IList<WirelessSwitchDto> wirelessSwitchList)
         {
             if (!value.Contains("Error"))
@@ -130,20 +147,24 @@ namespace Common.Converter
                     int positionX = int.Parse(pointJsonData["X"].ToString());
                     int positionY = int.Parse(pointJsonData["Y"].ToString());
 
-                    int[] position = { positionX, positionY };
+                    int[] position = new int[] { positionX, positionY };
 
                     IList<ListedMenuDto> _listedMenuList = ((name == "ListedMenu" && drawingType == MapContentDto.DrawingType.Menu) ? listedMenuList : null);
                     IList<MenuDto> _menuList = ((name == "Menu" && drawingType == MapContentDto.DrawingType.Menu) ? menuList : null);
                     IList<ShoppingEntryDto> _shoppingList = ((name == "ShoppingList" && drawingType == MapContentDto.DrawingType.ShoppingList) ? shoppingList : null);
 
                     MediaServerDto mediaServer = drawingType == MapContentDto.DrawingType.MediaServer ? (mediaServerList.Count > 0 ? mediaServerList[typeId - 1] : null) : null;
-                    SecurityDto security = drawingType == MapContentDto.DrawingType.Camera ? (securityList.Count > 0 ? securityList[typeId - 1] : null) : null;
-                    TemperatureDto temperature = drawingType == MapContentDto.DrawingType.Temperature ? (temperatureList.Count > 0 ? temperatureList[typeId - 1] : null) : null;
+
+                    SecurityDto _security = drawingType == MapContentDto.DrawingType.Camera ? security : null;
+
+                    // TODO Fix temperature selection
+                    // TemperatureDto temperature = drawingType == MapContentDto.DrawingType.Temperature ? (temperatureList.Count > 0 ? temperatureList[typeId - 1] : null) : null;
+                    TemperatureDto temperature = new TemperatureDto(-273.15, "SPACE", new System.DateTime(), "", TemperatureDto.TemperatureType.DUMMY, "");
                     WirelessSocketDto wirelessSocket = drawingType == MapContentDto.DrawingType.Socket ? (wirelessSocketList.Count > 0 ? wirelessSocketList[typeId - 1] : null) : null;
                     WirelessSwitchDto wirelessSwitch = drawingType == MapContentDto.DrawingType.LightSwitch ? (wirelessSwitchList.Count > 0 ? wirelessSwitchList[typeId - 1] : null) : null;
 
                     MapContentDto newMapContent = new MapContentDto(id, drawingType, typeId, position, name, shortName, area, visibility,
-                        _listedMenuList, _menuList, _shoppingList, mediaServer, security, temperature, wirelessSocket, wirelessSwitch);
+                        _listedMenuList, _menuList, _shoppingList, mediaServer, _security, temperature, wirelessSocket, wirelessSwitch);
 
                     mapContentList.Add(newMapContent);
                 }
@@ -151,7 +172,7 @@ namespace Common.Converter
                 return mapContentList;
             }
 
-            _logger.Error(string.Format("{0} has an error!", value));
+            Logger.Instance.Error(TAG, string.Format("{0} has an error!", value));
 
             return new List<MapContentDto>();
         }

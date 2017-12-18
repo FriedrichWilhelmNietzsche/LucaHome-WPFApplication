@@ -1,6 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
-using Common.Tools;
+﻿using Common.Dto;
 using Data.Services;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,18 +10,11 @@ namespace LucaHome.Dialogs
     public partial class SeasonDialog : Window, INotifyPropertyChanged
     {
         private const string TAG = "SeasonDialog";
-        private readonly Logger _logger;
-
-        private readonly SeriesService _seriesService;
 
         IList<string> _episodes;
 
         public SeasonDialog(SeasonDto season)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
-            _seriesService = SeriesService.Instance;
-
             _episodes = season.Episodes;
 
             InitializeComponent();
@@ -37,7 +28,7 @@ namespace LucaHome.Dialogs
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        
+
         public IList<string> Episodes
         {
             get
@@ -53,21 +44,17 @@ namespace LucaHome.Dialogs
 
         private void Watch_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Received click of sender {0} with arguments {1}", sender, routedEventArgs));
             if (sender is Button)
             {
                 Button senderButton = (Button)sender;
-                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
-
                 string episode = (string)senderButton.Tag;
-                _seriesService.WatchEpisode(episode);
+                SeriesService.Instance.WatchEpisode(episode);
                 Close();
             }
         }
 
         private void Close_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Close_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             Close();
         }
     }

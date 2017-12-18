@@ -1,5 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
+﻿using Common.Dto;
 using Common.Tools;
 using Data.Services;
 using System;
@@ -19,9 +18,7 @@ namespace LucaHome.Pages
     public partial class MenuUpdatePage : Page, INotifyPropertyChanged
     {
         private const string TAG = "MenuUpdatePage";
-        private readonly Logger _logger;
 
-        private readonly MenuService _menuService;
         private readonly NavigationService _navigationService;
 
         private readonly Notifier _notifier;
@@ -30,9 +27,6 @@ namespace LucaHome.Pages
 
         public MenuUpdatePage(NavigationService navigationService, MenuDto updateMenu)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
-            _menuService = MenuService.Instance;
             _navigationService = navigationService;
 
             _updateMenu = updateMenu;
@@ -75,8 +69,7 @@ namespace LucaHome.Pages
             }
             set
             {
-                _logger.Debug("MenuPageTitle cannot be overriden!");
-                OnPropertyChanged("MenuPageTitle");
+                Logger.Instance.Warning(TAG, "MenuPageTitle cannot be overriden!");
             }
         }
 
@@ -85,7 +78,7 @@ namespace LucaHome.Pages
             get
             {
                 IList<string> listedMenuList = new List<string>();
-                foreach (ListedMenuDto entry in _menuService.ListedMenuList)
+                foreach (ListedMenuDto entry in MenuService.Instance.ListedMenuList)
                 {
                     listedMenuList.Add(entry.Description);
                 }
@@ -121,39 +114,32 @@ namespace LucaHome.Pages
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-
-            _menuService.OnMenuDownloadFinished -= _onMenuDownloadFinished;
-            _menuService.OnMenuUpdateFinished -= _onMenuUpdateFinished;
+            MenuService.Instance.OnMenuDownloadFinished -= _onMenuDownloadFinished;
+            MenuService.Instance.OnMenuUpdateFinished -= _onMenuUpdateFinished;
         }
 
         private void UpdateMenu_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("UpdateMenu_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-            _menuService.OnMenuUpdateFinished += _onMenuUpdateFinished;
-            _menuService.UpdateMenu(_updateMenu);
+            MenuService.Instance.OnMenuUpdateFinished += _onMenuUpdateFinished;
+            MenuService.Instance.UpdateMenu(_updateMenu);
         }
 
         private void _onMenuDownloadFinished(IList<MenuDto> menuList, bool success, string response)
         {
-            _logger.Debug(string.Format("_onMenuDownloadFinished with model {0} was successful {1}", menuList, success));
-
-            _menuService.OnMenuDownloadFinished -= _onMenuDownloadFinished;
+            MenuService.Instance.OnMenuDownloadFinished -= _onMenuDownloadFinished;
             _navigationService.GoBack();
         }
 
         private void _onMenuUpdateFinished(bool success, string response)
         {
-            _logger.Debug(string.Format("_onMenuUpdateFinished was successful {0}", success));
-
-            _menuService.OnMenuUpdateFinished -= _onMenuUpdateFinished;
+            MenuService.Instance.OnMenuUpdateFinished -= _onMenuUpdateFinished;
 
             if (success)
             {
                 _notifier.ShowSuccess("Updated menu!");
 
-                _menuService.OnMenuDownloadFinished += _onMenuDownloadFinished;
-                _menuService.LoadMenuList();
+                MenuService.Instance.OnMenuDownloadFinished += _onMenuDownloadFinished;
+                MenuService.Instance.LoadMenuList();
             }
             else
             {
@@ -163,7 +149,6 @@ namespace LucaHome.Pages
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.GoBack();
         }
     }

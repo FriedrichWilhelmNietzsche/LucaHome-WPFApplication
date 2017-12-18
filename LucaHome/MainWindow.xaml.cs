@@ -1,5 +1,4 @@
-﻿using Common.Common;
-using Common.Tools;
+﻿using Common.Tools;
 using Data.Services;
 using LucaHome.Pages;
 using OpenWeather.Service;
@@ -17,7 +16,6 @@ namespace LucaHome
         private const int MAX_FAILED_USER_CHECK = 3;
 
         private const string TAG = "MainWindow";
-        private readonly Logger _logger;
 
         private readonly BirthdayService _birthdayService;
         private readonly CoinService _coinService;
@@ -37,12 +35,11 @@ namespace LucaHome
         private readonly UserService _userService;
         private readonly WirelessSocketService _wirelessSocketService;
 
-        //private readonly BootPage _bootPage;
+        private readonly BootPage _bootPage;
+        private readonly LoginPage _loginPage;
 
         public MainWindow()
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
             InitializeComponent();
 
             _failedUserCheck = 0;
@@ -68,11 +65,13 @@ namespace LucaHome
             _openWeatherService.City = _temperatureService.OpenWeatherCity;
             _openWeatherService.SetWallpaperActive = _temperatureService.SetWallpaperActive;
 
+            _bootPage = new BootPage(_navigationService);
+            _loginPage = new LoginPage(_navigationService);
+
             // Check for user first
             if (!_userService.UserSaved())
             {
-                _logger.Debug("Not yet entered an user! Navigating to LoginPage");
-                _navigationService.Navigate(new LoginPage(_navigationService));
+                _navigationService.Navigate(_loginPage);
             }
             else
             {
@@ -83,37 +82,34 @@ namespace LucaHome
 
         private void _onUserCheckedFinished(string response, bool success)
         {
-            _logger.Debug(string.Format("_onUserCheckedFinished with response {0} was successful: {1}", response, success));
+            Logger.Instance.Debug(TAG, string.Format("_onUserCheckedFinished with response {0} and success {1}", response, success));
+
             _userService.OnUserCheckedFinished -= _onUserCheckedFinished;
 
             // Is entered user was validated we can go to the boot page
             if (success)
             {
-                _logger.Debug("Validated user! Navigating to BootPage");
                 _failedUserCheck = 0;
-                _navigationService.Navigate(new BootPage(_navigationService));
+                _navigationService.Navigate(_bootPage);
             }
             else
             {
-                _logger.Debug("Failed to validate user! Increasing _failedUserCheck!");
                 _failedUserCheck++;
-                if(_failedUserCheck < MAX_FAILED_USER_CHECK)
+                if (_failedUserCheck < MAX_FAILED_USER_CHECK)
                 {
                     _userService.OnUserCheckedFinished += _onUserCheckedFinished;
                     _userService.ValidateUser();
                 }
                 else
                 {
-                    _logger.Debug("Too many failed checks! Navigating to LoginPage");
-                    _navigationService.Navigate(new LoginPage(_navigationService));
+                    Logger.Instance.Information(TAG, "Too many failed checks! Navigating to LoginPage");
+                    _navigationService.Navigate(_loginPage);
                 }
             }
         }
 
         private void Window_Closing(object sender, CancelEventArgs cancelEventArgs)
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} and cancelEventArgs: {1}", sender, cancelEventArgs));
-
             _userService.OnUserCheckedFinished -= _onUserCheckedFinished;
 
             _birthdayService.Dispose();

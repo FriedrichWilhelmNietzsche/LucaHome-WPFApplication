@@ -1,6 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
-using Common.Tools;
+﻿using Common.Dto;
 using Data.Services;
 using LucaHome.Dialogs;
 using System;
@@ -27,22 +25,16 @@ namespace LucaHome.Pages
     public partial class WirelessSocketPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "WirelessSocketPage";
-        private readonly Logger _logger;
 
         private readonly NavigationService _navigationService;
-        private readonly WirelessSocketService _wirelessSocketService;
 
         private readonly Notifier _notifier;
 
         private string _wirelessSocketSearchKey = string.Empty;
-        private IList<WirelessSocketDto> _wirelessSocketList = new List<WirelessSocketDto>();
 
         public WirelessSocketPage(NavigationService navigationService)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
             _navigationService = navigationService;
-            _wirelessSocketService = WirelessSocketService.Instance;
 
             InitializeComponent();
             DataContext = this;
@@ -84,15 +76,7 @@ namespace LucaHome.Pages
             {
                 _wirelessSocketSearchKey = value;
                 OnPropertyChanged("WirelessSocketSearchKey");
-
-                if (_wirelessSocketSearchKey != string.Empty)
-                {
-                    WirelessSocketList = _wirelessSocketService.FoundWirelessSockets(_wirelessSocketSearchKey);
-                }
-                else
-                {
-                    WirelessSocketList = _wirelessSocketService.WirelessSocketList;
-                }
+                WirelessSocketList = WirelessSocketService.Instance.FoundWirelessSockets(_wirelessSocketSearchKey);
             }
         }
 
@@ -100,66 +84,56 @@ namespace LucaHome.Pages
         {
             get
             {
-                return _wirelessSocketList;
+                return WirelessSocketService.Instance.WirelessSocketList;
             }
             set
             {
-                _wirelessSocketList = value;
                 OnPropertyChanged("WirelessSocketList");
             }
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+            WirelessSocketService.Instance.OnWirelessSocketDownloadFinished += _wirelessSocketListDownloadFinished;
+            WirelessSocketService.Instance.OnSetWirelessSocketFinished += _setWirelessSocketFinished;
 
-            _wirelessSocketService.OnWirelessSocketDownloadFinished += _wirelessSocketListDownloadFinished;
-            _wirelessSocketService.OnSetWirelessSocketFinished += _setWirelessSocketFinished;
-
-            if (_wirelessSocketService.WirelessSocketList == null)
+            if (WirelessSocketService.Instance.WirelessSocketList == null)
             {
-                _wirelessSocketService.LoadWirelessSocketList();
+                WirelessSocketService.Instance.LoadWirelessSocketList();
                 return;
             }
 
-            WirelessSocketList = _wirelessSocketService.WirelessSocketList;
+            WirelessSocketList = WirelessSocketService.Instance.WirelessSocketList;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
-            _wirelessSocketService.OnWirelessSocketDownloadFinished -= _wirelessSocketListDownloadFinished;
-            _wirelessSocketService.OnSetWirelessSocketFinished -= _setWirelessSocketFinished;
-            _wirelessSocketService.OnDeleteWirelessSocketFinished -= _onWirelessSocketDeleteFinished;
+            WirelessSocketService.Instance.OnWirelessSocketDownloadFinished -= _wirelessSocketListDownloadFinished;
+            WirelessSocketService.Instance.OnSetWirelessSocketFinished -= _setWirelessSocketFinished;
+            WirelessSocketService.Instance.OnDeleteWirelessSocketFinished -= _onWirelessSocketDeleteFinished;
 
             _notifier.Dispose();
         }
 
         private void WirelessSocketButton_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Received click of sender {0} with arguments {1}", sender, routedEventArgs));
             if (sender is Button)
             {
                 Button senderButton = (Button)sender;
-                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
 
                 string socketName = (String)senderButton.Tag;
-                _wirelessSocketService.ChangeWirelessSocketState(socketName);
+                WirelessSocketService.Instance.ChangeWirelessSocketState(socketName);
             }
         }
 
         private void ButtonUpdateWirelessSocket_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonUpdateWirelessSocket_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             if (sender is Button)
             {
                 Button senderButton = (Button)sender;
-                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
 
                 int wirelessSocketId = (int)senderButton.Tag;
-                WirelessSocketDto updateWirelessSocket = _wirelessSocketService.GetById(wirelessSocketId);
-                _logger.Warning(string.Format("Updating wireless socket {0}!", updateWirelessSocket));
+                WirelessSocketDto updateWirelessSocket = WirelessSocketService.Instance.GetById(wirelessSocketId);
 
                 WirelessSocketUpdatePage wirelessSocketUpdatePage = new WirelessSocketUpdatePage(_navigationService, updateWirelessSocket);
                 _navigationService.Navigate(wirelessSocketUpdatePage);
@@ -168,15 +142,12 @@ namespace LucaHome.Pages
 
         private void ButtonDeleteWirelessSocket_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonDeleteWirelessSocket_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             if (sender is Button)
             {
                 Button senderButton = (Button)sender;
-                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
 
                 int wirelessSocketId = (int)senderButton.Tag;
-                WirelessSocketDto deleteWirelessSocket = _wirelessSocketService.GetById(wirelessSocketId);
-                _logger.Warning(string.Format("Asking for deleting wireless socket {0}!", deleteWirelessSocket));
+                WirelessSocketDto deleteWirelessSocket = WirelessSocketService.Instance.GetById(wirelessSocketId);
 
                 DeleteDialog wirelessSocketDeleteDialog = new DeleteDialog("Delete socket?",
                     string.Format("Socket: {0}\nArea: {1}\nCode: {2}", deleteWirelessSocket.Name, deleteWirelessSocket.Area, deleteWirelessSocket.Code));
@@ -186,39 +157,34 @@ namespace LucaHome.Pages
                 var confirmDelete = wirelessSocketDeleteDialog.DialogResult;
                 if (confirmDelete == true)
                 {
-                    _wirelessSocketService.OnDeleteWirelessSocketFinished += _onWirelessSocketDeleteFinished;
-                    _wirelessSocketService.DeleteWirelessSocket(deleteWirelessSocket);
+                    WirelessSocketService.Instance.OnDeleteWirelessSocketFinished += _onWirelessSocketDeleteFinished;
+                    WirelessSocketService.Instance.DeleteWirelessSocket(deleteWirelessSocket);
                 }
             }
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.GoBack();
         }
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonAdd_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.Navigate(new WirelessSocketAddPage(_navigationService));
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _wirelessSocketService.LoadWirelessSocketList();
+            WirelessSocketService.Instance.LoadWirelessSocketList();
         }
 
         private void _wirelessSocketListDownloadFinished(IList<WirelessSocketDto> wirelessSocketList, bool success, string response)
         {
-            _logger.Debug(string.Format("_wirelessSocketListDownloadFinished with model {0} was successful: {1}", wirelessSocketList, success));
-            WirelessSocketList = _wirelessSocketService.WirelessSocketList;
+            WirelessSocketList = WirelessSocketService.Instance.WirelessSocketList;
         }
 
         private void _setWirelessSocketFinished(bool success, string response)
         {
-            _logger.Debug(string.Format("_setWirelessSocketFinished was successful: {0}", success));
             if (success)
             {
                 _notifier.ShowSuccess("Successfully set socket");
@@ -231,9 +197,8 @@ namespace LucaHome.Pages
 
         private void _onWirelessSocketDeleteFinished(bool success, string response)
         {
-            _logger.Debug(string.Format("_onWirelessSocketDeleteFinished with response {0} was successful: {1}", response, success));
-            _wirelessSocketService.OnDeleteWirelessSocketFinished -= _onWirelessSocketDeleteFinished;
-            _wirelessSocketService.LoadWirelessSocketList();
+            WirelessSocketService.Instance.OnDeleteWirelessSocketFinished -= _onWirelessSocketDeleteFinished;
+            WirelessSocketService.Instance.LoadWirelessSocketList();
         }
     }
 }

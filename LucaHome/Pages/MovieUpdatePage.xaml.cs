@@ -1,6 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
-using Common.Tools;
+﻿using Common.Dto;
 using Data.Services;
 using System;
 using System.Windows;
@@ -18,9 +16,7 @@ namespace LucaHome.Pages
     public partial class MovieUpdatePage : Page, INotifyPropertyChanged
     {
         private const string TAG = "MovieUpdatePage";
-        private readonly Logger _logger;
 
-        private readonly MovieService _movieService;
         private readonly NavigationService _navigationService;
 
         private readonly Notifier _notifier;
@@ -29,9 +25,6 @@ namespace LucaHome.Pages
 
         public MovieUpdatePage(NavigationService navigationService, MovieDto updateMovie)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
-            _movieService = MovieService.Instance;
             _navigationService = navigationService;
 
             _updateMovie = updateMovie;
@@ -120,31 +113,26 @@ namespace LucaHome.Pages
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-
-            _movieService.OnMovieDownloadFinished -= _onMovieDownloadFinished;
-            _movieService.OnMovieUpdateFinished -= _onMovieUpdateFinished;
+            MovieService.Instance.OnMovieDownloadFinished -= _onMovieDownloadFinished;
+            MovieService.Instance.OnMovieUpdateFinished -= _onMovieUpdateFinished;
         }
 
         private void UpdateMovie_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("UpdateMovie_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-            _movieService.OnMovieUpdateFinished += _onMovieUpdateFinished;
-            _movieService.UpdateMovie(_updateMovie);
+            MovieService.Instance.OnMovieUpdateFinished += _onMovieUpdateFinished;
+            MovieService.Instance.UpdateMovie(_updateMovie);
         }
 
         private void _onMovieUpdateFinished(bool success, string response)
         {
-            _logger.Debug(string.Format("_onMovieUpdateFinished was successful {0}", success));
-
-            _movieService.OnMovieUpdateFinished -= _onMovieUpdateFinished;
+            MovieService.Instance.OnMovieUpdateFinished -= _onMovieUpdateFinished;
 
             if (success)
             {
                 _notifier.ShowSuccess("Added new movie!");
 
-                _movieService.OnMovieDownloadFinished += _onMovieDownloadFinished;
-                _movieService.LoadMovieList();
+                MovieService.Instance.OnMovieDownloadFinished += _onMovieDownloadFinished;
+                MovieService.Instance.LoadMovieList();
             }
             else
             {
@@ -154,15 +142,12 @@ namespace LucaHome.Pages
 
         private void _onMovieDownloadFinished(IList<MovieDto> movieList, bool success, string response)
         {
-            _logger.Debug(string.Format("_onMovieDownloadFinished with model {0} was successful {1}", movieList, success));
-
-            _movieService.OnMovieDownloadFinished -= _onMovieDownloadFinished;
+            MovieService.Instance.OnMovieDownloadFinished -= _onMovieDownloadFinished;
             _navigationService.GoBack();
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.GoBack();
         }
     }

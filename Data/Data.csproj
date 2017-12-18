@@ -69,7 +69,7 @@
     <Compile Include="CustomEventArgs\PartReadyEventArgs.cs" />
     <Compile Include="Misc\AutomaticMultiPartReader.cs" />
     <Compile Include="Misc\MultiPartStream.cs" />
-    <Compile Include="Services\MediaMirrorService.cs" />
+    <Compile Include="Services\MediaServerService.cs" />
     <Compile Include="Services\SpecialicedBookService.cs" />
     <Compile Include="Services\NovelService.cs" />
     <Compile Include="Services\SeriesService.cs" />

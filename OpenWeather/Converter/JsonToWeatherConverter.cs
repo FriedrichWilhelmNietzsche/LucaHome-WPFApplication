@@ -2,7 +2,6 @@
 using Common.Enums;
 using Common.Tools;
 using Newtonsoft.Json.Linq;
-using OpenWeather.Common;
 using OpenWeather.Models;
 using System;
 using System.Collections.Generic;
@@ -12,20 +11,16 @@ namespace OpenWeather.Converter
     public class JsonToWeatherConverter
     {
         private const string TAG = "JsonToWeatherConverter";
-        private Logger _logger;
-
-        private UnixToDateTimeConverter _unixToDateTimeConverter;
 
         public JsonToWeatherConverter()
         {
-            _logger = new Logger(TAG, OWEnables.LOGGING);
-            _unixToDateTimeConverter = new UnixToDateTimeConverter();
+            // Empty constructor, nothing needed here
         }
 
         public WeatherModel ConvertFromJsonToCurrentWeather(string jsonString)
         {
             JObject jsonObject = JObject.Parse(jsonString);
-            
+
             string city = jsonObject["name"].ToString();
             JToken locationJObject = jsonObject.GetValue("sys");
             string country = locationJObject["country"].ToString();
@@ -50,18 +45,18 @@ namespace OpenWeather.Converter
             }
             catch (Exception exception)
             {
-                _logger.Error(exception.ToString());
+                Logger.Instance.Error(TAG, exception.ToString());
             }
 
             string sunriseString = locationJObject["sunrise"].ToString();
             string sunsetString = locationJObject["sunset"].ToString();
 
-            DateTime sunrise = _unixToDateTimeConverter.UnixTimeStampToDateTime(sunriseString);
-            DateTime sunset = _unixToDateTimeConverter.UnixTimeStampToDateTime(sunsetString);
+            DateTime sunrise = UnixToDateTimeConverter.Instance.UnixTimeStampToDateTime(sunriseString);
+            DateTime sunset = UnixToDateTimeConverter.Instance.UnixTimeStampToDateTime(sunsetString);
 
             string temperatureMinString = weatherDataDataJObject["temp_min"].ToString();
             string temperatureMaxString = weatherDataDataJObject["temp_max"].ToString();
-            
+
             WeatherModel newWeatherModel = new WeatherModel(
                 city,
                 country,
@@ -73,8 +68,6 @@ namespace OpenWeather.Converter
                 sunset,
                 DateTime.Now,
                 weatherCondition);
-
-            _logger.Debug(newWeatherModel.ToString());
 
             return newWeatherModel;
         }
@@ -89,7 +82,7 @@ namespace OpenWeather.Converter
 
             IList<ForecastPartModel> forecastList = new List<ForecastPartModel>();
             JToken dataJObject = jsonObject.GetValue("list");
-            foreach(JToken dataEntry in dataJObject)
+            foreach (JToken dataEntry in dataJObject)
             {
                 JToken mainDataJObject = dataEntry["main"];
                 string temperatureMinString = mainDataJObject["temp_min"].ToString();
@@ -110,7 +103,7 @@ namespace OpenWeather.Converter
                 }
                 catch (Exception exception)
                 {
-                    _logger.Error(exception.ToString());
+                    Logger.Instance.Error(TAG, exception.ToString());
                 }
 
                 JToken weatherDataJObject = dataEntry["weather"][0];
@@ -129,16 +122,12 @@ namespace OpenWeather.Converter
                     dateTime,
                     weatherCondition);
                 forecastList.Add(newForecastPartModel);
-
-                _logger.Debug(newForecastPartModel.ToString());
             }
-            
+
             ForecastModel newForecastModel = new ForecastModel(
                 city,
                 country,
                 forecastList);
-
-            _logger.Debug(newForecastModel.ToString());
 
             return newForecastModel;
         }

@@ -106,5 +106,29 @@ namespace Data.Properties {
                 this["CoinHourTrend"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("8080")]
+        public int MediaServerPort {
+            get {
+                return ((int)(this["MediaServerPort"]));
+            }
+            set {
+                this["MediaServerPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("25")]
+        public int YoutubeMaxCount {
+            get {
+                return ((int)(this["YoutubeMaxCount"]));
+            }
+            set {
+                this["YoutubeMaxCount"] = value;
+            }
+        }
     }
 }

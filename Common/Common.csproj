@@ -193,8 +193,6 @@
     <Resource Include="Assets\Icons\Sockets\gameconsole_on.png" />
     <Resource Include="Assets\Icons\Sockets\laptop_off.png" />
     <Resource Include="Assets\Icons\Sockets\laptop_on.png" />
-    <Resource Include="Assets\Icons\Sockets\mediamirror_off.png" />
-    <Resource Include="Assets\Icons\Sockets\mediamirror_on.png" />
     <Resource Include="Assets\Icons\Sockets\printer_off.png" />
     <Resource Include="Assets\Icons\Sockets\printer_on.png" />
     <Resource Include="Assets\Icons\Sockets\socket.png" />
@@ -299,6 +297,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Wallpaper\main_image_switches.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Icons\Coins\XRP.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Icons\Sockets\mediaserver_off.png" />
+    <Resource Include="Assets\Icons\Sockets\mediaserver_on.png" />
+    <Resource Include="Assets\Icons\Sockets\raspberry_off.png" />
+    <Resource Include="Assets\Icons\Sockets\raspberry_on.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

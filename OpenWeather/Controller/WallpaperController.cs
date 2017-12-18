@@ -34,7 +34,6 @@ namespace OpenWeather.Controller
     public class WallpaperController
     {
         private const String TAG = "WallpaperController";
-        private readonly Logger _logger;
 
         const int SPI_SETDESKWALLPAPER = 20;
         const int SPIF_UPDATEINIFILE = 0x01;
@@ -45,8 +44,7 @@ namespace OpenWeather.Controller
 
         public WallpaperController()
         {
-            _logger = new Logger(TAG);
-            _logger.Information("Created new WallpaperController");
+            Logger.Instance.Information(TAG, "Created new WallpaperController");
         }
 
         public static void SetDesktopWallpaperFromBitmap(Bitmap bitmap, Style style)

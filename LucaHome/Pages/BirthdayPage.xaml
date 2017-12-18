@@ -96,15 +96,14 @@
                                     DisplayMemberBinding="{Binding Age, UpdateSourceTrigger=PropertyChanged}"
                                     Width="150"/>
                     <GridViewColumn Header="RemindMe"
-                                    Width="150">
+                                    Width="200">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox 
                                     Height="40" 
                                     Width="40"
-                                    Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
                                     Margin="5 5 5 5"
-                                    Checked="{Binding RemindMe, UpdateSourceTrigger=PropertyChanged}"
+                                    IsChecked="{Binding RemindMe, UpdateSourceTrigger=PropertyChanged}"
                                     ToolTip="Remind me about this birthday"
                                     Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
                                     Click="ButtonRemindMeBirthday_Click">

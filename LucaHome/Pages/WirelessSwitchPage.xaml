@@ -1,0 +1,217 @@
+﻿<Page x:Class="LucaHome.Pages.WirelessSwitchPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:LucaHome.Pages"
+      xmlns:usercontrols="clr-namespace:LucaHome.UserControls"
+      mc:Ignorable="d" 
+      Height="{DynamicResource PageHeight}" 
+      Width="{DynamicResource PageWidth}"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+      TextElement.FontWeight="Regular"
+      TextElement.FontSize="13"
+      TextOptions.TextFormattingMode="Ideal" 
+      TextOptions.TextRenderingMode="Auto"   
+      Background="{DynamicResource MaterialDesignPaper}"
+      FontFamily="{DynamicResource MaterialDesignFont}"
+      Title="LucaHome - WirelessSwitches"
+      Loaded="Page_Loaded"
+      Unloaded="Page_Unloaded">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <usercontrols:ScrollableImage
+            Height="{DynamicResource TopWallpaperHeight}"
+            Grid.Column="0"
+            Grid.Row="0"
+            ImageWallpaperSource="/Common;component/Assets/Wallpaper/main_image_switches.png" />
+
+        <materialDesign:PackIcon 
+            Grid.Row="1" 
+            Grid.Column="0" 
+            Kind="AccountSearch" 
+            Margin="5 0 5 5" 
+            Foreground="{Binding ElementName=SearchWirelessSwitchTextBox, Path=BorderBrush}" />
+        <TextBox 
+            Grid.Row="1" 
+            Grid.Column="0" 
+            x:Name="SearchWirelessSwitchTextBox"
+            Margin="5 15 5 5" 
+            materialDesign:HintAssist.Hint="Search for keywords in the wireless switches">
+            <TextBox.Text>
+                <Binding Path="WirelessSwitchSearchKey" UpdateSourceTrigger="PropertyChanged" />
+            </TextBox.Text>
+        </TextBox>
+
+        <ListView 
+            Grid.Column="0"
+            Grid.Row="2"
+            HorizontalAlignment="Center"
+            Height="{DynamicResource ListHeight}"
+            Margin="5"
+            VerticalAlignment="Center"
+            Width="{DynamicResource ListWidth}"
+            ItemsSource="{Binding Path=WirelessSwitchList, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn 
+                        Width="55" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Center">
+                                    <Ellipse
+                                        Width="{DynamicResource EllipseOuterWidth}" 
+                                        Height="{DynamicResource EllipseOuterHeight}"
+                                        Fill="Purple"
+                                        HorizontalAlignment="Center"/>
+                                    <Ellipse
+                                        Width="{DynamicResource EllipseInnerWidth}" 
+                                        Height="{DynamicResource EllipseInnerHeight}"
+                                        HorizontalAlignment="Center">
+                                        <Ellipse.Fill>
+                                            <ImageBrush ImageSource="{Binding Drawable, UpdateSourceTrigger=PropertyChanged}" />
+                                        </Ellipse.Fill>
+                                    </Ellipse>
+                                </Grid>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Name"
+                                    DisplayMemberBinding="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="150"/>
+                    <GridViewColumn Header="Area"
+                                    DisplayMemberBinding="{Binding Area, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="150"/>
+                    <GridViewColumn Header="RemoteId"
+                                    DisplayMemberBinding="{Binding RemoteId, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="150"/>
+                    <GridViewColumn Header="KeyCode"
+                                    DisplayMemberBinding="{Binding KeyCode, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="150"/>
+                    <GridViewColumn Header="Action"
+                                    DisplayMemberBinding="{Binding Action, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="100"/>
+                    <GridViewColumn Header="Last trigger"
+                                    DisplayMemberBinding="{Binding LastTriggerDate, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="125"/>
+                    <GridViewColumn Header="Last user"
+                                    DisplayMemberBinding="{Binding LastTriggerUser, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="100"/>
+                    <GridViewColumn 
+                        Width="150" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Center">
+                                    <Button
+                                        Style="{DynamicResource MaterialDesignRaisedButton}"
+                                        Margin="5 5 5 5" 
+                                        Width="135"
+                                        ToolTip="Handling switches"
+                                        Tag="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                                        Click="WirelessSwitchButton_Click">
+                                        Change state
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn 
+                        Width="65" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button 
+                                    Height="40" 
+                                    Width="40"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                    Margin="5 5 5 5"
+                                    ToolTip="Update wireless switch"
+                                    Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
+                                    Click="ButtonUpdateWirelessSwitch_Click">
+                                    <materialDesign:PackIcon 
+                                        Kind="Settings" 
+                                        Height="25" 
+                                        Width="25" />
+                                </Button>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn 
+                        Width="65" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button 
+                                    Height="40" 
+                                    Width="40"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                                    Margin="5 5 5 5"
+                                    ToolTip="Delete wireless switch"
+                                    Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
+                                    Click="ButtonDeleteWirelessSwitch_Click" >
+                                    <materialDesign:PackIcon 
+                                        Kind="Delete" 
+                                        Height="25" 
+                                        Width="25" />
+                                </Button>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <Button 
+            Grid.Column="0"
+            Grid.Row="2"
+            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+            Margin="5"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            ToolTip="Go back"
+            Click="ButtonBack_Click">
+            <materialDesign:PackIcon 
+                Kind="KeyboardBackspace" 
+                Height="24" 
+                Width="24" />
+        </Button>
+
+        <Button 
+            Grid.Column="0"
+            Grid.Row="2"
+            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+            Margin="5 -24 5 5"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            ToolTip="Add new wireless switch"
+            Click="ButtonAdd_Click">
+            <materialDesign:PackIcon 
+                Kind="Plus" 
+                Height="24" 
+                Width="24" />
+        </Button>
+
+        <Button 
+            Grid.Column="0"
+            Grid.Row="2"
+            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+            Margin="5"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            ToolTip="Reload"
+            Click="ButtonReload_Click">
+            <materialDesign:PackIcon 
+                Kind="Reload" 
+                Height="24" 
+                Width="24" />
+        </Button>
+    </Grid>
+</Page>

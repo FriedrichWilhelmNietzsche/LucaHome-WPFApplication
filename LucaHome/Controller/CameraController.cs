@@ -13,7 +13,6 @@ namespace LucaHome.Controller
     public class CameraController
     {
         private const string TAG = "CameraController";
-        private readonly Logger _logger;
 
         private string _url;
         private HttpClient _httpClient;
@@ -22,7 +21,7 @@ namespace LucaHome.Controller
 
         public CameraController()
         {
-            _logger = new Logger(TAG);
+            // Empty constructor, nothing needed here
         }
 
         public event EventHandler<ImageReadyEventArsgs> ImageReady;
@@ -30,7 +29,7 @@ namespace LucaHome.Controller
         public void Initialize(string url)
         {
             _url = url;
-            _logger.Debug(String.Format("Initialized with url {0}", _url));
+            Logger.Instance.Debug(TAG, string.Format("Initialized with url {0}", _url));
 
             WebRequestHandler handler = new WebRequestHandler();
 
@@ -62,7 +61,7 @@ namespace LucaHome.Controller
             }
             catch (Exception exception)
             {
-                _logger.Error(exception.Message);
+                Logger.Instance.Error(TAG, exception.Message);
             }
         }
 

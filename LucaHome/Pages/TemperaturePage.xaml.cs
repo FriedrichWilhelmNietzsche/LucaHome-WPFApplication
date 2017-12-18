@@ -1,6 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
-using Common.Tools;
+﻿using Common.Dto;
 using Data.Services;
 using System.Collections.Generic;
 using System.Windows;
@@ -17,30 +15,23 @@ namespace LucaHome.Pages
     public partial class TemperaturePage : Page
     {
         private const string TAG = "TemperaturePage";
-        private readonly Logger _logger;
 
         private readonly NavigationService _navigationService;
-        private readonly TemperatureService _temperatureService;
 
         public TemperaturePage(NavigationService navigationService)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
             _navigationService = navigationService;
-            _temperatureService = TemperatureService.Instance;
 
             InitializeComponent();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+            TemperatureService.Instance.OnTemperatureDownloadFinished += _temperatureDownloadFinished;
 
-            _temperatureService.OnTemperatureDownloadFinished += _temperatureDownloadFinished;
-
-            if (_temperatureService.TemperatureList == null)
+            if (TemperatureService.Instance.TemperatureList == null)
             {
-                _temperatureService.LoadTemperatureList();
+                TemperatureService.Instance.LoadTemperatureList();
                 return;
             }
 
@@ -49,43 +40,34 @@ namespace LucaHome.Pages
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
-            _temperatureService.OnTemperatureDownloadFinished -= _temperatureDownloadFinished;
+            TemperatureService.Instance.OnTemperatureDownloadFinished -= _temperatureDownloadFinished;
         }
 
         private void setList()
         {
-            _logger.Debug("setList");
-
             TemperatureList.Items.Clear();
 
-            foreach (TemperatureDto entry in _temperatureService.TemperatureList)
+            foreach (TemperatureDto entry in TemperatureService.Instance.TemperatureList)
             {
                 TemperatureList.Items.Add(entry);
             }
 
-            Wallpaper.ImageWallpaperSource = _temperatureService.Wallpaper;
+            Wallpaper.ImageWallpaperSource = TemperatureService.Instance.Wallpaper;
         }
 
         private void _temperatureDownloadFinished(IList<TemperatureDto> temperatureList, bool success, string response)
         {
-            _logger.Debug(string.Format("_temperatureDownloadFinished with model {0} was successful: {1}", temperatureList, success));
             setList();
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _navigationService.GoBack();
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
-            _temperatureService.LoadTemperatureList();
+            TemperatureService.Instance.LoadTemperatureList();
         }
     }
 }

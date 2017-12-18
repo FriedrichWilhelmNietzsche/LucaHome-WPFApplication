@@ -1,11 +1,9 @@
 ﻿using Common.Enums;
 using Common.Tools;
-using OpenWeather.Common;
 using OpenWeather.Controller;
 using OpenWeather.Converter;
 using OpenWeather.Downloader;
 using OpenWeather.Models;
-using OpenWeather.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +18,6 @@ namespace OpenWeather.Service
     public class OpenWeatherService
     {
         private const String TAG = "OpenWeatherService";
-        private readonly Logger _logger;
 
         private const int TIMEOUT = 5 * 60 * 1000;
 
@@ -39,8 +36,7 @@ namespace OpenWeather.Service
 
         OpenWeatherService()
         {
-            _logger = new Logger(TAG, OWEnables.LOGGING);
-            _logger.Information("Created new instance");
+            Logger.Instance.Information(TAG, "Created new instance");
 
             _jsonToWeatherConverter = new JsonToWeatherConverter();
             _openWeatherDownloader = new OpenWeatherDownloader();
@@ -133,7 +129,7 @@ namespace OpenWeather.Service
             {
                 if (value == null || value == string.Empty)
                 {
-                    _logger.Error("Cannot set null value for City!");
+                    Logger.Instance.Error(TAG, "Cannot set null value for City!");
                     return;
                 }
 
@@ -180,11 +176,9 @@ namespace OpenWeather.Service
 
         public void LoadCurrentWeather()
         {
-            _logger.Debug("LoadCurrentWeather");
-
             if (!_openWeatherDownloader.Initialized)
             {
-                _logger.Error("OpenWeatherDownloader not initialized!");
+                Logger.Instance.Error(TAG, "OpenWeatherDownloader not initialized!");
                 return;
             }
 
@@ -194,11 +188,9 @@ namespace OpenWeather.Service
 
         public void LoadForecastModel()
         {
-            _logger.Debug("LoadForecastModel");
-
             if (!_openWeatherDownloader.Initialized)
             {
-                _logger.Error("OpenWeatherDownloader not initialized!");
+                Logger.Instance.Error(TAG, "OpenWeatherDownloader not initialized!");
                 return;
             }
 
@@ -208,24 +200,23 @@ namespace OpenWeather.Service
 
         private void _downloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            _logger.Debug(string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
             loadCurrentWeather();
             loadForecastModel();
         }
 
         private void loadCurrentWeather()
         {
-            _logger.Debug("loadCurrentWeather");
-
             string jsonString = _openWeatherDownloader.DownloadCurrentWeatherJson();
-            _logger.Debug(string.Format("Downloaded jsonString is {0}", jsonString));
 
             WeatherModel newWeatherModel = _jsonToWeatherConverter.ConvertFromJsonToCurrentWeather(jsonString);
-            _logger.Debug(string.Format("New WeatherModel is {0}", newWeatherModel));
 
             if (newWeatherModel != null)
             {
                 _currentWeather = newWeatherModel;
+            }
+            else
+            {
+                Logger.Instance.Error(TAG, "newWeatherModel is null!");
             }
 
             OnCurrentWeatherDownloadFinishedHandler(_currentWeather, (newWeatherModel != null));
@@ -234,17 +225,17 @@ namespace OpenWeather.Service
 
         private void loadForecastModel()
         {
-            _logger.Debug("loadForecastModel");
-
             string jsonString = _openWeatherDownloader.DownloadForecastWeatherJson();
-            _logger.Debug(string.Format("Downloaded jsonString is {0}", jsonString));
 
             ForecastModel newForecastModel = _jsonToWeatherConverter.ConvertFromJsonToForecastWeather(jsonString);
-            _logger.Debug(string.Format("New ForecastModel is {0}", newForecastModel));
 
             if (newForecastModel != null)
             {
                 _forecastWeather = newForecastModel;
+            }
+            else
+            {
+                Logger.Instance.Error(TAG, "newForecastModel is null!");
             }
 
             OnForecastWeatherDownloadFinishedHandler(_forecastWeather, (newForecastModel != null));
@@ -254,13 +245,12 @@ namespace OpenWeather.Service
         {
             if (!_setWallpaperActive)
             {
-                _logger.Debug("SetWallpaper is not active!");
                 return;
             }
 
             if (_currentWeather == null)
             {
-                _logger.Error("CurrentWeather is null!");
+                Logger.Instance.Error(TAG, "CurrentWeather is null!");
                 return;
             }
 
@@ -269,7 +259,7 @@ namespace OpenWeather.Service
 
         public void Dispose()
         {
-            _logger.Debug("Dispose");
+            Logger.Instance.Debug(TAG, "Dispose");
 
             _downloadTimer.Elapsed -= _downloadTimer_Elapsed;
             _downloadTimer.AutoReset = false;

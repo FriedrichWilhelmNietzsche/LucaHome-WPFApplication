@@ -47,25 +47,26 @@
         </TextBlock>
 
         <Button
+            Name="ConfirmButton"
             Grid.Row="3" 
             Grid.Column="0"
             Style="{DynamicResource MaterialDesignRaisedButton}"
             Margin="5 5 5 5" 
             Width="135"
             Tag="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
-            Click="ConfirmButton_Click">
-            Enable
-        </Button>
+            Click="ConfirmButton_Click"
+            Content="Enable"/>
 
         <Button
+            Name="CancelButton"
             Grid.Row="3" 
             Grid.Column="1"
             Style="{DynamicResource MaterialDesignRaisedButton}"
             Margin="5 5 5 5" 
             Width="135"
             Tag="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
-            Click="CancelButton_Click">
-            Disable
-        </Button>
+            Click="CancelButton_Click"
+            Content="Disable"/>
+
     </Grid>
 </Window>

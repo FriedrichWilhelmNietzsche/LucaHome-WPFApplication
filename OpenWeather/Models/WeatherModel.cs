@@ -1,6 +1,4 @@
 ﻿using Common.Enums;
-using Common.Tools;
-using OpenWeather.Common;
 using System;
 
 namespace OpenWeather.Models
@@ -8,7 +6,6 @@ namespace OpenWeather.Models
     public class WeatherModel
     {
         private const string TAG = "WeatherModel";
-        private Logger _logger;
 
         private string _city;
         private string _country;
@@ -27,19 +24,17 @@ namespace OpenWeather.Models
         private WeatherCondition _condition;
 
         public WeatherModel(
-            string city, 
-            string country, 
-            string description, 
-            double temperature, 
-            double humidity, 
-            double pressure, 
-            DateTime sunrise, 
-            DateTime sunset, 
-            DateTime lastUpdate, 
+            string city,
+            string country,
+            string description,
+            double temperature,
+            double humidity,
+            double pressure,
+            DateTime sunrise,
+            DateTime sunset,
+            DateTime lastUpdate,
             WeatherCondition condition)
         {
-            _logger = new Logger(TAG, OWEnables.LOGGING);
-
             _city = city;
             _country = country;
             _description = description;

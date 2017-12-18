@@ -1,6 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
-using Common.Tools;
+﻿using Common.Dto;
 using Data.Services;
 using LucaHome.Dialogs;
 using System;
@@ -27,10 +25,8 @@ namespace LucaHome.Pages
     public partial class SchedulePage : Page, INotifyPropertyChanged
     {
         private const string TAG = "SchedulePage";
-        private readonly Logger _logger;
 
         private readonly NavigationService _navigationService;
-        private readonly ScheduleService _scheduleService;
 
         private readonly Notifier _notifier;
 
@@ -39,10 +35,7 @@ namespace LucaHome.Pages
 
         public SchedulePage(NavigationService navigationService)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
             _navigationService = navigationService;
-            _scheduleService = ScheduleService.Instance;
 
             InitializeComponent();
             DataContext = this;
@@ -84,15 +77,7 @@ namespace LucaHome.Pages
             {
                 _scheduleSearchKey = value;
                 OnPropertyChanged("ScheduleSearchKey");
-
-                if (_scheduleSearchKey != string.Empty)
-                {
-                    ScheduleList = _scheduleService.FoundSchedules(_scheduleSearchKey);
-                }
-                else
-                {
-                    ScheduleList = _scheduleService.ScheduleList;
-                }
+                ScheduleList = ScheduleService.Instance.FoundSchedules(_scheduleSearchKey);
             }
         }
 
@@ -111,54 +96,45 @@ namespace LucaHome.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
+            ScheduleService.Instance.OnScheduleDownloadFinished += _scheduleListDownloadFinished;
+            ScheduleService.Instance.OnSetScheduleFinished += _setScheduleFinished;
 
-            _scheduleService.OnScheduleDownloadFinished += _scheduleListDownloadFinished;
-            _scheduleService.OnSetScheduleFinished += _setScheduleFinished;
-
-            if (_scheduleService.ScheduleList == null)
+            if (ScheduleService.Instance.ScheduleList == null)
             {
-                _scheduleService.LoadScheduleList();
+                ScheduleService.Instance.LoadScheduleList();
                 return;
             }
 
-            ScheduleList = _scheduleService.ScheduleList;
+            ScheduleList = ScheduleService.Instance.ScheduleList;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
-            _scheduleService.OnScheduleDownloadFinished -= _scheduleListDownloadFinished;
-            _scheduleService.OnSetScheduleFinished -= _setScheduleFinished;
+            ScheduleService.Instance.OnScheduleDownloadFinished -= _scheduleListDownloadFinished;
+            ScheduleService.Instance.OnSetScheduleFinished -= _setScheduleFinished;
 
             _notifier.Dispose();
         }
 
         private void ScheduleButton_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Received click of sender {0} with arguments {1}", sender, routedEventArgs));
             if (sender is Button)
             {
                 Button senderButton = (Button)sender;
-                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
 
                 string scheduleName = (String)senderButton.Tag;
-                _scheduleService.ChangeScheduleState(scheduleName);
+                ScheduleService.Instance.ChangeScheduleState(scheduleName);
             }
         }
 
         private void ButtonUpdateSchedule_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonUpdateSchedule_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             if (sender is Button)
             {
                 Button senderButton = (Button)sender;
-                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
 
                 int scheduleId = (int)senderButton.Tag;
-                ScheduleDto updateSchedule = _scheduleService.GetById(scheduleId);
-                _logger.Warning(string.Format("Updating schedule {0}!", updateSchedule));
+                ScheduleDto updateSchedule = ScheduleService.Instance.GetById(scheduleId);
 
                 ScheduleUpdatePage scheduleUpdatePage = new ScheduleUpdatePage(_navigationService, updateSchedule);
                 _navigationService.Navigate(scheduleUpdatePage);
@@ -167,15 +143,12 @@ namespace LucaHome.Pages
 
         private void ButtonDeleteSchedule_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonDeleteSchedule_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             if (sender is Button)
             {
                 Button senderButton = (Button)sender;
-                _logger.Debug(string.Format("Tag is {0}", senderButton.Tag));
 
                 int scheduleId = (int)senderButton.Tag;
-                ScheduleDto deleteSchedule = _scheduleService.GetById(scheduleId);
-                _logger.Warning(string.Format("Asking for deleting schedule {0}!", deleteSchedule));
+                ScheduleDto deleteSchedule = ScheduleService.Instance.GetById(scheduleId);
 
                 DeleteDialog scheduleDeleteDialog = new DeleteDialog("Delete socket?",
                     string.Format("Schedule: {0}", deleteSchedule.Name));
@@ -185,38 +158,33 @@ namespace LucaHome.Pages
                 var confirmDelete = scheduleDeleteDialog.DialogResult;
                 if (confirmDelete == true)
                 {
-                    _scheduleService.DeleteSchedule(deleteSchedule);
+                    ScheduleService.Instance.DeleteSchedule(deleteSchedule);
                 }
             }
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.GoBack();
         }
 
         private void ButtonAdd_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonAdd_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.Navigate(new ScheduleAddPage(_navigationService));
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _scheduleService.LoadScheduleList();
+            ScheduleService.Instance.LoadScheduleList();
         }
 
         private void _scheduleListDownloadFinished(IList<ScheduleDto> scheduleList, bool success, string response)
         {
-            _logger.Debug(string.Format("_scheduleListDownloadFinished with model {0} was successful: {1}", scheduleList, success));
-            ScheduleList = _scheduleService.ScheduleList;
+            ScheduleList = ScheduleService.Instance.ScheduleList;
         }
 
         private void _setScheduleFinished(IList<ScheduleDto> scheduleList, bool success, string response)
         {
-            _logger.Debug(string.Format("_setScheduleFinished was successful: {0}", success));
             if (success)
             {
                 _notifier.ShowSuccess("Successfully set socket");

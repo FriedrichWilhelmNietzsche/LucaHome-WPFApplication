@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Controls;
 using static Common.Dto.MapContentDto;
 using static Common.Dto.TemperatureDto;
-using static LucaHome.Dialogs.SetDialog;
 
 namespace LucaHome.Builder
 {
@@ -29,17 +28,20 @@ namespace LucaHome.Builder
                 {
                     WirelessSocketDto socket = entry.WirelessSocket;
 
-                    SetDialog setDialog = new SetDialog(string.Format("Set socket {0}", socket.Name),
-                        string.Format("Current State: {0}\nArea: {1}\nCode: {2}", socket.ActivationString, socket.Area, socket.Code));
+                    SetDialog setDialog = new SetDialog(
+                        socket.Name,
+                        string.Format("Current State: {0}\nArea: {1}\nCode: {2}", socket.ActivationString, socket.Area, socket.Code),
+                        "Activate",
+                        "Deactivate");
                     setDialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                     setDialog.ShowDialog();
 
                     Action setAction = setDialog.SetAction;
-                    if (setAction == Action.ACTIVATE)
+                    if (setAction == Action.CONFIRM)
                     {
                         WirelessSocketService.Instance.SetWirelessSocket(socket, true);
                     }
-                    else if (setAction == Action.DEACTIVATE)
+                    else if (setAction == Action.CANCEL)
                     {
                         WirelessSocketService.Instance.SetWirelessSocket(socket, false);
                     }
@@ -51,13 +53,23 @@ namespace LucaHome.Builder
                 {
                     WirelessSwitchDto wirelessSwitch = entry.WirelessSwitch;
 
-                    ToggleDialog toggleDialog = new ToggleDialog(
-                        string.Format("Toggle switch {0}", wirelessSwitch.Name),
-                        string.Format("Current Action: {0}\nArea: {1}\nKeyCode: {2}", wirelessSwitch.Action.ToString(), wirelessSwitch.Area, wirelessSwitch.KeyCode));
-                    toggleDialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                    toggleDialog.ShowDialog();
+                    SetDialog setDialog = new SetDialog(
+                        string.Format("{0}", wirelessSwitch.Name),
+                        string.Format("Current Action: {0}\nArea: {1}\nKeyCode: {2}", wirelessSwitch.Action.ToString(), wirelessSwitch.Area, wirelessSwitch.KeyCode),
+                        "Toggle",
+                        "Cancel");
+                    setDialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    setDialog.ShowDialog();
 
-                    WirelessSwitchService.Instance.ToggleWirelessSwitch(wirelessSwitch);
+                    Action setAction = setDialog.SetAction;
+                    if (setAction == Action.CONFIRM)
+                    {
+                        WirelessSwitchService.Instance.ToggleWirelessSwitch(wirelessSwitch);
+                    }
+                    else if (setAction == Action.CANCEL)
+                    {
+                        // Do nothing
+                    }
                 });
             }
             else if (entry.MapDrawingType == DrawingType.Temperature)
@@ -82,13 +94,13 @@ namespace LucaHome.Builder
             mapContentControl.ButtonEnabled = entry.ButtonEnabled;
 
             double imageGridWidth = MapGrid.ActualWidth;
-            double imageGridHeight = MapGrid.ActualHeight;
+            double imageGridHeight = MapGrid.ActualHeight - 100;
 
-            double marginRight = imageGridWidth * entry.Position[1] / 100;
-            double marginTop = imageGridHeight * entry.Position[0] / 100;
+            double marginLeft = imageGridWidth * entry.Position[0] / 100;
+            double marginBottom = imageGridHeight * entry.Position[1] / 100;
 
-            double marginLeft = imageGridWidth - marginRight - 35;
-            double marginBottom = imageGridHeight - marginTop - 35;
+            double marginRight = imageGridWidth - marginLeft - 35;
+            double marginTop = imageGridHeight - marginBottom - 35;
 
             mapContentControl.Margin = new Thickness(marginLeft, marginTop, marginRight, marginBottom);
 

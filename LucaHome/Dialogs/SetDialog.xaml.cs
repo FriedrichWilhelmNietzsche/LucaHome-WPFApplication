@@ -1,27 +1,28 @@
-﻿using Common.Common;
-using Common.Tools;
-using System.Windows;
+﻿using System.Windows;
 
 namespace LucaHome.Dialogs
 {
+    public enum Action { NULL, CONFIRM, CANCEL };
+
     public partial class SetDialog : Window
     {
-        public enum Action { NULL, ACTIVATE, DEACTIVATE};
-
         private const string TAG = "SetDialog";
-        private readonly Logger _logger;
 
         private Action _setAction = Action.NULL;
 
-        public SetDialog(string title, string description)
+        public SetDialog(string title, string description, string confirmButtonText, string cancelButtonText)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
             InitializeComponent();
 
             Title.Text = title;
             Description.Text = description;
+
+            ConfirmButton.Content = confirmButtonText;
+            CancelButton.Content = cancelButtonText;
         }
+
+        public SetDialog(string title, string description) : this(title, description, "Confirm", "Cancel")
+        { }
 
         public Action SetAction
         {
@@ -33,15 +34,13 @@ namespace LucaHome.Dialogs
 
         private void ConfirmButton_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ConfirmButton_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _setAction = Action.ACTIVATE;
+            _setAction = Action.CONFIRM;
             Close();
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("CancelButton_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _setAction = Action.DEACTIVATE;
+            _setAction = Action.CANCEL;
             Close();
         }
     }

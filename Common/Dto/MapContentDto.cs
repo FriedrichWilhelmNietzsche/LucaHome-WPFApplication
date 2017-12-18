@@ -11,7 +11,6 @@ namespace Common.Dto
         public enum DrawingType { Null, Socket, LAN, MediaServer, RaspberryPi, NAS, LightSwitch, Temperature, PuckJS, Menu, ShoppingList, Camera }
 
         private const string TAG = "MapContentDto";
-        private readonly Logger _logger;
 
         private int _id;
         private DrawingType _drawingType;
@@ -52,8 +51,6 @@ namespace Common.Dto
             WirelessSocketDto wirelessSocket,
             WirelessSwitchDto wirelessSwitch)
         {
-            _logger = new Logger(TAG);
-
             _id = id;
             _drawingType = drawingType;
             _drawingTypeId = drawingTypeId;
@@ -228,7 +225,7 @@ namespace Common.Dto
                 return _wirelessSwitch;
             }
         }
-        
+
         public string ButtonToolTip
         {
             get
@@ -287,30 +284,30 @@ namespace Common.Dto
                 switch (_drawingType)
                 {
                     case DrawingType.Socket:
-                        return new DelegateCommand(() => { _logger.Debug("There is currently no command for a socket"); });
+                        return new DelegateCommand(() => { Logger.Instance.Warning(TAG, "There is currently no command for a socket"); });
                     case DrawingType.LAN:
-                        return new DelegateCommand(() => { _logger.Debug("There is currently no command for a lan"); });
+                        return new DelegateCommand(() => { Logger.Instance.Warning(TAG, "There is currently no command for a lan"); });
                     case DrawingType.MediaServer:
-                        return new DelegateCommand(() => { _logger.Debug("There is currently no command for a mediaserver"); });
+                        return new DelegateCommand(() => { Logger.Instance.Warning(TAG, "There is currently no command for a mediaserver"); });
                     case DrawingType.RaspberryPi:
-                        return new DelegateCommand(() => { _logger.Debug("There is currently no command for a raspberry pi"); });
+                        return new DelegateCommand(() => { Logger.Instance.Warning(TAG, "There is currently no command for a raspberry pi"); });
                     case DrawingType.NAS:
-                        return new DelegateCommand(() => { _logger.Debug("There is currently no command for a nas"); });
+                        return new DelegateCommand(() => { Logger.Instance.Warning(TAG, "There is currently no command for a nas"); });
                     case DrawingType.LightSwitch:
-                        return new DelegateCommand(() => { _logger.Debug("There is currently no command for a lightswitch"); });
+                        return new DelegateCommand(() => { Logger.Instance.Warning(TAG, "There is currently no command for a lightswitch"); });
                     case DrawingType.Temperature:
-                        return new DelegateCommand(() => { _logger.Debug("There is currently no command for a temperature"); });
+                        return new DelegateCommand(() => { Logger.Instance.Warning(TAG, "There is currently no command for a temperature"); });
                     case DrawingType.PuckJS:
-                        return new DelegateCommand(() => { _logger.Debug("There is currently no command for a puck js"); });
+                        return new DelegateCommand(() => { Logger.Instance.Warning(TAG, "There is currently no command for a puck js"); });
                     case DrawingType.Menu:
-                        return new DelegateCommand(() => { _logger.Debug("There is currently no command for the menu"); });
+                        return new DelegateCommand(() => { Logger.Instance.Warning(TAG, "There is currently no command for the menu"); });
                     case DrawingType.ShoppingList:
-                        return new DelegateCommand(() => { _logger.Debug("There is currently no command for the shopping list"); });
+                        return new DelegateCommand(() => { Logger.Instance.Warning(TAG, "There is currently no command for the shopping list"); });
                     case DrawingType.Camera:
-                        return new DelegateCommand(() => { _logger.Debug("There is currently no command for the camera"); });
+                        return new DelegateCommand(() => { Logger.Instance.Warning(TAG, "There is currently no command for the camera"); });
                     case DrawingType.Null:
                     default:
-                        return new DelegateCommand(() => { _logger.Debug(string.Format("No valid command found for type {0}", _drawingType)); });
+                        return new DelegateCommand(() => { Logger.Instance.Warning(TAG, string.Format("No valid command found for type {0}", _drawingType)); });
                 }
             }
         }

@@ -65,8 +65,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\OWAction.cs" />
-    <Compile Include="Common\OWDefinitions.cs" />
-    <Compile Include="Common\OWEnables.cs" />
     <Compile Include="Common\OWKeys.cs" />
     <Compile Include="Controller\WallpaperController.cs" />
     <Compile Include="Converter\JsonToWeatherConverter.cs" />

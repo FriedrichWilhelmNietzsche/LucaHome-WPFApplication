@@ -2,7 +2,6 @@
 using Common.Converter;
 using Common.Dto;
 using Common.Enums;
-using Common.Interfaces;
 using Common.Tools;
 using Data.Controller;
 using OpenWeather.Models;
@@ -21,14 +20,9 @@ namespace Data.Services
     public class TemperatureService
     {
         private const string TAG = "TemperatureService";
-        private readonly Logger _logger;
-
         private const int TIMEOUT = 5 * 60 * 1000;
 
-        private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
-        private readonly IJsonDataConverter<TemperatureDto> _jsonDataToTemperatureConverter;
-        private readonly OpenWeatherService _openWeatherService;
 
         private static TemperatureService _instance = null;
         private static readonly object _padlock = new object();
@@ -39,12 +33,8 @@ namespace Data.Services
 
         TemperatureService()
         {
-            _logger = new Logger(TAG);
-
-            _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
-            _jsonDataToTemperatureConverter = new JsonDataToTemperatureConverter();
-            _openWeatherService = OpenWeatherService.Instance;
+            _downloadController.OnDownloadFinished += _temperatureDownloadFinished;
 
             _downloadTimer = new Timer(TIMEOUT);
             _downloadTimer.Elapsed += _downloadTimer_Elapsed;
@@ -95,7 +85,7 @@ namespace Data.Services
         {
             get
             {
-                return _openWeatherService?.CurrentWeather?.Condition?.WallpaperUri;
+                return OpenWeatherService.Instance.CurrentWeather?.Condition?.WallpaperUri;
             }
         }
 
@@ -103,7 +93,7 @@ namespace Data.Services
         {
             get
             {
-                return _openWeatherService?.CurrentWeather?.Condition?.Icon;
+                return OpenWeatherService.Instance.CurrentWeather?.Condition?.Icon;
             }
         }
 
@@ -111,17 +101,17 @@ namespace Data.Services
         {
             get
             {
-                return _settingsController.OpenWeatherCity;
+                return SettingsController.Instance.OpenWeatherCity;
             }
             set
             {
                 if (value == null)
                 {
-                    _logger.Error("Cannot add null value for OpenWeatherCity!");
+                    Logger.Instance.Error(TAG, "Cannot add null value for OpenWeatherCity!");
                     return;
                 }
 
-                _settingsController.OpenWeatherCity = value;
+                SettingsController.Instance.OpenWeatherCity = value;
             }
         }
 
@@ -129,88 +119,75 @@ namespace Data.Services
         {
             get
             {
-                return _settingsController.SetWallpaperActive;
+                return SettingsController.Instance.SetWallpaperActive;
             }
             set
             {
-                _settingsController.SetWallpaperActive = value;
+                SettingsController.Instance.SetWallpaperActive = value;
             }
         }
 
         public void LoadTemperatureList()
         {
-            _logger.Debug("LoadTemperatureList");
             loadTemperatureListAsync();
         }
 
         private void _downloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            _logger.Debug(string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
-            _openWeatherService.LoadCurrentWeather();
-            _openWeatherService.LoadForecastModel();
+            OpenWeatherService.Instance.LoadCurrentWeather();
+            OpenWeatherService.Instance.LoadForecastModel();
             loadTemperatureListAsync();
         }
 
         private async Task loadTemperatureListAsync()
         {
-            _logger.Debug("loadTemperatureListAsync");
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnTemperatureDownloadFinished(null, false, "No user");
                 return;
             }
 
-            string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_TEMPERATURES.Action;
-
-            _downloadController.OnDownloadFinished += _temperatureDownloadFinished;
-
+            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
+                user.Name, user.Passphrase,
+                LucaServerAction.GET_TEMPERATURES.Action);
+            
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.Temperature);
         }
 
         private void _temperatureDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_temperatureDownloadFinished");
-
             if (downloadType != DownloadType.Temperature)
             {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
-
-            _downloadController.OnDownloadFinished -= _temperatureDownloadFinished;
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnTemperatureDownloadFinished(null, false, response);
                 return;
             }
-
-            _logger.Debug(string.Format("response: {0}", response));
 
             if (!success)
             {
-                _logger.Error("Download was not successful!");
-
+                Logger.Instance.Error(TAG, "Download was not successful!");
                 publishOnTemperatureDownloadFinished(null, false, response);
                 return;
             }
 
-            IList<TemperatureDto> temperatureList = _jsonDataToTemperatureConverter.GetList(response);
+            IList<TemperatureDto> temperatureList = JsonDataToTemperatureConverter.Instance.GetList(response);
             if (temperatureList == null)
             {
-                _logger.Error("Converted temperatureList is null!");
-
+                Logger.Instance.Error(TAG, "Converted temperatureList is null!");
                 publishOnTemperatureDownloadFinished(null, false, response);
                 return;
             }
 
             _temperatureList = temperatureList;
 
-            WeatherModel currentWeather = _openWeatherService.CurrentWeather;
+            WeatherModel currentWeather = OpenWeatherService.Instance.CurrentWeather;
             if (currentWeather != null)
             {
                 TemperatureDto currentWeatherTemperature = new TemperatureDto(currentWeather.Temperature, "Outdoor", currentWeather.LastUpdate, string.Empty, TemperatureType.CITY, string.Empty);
@@ -222,15 +199,14 @@ namespace Data.Services
 
         public void Dispose()
         {
-            _logger.Debug("Dispose");
+            Logger.Instance.Debug(TAG, "Dispose");
 
             _downloadController.OnDownloadFinished -= _temperatureDownloadFinished;
+            _downloadController.Dispose();
 
             _downloadTimer.Elapsed -= _downloadTimer_Elapsed;
             _downloadTimer.AutoReset = false;
             _downloadTimer.Stop();
-
-            _downloadController.Dispose();
         }
     }
 }

@@ -62,9 +62,20 @@
             MouseUp="SocketCard_MouseUp"/>
 
         <usercontrols:MainPageCard
-            x:Name="ScheduleCard"
+            x:Name="SwitchCard"
             Grid.Row="1"
             Grid.Column="1"
+            CardImage="/Common;component/Assets/Wallpaper/main_image_switches.png"
+            Title="Switches"
+            Description="Control your switches"
+            ButtonAddVisibility="Visible"
+            ButtonMapVisibility="Hidden"
+            MouseUp="SwitchCard_MouseUp"/>
+
+        <usercontrols:MainPageCard
+            x:Name="ScheduleCard"
+            Grid.Row="1"
+            Grid.Column="2"
             CardImage="/Common;component/Assets/Wallpaper/main_image_schedule.png"
             Title="Schedules"
             Description="Manage sockets using schedules"

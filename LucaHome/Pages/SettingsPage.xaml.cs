@@ -1,7 +1,6 @@
-﻿using Common.Common;
-using Common.Dto;
-using Common.Tools;
+﻿using Common.Dto;
 using Data.Services;
+using LucaHome.Rules;
 using OpenWeather.Service;
 using System;
 using System.ComponentModel;
@@ -19,25 +18,14 @@ namespace LucaHome.Pages
     public partial class SettingsPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "SettingsPage";
-        private readonly Logger _logger;
 
-        private readonly OpenWeatherService _openWeatherService;
         private readonly NavigationService _navigationService;
-        private readonly NetworkService _networkService;
-        private readonly TemperatureService _temperatureService;
-        private readonly UserService _userService;
 
         private readonly Notifier _notifier;
 
         public SettingsPage(NavigationService navigationService)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
-            _openWeatherService = OpenWeatherService.Instance;
             _navigationService = navigationService;
-            _networkService = NetworkService.Instance;
-            _temperatureService = TemperatureService.Instance;
-            _userService = UserService.Instance;
 
             InitializeComponent();
             DataContext = this;
@@ -67,30 +55,26 @@ namespace LucaHome.Pages
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            _logger.Debug(string.Format("OnPropertyChanged with propertyName {0}", propertyName));
         }
 
         public string UserName
         {
             get
             {
-                _logger.Debug("Get UserName");
-                return _userService.User.Name;
+                return UserService.Instance.User.Name;
             }
             set
             {
-                _logger.Debug(string.Format("UserName set with value {0}", value));
                 if (value != null && value != string.Empty)
                 {
-                    string password = _userService.User.Passphrase;
+                    string password = UserService.Instance.User.Passphrase;
                     UserDto newUser = new UserDto(value, password);
 
-                    if (newUser != _userService.User)
+                    if (newUser != UserService.Instance.User)
                     {
-                        _userService.ValidateUser(newUser);
+                        UserService.Instance.ValidateUser(newUser);
 
                         string message = "Set new value for user name in settings";
-                        _logger.Debug(message);
                         _notifier.ShowInformation(message);
                     }
 
@@ -103,23 +87,20 @@ namespace LucaHome.Pages
         {
             get
             {
-                _logger.Debug("Get Password");
-                return _userService.User.Passphrase;
+                return UserService.Instance.User.Passphrase;
             }
             set
             {
-                _logger.Debug(string.Format("Password set with value {0}", value));
                 if (value != null && value != string.Empty)
                 {
-                    string userName = _userService.User.Name;
+                    string userName = UserService.Instance.User.Name;
                     UserDto newUser = new UserDto(userName, value);
 
-                    if (newUser != _userService.User)
+                    if (newUser != UserService.Instance.User)
                     {
-                        _userService.ValidateUser(newUser);
+                        UserService.Instance.ValidateUser(newUser);
 
                         string message = "Set new value for user password in settings";
-                        _logger.Debug(message);
                         _notifier.ShowInformation(message);
                     }
 
@@ -132,26 +113,23 @@ namespace LucaHome.Pages
         {
             get
             {
-                _logger.Debug("Get OpenWeatherCity");
-                return _temperatureService.OpenWeatherCity;
+                return TemperatureService.Instance.OpenWeatherCity;
             }
             set
             {
-                _logger.Debug(string.Format("OpenWeatherCity set with value {0}", value));
                 if (value != null && value != string.Empty)
                 {
-                    string openWeatherCity = _temperatureService.OpenWeatherCity;
+                    string openWeatherCity = TemperatureService.Instance.OpenWeatherCity;
 
                     if (openWeatherCity != value)
                     {
-                        _temperatureService.OpenWeatherCity = value;
+                        TemperatureService.Instance.OpenWeatherCity = value;
 
-                        _openWeatherService.City = value;
-                        _openWeatherService.LoadCurrentWeather();
-                        _openWeatherService.LoadForecastModel();
+                        OpenWeatherService.Instance.City = value;
+                        OpenWeatherService.Instance.LoadCurrentWeather();
+                        OpenWeatherService.Instance.LoadForecastModel();
 
                         string message = "Set new value for OpenWeatherCity in settings and OpenWeatherService";
-                        _logger.Debug(message);
                         _notifier.ShowInformation(message);
                     }
 
@@ -164,16 +142,14 @@ namespace LucaHome.Pages
         {
             get
             {
-                _logger.Debug("Get SetWallpaperActive");
-                return _temperatureService.SetWallpaperActive;
+                return TemperatureService.Instance.SetWallpaperActive;
             }
             set
             {
-                _temperatureService.SetWallpaperActive = value;
-                _openWeatherService.SetWallpaperActive = value;
+                TemperatureService.Instance.SetWallpaperActive = value;
+                OpenWeatherService.Instance.SetWallpaperActive = value;
 
                 string message = "Set new value for SetWallpaperActive in settings and OpenWeatherService";
-                _logger.Debug(message);
                 _notifier.ShowInformation(message);
 
                 OnPropertyChanged("SetWallpaperActive");
@@ -184,22 +160,18 @@ namespace LucaHome.Pages
         {
             get
             {
-                _logger.Debug("Get HomeSSID");
-                return _networkService.HomeSSID;
+                return NetworkService.Instance.HomeSSID;
             }
             set
             {
-                _logger.Debug(string.Format("HomeSSID set with value {0}", value));
-
                 if (value != null && value != string.Empty)
                 {
-                    string homeSSID = _networkService.HomeSSID;
+                    string homeSSID = NetworkService.Instance.HomeSSID;
                     if (homeSSID != value)
                     {
-                        _networkService.HomeSSID = value;
+                        NetworkService.Instance.HomeSSID = value;
 
                         string message = "Set new value for HomeSSID in settings";
-                        _logger.Debug(message);
                         _notifier.ShowInformation(message);
                     }
 
@@ -212,22 +184,18 @@ namespace LucaHome.Pages
         {
             get
             {
-                _logger.Debug("Get RaspberryPiServerIP");
-                return _networkService.ServerIpAddress;
+                return NetworkService.Instance.ServerIpAddress;
             }
             set
             {
-                _logger.Debug(string.Format("ServerIpAddress set with value {0}", value));
                 if (value != null && value != string.Empty)
                 {
-                    string serverIpAddress = _networkService.ServerIpAddress;
+                    string serverIpAddress = NetworkService.Instance.ServerIpAddress;
 
                     if (serverIpAddress != value)
                     {
-                        _networkService.ServerIpAddress = value;
-
+                        NetworkService.Instance.ServerIpAddress = value;
                         string message = "Set new value for ServerIpAddress in settings";
-                        _logger.Debug(message);
                         _notifier.ShowInformation(message);
                     }
 
@@ -236,10 +204,46 @@ namespace LucaHome.Pages
             }
         }
 
+        public int MediaServerPort
+        {
+            get
+            {
+                return 0;
+            }
+            set
+            {
+                int newMediaServerPort;
+                bool isNumber = int.TryParse(value.ToString(), out newMediaServerPort);
+
+                if (isNumber)
+                {
+                    // TODO
+                    OnPropertyChanged("MediaServerPort");
+                }
+            }
+        }
+
+        public int YoutubeSearchCount
+        {
+            get
+            {
+                return 0;
+            }
+            set
+            {
+                int newYoutubeSearchCount;
+                bool isNumber = int.TryParse(value.ToString(), out newYoutubeSearchCount);
+
+                if (isNumber)
+                {
+                    // TODO
+                    OnPropertyChanged("YoutubeSearchCount");
+                }
+            }
+        }
+
         private void UserNameTextBox_KeyDown(object sender, KeyEventArgs keyEventArgs)
         {
-            _logger.Debug(string.Format("UserNameTextBox_KeyDown with sender {0} and keyEventArgs: {1}", sender, keyEventArgs));
-
             if (keyEventArgs.Key == Key.Enter && keyEventArgs.IsDown)
             {
                 UserName = UserNameTextBox.Text;
@@ -248,8 +252,6 @@ namespace LucaHome.Pages
 
         private void PasswordBox_KeyDown(object sender, KeyEventArgs keyEventArgs)
         {
-            _logger.Debug(string.Format("PasswordBox_KeyDown with sender {0} and keyEventArgs: {1}", sender, keyEventArgs));
-
             if (keyEventArgs.Key == Key.Enter && keyEventArgs.IsDown)
             {
                 Password = PasswordBox.Text;
@@ -258,8 +260,6 @@ namespace LucaHome.Pages
 
         private void OpenWeatherCityTextBox_KeyDown(object sender, KeyEventArgs keyEventArgs)
         {
-            _logger.Debug(string.Format("OpenWeatherCityTextBox_KeyDown with sender {0} and keyEventArgs: {1}", sender, keyEventArgs));
-
             if (keyEventArgs.Key == Key.Enter && keyEventArgs.IsDown)
             {
                 OpenWeatherCity = OpenWeatherCityTextBox.Text;
@@ -268,8 +268,6 @@ namespace LucaHome.Pages
 
         private void HomeSSIDTextBox_KeyDown(object sender, KeyEventArgs keyEventArgs)
         {
-            _logger.Debug(string.Format("HomeSSIDTextBox_KeyDown with sender {0} and keyEventArgs: {1}", sender, keyEventArgs));
-
             if (keyEventArgs.Key == Key.Enter && keyEventArgs.IsDown)
             {
                 HomeSSID = HomeSSIDTextBox.Text;
@@ -278,18 +276,42 @@ namespace LucaHome.Pages
 
         private void RaspberryPiServerIPTextBox_KeyDown(object sender, KeyEventArgs keyEventArgs)
         {
-            _logger.Debug(string.Format("RaspberryPiServerIPTextBox_KeyDown with sender {0} and keyEventArgs: {1}", sender, keyEventArgs));
-
             if (keyEventArgs.Key == Key.Enter && keyEventArgs.IsDown)
             {
                 RaspberryPiServerIP = RaspberryPiServerIPTextBox.Text;
             }
         }
 
+        private void MediaServerPortTextBox_KeyDown(object sender, KeyEventArgs keyEventArgs)
+        {
+            if (keyEventArgs.Key == Key.Enter && keyEventArgs.IsDown)
+            {
+                MediaServerPort = int.Parse(MediaServerPortTextBox.Text);
+            }
+        }
+
+        private void MediaServerPortTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !TextBoxIntegerRule.Validate(e.Text);
+            base.OnPreviewTextInput(e);
+        }
+
+        private void YoutubeSearchCountTextBox_KeyDown(object sender, KeyEventArgs keyEventArgs)
+        {
+            if (keyEventArgs.Key == Key.Enter && keyEventArgs.IsDown)
+            {
+                YoutubeSearchCount = int.Parse(YoutubeSearchCountTextBox.Text);
+            }
+        }
+
+        private void YoutubeSearchCountTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !TextBoxIntegerRule.Validate(e.Text);
+            base.OnPreviewTextInput(e);
+        }
+
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-
             _navigationService.GoBack();
         }
     }

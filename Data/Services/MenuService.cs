@@ -2,7 +2,6 @@
 using Common.Converter;
 using Common.Dto;
 using Common.Enums;
-using Common.Interfaces;
 using Common.Tools;
 using Data.Controller;
 using System.Collections.Generic;
@@ -24,14 +23,9 @@ namespace Data.Services
     public class MenuService
     {
         private const string TAG = "MenuService";
-        private readonly Logger _logger;
-
         private const int TIMEOUT = 6 * 60 * 60 * 1000;
 
-        private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
-        private readonly IJsonDataConverter<ListedMenuDto> _jsonDataToListedMenuConverter;
-        private readonly IJsonDataConverter<MenuDto> _jsonDataToMenuConverter;
 
         private static MenuService _instance = null;
         private static readonly object _padlock = new object();
@@ -43,13 +37,7 @@ namespace Data.Services
 
         MenuService()
         {
-            _logger = new Logger(TAG);
-
-            _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
-            _jsonDataToListedMenuConverter = new JsonDataToListedMenuConverter();
-            _jsonDataToMenuConverter = new JsonDataToMenuConverter();
-
             _downloadController.OnDownloadFinished += _listedMenuDownloadFinished;
             _downloadController.OnDownloadFinished += _menuDownloadFinished;
 
@@ -145,74 +133,70 @@ namespace Data.Services
 
         public void LoadListedMenuList()
         {
-            _logger.Debug("LoadListedMenuList");
             loadListedMenuListAsync();
         }
 
         public void AddListedMenu(ListedMenuDto addListedMenu)
         {
-            _logger.Debug(string.Format("AddListedMenu: {0}", addListedMenu));
+            Logger.Instance.Debug(TAG, string.Format("AddListedMenu: {0}", addListedMenu));
             addListedMenuAsync(addListedMenu);
         }
 
         public void UpdateListedMenu(ListedMenuDto updateListedMenu)
         {
-            _logger.Debug(string.Format("UpdateListedMenu: {0}", updateListedMenu));
+            Logger.Instance.Debug(TAG, string.Format("UpdateListedMenu: {0}", updateListedMenu));
             updateListedMenuAsync(updateListedMenu);
         }
 
         public void DeleteListedMenu(ListedMenuDto deleteListedMenu)
         {
-            _logger.Debug(string.Format("DeleteListedMenu: {0}", deleteListedMenu));
+            Logger.Instance.Debug(TAG, string.Format("DeleteListedMenu: {0}", deleteListedMenu));
             deleteListedMenuAsync(deleteListedMenu);
         }
 
         public void LoadMenuList()
         {
-            _logger.Debug("LoadMenuList");
             loadMenuListAsync();
         }
 
         public void UpdateMenu(MenuDto updateMenu)
         {
-            _logger.Debug(string.Format("UpdateMenu: {0}", updateMenu));
+            Logger.Instance.Debug(TAG, string.Format("UpdateMenu: {0}", updateMenu));
             updateMenuAsync(updateMenu);
         }
 
         public void ClearMenu(MenuDto clearMenu)
         {
-            _logger.Debug(string.Format("ClearMenu: {0}", clearMenu));
+            Logger.Instance.Debug(TAG, string.Format("ClearMenu: {0}", clearMenu));
             clearMenuAsync(clearMenu);
         }
 
         private void _downloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            _logger.Debug(string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
             loadListedMenuListAsync();
             loadMenuListAsync();
         }
 
         private async Task loadListedMenuListAsync()
         {
-            _logger.Debug("loadListedMenuListAsync");
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnListedMenuDownloadFinished(null, false, "No user");
                 return;
             }
 
-            string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_LISTEDMENU.Action;
+            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
+                user.Name, user.Passphrase,
+                LucaServerAction.GET_LISTEDMENU.Action);
 
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.ListedMenu);
         }
 
         private async Task addListedMenuAsync(ListedMenuDto addListedMenu)
         {
-            _logger.Debug(string.Format("addListedMenuAsync: {0}", addListedMenu));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnMenuUpdateFinished(false, "No user");
@@ -220,20 +204,17 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 addListedMenu.CommandAdd);
 
             _downloadController.OnDownloadFinished += _listedMenuAddFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.ListedMenuAdd);
         }
 
         private async Task updateListedMenuAsync(ListedMenuDto updateListedMenu)
         {
-            _logger.Debug(string.Format("updateListedMenuAsync: {0}", updateListedMenu));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnMenuUpdateFinished(false, "No user");
@@ -241,20 +222,17 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 updateListedMenu.CommandUpdate);
 
             _downloadController.OnDownloadFinished += _listedMenuUpdateFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.ListedMenuUpdate);
         }
 
         private async Task deleteListedMenuAsync(ListedMenuDto deleteListedMenu)
         {
-            _logger.Debug(string.Format("deleteListedMenuAsync: {0}", deleteListedMenu));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnMenuUpdateFinished(false, "No user");
@@ -262,36 +240,34 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 deleteListedMenu.CommandDelete);
 
             _downloadController.OnDownloadFinished += _listedMenuDeleteFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.ListedMenuDelete);
         }
 
         private async Task loadMenuListAsync()
         {
-            _logger.Debug("loadMenuListAsync");
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnMenuDownloadFinished(null, false, "No user");
                 return;
             }
 
-            string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_MENU.Action;
+            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
+                user.Name, user.Passphrase,
+                LucaServerAction.GET_MENU.Action);
 
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.Menu);
         }
 
         private async Task updateMenuAsync(MenuDto updateMenu)
         {
-            _logger.Debug(string.Format("updateMenuAsync: {0}", updateMenu));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnMenuUpdateFinished(false, "No user");
@@ -299,20 +275,17 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 updateMenu.CommandUpdate);
 
             _downloadController.OnDownloadFinished += _menuUpdateFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.MenuUpdate);
         }
 
         private async Task clearMenuAsync(MenuDto clearMenu)
         {
-            _logger.Debug(string.Format("clearMenuAsync: {0}", clearMenu));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnMenuClearFinished(false, "No user");
@@ -320,64 +293,52 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 clearMenu.CommandClear);
 
             _downloadController.OnDownloadFinished += _menuClearFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.MenuClear);
         }
 
         private void _listedMenuDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_listedMenuDownloadFinished");
-
             if (downloadType != DownloadType.ListedMenu)
             {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
-                _logger.Error(response);
+                Logger.Instance.Error(TAG, response);
 
                 publishOnListedMenuDownloadFinished(null, false, response);
                 return;
             }
-
-            _logger.Debug(string.Format("response: {0}", response));
 
             if (!success)
             {
-                _logger.Error("Download was not successful!");
-
+                Logger.Instance.Error(TAG, "Download was not successful!");
                 publishOnListedMenuDownloadFinished(null, false, response);
                 return;
             }
 
-            IList<ListedMenuDto> listedMenuList = _jsonDataToListedMenuConverter.GetList(response);
+            IList<ListedMenuDto> listedMenuList = JsonDataToListedMenuConverter.Instance.GetList(response);
             if (listedMenuList == null)
             {
-                _logger.Error("Converted listedMenuList is null!");
-
+                Logger.Instance.Error(TAG, "Converted listedMenuList is null!");
                 publishOnListedMenuDownloadFinished(null, false, response);
                 return;
             }
 
             _listedMenuList = listedMenuList;
-
             publishOnListedMenuDownloadFinished(_listedMenuList, true, response);
         }
 
         private void _listedMenuAddFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_listedMenuAddFinished");
-
             if (downloadType != DownloadType.ListedMenuAdd)
             {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
 
@@ -385,34 +346,26 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnListedMenuAddFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Update was not successful!");
-
+                Logger.Instance.Error(TAG, "Update was not successful!");
                 publishOnListedMenuAddFinished(false, response);
                 return;
             }
 
             publishOnListedMenuAddFinished(true, response);
-
             loadListedMenuListAsync();
         }
 
         private void _listedMenuUpdateFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_listedMenuUpdateFinished");
-
             if (downloadType != DownloadType.ListedMenuUpdate)
             {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
 
@@ -420,34 +373,26 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnListedMenuUpdateFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Update was not successful!");
-
+                Logger.Instance.Error(TAG, "Update was not successful!");
                 publishOnListedMenuUpdateFinished(false, response);
                 return;
             }
 
             publishOnListedMenuUpdateFinished(true, response);
-
             loadListedMenuListAsync();
         }
 
         private void _listedMenuDeleteFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_listedMenuDeleteFinished");
-
             if (downloadType != DownloadType.ListedMenuDelete)
             {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
 
@@ -455,76 +400,59 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnListedMenuDeleteFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Update was not successful!");
-
+                Logger.Instance.Error(TAG, "Update was not successful!");
                 publishOnListedMenuDeleteFinished(false, response);
                 return;
             }
 
             publishOnListedMenuDeleteFinished(true, response);
-
             loadListedMenuListAsync();
         }
 
         private void _menuDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_menuDownloadFinished");
-
             if (downloadType != DownloadType.Menu)
             {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnMenuDownloadFinished(null, false, response);
                 return;
             }
-
-            _logger.Debug(string.Format("response: {0}", response));
 
             if (!success)
             {
-                _logger.Error("Download was not successful!");
-
+                Logger.Instance.Error(TAG, "Download was not successful!");
                 publishOnMenuDownloadFinished(null, false, response);
                 return;
             }
 
-            IList<MenuDto> menuList = _jsonDataToMenuConverter.GetList(response);
+            IList<MenuDto> menuList = JsonDataToMenuConverter.Instance.GetList(response);
             if (menuList == null)
             {
-                _logger.Error("Converted menuList is null!");
-
+                Logger.Instance.Error(TAG, "Converted menuList is null!");
                 publishOnMenuDownloadFinished(null, false, response);
                 return;
             }
 
             _menuList = menuList;
-
             publishOnMenuDownloadFinished(_menuList, true, response);
         }
 
         private void _menuUpdateFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_menuUpdateFinished");
-
             if (downloadType != DownloadType.MenuUpdate)
             {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
 
@@ -532,34 +460,26 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnMenuUpdateFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Update was not successful!");
-
+                Logger.Instance.Error(TAG, "Update was not successful!");
                 publishOnMenuUpdateFinished(false, response);
                 return;
             }
 
             publishOnMenuUpdateFinished(true, response);
-
             loadMenuListAsync();
         }
 
         private void _menuClearFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_menuUpdateFinished");
-
             if (downloadType != DownloadType.MenuClear)
             {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
 
@@ -567,30 +487,25 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
-                _logger.Error(response);
-
+                Logger.Instance.Error(TAG, response);
                 publishOnMenuClearFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Update was not successful!");
-
+                Logger.Instance.Error(TAG, "Update was not successful!");
                 publishOnMenuClearFinished(false, response);
                 return;
             }
 
             publishOnMenuClearFinished(true, response);
-
             loadMenuListAsync();
         }
 
         public void Dispose()
         {
-            _logger.Debug("Dispose");
+            Logger.Instance.Debug(TAG, "Dispose");
 
             _downloadController.OnDownloadFinished -= _listedMenuDownloadFinished;
             _downloadController.OnDownloadFinished -= _listedMenuAddFinished;
@@ -601,11 +516,11 @@ namespace Data.Services
             _downloadController.OnDownloadFinished -= _menuUpdateFinished;
             _downloadController.OnDownloadFinished -= _menuClearFinished;
 
+            _downloadController.Dispose();
+
             _downloadTimer.Elapsed -= _downloadTimer_Elapsed;
             _downloadTimer.AutoReset = false;
             _downloadTimer.Stop();
-
-            _downloadController.Dispose();
         }
     }
 }

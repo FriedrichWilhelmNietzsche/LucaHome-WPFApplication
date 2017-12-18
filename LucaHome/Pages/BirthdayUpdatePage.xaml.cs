@@ -1,6 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
-using Common.Tools;
+﻿using Common.Dto;
 using Data.Services;
 using System;
 using System.Collections.Generic;
@@ -18,9 +16,7 @@ namespace LucaHome.Pages
     public partial class BirthdayUpdatePage : Page, INotifyPropertyChanged
     {
         private const string TAG = "BirthdayUpdatePage";
-        private readonly Logger _logger;
 
-        private readonly BirthdayService _birthdayService;
         private readonly NavigationService _navigationService;
 
         private readonly Notifier _notifier;
@@ -29,9 +25,6 @@ namespace LucaHome.Pages
 
         public BirthdayUpdatePage(NavigationService navigationService, BirthdayDto updateBirthday)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
-            _birthdayService = BirthdayService.Instance;
             _navigationService = navigationService;
 
             _updateBirthday = updateBirthday;
@@ -107,33 +100,26 @@ namespace LucaHome.Pages
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-
-            _birthdayService.OnBirthdayUpdateFinished -= _onBirthdayUpdateFinished;
-            _birthdayService.OnBirthdayDownloadFinished -= _onBirthdayDownloadFinished;
+            BirthdayService.Instance.OnBirthdayUpdateFinished -= _onBirthdayUpdateFinished;
+            BirthdayService.Instance.OnBirthdayDownloadFinished -= _onBirthdayDownloadFinished;
         }
 
         private void UpdateBirthday_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("UpdateBirthday_Click with sender {0} and routedEventArgs: {1}", sender, routedEventArgs));
-            _birthdayService.OnBirthdayAddFinished += _onBirthdayUpdateFinished;
-
-            _logger.Debug(string.Format("Trying to update birthday {0}", _updateBirthday));
-            _birthdayService.UpdateBirthday(_updateBirthday);
+            BirthdayService.Instance.OnBirthdayAddFinished += _onBirthdayUpdateFinished;
+            BirthdayService.Instance.UpdateBirthday(_updateBirthday);
         }
 
         private void _onBirthdayUpdateFinished(bool success, string response)
         {
-            _logger.Debug(string.Format("_onBirthdayUpdateFinished was successful {0}", success));
-
-            _birthdayService.OnBirthdayAddFinished -= _onBirthdayUpdateFinished;
+            BirthdayService.Instance.OnBirthdayAddFinished -= _onBirthdayUpdateFinished;
 
             if (success)
             {
                 _notifier.ShowSuccess("Updated birthday!");
 
-                _birthdayService.OnBirthdayDownloadFinished += _onBirthdayDownloadFinished;
-                _birthdayService.LoadBirthdayList();
+                BirthdayService.Instance.OnBirthdayDownloadFinished += _onBirthdayDownloadFinished;
+                BirthdayService.Instance.LoadBirthdayList();
             }
             else
             {
@@ -143,14 +129,12 @@ namespace LucaHome.Pages
 
         private void _onBirthdayDownloadFinished(IList<BirthdayDto> birthdayList, bool success, string response)
         {
-            _logger.Debug(string.Format("_onBirthdayDownloadFinished with model {0} was successful {1}", birthdayList, success));
-            _birthdayService.OnBirthdayDownloadFinished -= _onBirthdayDownloadFinished;
+            BirthdayService.Instance.OnBirthdayDownloadFinished -= _onBirthdayDownloadFinished;
             _navigationService.GoBack();
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.GoBack();
         }
     }

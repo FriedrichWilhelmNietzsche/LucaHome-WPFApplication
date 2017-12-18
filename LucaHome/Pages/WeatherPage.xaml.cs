@@ -1,6 +1,4 @@
-﻿using Common.Common;
-using Common.Tools;
-using OpenWeather.Models;
+﻿using OpenWeather.Models;
 using OpenWeather.Service;
 using System;
 using System.Collections.Generic;
@@ -19,21 +17,15 @@ namespace LucaHome.Pages
     public partial class WeatherPage : Page, INotifyPropertyChanged
     {
         private const string TAG = "WeatherPage";
-        private readonly Logger _logger;
 
         private readonly NavigationService _navigationService;
-        private readonly OpenWeatherService _openWeatherService;
 
         private Uri _wallpaperSource = new Uri("/OpenWeather;component/Assets/Images/weather_wallpaper_dummy.png", UriKind.Relative);
         private string _weatherSearchKey = string.Empty;
-        private IList<ForecastPartModel> _forecasteList = new List<ForecastPartModel>();
 
         public WeatherPage(NavigationService navigationService)
         {
-            _logger = new Logger(TAG, Enables.LOGGING);
-
             _navigationService = navigationService;
-            _openWeatherService = OpenWeatherService.Instance;
 
             InitializeComponent();
             DataContext = this;
@@ -72,14 +64,14 @@ namespace LucaHome.Pages
 
                 if (_weatherSearchKey != string.Empty)
                 {
-                    ForecastModel foundForecastModel = _openWeatherService.FoundForecastEntries(_weatherSearchKey);
+                    ForecastModel foundForecastModel = OpenWeatherService.Instance.FoundForecastEntries(_weatherSearchKey);
                     WallpaperSource = foundForecastModel.Wallpaper;
                     WeatherList = foundForecastModel.List;
                 }
                 else
                 {
-                    WallpaperSource = _openWeatherService.ForecastWeather.Wallpaper;
-                    WeatherList = _openWeatherService.ForecastWeather.List;
+                    WallpaperSource = OpenWeatherService.Instance.ForecastWeather.Wallpaper;
+                    WeatherList = OpenWeatherService.Instance.ForecastWeather.List;
                 }
             }
         }
@@ -88,56 +80,50 @@ namespace LucaHome.Pages
         {
             get
             {
-                return _forecasteList;
+                return OpenWeatherService.Instance.ForecastWeather.List;
             }
             set
             {
-                _forecasteList = value;
                 OnPropertyChanged("WeatherList");
             }
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Loaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _openWeatherService.OnForecastWeatherDownloadFinished += _forecastWeatherDownloadFinished;
+            OpenWeatherService.Instance.OnForecastWeatherDownloadFinished += _forecastWeatherDownloadFinished;
 
-            if (_openWeatherService.ForecastWeather == null)
+            if (OpenWeatherService.Instance.ForecastWeather == null)
             {
-                _openWeatherService.LoadForecastModel();
+                OpenWeatherService.Instance.LoadForecastModel();
                 return;
             }
 
-            WallpaperSource = _openWeatherService.ForecastWeather.Wallpaper;
-            WeatherList = _openWeatherService.ForecastWeather.List;
+            WallpaperSource = OpenWeatherService.Instance.ForecastWeather.Wallpaper;
+            WeatherList = OpenWeatherService.Instance.ForecastWeather.List;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("Page_Unloaded with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _openWeatherService.OnForecastWeatherDownloadFinished -= _forecastWeatherDownloadFinished;
+            OpenWeatherService.Instance.OnForecastWeatherDownloadFinished -= _forecastWeatherDownloadFinished;
         }
 
         private void _forecastWeatherDownloadFinished(ForecastModel forecastWeather, bool success)
         {
-            _logger.Debug(string.Format("_forecastWeatherDownloadFinished with model {0} was successful: {1}", forecastWeather, success));
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                WallpaperSource = _openWeatherService.ForecastWeather.Wallpaper;
-                WeatherList = _openWeatherService.ForecastWeather.List;
+                WallpaperSource = OpenWeatherService.Instance.ForecastWeather.Wallpaper;
+                WeatherList = OpenWeatherService.Instance.ForecastWeather.List;
             }));
         }
 
         private void ButtonBack_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonBack_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
             _navigationService.GoBack();
         }
 
         private void ButtonReload_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _logger.Debug(string.Format("ButtonReload_Click with sender {0} and routedEventArgs {1}", sender, routedEventArgs));
-            _openWeatherService.LoadForecastModel();
+            OpenWeatherService.Instance.LoadForecastModel();
         }
     }
 }

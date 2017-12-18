@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using System.Threading.Tasks;
-using Common.Interfaces;
 
 namespace Data.Services
 {
@@ -20,13 +19,9 @@ namespace Data.Services
     public class BirthdayService
     {
         private const string TAG = "BirthdayService";
-        private readonly Logger _logger;
-
         private const int TIMEOUT = 6 * 60 * 60 * 1000;
 
-        private readonly SettingsController _settingsController;
         private readonly DownloadController _downloadController;
-        private readonly IJsonDataConverter<BirthdayDto> _jsonDataToBirthdayConverter;
 
         private static BirthdayService _instance = null;
         private static readonly object _padlock = new object();
@@ -37,12 +32,7 @@ namespace Data.Services
 
         BirthdayService()
         {
-            _logger = new Logger(TAG);
-
-            _settingsController = SettingsController.Instance;
             _downloadController = new DownloadController();
-            _jsonDataToBirthdayConverter = new JsonDataToBirthdayConverter();
-
             _downloadController.OnDownloadFinished += _birthdayDownloadFinished;
 
             _downloadTimer = new Timer(TIMEOUT);
@@ -111,6 +101,11 @@ namespace Data.Services
 
         public IList<BirthdayDto> FoundBirthdays(string searchKey)
         {
+            if (searchKey == string.Empty)
+            {
+                return _birthdayList;
+            }
+
             List<BirthdayDto> foundBirthdays = _birthdayList
                         .Where(birthday =>
                             birthday.Name.Contains(searchKey)
@@ -125,56 +120,53 @@ namespace Data.Services
 
         public void LoadBirthdayList()
         {
-            _logger.Debug("LoadBirthdayList");
             loadBirthdayListAsync();
         }
 
         public void AddBirthday(BirthdayDto newBirthday)
         {
-            _logger.Debug(string.Format("AddBirthday: Adding new birthday {0}", newBirthday));
+            Logger.Instance.Debug(TAG, string.Format("AddBirthday: Adding new birthday {0}", newBirthday));
             addBirthdayAsync(newBirthday);
         }
 
         public void UpdateBirthday(BirthdayDto updateBirthday)
         {
-            _logger.Debug(string.Format("UpdateBirthday: Updating birthday {0}", updateBirthday));
+            Logger.Instance.Debug(TAG, string.Format("UpdateBirthday: Updating birthday {0}", updateBirthday));
             updateBirthdayAsync(updateBirthday);
         }
 
         public void DeleteBirthday(BirthdayDto deleteBirthday)
         {
-            _logger.Debug(string.Format("DeleteBirthday: Deleting birthday {0}", deleteBirthday));
+            Logger.Instance.Debug(TAG, string.Format("DeleteBirthday: Deleting birthday {0}", deleteBirthday));
             deleteBirthdayAsync(deleteBirthday);
         }
 
         private void _downloadTimer_Elapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            _logger.Debug(string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
+            Logger.Instance.Debug(TAG, string.Format("_downloadTimer_Elapsed with sender {0} and elapsedEventArgs {1}", sender, elapsedEventArgs));
             loadBirthdayListAsync();
         }
 
         private async Task loadBirthdayListAsync()
         {
-            _logger.Debug("loadBirthdayListAsync");
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnBirthdayDownloadFinished(null, false, "No user");
                 return;
             }
 
-            string requestUrl = "http://" + _settingsController.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.GET_BIRTHDAYS.Action;
-            _logger.Debug(string.Format("RequestUrl {0}", requestUrl));
+            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
+                user.Name, user.Passphrase,
+                LucaServerAction.GET_BIRTHDAYS.Action);
 
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.Birthday);
         }
 
         private async Task addBirthdayAsync(BirthdayDto newBirthday)
         {
-            _logger.Debug(string.Format("addBirthdayAsync: Adding new birthday {0}", newBirthday));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnBirthdayAddFinished(false, "No user");
@@ -182,7 +174,7 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 newBirthday.CommandAdd);
 
@@ -193,9 +185,7 @@ namespace Data.Services
 
         private async Task updateBirthdayAsync(BirthdayDto updateBirthday)
         {
-            _logger.Debug(string.Format("updateBirthdayAsync: Updating birthday {0}", updateBirthday));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnBirthdayUpdateFinished(false, "No user");
@@ -203,7 +193,7 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 updateBirthday.CommandUpdate);
 
@@ -214,9 +204,7 @@ namespace Data.Services
 
         private async Task deleteBirthdayAsync(BirthdayDto deleteBirthday)
         {
-            _logger.Debug(string.Format("deleteBirthdayAsync: Deleting birthday {0}", deleteBirthday));
-
-            UserDto user = _settingsController.User;
+            UserDto user = SettingsController.Instance.User;
             if (user == null)
             {
                 publishOnBirthdayDeleteFinished(false, "No user");
@@ -224,7 +212,7 @@ namespace Data.Services
             }
 
             string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
-                _settingsController.ServerIpAddress, Constants.ACTION_PATH,
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
                 user.Name, user.Passphrase,
                 deleteBirthday.CommandDelete);
 
@@ -235,36 +223,31 @@ namespace Data.Services
 
         private void _birthdayDownloadFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_birthdayDownloadFinished");
-
             if (downloadType != DownloadType.Birthday)
             {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
-                _logger.Error(response);
+                Logger.Instance.Error(TAG, response);
 
                 publishOnBirthdayDownloadFinished(null, false, response);
                 return;
             }
-
-            _logger.Debug(string.Format("response: {0}", response));
 
             if (!success)
             {
-                _logger.Error("Download was not successful!");
+                Logger.Instance.Error(TAG, "Download was not successful!");
 
                 publishOnBirthdayDownloadFinished(null, false, response);
                 return;
             }
 
-            IList<BirthdayDto> birthdayList = _jsonDataToBirthdayConverter.GetList(response);
+            IList<BirthdayDto> birthdayList = JsonDataToBirthdayConverter.Instance.GetList(response);
             if (birthdayList == null)
             {
-                _logger.Error("Converted birthdayList is null!");
+                Logger.Instance.Error(TAG, "Converted birthdayList is null!");
 
                 publishOnBirthdayDownloadFinished(null, false, response);
                 return;
@@ -277,11 +260,8 @@ namespace Data.Services
 
         private void _birthdayAddFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_birthdayAddFinished");
-
             if (downloadType != DownloadType.BirthdayAdd)
             {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
 
@@ -289,17 +269,15 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
-                _logger.Error(response);
+                Logger.Instance.Error(TAG, response);
 
                 publishOnBirthdayAddFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Adding was not successful!");
+                Logger.Instance.Error(TAG, "Adding was not successful!");
 
                 publishOnBirthdayAddFinished(false, response);
                 return;
@@ -312,11 +290,8 @@ namespace Data.Services
 
         private void _birthdayUpdateFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_birthdayUpdateinished");
-
             if (downloadType != DownloadType.BirthdayUpdate)
             {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
 
@@ -324,17 +299,15 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
-                _logger.Error(response);
+                Logger.Instance.Error(TAG, response);
 
                 publishOnBirthdayUpdateFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Updating was not successful!");
+                Logger.Instance.Error(TAG, "Updating was not successful!");
 
                 publishOnBirthdayUpdateFinished(false, response);
                 return;
@@ -347,11 +320,8 @@ namespace Data.Services
 
         private void _birthdayDeleteFinished(string response, bool success, DownloadType downloadType, object additional)
         {
-            _logger.Debug("_birthdayDeleteFinished");
-
             if (downloadType != DownloadType.BirthdayDelete)
             {
-                _logger.Debug(string.Format("Received download finished with downloadType {0}", downloadType));
                 return;
             }
 
@@ -359,17 +329,15 @@ namespace Data.Services
 
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
-                _logger.Error(response);
+                Logger.Instance.Error(TAG, response);
 
                 publishOnBirthdayDeleteFinished(false, response);
                 return;
             }
 
-            _logger.Debug(string.Format("response: {0}", response));
-
             if (!success)
             {
-                _logger.Error("Deleting was not successful!");
+                Logger.Instance.Error(TAG, "Deleting was not successful!");
 
                 publishOnBirthdayDeleteFinished(false, response);
                 return;
@@ -382,18 +350,17 @@ namespace Data.Services
 
         public void Dispose()
         {
-            _logger.Debug("Dispose");
+            Logger.Instance.Debug(TAG, "Dispose");
 
             _downloadController.OnDownloadFinished -= _birthdayDownloadFinished;
             _downloadController.OnDownloadFinished -= _birthdayAddFinished;
             _downloadController.OnDownloadFinished -= _birthdayUpdateFinished;
             _downloadController.OnDownloadFinished -= _birthdayDeleteFinished;
+            _downloadController.Dispose();
 
             _downloadTimer.Elapsed -= _downloadTimer_Elapsed;
             _downloadTimer.AutoReset = false;
             _downloadTimer.Stop();
-
-            _downloadController.Dispose();
         }
     }
 }
