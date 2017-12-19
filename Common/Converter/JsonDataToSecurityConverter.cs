@@ -74,8 +74,6 @@ namespace Common.Converter
 
                 foreach (JToken child in eventsJsonData.Children())
                 {
-                    JToken changeJsonData = child["Change"];
-
                     string name = child["FileName"].ToString();
 
                     RegisteredEventDto registeredEvent = new RegisteredEventDto(id, name);

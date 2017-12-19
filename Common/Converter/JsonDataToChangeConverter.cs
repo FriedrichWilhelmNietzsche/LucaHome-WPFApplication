@@ -77,7 +77,12 @@ namespace Common.Converter
                     int month = int.Parse(changeJsonDate["Month"].ToString());
                     int year = int.Parse(changeJsonDate["Year"].ToString());
 
-                    DateTime dateTime = new DateTime(year, month, day);
+                    JToken changeJsonTime = changeJsonData["Time"];
+
+                    int hour = int.Parse(changeJsonTime["Hour"].ToString());
+                    int minute = int.Parse(changeJsonTime["Minute"].ToString());
+
+                    DateTime dateTime = new DateTime(year, month, day, hour, minute, 0);
 
                     ChangeDto newChange = new ChangeDto(id, type, dateTime, user);
                     changeList.Add(newChange);
