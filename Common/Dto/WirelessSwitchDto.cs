@@ -11,14 +11,17 @@ namespace Common.Dto
         private char _keyCode;
         private bool _action;
 
-        public WirelessSwitchDto(int id, string name, string area, int remoteId, char keyCode, bool isActivated, bool action, DateTime lastTriggerDate, string lastTriggerUser)
+        public WirelessSwitchDto(
+            int id, 
+            string name, string area, int remoteId, char keyCode, bool isActivated, bool action, 
+            DateTime lastTriggerDate, string lastTriggerUser)
             : base(id, name, area, "", isActivated, lastTriggerDate, lastTriggerUser)
         {
             _remoteId = remoteId;
             _keyCode = keyCode;
             _action = action;
         }
-        
+
         public int RemoteId
         {
             get
@@ -30,7 +33,7 @@ namespace Common.Dto
                 _remoteId = value;
             }
         }
-        
+
         public char KeyCode
         {
             get
@@ -75,7 +78,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}&area={2}&remoteid={3}&keycode={4}", LucaServerAction.ADD_SWITCH.Action, _name, _area, _remoteId, _keyCode);
+                return string.Format("{0}{1}&name={2}&area={3}&remoteid={4}&keycode={5}", LucaServerAction.ADD_SWITCH.Action, _typeId, _name, _area, _remoteId, _keyCode);
             }
         }
 
@@ -83,7 +86,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}&area={2}&remoteid={3}&keycode={4}", LucaServerAction.UPDATE_SWITCH.Action, _name, _area, _remoteId, _keyCode);
+                return string.Format("{0}{1}&name={2}&area={3}&remoteid={4}&keycode={5}", LucaServerAction.UPDATE_SWITCH.Action, _typeId, _name, _area, _remoteId, _keyCode);
             }
         }
 
@@ -91,7 +94,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}", LucaServerAction.DELETE_SWITCH.Action, _name);
+                return string.Format("{0}{1}", LucaServerAction.DELETE_SWITCH.Action, _typeId);
             }
         }
 

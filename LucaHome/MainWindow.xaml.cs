@@ -22,6 +22,7 @@ namespace LucaHome
         private readonly LibraryService _libraryService;
         private readonly MapContentService _mapContentService;
         private readonly MenuService _menuService;
+        private readonly MeterDataService _meterDataService;
         private readonly MovieService _movieService;
         private readonly NavigationService _navigationService;
         private readonly NovelService _novelService;
@@ -49,6 +50,7 @@ namespace LucaHome
             _libraryService = LibraryService.Instance;
             _mapContentService = MapContentService.Instance;
             _menuService = MenuService.Instance;
+            _meterDataService = MeterDataService.Instance;
             _movieService = MovieService.Instance;
             _navigationService = _mainFrame.NavigationService;
             _novelService = NovelService.Instance;
@@ -117,6 +119,7 @@ namespace LucaHome
             _libraryService.Dispose();
             _mapContentService.Dispose();
             _menuService.Dispose();
+            _meterDataService.Dispose();
             _movieService.Dispose();
             _novelService.Dispose();
             _openWeatherService.Dispose();

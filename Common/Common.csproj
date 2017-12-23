@@ -88,6 +88,7 @@
     <Compile Include="Common\Enables.cs" />
     <Compile Include="Common\Keys.cs" />
     <Compile Include="Common\Timeouts.cs" />
+    <Compile Include="Converter\JsonDataToMeterDataConverter.cs" />
     <Compile Include="Converter\JsonDataToSecurityConverter.cs" />
     <Compile Include="Converter\JsonDataToCoinConversionConverter.cs" />
     <Compile Include="Converter\JsonDataToCoinConverter.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="Dto\CoinDto.cs" />
     <Compile Include="Dto\ChangeDto.cs" />
     <Compile Include="Dto\ListedMenuDto.cs" />
+    <Compile Include="Dto\MeterDataDto.cs" />
     <Compile Include="Dto\NovelDto.cs" />
     <Compile Include="Dto\SeasonDto.cs" />
     <Compile Include="Dto\SeriesDto.cs" />

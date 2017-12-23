@@ -2,9 +2,6 @@
 {
     public class Constants
     {
-        // ========== DOWNLOADS ==========
-        public static int DOWNLOAD_STEPS = 19;
-
         // ========== RASPBERRY CONNECTION ==========
         public static string ACTION_PATH = "/lib/lucahome.php?user=";
         public static string REST_PASSWORD = "&password=";

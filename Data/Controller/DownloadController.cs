@@ -12,6 +12,7 @@ namespace Data.Controller
         MapContent,
         ListedMenu, ListedMenuAdd, ListedMenuUpdate, ListedMenuDelete,
         Menu, MenuUpdate, MenuClear,
+        MeterData, MeterDataAdd, MeterDataUpdate, MeterDataDelete,
         Movie, MovieUpdate,
         Schedule, ScheduleSet, ScheduleAdd, ScheduleUpdate, ScheduleDelete,
         Security, SecurityCamera, SecurityCameraControl,

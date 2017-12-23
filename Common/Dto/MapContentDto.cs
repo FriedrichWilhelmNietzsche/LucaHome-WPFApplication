@@ -8,7 +8,7 @@ namespace Common.Dto
 {
     public class MapContentDto
     {
-        public enum DrawingType { Null, Socket, LAN, MediaServer, RaspberryPi, NAS, LightSwitch, Temperature, PuckJS, Menu, ShoppingList, Camera }
+        public enum DrawingType { Null, Socket, LAN, MediaServer, RaspberryPi, NAS, LightSwitch, Temperature, PuckJS, Menu, ShoppingList, Camera, Meter }
 
         private const string TAG = "MapContentDto";
 

@@ -153,14 +153,12 @@ namespace Common.Converter
                     IList<MenuDto> _menuList = ((name == "Menu" && drawingType == MapContentDto.DrawingType.Menu) ? menuList : null);
                     IList<ShoppingEntryDto> _shoppingList = ((name == "ShoppingList" && drawingType == MapContentDto.DrawingType.ShoppingList) ? shoppingList : null);
 
-                    MediaServerDto _mediaServer = drawingType == MapContentDto.DrawingType.MediaServer ? (mediaServerList.Count > 0 ? mediaServerList[typeId - 1] : null) : null;
+                    MediaServerDto _mediaServer = drawingType == MapContentDto.DrawingType.MediaServer ? (mediaServerList.Count > 0 ? mediaServerList[typeId] : null) : null;
                     SecurityDto _security = drawingType == MapContentDto.DrawingType.Camera ? security : null;
 
-                    // TODO Fix temperature selection
-                    // TemperatureDto temperature = drawingType == MapContentDto.DrawingType.Temperature ? (temperatureList.Count > 0 ? temperatureList[typeId - 1] : null) : null;
-                    TemperatureDto _temperature = new TemperatureDto(-273.15, "SPACE", new System.DateTime(), "", TemperatureDto.TemperatureType.DUMMY, "");
-                    WirelessSocketDto _wirelessSocket = drawingType == MapContentDto.DrawingType.Socket ? (wirelessSocketList.Count > 0 ? wirelessSocketList[typeId - 1] : null) : null;
-                    WirelessSwitchDto _wirelessSwitch = drawingType == MapContentDto.DrawingType.LightSwitch ? (wirelessSwitchList.Count > 0 ? wirelessSwitchList[typeId - 1] : null) : null;
+                    TemperatureDto _temperature = drawingType == MapContentDto.DrawingType.Temperature ? (temperatureList.Count > 0 ? temperatureList[typeId] : null) : null;
+                    WirelessSocketDto _wirelessSocket = drawingType == MapContentDto.DrawingType.Socket ? (wirelessSocketList.Count > 0 ? wirelessSocketList[typeId] : null) : null;
+                    WirelessSwitchDto _wirelessSwitch = drawingType == MapContentDto.DrawingType.LightSwitch ? (wirelessSwitchList.Count > 0 ? wirelessSwitchList[typeId] : null) : null;
 
                     MapContentDto newMapContent = new MapContentDto(id, drawingType, typeId, position, name, shortName, area, visibility,
                         _listedMenuList, _menuList, _shoppingList, _mediaServer, _security, _temperature, _wirelessSocket, _wirelessSwitch);

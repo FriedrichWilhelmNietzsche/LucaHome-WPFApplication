@@ -70,25 +70,31 @@ namespace Common.Enums
 
         //SOCKETS
         public static readonly LucaServerAction GET_SOCKETS = new LucaServerAction(100, "getsockets");
-        public static readonly LucaServerAction SET_SOCKET = new LucaServerAction(101, "setsocket&socket=");
-        public static readonly LucaServerAction ADD_SOCKET = new LucaServerAction(102, "addsocket&name=");
-        public static readonly LucaServerAction UPDATE_SOCKET = new LucaServerAction(103, "updatesocket&name=");
-        public static readonly LucaServerAction DELETE_SOCKET = new LucaServerAction(104, "deletesocket&socket=");
+        public static readonly LucaServerAction SET_SOCKET = new LucaServerAction(101, "setsocket&id=");
+        public static readonly LucaServerAction ADD_SOCKET = new LucaServerAction(102, "addsocket&id=");
+        public static readonly LucaServerAction UPDATE_SOCKET = new LucaServerAction(103, "updatesocket&id=");
+        public static readonly LucaServerAction DELETE_SOCKET = new LucaServerAction(104, "deletesocket&id=");
         public static readonly LucaServerAction DEACTIVATE_ALL_SOCKETS = new LucaServerAction(105, "deactivateAllSockets");
 
         //SWITCH
         public static readonly LucaServerAction GET_SWITCHES = new LucaServerAction(110, "getswitches");
-        public static readonly LucaServerAction ADD_SWITCH = new LucaServerAction(111, "addswitch&name=");
-        public static readonly LucaServerAction UPDATE_SWITCH = new LucaServerAction(112, "updateswitch&name=");
-        public static readonly LucaServerAction DELETE_SWITCH = new LucaServerAction(113, "deleteswitch&name=");
-        public static readonly LucaServerAction TOGGLE_SWITCH = new LucaServerAction(114, "toggleswitch&name=");
+        public static readonly LucaServerAction ADD_SWITCH = new LucaServerAction(111, "addswitch&id=");
+        public static readonly LucaServerAction UPDATE_SWITCH = new LucaServerAction(112, "updateswitch&id=");
+        public static readonly LucaServerAction DELETE_SWITCH = new LucaServerAction(113, "deleteswitch&id=");
+        public static readonly LucaServerAction TOGGLE_SWITCH = new LucaServerAction(114, "toggleswitch&id=");
         public static readonly LucaServerAction TOGGLE_ALL_SWITCHES = new LucaServerAction(115, "toggleallswitches");
 
+        //METER_DATA
+        public static readonly LucaServerAction GET_METER_DATA = new LucaServerAction(120, "getmeterdata");
+        public static readonly LucaServerAction ADD_METER_DATA = new LucaServerAction(121, "addmeterdata&id=");
+        public static readonly LucaServerAction UPDATE_METER_DATA = new LucaServerAction(122, "updatemeterdata&id=");
+        public static readonly LucaServerAction DELETE_METER_DATA = new LucaServerAction(123, "deletemeterdata&id=");
+
         //TEMPERATURE
-        public static readonly LucaServerAction GET_TEMPERATURES = new LucaServerAction(120, "getcurrenttemperature");
+        public static readonly LucaServerAction GET_TEMPERATURES = new LucaServerAction(130, "getcurrenttemperature");
 
         //USER
-        public static readonly LucaServerAction VALIDATE_USER = new LucaServerAction(130, "validateuser");
+        public static readonly LucaServerAction VALIDATE_USER = new LucaServerAction(140, "validateuser");
 
         public static IEnumerable<LucaServerAction> Values
         {
@@ -154,6 +160,11 @@ namespace Common.Enums
                 yield return DELETE_SWITCH;
                 yield return TOGGLE_SWITCH;
                 yield return TOGGLE_ALL_SWITCHES;
+
+                yield return GET_METER_DATA;
+                yield return ADD_METER_DATA;
+                yield return UPDATE_METER_DATA;
+                yield return DELETE_METER_DATA;
 
                 yield return GET_TEMPERATURES;
 

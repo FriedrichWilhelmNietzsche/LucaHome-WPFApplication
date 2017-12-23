@@ -1,5 +1,4 @@
-﻿using Common.Common;
-using Common.Dto;
+﻿using Common.Dto;
 using Common.Tools;
 using Data.Services;
 using OpenWeather.Models;
@@ -49,6 +48,7 @@ namespace LucaHome.Pages
             _downloadActions.Add(16, WirelessSwitchService.Instance.LoadWirelessSwitchList);
             _downloadActions.Add(17, ScheduleService.Instance.LoadScheduleList);
             _downloadActions.Add(18, MapContentService.Instance.LoadMapContentList);
+            _downloadActions.Add(19, MeterDataService.Instance.LoadMeterDataList);
 
             _registerActions.Add(0, () => BirthdayService.Instance.OnBirthdayDownloadFinished += _birthdayDownloadFinished);
             _registerActions.Add(1, () => CoinService.Instance.OnCoinConversionDownloadFinished += _onCoinConversionDownloadFinished);
@@ -69,6 +69,7 @@ namespace LucaHome.Pages
             _registerActions.Add(16, () => WirelessSwitchService.Instance.OnWirelessSwitchDownloadFinished += _wirelessSwitchDownloadFinished);
             _registerActions.Add(17, () => ScheduleService.Instance.OnScheduleDownloadFinished += _scheduleDownloadFinished);
             _registerActions.Add(18, () => MapContentService.Instance.OnMapContentDownloadFinished += _mapContentDownloadFinished);
+            _registerActions.Add(19, () => MeterDataService.Instance.OnMeterDataDownloadFinished += _meterDataDownloadFinished);
 
             DataContext = this;
         }
@@ -83,7 +84,7 @@ namespace LucaHome.Pages
         {
             get
             {
-                return String.Format("Loading LucaHome WPF Application ... {0} %", (_downloadCount * 100) / Constants.DOWNLOAD_STEPS);
+                return String.Format("Loading LucaHome WPF Application ... {0} %", (_downloadCount * 100) / _downloadActions.Count);
             }
             set
             {
@@ -215,17 +216,23 @@ namespace LucaHome.Pages
             checkDownloadCount("_mapContentDownloadFinished");
         }
 
+        private void _meterDataDownloadFinished(IList<MeterDataDto> meterDataList, bool success, string response)
+        {
+            MeterDataService.Instance.OnMeterDataDownloadFinished -= _meterDataDownloadFinished;
+            checkDownloadCount("_meterDataDownloadFinished");
+        }
+
         private void checkDownloadCount(string objectFinished)
         {
             _downloadCount++;
-            Logger.Instance.Debug(TAG, string.Format("checkDownloadCount: Download {0}/{1}", _downloadCount, Constants.DOWNLOAD_STEPS));
+            Logger.Instance.Debug(TAG, string.Format("checkDownloadCount: Download {0}/{1}", _downloadCount, _downloadActions.Count));
 
             _objectFinishedList.Add(objectFinished);
             Logger.Instance.Debug(TAG, string.Format("_objectFinishedList: {0}", String.Join(", ", _objectFinishedList)));
 
             OnPropertyChanged("ProgressText");
 
-            if (_downloadCount >= Constants.DOWNLOAD_STEPS)
+            if (_downloadCount >= _downloadActions.Count)
             {
                 Application.Current.Dispatcher.Invoke(new Action(() => { _navigationService.Navigate(new MainPage(_navigationService)); }));
             }

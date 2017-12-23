@@ -63,10 +63,11 @@ namespace Common.Converter
                 JObject jsonObject = JObject.Parse(value);
                 JToken jsonObjectData = jsonObject.GetValue("Data");
 
-                int id = 0;
                 foreach (JToken child in jsonObjectData.Children())
                 {
                     JToken wirelessSocketJsonData = child["WirelessSocket"];
+
+                    int typeId = int.Parse(wirelessSocketJsonData["TypeId"].ToString());
 
                     string name = wirelessSocketJsonData["Name"].ToString();
                     string area = wirelessSocketJsonData["Area"].ToString();
@@ -95,10 +96,8 @@ namespace Common.Converter
 
                     string lastTriggerUser = lastTriggerJsonData["UserName"].ToString();
 
-                    WirelessSocketDto newMenu = new WirelessSocketDto(id, name, area, code, isActivated, lastTriggerDate, lastTriggerUser);
+                    WirelessSocketDto newMenu = new WirelessSocketDto(typeId, name, area, code, isActivated, lastTriggerDate, lastTriggerUser);
                     wirelessSocketList.Add(newMenu);
-
-                    id++;
                 }
 
                 return wirelessSocketList;

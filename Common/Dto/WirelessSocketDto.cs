@@ -9,7 +9,7 @@ namespace Common.Dto
     {
         private const string TAG = "WirelessSocketDto";
 
-        protected int _id;
+        protected int _typeId;
 
         protected string _name;
         protected string _area;
@@ -21,9 +21,9 @@ namespace Common.Dto
 
         protected string _shortName;
 
-        public WirelessSocketDto(int id, string name, string area, string code, bool isActivated, DateTime lastTriggerDate, string lastTriggerUser)
+        public WirelessSocketDto(int typeId, string name, string area, string code, bool isActivated, DateTime lastTriggerDate, string lastTriggerUser)
         {
-            _id = id;
+            _typeId = typeId;
 
             _name = name;
             _area = area;
@@ -42,11 +42,11 @@ namespace Common.Dto
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public int Id
+        public int TypeId
         {
             get
             {
-                return _id;
+                return _typeId;
             }
         }
 
@@ -146,7 +146,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}{2}", LucaServerAction.SET_SOCKET.Action, _name, ((_isActivated) ? Constants.STATE_ON : Constants.STATE_OFF));
+                return string.Format("{0}{1}{2}", LucaServerAction.SET_SOCKET.Action, _typeId, ((_isActivated) ? Constants.STATE_ON : Constants.STATE_OFF));
             }
         }
 
@@ -154,7 +154,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}&area={2}&code={3}", LucaServerAction.ADD_SOCKET.Action, _name, _area, _code);
+                return string.Format("{0}{1}&name={2}&area={3}&code={4}", LucaServerAction.ADD_SOCKET.Action, _typeId, _name, _area, _code);
             }
         }
 
@@ -162,7 +162,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}&area={2}&code={3}&isactivated={4}", LucaServerAction.UPDATE_SOCKET.Action, _name, _area, _code, (_isActivated ? "1" : "0"));
+                return string.Format("{0}{1}&name={2}&area={3}&code={4}&isactivated={5}", LucaServerAction.UPDATE_SOCKET.Action, _typeId, _name, _area, _code, (_isActivated ? "1" : "0"));
             }
         }
 
@@ -170,7 +170,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}", LucaServerAction.DELETE_SOCKET.Action, _name);
+                return string.Format("{0}{1}", LucaServerAction.DELETE_SOCKET.Action, _typeId);
             }
         }
 
