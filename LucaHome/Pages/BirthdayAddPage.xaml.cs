@@ -27,7 +27,7 @@ namespace LucaHome.Pages
         {
             _navigationService = navigationService;
 
-            _newBirthday = new BirthdayDto(BirthdayService.Instance.BirthdayList.Count, "", true, false, DateTime.Now);
+            _newBirthday = new BirthdayDto(BirthdayService.Instance.BirthdayList.Count, "", DateTime.Now, "", true, false);
 
             InitializeComponent();
             DataContext = this;
@@ -69,6 +69,19 @@ namespace LucaHome.Pages
             {
                 _newBirthday.Name = value;
                 OnPropertyChanged("BirthdayName");
+            }
+        }
+
+        public string BirthdayGroup
+        {
+            get
+            {
+                return _newBirthday.Group;
+            }
+            set
+            {
+                _newBirthday.Group = value;
+                OnPropertyChanged("BirthdayGroup");
             }
         }
 

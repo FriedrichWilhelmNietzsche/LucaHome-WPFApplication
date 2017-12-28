@@ -1,6 +1,5 @@
 ﻿using Common.Enums;
 using System;
-using System.Collections.Generic;
 
 namespace Common.Dto
 {
@@ -8,38 +7,60 @@ namespace Common.Dto
     {
         private const string TAG = "MeterDataDto";
 
-        private int _typeId;
+        private int _id;
         private string _type;
+        private int _typeId;
 
+        private DateTime _saveDate;
         private string _meterId;
         private string _area;
-
-        private IList<int> _idList;
-        private IList<double> _valueList;
-        private IList<DateTime> _saveDateList;
-        private IList<string> _imageNameList;
+        private double _value;
+        private string _imageName;
 
         public MeterDataDto(
-            int typeId,
+            int id,
             string type,
+            int typeId,
+
+            DateTime saveDate,
             string meterId,
             string area,
-
-            IList<int> idList,
-            IList<double> valueList,
-            IList<DateTime> saveDateList,
-            IList<string> imageNameList)
+            double value,
+            string imageName)
         {
-            _typeId = typeId;
+            _id = id;
             _type = type;
+            _typeId = typeId;
 
+            _saveDate = saveDate;
             _meterId = meterId;
             _area = area;
+            _value = value;
+            _imageName = imageName;
+        }
 
-            _idList = idList;
-            _valueList = valueList;
-            _saveDateList = saveDateList;
-            _imageNameList = imageNameList;
+        public int Id
+        {
+            get
+            {
+                return _id;
+            }
+            set
+            {
+                _id = value;
+            }
+        }
+
+        public string Type
+        {
+            get
+            {
+                return _type;
+            }
+            set
+            {
+                _type = value;
+            }
         }
 
         public int TypeId
@@ -54,15 +75,15 @@ namespace Common.Dto
             }
         }
 
-        public string Type
+        public DateTime SaveDate
         {
             get
             {
-                return _type;
+                return _saveDate;
             }
             set
             {
-                _type = value;
+                _saveDate = value;
             }
         }
 
@@ -90,6 +111,30 @@ namespace Common.Dto
             }
         }
 
+        public double Value
+        {
+            get
+            {
+                return _value;
+            }
+            set
+            {
+                _value = value;
+            }
+        }
+
+        public string ImageName
+        {
+            get
+            {
+                return _imageName;
+            }
+            set
+            {
+                _imageName = value;
+            }
+        }
+
         public string CommandAdd
         {
             get
@@ -104,7 +149,7 @@ namespace Common.Dto
             get
             {
                 return string.Format("{0}{1}&type={2}&typeId={3}&day={4}&month={5}&year={6}&hour={7}&minute={8}&meterId={9}&area={10}&value={11}&imageName={12}",
-                    LucaServerAction.ADD_METER_DATA.Action, _id, _type, _typeId, _saveDate.Day, _saveDate.Month, _saveDate.Year, _saveDate.Hour, _saveDate.Minute, _meterId, _area, _value, _imageName);
+                    LucaServerAction.UPDATE_METER_DATA.Action, _id, _type, _typeId, _saveDate.Day, _saveDate.Month, _saveDate.Year, _saveDate.Hour, _saveDate.Minute, _meterId, _area, _value, _imageName);
             }
         }
 

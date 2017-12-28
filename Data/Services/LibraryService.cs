@@ -99,7 +99,6 @@ namespace Data.Services
                         .Where(magazin => magazin.DirName.Contains(name))
                         .Select(magazin => magazin)
                         .FirstOrDefault();
-
             return foundMagazin;
         }
 
@@ -110,15 +109,12 @@ namespace Data.Services
                 return _magazinList; ;
             }
 
-            List<MagazinDirDto> foundMagazins = _magazinList
-                        .Where(magazin =>
-                            magazin.DirName.Contains(searchKey)
-                            || magazin.Icon.ToString().Contains(searchKey)
-                            || magazin.DirContent.Select(entry => entry).Contains(searchKey))
+            List<MagazinDirDto> foundMagazinList = _magazinList
+                        .Where(magazin => magazin.ToString().Contains(searchKey))
                         .Select(magazin => magazin)
+                        .OrderBy(magazin => magazin.DirName)
                         .ToList();
-
-            return foundMagazins;
+            return foundMagazinList;
         }
 
         public void StartReading(string directory, string title)
@@ -190,7 +186,6 @@ namespace Data.Services
             }
 
             _magazinList = _magazinList.OrderBy(x => x.DirName).ToList();
-
             publishOnMagazinListDownloadFinished(_magazinList, true, "Success");
         }
 

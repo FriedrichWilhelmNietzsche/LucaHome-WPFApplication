@@ -110,7 +110,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}&genre={2}&description={3}&rating={4}&watched={5}", LucaServerAction.UPDATE_MOVIE.Action, _title, _genre, _description, _rating, _watched);
+                return string.Format("{0}{1}&title={2}&genre={3}&description={4}&rating={5}&watched={6}", LucaServerAction.UPDATE_MOVIE.Action, _id, _title, _genre, _description, _rating, _watched);
             }
         }
 

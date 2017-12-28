@@ -1,5 +1,7 @@
 ﻿using Common.Dto;
+using Common.Tools;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace Common.Converter
 {
@@ -38,26 +40,33 @@ namespace Common.Converter
                 return coin;
             }
 
-            JObject jsonObject = JObject.Parse(responseString);
-            JToken jsonObjectData = jsonObject.GetValue("Data");
-
-            JToken firstEntry = jsonObjectData.First;
-            double firstEntryOpen = double.Parse(firstEntry["open"].ToString());
-
-            JToken lastEntry = jsonObjectData.Last;
-            double lastEntryClose = double.Parse(lastEntry["close"].ToString());
-
-            if (lastEntryClose - firstEntryOpen > 0)
+            try
             {
-                coin.CurrentTrend = CoinDto.Trend.RISE;
+                JObject jsonObject = JObject.Parse(responseString);
+                JToken jsonObjectData = jsonObject.GetValue("Data");
+
+                JToken firstEntry = jsonObjectData.First;
+                double firstEntryOpen = double.Parse(firstEntry["open"].ToString());
+
+                JToken lastEntry = jsonObjectData.Last;
+                double lastEntryClose = double.Parse(lastEntry["close"].ToString());
+
+                if (lastEntryClose - firstEntryOpen > 0)
+                {
+                    coin.CurrentTrend = CoinDto.Trend.RISE;
+                }
+                else if (lastEntryClose - firstEntryOpen < 0)
+                {
+                    coin.CurrentTrend = CoinDto.Trend.FALL;
+                }
+                else
+                {
+                    coin.CurrentTrend = CoinDto.Trend.NULL;
+                }
             }
-            else if (lastEntryClose - firstEntryOpen < 0)
+            catch (Exception exception)
             {
-                coin.CurrentTrend = CoinDto.Trend.FALL;
-            }
-            else
-            {
-                coin.CurrentTrend = CoinDto.Trend.NULL;
+                Logger.Instance.Error(TAG, exception.Message);
             }
 
             return coin;

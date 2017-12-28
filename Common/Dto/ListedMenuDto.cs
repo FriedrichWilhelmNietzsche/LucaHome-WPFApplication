@@ -89,7 +89,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}&title={2}&description={3}&rating={4}", LucaServerAction.UPDATE_LISTEDMENU.Action, _id, _title, _description, _rating);
+                return string.Format("{0}{1}&title={2}&description={3}&rating={4}&usecounter={5}", LucaServerAction.UPDATE_LISTEDMENU.Action, _id, _title, _description, _rating, _useCounter);
             }
         }
 

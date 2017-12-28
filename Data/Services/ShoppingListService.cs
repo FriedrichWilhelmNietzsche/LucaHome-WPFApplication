@@ -85,7 +85,7 @@ namespace Data.Services
         {
             get
             {
-                return _shoppingList;
+                return _shoppingList.OrderBy(shoppingEntry => shoppingEntry.Group).ToList();
             }
         }
 
@@ -95,7 +95,6 @@ namespace Data.Services
                         .Where(entry => entry.Id == id)
                         .Select(entry => entry)
                         .FirstOrDefault();
-
             return foundEntry;
         }
 
@@ -106,15 +105,12 @@ namespace Data.Services
                 return _shoppingList;
             }
 
-            List<ShoppingEntryDto> foundShoppingEntries = _shoppingList
-                        .Where(shoppingEntry =>
-                            shoppingEntry.Name.Contains(searchKey)
-                            || shoppingEntry.Group.ToString().Contains(searchKey)
-                            || shoppingEntry.Quantity.ToString().Contains(searchKey))
+            List<ShoppingEntryDto> foundShoppingEntryList = _shoppingList
+                        .Where(shoppingEntry => shoppingEntry.ToString().Contains(searchKey))
                         .Select(shoppingEntry => shoppingEntry)
+                        .OrderBy(shoppingEntry => shoppingEntry.Group)
                         .ToList();
-
-            return foundShoppingEntries;
+            return foundShoppingEntryList;
         }
 
         public void LoadShoppingList()
@@ -245,7 +241,7 @@ namespace Data.Services
                 return;
             }
 
-            _shoppingList = shoppingList;
+            _shoppingList = shoppingList.OrderBy(shoppingEntry => shoppingEntry.Group).ToList();
             publishOnShoppingListDownloadFinished(_shoppingList, true, response);
         }
 

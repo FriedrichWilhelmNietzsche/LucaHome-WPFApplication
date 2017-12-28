@@ -110,15 +110,12 @@ namespace Data.Services
                 return _novelList;
             }
 
-            List<NovelDto> foundNovelDtos = _novelList
-                        .Where(entry =>
-                            entry.Author.Contains(searchKey)
-                            || entry.Icon.ToString().Contains(searchKey)
-                            || entry.Books.Select(book => book).Contains(searchKey))
-                        .Select(magazin => magazin)
+            List<NovelDto> foundNovelList = _novelList
+                        .Where(novel => novel.ToString().Contains(searchKey))
+                        .Select(novel => novel)
+                        .OrderBy(novel => novel.Author)
                         .ToList();
-
-            return foundNovelDtos;
+            return foundNovelList;
         }
 
         public void StartReading(string directory, string title)
@@ -190,7 +187,6 @@ namespace Data.Services
             }
 
             _novelList = _novelList.OrderBy(x => x.Author).ToList();
-
             publishOnNovelListDownloadFinished(_novelList, true, "Success");
         }
 

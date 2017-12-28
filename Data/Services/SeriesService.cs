@@ -99,7 +99,6 @@ namespace Data.Services
                         .Where(series => series.SeriesName.Contains(name))
                         .Select(series => series)
                         .FirstOrDefault();
-
             return foundSeries;
         }
 
@@ -110,14 +109,12 @@ namespace Data.Services
                 return _seriesList;
             }
 
-            List<SeriesDto> foundSeries = _seriesList
-                        .Where(series =>
-                            series.SeriesName.Contains(searchKey)
-                            || series.Icon.ToString().Contains(searchKey))
+            List<SeriesDto> foundSeriesList = _seriesList
+                        .Where(series => series.ToString().Contains(searchKey))
                         .Select(series => series)
+                        .OrderBy(series => series.SeriesName)
                         .ToList();
-
-            return foundSeries;
+            return foundSeriesList;
         }
 
         public void OpenExplorer(string series)

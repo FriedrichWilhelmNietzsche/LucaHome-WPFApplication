@@ -69,6 +69,7 @@
     <Compile Include="CustomEventArgs\PartReadyEventArgs.cs" />
     <Compile Include="Misc\AutomaticMultiPartReader.cs" />
     <Compile Include="Misc\MultiPartStream.cs" />
+    <Compile Include="Services\MoneyMeterDataService.cs" />
     <Compile Include="Services\MeterDataService.cs" />
     <Compile Include="Services\MediaServerService.cs" />
     <Compile Include="Services\SpecialicedBookService.cs" />

@@ -60,46 +60,53 @@ namespace Common.Converter
             {
                 IList<WirelessSwitchDto> wirelessSwitchList = new List<WirelessSwitchDto>();
 
-                JObject jsonObject = JObject.Parse(value);
-                JToken jsonObjectData = jsonObject.GetValue("Data");
-
-                foreach (JToken child in jsonObjectData.Children())
+                try
                 {
-                    JToken wirelessSwitchJsonData = child["WirelessSwitch"];
+                    JObject jsonObject = JObject.Parse(value);
+                    JToken jsonObjectData = jsonObject.GetValue("Data");
 
-                    int typeId = int.Parse(wirelessSwitchJsonData["TypeId"].ToString());
-
-                    string name = wirelessSwitchJsonData["Name"].ToString();
-                    string area = wirelessSwitchJsonData["Area"].ToString();
-
-                    int remoteId = int.Parse(wirelessSwitchJsonData["RemoteId"].ToString());
-                    char keyCode = char.Parse(wirelessSwitchJsonData["KeyCode"].ToString());
-
-                    bool action = wirelessSwitchJsonData["Action"].ToString() == "1";
-
-                    JToken lastTriggerJsonData = wirelessSwitchJsonData["LastTrigger"];
-
-                    int year = int.Parse(lastTriggerJsonData["Year"].ToString());
-                    int month = int.Parse(lastTriggerJsonData["Month"].ToString());
-                    int day = int.Parse(lastTriggerJsonData["Day"].ToString());
-                    int hour = int.Parse(lastTriggerJsonData["Minute"].ToString());
-                    int minute = int.Parse(lastTriggerJsonData["Hour"].ToString());
-
-                    if (year == -1 || month == -1 || day == -1 || hour == -1 || minute == -1)
+                    foreach (JToken child in jsonObjectData.Children())
                     {
-                        year = 1970;
-                        month = 1;
-                        day = 1;
-                        hour = 0;
-                        minute = 0;
+                        JToken wirelessSwitchJsonData = child["WirelessSwitch"];
+
+                        int typeId = int.Parse(wirelessSwitchJsonData["TypeId"].ToString());
+
+                        string name = wirelessSwitchJsonData["Name"].ToString();
+                        string area = wirelessSwitchJsonData["Area"].ToString();
+
+                        int remoteId = int.Parse(wirelessSwitchJsonData["RemoteId"].ToString());
+                        char keyCode = char.Parse(wirelessSwitchJsonData["KeyCode"].ToString());
+
+                        bool action = wirelessSwitchJsonData["Action"].ToString() == "1";
+
+                        JToken lastTriggerJsonData = wirelessSwitchJsonData["LastTrigger"];
+
+                        int year = int.Parse(lastTriggerJsonData["Year"].ToString());
+                        int month = int.Parse(lastTriggerJsonData["Month"].ToString());
+                        int day = int.Parse(lastTriggerJsonData["Day"].ToString());
+                        int hour = int.Parse(lastTriggerJsonData["Hour"].ToString());
+                        int minute = int.Parse(lastTriggerJsonData["Minute"].ToString());
+
+                        if (year == -1 || month == -1 || day == -1 || hour == -1 || minute == -1)
+                        {
+                            year = 1970;
+                            month = 1;
+                            day = 1;
+                            hour = 0;
+                            minute = 0;
+                        }
+
+                        DateTime lastTriggerDate = new DateTime(year, month, day, hour, minute, 0);
+
+                        string lastTriggerUser = lastTriggerJsonData["UserName"].ToString();
+
+                        WirelessSwitchDto newMenu = new WirelessSwitchDto(typeId, name, area, remoteId, keyCode, false, action, lastTriggerDate, lastTriggerUser);
+                        wirelessSwitchList.Add(newMenu);
                     }
-
-                    DateTime lastTriggerDate = new DateTime(year, month, day, hour, minute, 0);
-
-                    string lastTriggerUser = lastTriggerJsonData["UserName"].ToString();
-
-                    WirelessSwitchDto newMenu = new WirelessSwitchDto(typeId, name, area, remoteId, keyCode, false, action, lastTriggerDate, lastTriggerUser);
-                    wirelessSwitchList.Add(newMenu);
+                }
+                catch (Exception exception)
+                {
+                    Logger.Instance.Error(TAG, exception.Message);
                 }
 
                 return wirelessSwitchList;

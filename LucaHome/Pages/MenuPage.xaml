@@ -74,7 +74,7 @@
                                     Width="350"/>
                     <GridViewColumn Header="Description"
                                     DisplayMemberBinding="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="200"/>
+                                    Width="300"/>
                     <GridViewColumn Header="Date"
                                     DisplayMemberBinding="{Binding Date, UpdateSourceTrigger=PropertyChanged}"
                                     Width="175"/>

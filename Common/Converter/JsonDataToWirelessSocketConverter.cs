@@ -60,44 +60,51 @@ namespace Common.Converter
             {
                 IList<WirelessSocketDto> wirelessSocketList = new List<WirelessSocketDto>();
 
-                JObject jsonObject = JObject.Parse(value);
-                JToken jsonObjectData = jsonObject.GetValue("Data");
-
-                foreach (JToken child in jsonObjectData.Children())
+                try
                 {
-                    JToken wirelessSocketJsonData = child["WirelessSocket"];
+                    JObject jsonObject = JObject.Parse(value);
+                    JToken jsonObjectData = jsonObject.GetValue("Data");
 
-                    int typeId = int.Parse(wirelessSocketJsonData["TypeId"].ToString());
-
-                    string name = wirelessSocketJsonData["Name"].ToString();
-                    string area = wirelessSocketJsonData["Area"].ToString();
-                    string code = wirelessSocketJsonData["Code"].ToString();
-
-                    bool isActivated = wirelessSocketJsonData["State"].ToString() == "1";
-
-                    JToken lastTriggerJsonData = wirelessSocketJsonData["LastTrigger"];
-
-                    int year = int.Parse(lastTriggerJsonData["Year"].ToString());
-                    int month = int.Parse(lastTriggerJsonData["Month"].ToString());
-                    int day = int.Parse(lastTriggerJsonData["Day"].ToString());
-                    int hour = int.Parse(lastTriggerJsonData["Minute"].ToString());
-                    int minute = int.Parse(lastTriggerJsonData["Hour"].ToString());
-
-                    if (year == -1 || month == -1 || day == -1 || hour == -1 || minute == -1)
+                    foreach (JToken child in jsonObjectData.Children())
                     {
-                        year = 1970;
-                        month = 1;
-                        day = 1;
-                        hour = 0;
-                        minute = 0;
+                        JToken wirelessSocketJsonData = child["WirelessSocket"];
+
+                        int typeId = int.Parse(wirelessSocketJsonData["TypeId"].ToString());
+
+                        string name = wirelessSocketJsonData["Name"].ToString();
+                        string area = wirelessSocketJsonData["Area"].ToString();
+                        string code = wirelessSocketJsonData["Code"].ToString();
+
+                        bool isActivated = wirelessSocketJsonData["State"].ToString() == "1";
+
+                        JToken lastTriggerJsonData = wirelessSocketJsonData["LastTrigger"];
+
+                        int year = int.Parse(lastTriggerJsonData["Year"].ToString());
+                        int month = int.Parse(lastTriggerJsonData["Month"].ToString());
+                        int day = int.Parse(lastTriggerJsonData["Day"].ToString());
+                        int hour = int.Parse(lastTriggerJsonData["Hour"].ToString());
+                        int minute = int.Parse(lastTriggerJsonData["Minute"].ToString());
+
+                        if (year == -1 || month == -1 || day == -1 || hour == -1 || minute == -1)
+                        {
+                            year = 1970;
+                            month = 1;
+                            day = 1;
+                            hour = 0;
+                            minute = 0;
+                        }
+
+                        DateTime lastTriggerDate = new DateTime(year, month, day, hour, minute, 0);
+
+                        string lastTriggerUser = lastTriggerJsonData["UserName"].ToString();
+
+                        WirelessSocketDto newMenu = new WirelessSocketDto(typeId, name, area, code, isActivated, lastTriggerDate, lastTriggerUser);
+                        wirelessSocketList.Add(newMenu);
                     }
-
-                    DateTime lastTriggerDate = new DateTime(year, month, day, hour, minute, 0);
-
-                    string lastTriggerUser = lastTriggerJsonData["UserName"].ToString();
-
-                    WirelessSocketDto newMenu = new WirelessSocketDto(typeId, name, area, code, isActivated, lastTriggerDate, lastTriggerUser);
-                    wirelessSocketList.Add(newMenu);
+                }
+                catch (Exception exception)
+                {
+                    Logger.Instance.Error(TAG, exception.Message);
                 }
 
                 return wirelessSocketList;

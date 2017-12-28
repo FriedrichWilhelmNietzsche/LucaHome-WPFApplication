@@ -11,13 +11,15 @@ namespace Common.Dto
         private string _name;
         private ShoppingEntryGroup _group;
         private int _quantity;
+        private string _unit;
 
-        public ShoppingEntryDto(int id, string name, ShoppingEntryGroup group, int quantity)
+        public ShoppingEntryDto(int id, string name, ShoppingEntryGroup group, int quantity, string unit)
         {
             _id = id;
             _name = name;
             _group = group;
             _quantity = quantity;
+            _unit = unit;
         }
 
         public int Id
@@ -68,6 +70,18 @@ namespace Common.Dto
             }
         }
 
+        public string Unit
+        {
+            get
+            {
+                return _unit;
+            }
+            set
+            {
+                _unit = value;
+            }
+        }
+
         public Uri Icon
         {
             get
@@ -80,7 +94,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format(LucaServerAction.ADD_SHOPPING_ENTRY_F.Action, _id, _name, _group.Description, _quantity);
+                return string.Format(LucaServerAction.ADD_SHOPPING_ENTRY_F.Action, _id, _name, _group.Description, _quantity, _unit);
             }
         }
 
@@ -88,7 +102,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format(LucaServerAction.UPDATE_SHOPPING_ENTRY_F.Action, _id, _name, _group.Description, _quantity);
+                return string.Format(LucaServerAction.UPDATE_SHOPPING_ENTRY_F.Action, _id, _name, _group.Description, _quantity, _unit);
             }
         }
 
@@ -102,7 +116,7 @@ namespace Common.Dto
 
         public override string ToString()
         {
-            return string.Format("( {0}: (Id: {1} );(Name: {2} );(Group: {3} );(Quantity: {4} ))", TAG, _id, _name, _group, _quantity);
+            return string.Format("( {0}: (Id: {1} );(Name: {2} );(Group: {3} );(Quantity: {4} );(Unit: {5} ))", TAG, _id, _name, _group, _quantity, _unit);
         }
     }
 }

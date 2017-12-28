@@ -60,30 +60,38 @@ namespace Common.Converter
             {
                 IList<BirthdayDto> birthdayList = new List<BirthdayDto>();
 
-                JObject jsonObject = JObject.Parse(value);
-                JToken jsonObjectData = jsonObject.GetValue("Data");
-
-                foreach (JToken child in jsonObjectData.Children())
+                try
                 {
-                    JToken birthdayJsonData = child["Birthday"];
+                    JObject jsonObject = JObject.Parse(value);
+                    JToken jsonObjectData = jsonObject.GetValue("Data");
 
-                    int id = int.Parse(birthdayJsonData["ID"].ToString());
+                    foreach (JToken child in jsonObjectData.Children())
+                    {
+                        JToken birthdayJsonData = child["Birthday"];
 
-                    string name = birthdayJsonData["Name"].ToString();
+                        int id = int.Parse(birthdayJsonData["Id"].ToString());
 
-                    bool remindMe = birthdayJsonData["RemindMe"].ToString() == "1";
-                    bool sendMail = birthdayJsonData["SendMail"].ToString() == "1";
+                        string name = birthdayJsonData["Name"].ToString();
+                        string group = birthdayJsonData["Group"].ToString();
 
-                    JToken birthdayJsonDate = birthdayJsonData["Date"];
+                        bool remindMe = birthdayJsonData["RemindMe"].ToString() == "1";
+                        bool sentMail = birthdayJsonData["SentMail"].ToString() == "1";
 
-                    int day = int.Parse(birthdayJsonDate["Day"].ToString());
-                    int month = int.Parse(birthdayJsonDate["Month"].ToString());
-                    int year = int.Parse(birthdayJsonDate["Year"].ToString());
+                        JToken birthdayJsonDate = birthdayJsonData["Date"];
 
-                    DateTime birthdayDate = new DateTime(year, month, day);
+                        int day = int.Parse(birthdayJsonDate["Day"].ToString());
+                        int month = int.Parse(birthdayJsonDate["Month"].ToString());
+                        int year = int.Parse(birthdayJsonDate["Year"].ToString());
 
-                    BirthdayDto newBirthday = new BirthdayDto(id, name, remindMe, sendMail, birthdayDate);
-                    birthdayList.Add(newBirthday);
+                        DateTime birthdayDate = new DateTime(year, month, day);
+
+                        BirthdayDto newBirthday = new BirthdayDto(id, name, birthdayDate, group, remindMe, sentMail);
+                        birthdayList.Add(newBirthday);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Logger.Instance.Error(TAG, exception.Message);
                 }
 
                 return birthdayList;

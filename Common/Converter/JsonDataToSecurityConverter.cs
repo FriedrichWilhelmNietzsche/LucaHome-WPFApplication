@@ -2,6 +2,7 @@
 using Common.Interfaces;
 using Common.Tools;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using static Common.Dto.SecurityDto;
 
@@ -60,30 +61,37 @@ namespace Common.Converter
             {
                 IList<SecurityDto> securityList = new List<SecurityDto>();
 
-                JObject jsonObject = JObject.Parse(value);
-                JToken jsonObjectData = jsonObject.GetValue("MotionData");
-
-                bool state = jsonObjectData["State"].ToString() == "ON";
-                bool control = jsonObjectData["Control"].ToString() == "ON";
-
-                string url = jsonObjectData["URL"].ToString();
-
-                JToken eventsJsonData = jsonObjectData["Events"];
-                IList<RegisteredEventDto> registeredEventList = new List<RegisteredEventDto>();
-                int id = 0;
-
-                foreach (JToken child in eventsJsonData.Children())
+                try
                 {
-                    string name = child["FileName"].ToString();
+                    JObject jsonObject = JObject.Parse(value);
+                    JToken jsonObjectData = jsonObject.GetValue("MotionData");
 
-                    RegisteredEventDto registeredEvent = new RegisteredEventDto(id, name);
-                    registeredEventList.Add(registeredEvent);
+                    bool state = jsonObjectData["State"].ToString() == "ON";
+                    bool control = jsonObjectData["Control"].ToString() == "ON";
 
-                    id++;
+                    string url = jsonObjectData["URL"].ToString();
+
+                    JToken eventsJsonData = jsonObjectData["Events"];
+                    IList<RegisteredEventDto> registeredEventList = new List<RegisteredEventDto>();
+                    int id = 0;
+
+                    foreach (JToken child in eventsJsonData.Children())
+                    {
+                        string name = child["FileName"].ToString();
+
+                        RegisteredEventDto registeredEvent = new RegisteredEventDto(id, name);
+                        registeredEventList.Add(registeredEvent);
+
+                        id++;
+                    }
+
+                    SecurityDto security = new SecurityDto(state, control, url, registeredEventList);
+                    securityList.Add(security);
                 }
-
-                SecurityDto security = new SecurityDto(state, control, url, registeredEventList);
-                securityList.Add(security);
+                catch (Exception exception)
+                {
+                    Logger.Instance.Error(TAG, exception.Message);
+                }
 
                 return securityList;
             }

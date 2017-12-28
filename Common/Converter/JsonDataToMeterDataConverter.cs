@@ -60,39 +60,46 @@ namespace Common.Converter
             {
                 IList<MeterDataDto> meterDataList = new List<MeterDataDto>();
 
-                JObject jsonObject = JObject.Parse(jsonString);
-                JToken jsonObjectData = jsonObject.GetValue("Data");
-
-                foreach (JToken child in jsonObjectData.Children())
+                try
                 {
-                    JToken meterDataJsonData = child["MeterData"];
+                    JObject jsonObject = JObject.Parse(jsonString);
+                    JToken jsonObjectData = jsonObject.GetValue("Data");
 
-                    int id = int.Parse(meterDataJsonData["ID"].ToString());
+                    foreach (JToken child in jsonObjectData.Children())
+                    {
+                        JToken meterDataJsonData = child["MeterData"];
 
-                    string type = meterDataJsonData["Type"].ToString();
-                    int typeId = int.Parse(meterDataJsonData["TypeId"].ToString());
+                        int id = int.Parse(meterDataJsonData["Id"].ToString());
 
-                    JToken meterDataJsonDate = meterDataJsonData["Date"];
+                        string type = meterDataJsonData["Type"].ToString();
+                        int typeId = int.Parse(meterDataJsonData["TypeId"].ToString());
 
-                    int day = int.Parse(meterDataJsonDate["Day"].ToString());
-                    int month = int.Parse(meterDataJsonDate["Month"].ToString());
-                    int year = int.Parse(meterDataJsonDate["Year"].ToString());
+                        JToken meterDataJsonDate = meterDataJsonData["Date"];
 
-                    JToken meterDataJsonTime = meterDataJsonData["Time"];
+                        int day = int.Parse(meterDataJsonDate["Day"].ToString());
+                        int month = int.Parse(meterDataJsonDate["Month"].ToString());
+                        int year = int.Parse(meterDataJsonDate["Year"].ToString());
 
-                    int hour = int.Parse(meterDataJsonTime["Hour"].ToString());
-                    int minute = int.Parse(meterDataJsonTime["Minute"].ToString());
+                        JToken meterDataJsonTime = meterDataJsonData["Time"];
 
-                    DateTime saveDate = new DateTime(year, month, day, hour, minute, 0);
+                        int hour = int.Parse(meterDataJsonTime["Hour"].ToString());
+                        int minute = int.Parse(meterDataJsonTime["Minute"].ToString());
 
-                    string meterId = meterDataJsonData["MeterId"].ToString();
-                    string area = meterDataJsonData["Area"].ToString();
+                        DateTime saveDate = new DateTime(year, month, day, hour, minute, 0);
 
-                    double value = double.Parse(meterDataJsonDate["Value"].ToString());
-                    string imageName = meterDataJsonData["ImageName"].ToString();
+                        string meterId = meterDataJsonData["MeterId"].ToString();
+                        string area = meterDataJsonData["Area"].ToString();
 
-                    MeterDataDto newMeterData = new MeterDataDto(id, type, typeId, saveDate, meterId, area, value, imageName);
-                    meterDataList.Add(newMeterData);
+                        double value = double.Parse(meterDataJsonData["Value"].ToString());
+                        string imageName = meterDataJsonData["ImageName"].ToString();
+
+                        MeterDataDto newMeterData = new MeterDataDto(id, type, typeId, saveDate, meterId, area, value, imageName);
+                        meterDataList.Add(newMeterData);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Logger.Instance.Error(TAG, exception.Message);
                 }
 
                 return meterDataList;

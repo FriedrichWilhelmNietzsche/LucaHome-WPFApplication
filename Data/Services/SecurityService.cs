@@ -87,14 +87,12 @@ namespace Data.Services
                 return _security.RegisteredMotionEvents;
             }
 
-            List<RegisteredEventDto> foundRegisteredEvents = _security.RegisteredMotionEvents
-                        .Where(entry =>
-                        entry.Id.ToString().Contains(searchKey)
-                        || entry.Name.Contains(searchKey))
+            List<RegisteredEventDto> foundRegisteredEventList = _security.RegisteredMotionEvents
+                        .Where(entry => entry.ToString().Contains(searchKey))
                         .Select(entry => entry)
+                        .OrderBy(entry => entry.Id)
                         .ToList();
-
-            return foundRegisteredEvents;
+            return foundRegisteredEventList;
         }
 
         public void OpenFile(string registeredEventName)
@@ -138,11 +136,10 @@ namespace Data.Services
                 return;
             }
 
-            string requestUrl =
-                "http://" + SettingsController.Instance.ServerIpAddress
-                + Constants.ACTION_PATH + user.Name
-                + "&password=" + user.Passphrase
-                + "&action=" + LucaServerAction.GET_MOTION_DATA.Action;
+            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
+                user.Name, user.Passphrase,
+                LucaServerAction.GET_MOTION_DATA.Action);
 
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.Security);
         }
@@ -159,11 +156,17 @@ namespace Data.Services
             string requestUrl;
             if (state)
             {
-                requestUrl = "http://" + SettingsController.Instance.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.START_MOTION.Action;
+                requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                    SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
+                    user.Name, user.Passphrase,
+                    LucaServerAction.START_MOTION.Action);
             }
             else
             {
-                requestUrl = "http://" + SettingsController.Instance.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.STOP_MOTION.Action;
+                requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}",
+                    SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
+                    user.Name, user.Passphrase,
+                    LucaServerAction.STOP_MOTION.Action);
             }
 
             _downloadController.OnDownloadFinished += _setCameraStateFinished;
@@ -179,7 +182,11 @@ namespace Data.Services
                 return;
             }
 
-            string requestUrl = "http://" + SettingsController.Instance.ServerIpAddress + Constants.ACTION_PATH + user.Name + "&password=" + user.Passphrase + "&action=" + LucaServerAction.SET_MOTION_CONTROL_TASK.Action + (state ? "1" : "0");
+            string requestUrl = string.Format("http://{0}{1}{2}&password={3}&action={4}{5}",
+                SettingsController.Instance.ServerIpAddress, Constants.ACTION_PATH,
+                user.Name, user.Passphrase,
+                LucaServerAction.SET_MOTION_CONTROL_TASK.Action,
+                (state ? "1" : "0"));
 
             _downloadController.OnDownloadFinished += _setCameraControlStateFinished;
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.SecurityCameraControl);

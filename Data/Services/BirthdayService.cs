@@ -95,7 +95,6 @@ namespace Data.Services
                         .Where(birthday => birthday.Id == id)
                         .Select(birthday => birthday)
                         .FirstOrDefault();
-
             return foundBirthday;
         }
 
@@ -106,16 +105,11 @@ namespace Data.Services
                 return _birthdayList;
             }
 
-            List<BirthdayDto> foundBirthdays = _birthdayList
-                        .Where(birthday =>
-                            birthday.Name.Contains(searchKey)
-                            || birthday.Id.ToString().Contains(searchKey)
-                            || birthday.Birthday.ToString().Contains(searchKey)
-                            || birthday.Age.ToString().Contains(searchKey))
+            List<BirthdayDto> foundBirthdayList = _birthdayList
+                        .Where(birthday => birthday.ToString().Contains(searchKey))
                         .Select(birthday => birthday)
                         .ToList();
-
-            return foundBirthdays;
+            return foundBirthdayList;
         }
 
         public void LoadBirthdayList()
@@ -179,7 +173,6 @@ namespace Data.Services
                 newBirthday.CommandAdd);
 
             _downloadController.OnDownloadFinished += _birthdayAddFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.BirthdayAdd);
         }
 
@@ -198,7 +191,6 @@ namespace Data.Services
                 updateBirthday.CommandUpdate);
 
             _downloadController.OnDownloadFinished += _birthdayUpdateFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.BirthdayUpdate);
         }
 
@@ -217,7 +209,6 @@ namespace Data.Services
                 deleteBirthday.CommandDelete);
 
             _downloadController.OnDownloadFinished += _birthdayDeleteFinished;
-
             _downloadController.SendCommandToWebsite(requestUrl, DownloadType.BirthdayDelete);
         }
 
@@ -231,7 +222,6 @@ namespace Data.Services
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
                 Logger.Instance.Error(TAG, response);
-
                 publishOnBirthdayDownloadFinished(null, false, response);
                 return;
             }
@@ -239,7 +229,6 @@ namespace Data.Services
             if (!success)
             {
                 Logger.Instance.Error(TAG, "Download was not successful!");
-
                 publishOnBirthdayDownloadFinished(null, false, response);
                 return;
             }
@@ -248,13 +237,11 @@ namespace Data.Services
             if (birthdayList == null)
             {
                 Logger.Instance.Error(TAG, "Converted birthdayList is null!");
-
                 publishOnBirthdayDownloadFinished(null, false, response);
                 return;
             }
 
             _birthdayList = birthdayList;
-
             publishOnBirthdayDownloadFinished(_birthdayList, true, response);
         }
 
@@ -270,7 +257,6 @@ namespace Data.Services
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
                 Logger.Instance.Error(TAG, response);
-
                 publishOnBirthdayAddFinished(false, response);
                 return;
             }
@@ -278,13 +264,11 @@ namespace Data.Services
             if (!success)
             {
                 Logger.Instance.Error(TAG, "Adding was not successful!");
-
                 publishOnBirthdayAddFinished(false, response);
                 return;
             }
 
             publishOnBirthdayAddFinished(true, response);
-
             loadBirthdayListAsync();
         }
 
@@ -300,7 +284,6 @@ namespace Data.Services
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
                 Logger.Instance.Error(TAG, response);
-
                 publishOnBirthdayUpdateFinished(false, response);
                 return;
             }
@@ -308,13 +291,11 @@ namespace Data.Services
             if (!success)
             {
                 Logger.Instance.Error(TAG, "Updating was not successful!");
-
                 publishOnBirthdayUpdateFinished(false, response);
                 return;
             }
 
             publishOnBirthdayUpdateFinished(true, response);
-
             loadBirthdayListAsync();
         }
 
@@ -330,7 +311,6 @@ namespace Data.Services
             if (response.Contains("Error") || response.Contains("ERROR"))
             {
                 Logger.Instance.Error(TAG, response);
-
                 publishOnBirthdayDeleteFinished(false, response);
                 return;
             }
@@ -338,13 +318,11 @@ namespace Data.Services
             if (!success)
             {
                 Logger.Instance.Error(TAG, "Deleting was not successful!");
-
                 publishOnBirthdayDeleteFinished(false, response);
                 return;
             }
 
             publishOnBirthdayDeleteFinished(true, response);
-
             loadBirthdayListAsync();
         }
 

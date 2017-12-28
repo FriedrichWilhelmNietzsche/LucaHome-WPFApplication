@@ -74,35 +74,22 @@ namespace Data.Services
                         .Where(mapContent => mapContent.Id == id)
                         .Select(mapContent => mapContent)
                         .FirstOrDefault();
-
             return foundMapContent;
         }
 
         public IList<MapContentDto> FoundapContents(string searchKey)
         {
-            List<MapContentDto> foundMapContents = _mapContentList
-                        .Where(mapContent =>
-                            mapContent.Id.ToString().Contains(searchKey)
-                            || mapContent.MapDrawingType.ToString().Contains(searchKey)
-                            || mapContent.DrawingTypeId.ToString().Contains(searchKey)
-                            || mapContent.Position.ToString().Contains(searchKey)
-                            || mapContent.Name.Contains(searchKey)
-                            || mapContent.ShortName.Contains(searchKey)
-                            || mapContent.Area.Contains(searchKey)
-                            || mapContent.ButtonVisibility.ToString().Contains(searchKey)
-                            || mapContent.ListedMenuList.ToString().Contains(searchKey)
-                            || mapContent.MenuList.ToString().Contains(searchKey)
-                            || mapContent.ShoppingList.ToString().Contains(searchKey)
-                            || mapContent.MediaServer.ToString().Contains(searchKey)
-                            || mapContent.Security.ToString().Contains(searchKey)
-                            || mapContent.Temperature.ToString().Contains(searchKey)
-                            || mapContent.WirelessSocket.ToString().Contains(searchKey)
-                            || mapContent.WirelessSwitch.ToString().Contains(searchKey)
-                            || mapContent.ButtonToolTip.Contains(searchKey))
-                        .Select(mapContent => mapContent)
-                        .ToList();
+            if (searchKey == string.Empty)
+            {
+                return _mapContentList;
+            }
 
-            return foundMapContents;
+            List<MapContentDto> foundMapContentList = _mapContentList
+                        .Where(mapContent => mapContent.ToString().Contains(searchKey))
+                        .Select(mapContent => mapContent)
+                        .OrderBy(mapContent => mapContent.Id)
+                        .ToList();
+            return foundMapContentList;
         }
 
         public void LoadMapContentList()
@@ -185,7 +172,6 @@ namespace Data.Services
             }
 
             _mapContentList = mapContentList;
-
             publishOnMapContentDownloadFinished(_mapContentList, true, response);
         }
 

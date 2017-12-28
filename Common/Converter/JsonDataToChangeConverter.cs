@@ -60,34 +60,41 @@ namespace Common.Converter
             {
                 IList<ChangeDto> changeList = new List<ChangeDto>();
 
-                JObject jsonObject = JObject.Parse(value);
-                JToken jsonObjectData = jsonObject.GetValue("Data");
-
-                int id = 0;
-                foreach (JToken child in jsonObjectData.Children())
+                try
                 {
-                    JToken changeJsonData = child["Change"];
+                    JObject jsonObject = JObject.Parse(value);
+                    JToken jsonObjectData = jsonObject.GetValue("Data");
 
-                    string type = changeJsonData["Type"].ToString();
-                    string user = changeJsonData["UserName"].ToString();
+                    int id = 0;
+                    foreach (JToken child in jsonObjectData.Children())
+                    {
+                        JToken changeJsonData = child["Change"];
 
-                    JToken changeJsonDate = changeJsonData["Date"];
+                        string type = changeJsonData["Type"].ToString();
+                        string user = changeJsonData["UserName"].ToString();
 
-                    int day = int.Parse(changeJsonDate["Day"].ToString());
-                    int month = int.Parse(changeJsonDate["Month"].ToString());
-                    int year = int.Parse(changeJsonDate["Year"].ToString());
+                        JToken changeJsonDate = changeJsonData["Date"];
 
-                    JToken changeJsonTime = changeJsonData["Time"];
+                        int day = int.Parse(changeJsonDate["Day"].ToString());
+                        int month = int.Parse(changeJsonDate["Month"].ToString());
+                        int year = int.Parse(changeJsonDate["Year"].ToString());
 
-                    int hour = int.Parse(changeJsonTime["Hour"].ToString());
-                    int minute = int.Parse(changeJsonTime["Minute"].ToString());
+                        JToken changeJsonTime = changeJsonData["Time"];
 
-                    DateTime dateTime = new DateTime(year, month, day, hour, minute, 0);
+                        int hour = int.Parse(changeJsonTime["Hour"].ToString());
+                        int minute = int.Parse(changeJsonTime["Minute"].ToString());
 
-                    ChangeDto newChange = new ChangeDto(id, type, dateTime, user);
-                    changeList.Add(newChange);
+                        DateTime dateTime = new DateTime(year, month, day, hour, minute, 0);
 
-                    id++;
+                        ChangeDto newChange = new ChangeDto(id, type, dateTime, user);
+                        changeList.Add(newChange);
+
+                        id++;
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Logger.Instance.Error(TAG, exception.Message);
                 }
 
                 return changeList;

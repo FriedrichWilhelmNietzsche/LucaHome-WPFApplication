@@ -99,7 +99,6 @@ namespace Data.Services
                         .Where(movie => movie.Id == id)
                         .Select(movie => movie)
                         .FirstOrDefault();
-
             return foundMovie;
         }
 
@@ -110,18 +109,12 @@ namespace Data.Services
                 return _movieList;
             }
 
-            List<MovieDto> foundMovies = _movieList
-                        .Where(movie =>
-                            movie.Title.Contains(searchKey)
-                            || movie.Genre.Contains(searchKey)
-                            || movie.Description.Contains(searchKey)
-                            || movie.RatingString.Contains(searchKey)
-                            || movie.Watched.ToString().Contains(searchKey))
+            List<MovieDto> foundMovieList = _movieList
+                        .Where(movie => movie.ToString().Contains(searchKey))
                         .Select(movie => movie)
                         .OrderBy(movie => movie.Title)
                         .ToList();
-
-            return foundMovies;
+            return foundMovieList;
         }
 
         public void LoadMovieList()

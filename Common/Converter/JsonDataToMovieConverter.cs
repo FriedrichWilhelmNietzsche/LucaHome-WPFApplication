@@ -2,6 +2,7 @@
 using Common.Interfaces;
 using Common.Tools;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 
 namespace Common.Converter
@@ -59,25 +60,35 @@ namespace Common.Converter
             {
                 IList<MovieDto> movieList = new List<MovieDto>();
 
-                JObject jsonObject = JObject.Parse(value);
-                JToken jsonObjectData = jsonObject.GetValue("Data");
-
-                int id = 0;
-                foreach (JToken child in jsonObjectData.Children())
+                try
                 {
-                    JToken movieJsonData = child["Movie"];
+                    JObject jsonObject = JObject.Parse(value);
+                    JToken jsonObjectData = jsonObject.GetValue("Data");
 
-                    string title = movieJsonData["Title"].ToString();
-                    string genre = movieJsonData["Genre"].ToString();
-                    string description = movieJsonData["Description"].ToString();
+                    int id = 0;
+                    foreach (JToken child in jsonObjectData.Children())
+                    {
+                        JToken movieJsonData = child["Movie"];
 
-                    int rating = int.Parse(movieJsonData["Rating"].ToString());
-                    int watched = int.Parse(movieJsonData["Watched"].ToString());
+                        //TODO Disabled due to error on server
+                        //int id = int.Parse(movieJsonData["Id"].ToString());
 
-                    MovieDto newMovie = new MovieDto(id, title, genre, description, rating, watched);
-                    movieList.Add(newMovie);
+                        string title = movieJsonData["Title"].ToString();
+                        string genre = movieJsonData["Genre"].ToString();
+                        string description = movieJsonData["Description"].ToString();
 
-                    id++;
+                        int rating = int.Parse(movieJsonData["Rating"].ToString());
+                        int watched = int.Parse(movieJsonData["Watched"].ToString());
+
+                        MovieDto newMovie = new MovieDto(id, title, genre, description, rating, watched);
+                        movieList.Add(newMovie);
+
+                        id++;
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Logger.Instance.Error(TAG, exception.Message);
                 }
 
                 return movieList;

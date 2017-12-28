@@ -1,5 +1,6 @@
 ﻿using Common.Interfaces;
 using Common.Tools;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -56,29 +57,36 @@ namespace Common.Converter
         {
             IList<KeyValuePair<string, double>> list = new List<KeyValuePair<string, double>>();
 
-            string[] entries = Regex.Split(jsonValue, "\\},");
-            for (int index = 0; index < entries.Length; index++)
+            try
             {
-                string entry = entries[index];
-                string replacedEntry = entry.Replace("},", "").Replace("{", "").Replace("}}", "");
-                string[] data = Regex.Split(replacedEntry, "\\:");
-
-                if (data.Length == 3)
+                string[] entries = Regex.Split(jsonValue, "\\},");
+                for (int index = 0; index < entries.Length; index++)
                 {
-                    string key = data[0].Replace("\"", "");
+                    string entry = entries[index];
+                    string replacedEntry = entry.Replace("},", "").Replace("{", "").Replace("}}", "");
+                    string[] data = Regex.Split(replacedEntry, "\\:");
 
-                    string numberDecimalSeparator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
-                    string valueString = data[2].Replace(".", numberDecimalSeparator);
-                    double value = 0;
-                    bool parseValueSuccess = double.TryParse(valueString, out value);
+                    if (data.Length == 3)
+                    {
+                        string key = data[0].Replace("\"", "");
 
-                    KeyValuePair<string, double> newValue = new KeyValuePair<string, double>(key, value);
-                    list.Add(newValue);
+                        string numberDecimalSeparator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+                        string valueString = data[2].Replace(".", numberDecimalSeparator);
+                        double value = 0;
+                        bool parseValueSuccess = double.TryParse(valueString, out value);
+
+                        KeyValuePair<string, double> newValue = new KeyValuePair<string, double>(key, value);
+                        list.Add(newValue);
+                    }
+                    else
+                    {
+                        Logger.Instance.Warning(TAG, string.Format("Data has invalid length {0}, entry is {1}", data.Length, entry));
+                    }
                 }
-                else
-                {
-                    Logger.Instance.Warning(TAG, string.Format("Data has invalid length {0}, entry is {1}", data.Length, entry));
-                }
+            }
+            catch (Exception exception)
+            {
+                Logger.Instance.Error(TAG, exception.Message);
             }
 
             return list;

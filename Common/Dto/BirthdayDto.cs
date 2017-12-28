@@ -10,18 +10,22 @@ namespace Common.Dto
         enum BirthdayType { PREVIOUS, TODAY, UPCOMING };
 
         private int _id;
-        private string _name;
-        private bool _remindMe;
-        private bool _sendMail;
-        private DateTime _birthday;
 
-        public BirthdayDto(int id, string name, bool remindMe, bool sendMail, DateTime birthday)
+        private string _name;
+        private DateTime _birthday;
+        private string _group;
+
+        private bool _remindMe;
+        private bool _sentMail;
+
+        public BirthdayDto(int id, string name, DateTime birthday, string group, bool remindMe, bool sentMail)
         {
             _id = id;
             _name = name;
-            _remindMe = remindMe;
-            _sendMail = sendMail;
             _birthday = birthday;
+            _group = group;
+            _remindMe = remindMe;
+            _sentMail = sentMail;
         }
 
         public int Id
@@ -44,6 +48,30 @@ namespace Common.Dto
             }
         }
 
+        public DateTime Birthday
+        {
+            get
+            {
+                return _birthday;
+            }
+            set
+            {
+                _birthday = value;
+            }
+        }
+
+        public string Group
+        {
+            get
+            {
+                return _group;
+            }
+            set
+            {
+                _group = value;
+            }
+        }
+
         public bool RemindMe
         {
             get
@@ -56,23 +84,11 @@ namespace Common.Dto
             }
         }
 
-        public bool SendMail
+        public bool SentMail
         {
             get
             {
-                return _sendMail;
-            }
-        }
-
-        public DateTime Birthday
-        {
-            get
-            {
-                return _birthday;
-            }
-            set
-            {
-                _birthday = value;
+                return _sentMail;
             }
         }
 
@@ -156,7 +172,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}&name={2}&day={3}&month={4}&year={5}&remindme={6}", LucaServerAction.ADD_BIRTHDAY.Action, _id, _name, _birthday.Day, _birthday.Month, _birthday.Year, (_remindMe ? "1" : "0"));
+                return string.Format("{0}{1}&name={2}&day={3}&month={4}&year={5}&group={6}&remindme={7}", LucaServerAction.ADD_BIRTHDAY.Action, _id, _name, _birthday.Day, _birthday.Month, _birthday.Year, _group, (_remindMe ? "1" : "0"));
             }
         }
 
@@ -164,7 +180,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}&name={2}&day={3}&month={4}&year={5}&remindme={6}", LucaServerAction.UPDATE_BIRTHDAY.Action, _id, _name, _birthday.Day, _birthday.Month, _birthday.Year, (_remindMe ? "1" : "0"));
+                return string.Format("{0}{1}&name={2}&day={3}&month={4}&year={5}&group={6}&remindme={7}", LucaServerAction.UPDATE_BIRTHDAY.Action, _id, _name, _birthday.Day, _birthday.Month, _birthday.Year, _group, (_remindMe ? "1" : "0"));
             }
         }
 
@@ -178,7 +194,7 @@ namespace Common.Dto
 
         public override string ToString()
         {
-            return string.Format("( {0}: (Name: {1} );(Birthday: {2} );(Age: {3} );(HasBirthday: {4} );(RemindMe: {5} );(SendMail: {6} ))", TAG, _name, _birthday, Age, HasBirthday, (_remindMe ? "1" : "0"), (_sendMail ? "1" : "0"));
+            return string.Format("( {0}: (Name: {1} );(Birthday: {2} );(Age: {3} );(HasBirthday: {4} );(Group: {5} );(RemindMe: {6} );(SentMail: {7} ))", TAG, _name, _birthday, Age, HasBirthday, _group, (_remindMe ? "1" : "0"), (_sentMail ? "1" : "0"));
         }
     }
 }

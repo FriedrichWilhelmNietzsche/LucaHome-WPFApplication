@@ -92,17 +92,16 @@ namespace Data.Services
         {
             get
             {
-                return _wirelessSwitchList;
+                return _wirelessSwitchList.OrderBy(wirelessSwitch => wirelessSwitch.TypeId).ToList();
             }
         }
 
-        public WirelessSwitchDto GetById(int id)
+        public WirelessSwitchDto GetByTypeId(int typeId)
         {
             WirelessSwitchDto foundWirelessSwitch = _wirelessSwitchList
-                        .Where(wirelessSwitch => wirelessSwitch.Id == id)
+                        .Where(wirelessSwitch => wirelessSwitch.TypeId == typeId)
                         .Select(wirelessSwitch => wirelessSwitch)
                         .FirstOrDefault();
-
             return foundWirelessSwitch;
         }
 
@@ -112,7 +111,6 @@ namespace Data.Services
                         .Where(wirelessSwitch => wirelessSwitch.Name.Equals(name))
                         .Select(wirelessSwitch => wirelessSwitch)
                         .FirstOrDefault();
-
             return foundWirelessSwitch;
         }
 
@@ -123,21 +121,12 @@ namespace Data.Services
                 return _wirelessSwitchList;
             }
 
-            List<WirelessSwitchDto> foundWirelessSwitches = _wirelessSwitchList
-                        .Where(wirelessSwitch =>
-                            wirelessSwitch.Name.Contains(searchKey)
-                            || wirelessSwitch.Area.Contains(searchKey)
-                            || wirelessSwitch.Code.Contains(searchKey)
-                            || wirelessSwitch.ShortName.Contains(searchKey)
-                            || wirelessSwitch.IsActivated.ToString().Contains(searchKey)
-                            || wirelessSwitch.ActivationString.Contains(searchKey)
-                            || wirelessSwitch.RemoteId.ToString().Contains(searchKey)
-                            || wirelessSwitch.KeyCode.ToString().Contains(searchKey)
-                            || wirelessSwitch.Action.ToString().Contains(searchKey))
+            List<WirelessSwitchDto> foundWirelessSwitchList = _wirelessSwitchList
+                        .Where(wirelessSwitch => wirelessSwitch.ToString().Contains(searchKey))
                         .Select(wirelessSwitch => wirelessSwitch)
+                        .OrderBy(wirelessSwitch => wirelessSwitch.Area)
                         .ToList();
-
-            return foundWirelessSwitches;
+            return foundWirelessSwitchList;
         }
 
         public void LoadWirelessSwitchList()
@@ -299,7 +288,7 @@ namespace Data.Services
                 return;
             }
 
-            _wirelessSwitchList = wirelessSwitchList;
+            _wirelessSwitchList = wirelessSwitchList.OrderBy(wirelessSwitch => wirelessSwitch.TypeId).ToList();
             publishOnWirelessSwitchDownloadFinished(_wirelessSwitchList, true, response);
         }
 

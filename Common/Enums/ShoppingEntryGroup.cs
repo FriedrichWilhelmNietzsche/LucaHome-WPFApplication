@@ -21,6 +21,7 @@ namespace Common.Enums
         public static readonly ShoppingEntryGroup LEISURE = new ShoppingEntryGroup(13, "Leisure", new Uri("/Common;component/Assets/Icons/Shopping/leisure.png", UriKind.Relative));
         public static readonly ShoppingEntryGroup BAKING = new ShoppingEntryGroup(14, "Baking", new Uri("/Common;component/Assets/Icons/Shopping/baking.png", UriKind.Relative));
         public static readonly ShoppingEntryGroup CEREALS = new ShoppingEntryGroup(15, "Cereals", new Uri("/Common;component/Assets/Icons/Shopping/cereals.png", UriKind.Relative));
+        public static readonly ShoppingEntryGroup SPICES = new ShoppingEntryGroup(16, "Spices", new Uri("/Common;component/Assets/Icons/Shopping/spices.png", UriKind.Relative));
 
         public static IEnumerable<ShoppingEntryGroup> Values
         {
@@ -42,6 +43,7 @@ namespace Common.Enums
                 yield return LEISURE;
                 yield return BAKING;
                 yield return CEREALS;
+                yield return SPICES;
             }
         }
 

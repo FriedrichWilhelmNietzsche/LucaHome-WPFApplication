@@ -139,20 +139,9 @@
             MouseUp="BirthdayCard_MouseUp"/>
 
         <usercontrols:MainPageCard
-            x:Name="CoinsCard"
-            Grid.Row="2"
-            Grid.Column="4"
-            CardImage="/Common;component/Assets/Wallpaper/main_image_coins.png"
-            Title="Coins"
-            Description="Watch your coins"
-            ButtonAddVisibility="Visible"
-            ButtonMapVisibility="Collapsed"
-            MouseUp="CoinsCard_MouseUp"/>
-
-        <usercontrols:MainPageCard
             x:Name="MovieCard"
-            Grid.Row="3"
-            Grid.Column="0"
+            Grid.Row="2"
+            Grid.Column="3"
             CardImage="/Common;component/Assets/Wallpaper/main_image_movies.png"
             Title="Movies"
             Description="Want to watch some blockbuster?"
@@ -162,8 +151,8 @@
 
         <usercontrols:MainPageCard
             x:Name="SeriesCard"
-            Grid.Row="3"
-            Grid.Column="1"
+            Grid.Row="2"
+            Grid.Column="4"
             CardImage="/Common;component/Assets/Wallpaper/main_image_series.jpg"
             Title="Series"
             Description="Want to watch some series?"
@@ -174,7 +163,7 @@
         <usercontrols:MainPageCard
             x:Name="MagazinCard"
             Grid.Row="3"
-            Grid.Column="2"
+            Grid.Column="0"
             CardImage="/Common;component/Assets/Wallpaper/main_image_magazine.png"
             Title="Magazine"
             Description="Read some papers?"
@@ -185,7 +174,7 @@
         <usercontrols:MainPageCard
             x:Name="NovelCard"
             Grid.Row="3"
-            Grid.Column="3"
+            Grid.Column="1"
             CardImage="/Common;component/Assets/Wallpaper/main_image_novel.png"
             Title="Novel"
             Description="Relax reading novels"
@@ -196,7 +185,7 @@
         <usercontrols:MainPageCard
             x:Name="SpecialicedBookCard"
             Grid.Row="3"
-            Grid.Column="4"
+            Grid.Column="2"
             CardImage="/Common;component/Assets/Wallpaper/main_image_sachbuch.png"
             Title="Specialiced books"
             Description="Improve your knowledge"
@@ -207,8 +196,8 @@
         <usercontrols:MainPageCard
             Visibility="Collapsed"
             x:Name="MediaMirrorCard"
-            Grid.Row="4"
-            Grid.Column="0"
+            Grid.Row="3"
+            Grid.Column="4"
             CardImage="/Common;component/Assets/Wallpaper/main_image_mediamirror.png"
             Title="MediaMirror"
             Description="Control your media mirror!"
@@ -217,9 +206,42 @@
             MouseUp="MediaMirrorCard_MouseUp"/>
 
         <usercontrols:MainPageCard
-            x:Name="SecurityCard"
+            x:Name="MeterCard"
+            Grid.Row="4"
+            Grid.Column="0"
+            CardImage="/Common;component/Assets/Wallpaper/main_image_meter.png"
+            Title="Meter"
+            Description="Monitor your meter"
+            ButtonAddVisibility="Collapsed"
+            ButtonMapVisibility="Collapsed"
+            MouseUp="MeterCard_MouseUp"/>
+
+        <usercontrols:MainPageCard
+            x:Name="MoneyMeterCard"
+            Grid.Row="4"
+            Grid.Column="1"
+            CardImage="/Common;component/Assets/Wallpaper/main_image_money_meter.png"
+            Title="Money"
+            Description="Monitor your money"
+            ButtonAddVisibility="Collapsed"
+            ButtonMapVisibility="Collapsed"
+            MouseUp="MoneyMeterCard_MouseUp"/>
+
+        <usercontrols:MainPageCard
+            x:Name="CoinsCard"
             Grid.Row="4"
             Grid.Column="2"
+            CardImage="/Common;component/Assets/Wallpaper/main_image_coins.png"
+            Title="Coins"
+            Description="Watch your coins"
+            ButtonAddVisibility="Visible"
+            ButtonMapVisibility="Collapsed"
+            MouseUp="CoinsCard_MouseUp"/>
+
+        <usercontrols:MainPageCard
+            x:Name="SecurityCard"
+            Grid.Row="4"
+            Grid.Column="3"
             CardImage="/Common;component/Assets/Wallpaper/main_image_security.png"
             Title="Security"
             Description="Secure your flat!"

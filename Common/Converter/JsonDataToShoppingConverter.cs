@@ -3,6 +3,7 @@ using Common.Enums;
 using Common.Interfaces;
 using Common.Tools;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 
 namespace Common.Converter
@@ -60,22 +61,30 @@ namespace Common.Converter
             {
                 IList<ShoppingEntryDto> shoppingList = new List<ShoppingEntryDto>();
 
-                JObject jsonObject = JObject.Parse(value);
-                JToken jsonObjectData = jsonObject.GetValue("Data");
-
-                foreach (JToken child in jsonObjectData.Children())
+                try
                 {
-                    JToken shoppingJsonData = child["ShoppingEntry"];
+                    JObject jsonObject = JObject.Parse(value);
+                    JToken jsonObjectData = jsonObject.GetValue("Data");
 
-                    int id = int.Parse(shoppingJsonData["ID"].ToString());
+                    foreach (JToken child in jsonObjectData.Children())
+                    {
+                        JToken shoppingJsonData = child["ShoppingEntry"];
 
-                    string name = shoppingJsonData["Name"].ToString();
-                    string group = shoppingJsonData["Group"].ToString();
+                        int id = int.Parse(shoppingJsonData["Id"].ToString());
 
-                    int quantity = int.Parse(shoppingJsonData["Quantity"].ToString());
+                        string name = shoppingJsonData["Name"].ToString();
+                        string group = shoppingJsonData["Group"].ToString();
 
-                    ShoppingEntryDto newMenu = new ShoppingEntryDto(id, name, ShoppingEntryGroup.GetByDescription(group), quantity);
-                    shoppingList.Add(newMenu);
+                        int quantity = int.Parse(shoppingJsonData["Quantity"].ToString());
+                        string unit = shoppingJsonData["Unit"].ToString();
+
+                        ShoppingEntryDto newMenu = new ShoppingEntryDto(id, name, ShoppingEntryGroup.GetByDescription(group), quantity, unit);
+                        shoppingList.Add(newMenu);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Logger.Instance.Error(TAG, exception.Message);
                 }
 
                 return shoppingList;

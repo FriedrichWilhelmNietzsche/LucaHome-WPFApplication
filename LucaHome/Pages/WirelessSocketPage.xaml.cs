@@ -31,6 +31,7 @@ namespace LucaHome.Pages
         private readonly Notifier _notifier;
 
         private string _wirelessSocketSearchKey = string.Empty;
+        private IList<WirelessSocketDto> _wirelessSocketList;
 
         public WirelessSocketPage(NavigationService navigationService)
         {
@@ -84,10 +85,11 @@ namespace LucaHome.Pages
         {
             get
             {
-                return WirelessSocketService.Instance.WirelessSocketList;
+                return _wirelessSocketList;
             }
             set
             {
+                _wirelessSocketList = value;
                 OnPropertyChanged("WirelessSocketList");
             }
         }
@@ -133,7 +135,7 @@ namespace LucaHome.Pages
                 Button senderButton = (Button)sender;
 
                 int wirelessSocketId = (int)senderButton.Tag;
-                WirelessSocketDto updateWirelessSocket = WirelessSocketService.Instance.GetById(wirelessSocketId);
+                WirelessSocketDto updateWirelessSocket = WirelessSocketService.Instance.GetByTypeId(wirelessSocketId);
 
                 WirelessSocketUpdatePage wirelessSocketUpdatePage = new WirelessSocketUpdatePage(_navigationService, updateWirelessSocket);
                 _navigationService.Navigate(wirelessSocketUpdatePage);
@@ -147,7 +149,7 @@ namespace LucaHome.Pages
                 Button senderButton = (Button)sender;
 
                 int wirelessSocketId = (int)senderButton.Tag;
-                WirelessSocketDto deleteWirelessSocket = WirelessSocketService.Instance.GetById(wirelessSocketId);
+                WirelessSocketDto deleteWirelessSocket = WirelessSocketService.Instance.GetByTypeId(wirelessSocketId);
 
                 DeleteDialog wirelessSocketDeleteDialog = new DeleteDialog("Delete socket?",
                     string.Format("Socket: {0}\nArea: {1}\nCode: {2}", deleteWirelessSocket.Name, deleteWirelessSocket.Area, deleteWirelessSocket.Code));

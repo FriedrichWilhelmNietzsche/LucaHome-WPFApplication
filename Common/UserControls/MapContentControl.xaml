@@ -39,6 +39,14 @@
             IsEnabled="{Binding
                 RelativeSource={RelativeSource AncestorType=UserControl},
                 Path=ButtonEnabled,
+                Mode=OneWay}"
+            Foreground="{Binding
+                RelativeSource={RelativeSource AncestorType=UserControl},
+                Path=ButtonForeground,
+                Mode=OneWay}"
+            Background="{Binding
+                RelativeSource={RelativeSource AncestorType=UserControl},
+                Path=ButtonBackground,
                 Mode=OneWay}">
         </Button>
     </Grid>

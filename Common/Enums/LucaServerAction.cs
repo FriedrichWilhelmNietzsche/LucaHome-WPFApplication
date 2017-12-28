@@ -50,30 +50,28 @@ namespace Common.Enums
 
         //MOVIE
         public static readonly LucaServerAction GET_MOVIES = new LucaServerAction(70, "getmovies");
-        public static readonly LucaServerAction START_MOVIE = new LucaServerAction(71, "startmovie&title=");
-        public static readonly LucaServerAction ADD_MOVIE = new LucaServerAction(72, "addmovie&title=");
-        public static readonly LucaServerAction UPDATE_MOVIE = new LucaServerAction(73, "updatemovie&title=");
-        public static readonly LucaServerAction DELETE_MOVIE = new LucaServerAction(74, "deletemovie&title=");
+        public static readonly LucaServerAction START_MOVIE = new LucaServerAction(71, "startmovie&id=");
+        public static readonly LucaServerAction UPDATE_MOVIE = new LucaServerAction(72, "updatemovie&id=");
 
         //SCHEDULES
         public static readonly LucaServerAction GET_SCHEDULES = new LucaServerAction(80, "getschedules");
-        public static readonly LucaServerAction SET_SCHEDULE = new LucaServerAction(81, "setschedule&schedule=");
-        public static readonly LucaServerAction ADD_SCHEDULE = new LucaServerAction(82, "addschedule&name=");
-        public static readonly LucaServerAction UPDATE_SCHEDULE = new LucaServerAction(83, "updateschedule&name=");
-        public static readonly LucaServerAction DELETE_SCHEDULE = new LucaServerAction(84, "deleteschedule&schedule=");
+        public static readonly LucaServerAction SET_SCHEDULE = new LucaServerAction(81, "setschedule&id=");
+        public static readonly LucaServerAction ADD_SCHEDULE = new LucaServerAction(82, "addschedule&id=");
+        public static readonly LucaServerAction UPDATE_SCHEDULE = new LucaServerAction(83, "updateschedule&id=");
+        public static readonly LucaServerAction DELETE_SCHEDULE = new LucaServerAction(84, "deleteschedule&id=");
 
         //SHOPPING_LIST
         public static readonly LucaServerAction GET_SHOPPING_LIST = new LucaServerAction(90, "getshoppinglist");
-        public static readonly LucaServerAction ADD_SHOPPING_ENTRY_F = new LucaServerAction(91, "addshoppingentry&id={0}&name={1}&group={2}&quantity={3}");
-        public static readonly LucaServerAction UPDATE_SHOPPING_ENTRY_F = new LucaServerAction(92, "updateshoppingentry&id={0}&name={1}&group={2}&quantity={3}");
+        public static readonly LucaServerAction ADD_SHOPPING_ENTRY_F = new LucaServerAction(91, "addshoppingentry&id={0}&name={1}&group={2}&quantity={3}&unit={4}");
+        public static readonly LucaServerAction UPDATE_SHOPPING_ENTRY_F = new LucaServerAction(92, "updateshoppingentry&id={0}&name={1}&group={2}&quantity={3}&unit={4}");
         public static readonly LucaServerAction DELETE_SHOPPING_ENTRY_F = new LucaServerAction(93, "deleteshoppingentry&id={0}");
 
         //SOCKETS
         public static readonly LucaServerAction GET_SOCKETS = new LucaServerAction(100, "getsockets");
-        public static readonly LucaServerAction SET_SOCKET = new LucaServerAction(101, "setsocket&id=");
-        public static readonly LucaServerAction ADD_SOCKET = new LucaServerAction(102, "addsocket&id=");
-        public static readonly LucaServerAction UPDATE_SOCKET = new LucaServerAction(103, "updatesocket&id=");
-        public static readonly LucaServerAction DELETE_SOCKET = new LucaServerAction(104, "deletesocket&id=");
+        public static readonly LucaServerAction SET_SOCKET = new LucaServerAction(101, "setsocket&socket=");
+        public static readonly LucaServerAction ADD_SOCKET = new LucaServerAction(102, "addsocket&typeid=");
+        public static readonly LucaServerAction UPDATE_SOCKET = new LucaServerAction(103, "updatesocket&typeid=");
+        public static readonly LucaServerAction DELETE_SOCKET = new LucaServerAction(104, "deletesocket&typeid=");
         public static readonly LucaServerAction DEACTIVATE_ALL_SOCKETS = new LucaServerAction(105, "deactivateAllSockets");
 
         //SWITCH
@@ -81,7 +79,7 @@ namespace Common.Enums
         public static readonly LucaServerAction ADD_SWITCH = new LucaServerAction(111, "addswitch&id=");
         public static readonly LucaServerAction UPDATE_SWITCH = new LucaServerAction(112, "updateswitch&id=");
         public static readonly LucaServerAction DELETE_SWITCH = new LucaServerAction(113, "deleteswitch&id=");
-        public static readonly LucaServerAction TOGGLE_SWITCH = new LucaServerAction(114, "toggleswitch&id=");
+        public static readonly LucaServerAction TOGGLE_SWITCH = new LucaServerAction(114, "toggleswitch&name=");
         public static readonly LucaServerAction TOGGLE_ALL_SWITCHES = new LucaServerAction(115, "toggleallswitches");
 
         //METER_DATA
@@ -89,6 +87,13 @@ namespace Common.Enums
         public static readonly LucaServerAction ADD_METER_DATA = new LucaServerAction(121, "addmeterdata&id=");
         public static readonly LucaServerAction UPDATE_METER_DATA = new LucaServerAction(122, "updatemeterdata&id=");
         public static readonly LucaServerAction DELETE_METER_DATA = new LucaServerAction(123, "deletemeterdata&id=");
+
+        //MONEY METER_DATA
+        public static readonly LucaServerAction GET_MONEY_METER_DATA_ALL = new LucaServerAction(130, "getmoneymeterdataall");
+        public static readonly LucaServerAction GET_MONEY_METER_DATA_USER = new LucaServerAction(131, "getmoneymeterdatauser");
+        public static readonly LucaServerAction ADD_MONEY_METER_DATA = new LucaServerAction(132, "addmoneymeterdata&id=");
+        public static readonly LucaServerAction UPDATE_MONEY_METER_DATA = new LucaServerAction(133, "updatemoneymeterdata&id=");
+        public static readonly LucaServerAction DELETE_MONEY_METER_DATA = new LucaServerAction(134, "deletemoneymeterdata&id=");
 
         //TEMPERATURE
         public static readonly LucaServerAction GET_TEMPERATURES = new LucaServerAction(130, "getcurrenttemperature");
@@ -132,9 +137,7 @@ namespace Common.Enums
 
                 yield return GET_MOVIES;
                 yield return START_MOVIE;
-                yield return ADD_MOVIE;
                 yield return UPDATE_MOVIE;
-                yield return DELETE_MOVIE;
 
                 yield return GET_SCHEDULES;
                 yield return SET_SCHEDULE;
@@ -165,6 +168,12 @@ namespace Common.Enums
                 yield return ADD_METER_DATA;
                 yield return UPDATE_METER_DATA;
                 yield return DELETE_METER_DATA;
+
+                yield return GET_MONEY_METER_DATA_ALL;
+                yield return GET_MONEY_METER_DATA_USER;
+                yield return ADD_MONEY_METER_DATA;
+                yield return UPDATE_MONEY_METER_DATA;
+                yield return DELETE_MONEY_METER_DATA;
 
                 yield return GET_TEMPERATURES;
 

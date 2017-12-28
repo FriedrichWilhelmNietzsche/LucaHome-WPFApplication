@@ -72,6 +72,19 @@ namespace LucaHome.Pages
             }
         }
 
+        public string BirthdayGroup
+        {
+            get
+            {
+                return _updateBirthday.Group;
+            }
+            set
+            {
+                _updateBirthday.Group = value;
+                OnPropertyChanged("BirthdayGroup");
+            }
+        }
+
         public DateTime BirthdayDate
         {
             get

@@ -60,65 +60,71 @@ namespace Common.Converter
             {
                 IList<ScheduleDto> scheduleList = new List<ScheduleDto>();
 
-                JObject jsonObject = JObject.Parse(value);
-                JToken jsonObjectData = jsonObject.GetValue("Data");
-
-                int id = 0;
-                foreach (JToken child in jsonObjectData.Children())
+                try
                 {
-                    JToken scheduleJsonData = child["Schedule"];
+                    JObject jsonObject = JObject.Parse(value);
+                    JToken jsonObjectData = jsonObject.GetValue("Data");
 
-                    bool isTimer = scheduleJsonData["IsTimer"].ToString() == "1";
-                    if (isTimer)
+                    foreach (JToken child in jsonObjectData.Children())
                     {
-                        continue;
-                    }
+                        JToken scheduleJsonData = child["Schedule"];
 
-                    string name = scheduleJsonData["Name"].ToString();
-
-                    string socketName = scheduleJsonData["Socket"].ToString();
-                    WirelessSocketDto wirelessSocket = null;
-                    for (int index = 0; index < socketList.Count; index++)
-                    {
-                        if (socketList[index].Name.Contains(socketName))
+                        bool isTimer = scheduleJsonData["IsTimer"].ToString() == "1";
+                        if (isTimer)
                         {
-                            wirelessSocket = socketList[index];
-                            break;
+                            continue;
                         }
-                    }
 
-                    string gpioName = scheduleJsonData["Gpio"].ToString();
-                    // TODO Gpios currently not supported in LucaHome WPF
+                        int id = int.Parse(scheduleJsonData["Id"].ToString());
 
-                    string switchName = scheduleJsonData["Switch"].ToString();
-                    WirelessSwitchDto wirelessSwitch = null;
-                    for (int index = 0; index < switchList.Count; index++)
-                    {
-                        if (switchList[index].Name.Contains(switchName))
+                        string name = scheduleJsonData["Name"].ToString();
+
+                        string socketName = scheduleJsonData["Socket"].ToString();
+                        WirelessSocketDto wirelessSocket = null;
+                        for (int index = 0; index < socketList.Count; index++)
                         {
-                            wirelessSwitch = switchList[index];
-                            break;
+                            if (socketList[index].Name.Contains(socketName))
+                            {
+                                wirelessSocket = socketList[index];
+                                break;
+                            }
                         }
+
+                        string gpioName = scheduleJsonData["Gpio"].ToString();
+                        // TODO Gpios currently not supported in LucaHome WPF
+
+                        string switchName = scheduleJsonData["Switch"].ToString();
+                        WirelessSwitchDto wirelessSwitch = null;
+                        for (int index = 0; index < switchList.Count; index++)
+                        {
+                            if (switchList[index].Name.Contains(switchName))
+                            {
+                                wirelessSwitch = switchList[index];
+                                break;
+                            }
+                        }
+
+                        int weekday = int.Parse(scheduleJsonData["Weekday"].ToString());
+
+                        int hour = int.Parse(scheduleJsonData["Hour"].ToString());
+                        int minute = int.Parse(scheduleJsonData["Minute"].ToString());
+
+                        DateTime time = new DateTime(1970, 1, 1, hour, minute, 0);
+
+                        int scheduleDayOfWeekInteger = (int)time.DayOfWeek;
+                        int difference = scheduleDayOfWeekInteger - weekday;
+                        time = time.AddDays(difference);
+
+                        WirelessAction wirelessAction = scheduleJsonData["Action"].ToString() == "1" ? WirelessAction.Activate : WirelessAction.Deactivate;
+                        bool isActive = scheduleJsonData["IsActive"].ToString() == "1";
+
+                        ScheduleDto newSchedule = new ScheduleDto(id, name, wirelessSocket, wirelessSwitch, time, wirelessAction, isActive);
+                        scheduleList.Add(newSchedule);
                     }
-
-                    int weekday = int.Parse(scheduleJsonData["Weekday"].ToString());
-
-                    int hour = int.Parse(scheduleJsonData["Hour"].ToString());
-                    int minute = int.Parse(scheduleJsonData["Minute"].ToString());
-
-                    DateTime time = new DateTime(1970, 1, 1, hour, minute, 0);
-
-                    int scheduleDayOfWeekInteger = (int)time.DayOfWeek;
-                    int difference = scheduleDayOfWeekInteger - weekday;
-                    time = time.AddDays(difference);
-
-                    WirelessAction wirelessAction = scheduleJsonData["OnOff"].ToString() == "1" ? WirelessAction.Activate : WirelessAction.Deactivate;
-                    bool isActive = scheduleJsonData["State"].ToString() == "1";
-
-                    ScheduleDto newSchedule = new ScheduleDto(id, name, wirelessSocket, wirelessSwitch, time, wirelessAction, isActive);
-                    scheduleList.Add(newSchedule);
-
-                    id++;
+                }
+                catch (Exception exception)
+                {
+                    Logger.Instance.Error(TAG, exception.Message);
                 }
 
                 return scheduleList;

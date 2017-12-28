@@ -21,12 +21,10 @@ namespace LucaHome.Pages
 {
     public partial class SecurityPage : Page, INotifyPropertyChanged
     {
-        private const string TAG = "BirthdayPage";
-        private readonly Logger _logger;
-
-        private readonly NavigationService _navigationService;
-
+        private const string TAG = "SecurityPage";
+        
         private readonly CameraController _cameraController;
+        private readonly NavigationService _navigationService;
 
         private string _registeredEventSearchKey;
         private IList<RegisteredEventDto> _registeredEventList;
@@ -37,10 +35,10 @@ namespace LucaHome.Pages
 
         public SecurityPage(NavigationService navigationService)
         {
-            _navigationService = navigationService;
-
             _cameraController = new CameraController();
             _cameraControlButtonEnabled = false;
+
+            _navigationService = navigationService;
 
             InitializeComponent();
             DataContext = this;

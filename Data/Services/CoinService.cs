@@ -94,7 +94,7 @@ namespace Data.Services
         {
             get
             {
-                return _coinList;
+                return _coinList.OrderByDescending(coin => coin.Value).ToList();
             }
         }
 
@@ -104,7 +104,6 @@ namespace Data.Services
                         .Where(coin => coin.Id == id)
                         .Select(coin => coin)
                         .FirstOrDefault();
-
             return foundCoin;
         }
 
@@ -115,16 +114,12 @@ namespace Data.Services
                 return _coinList;
             }
 
-            List<CoinDto> foundCoins = _coinList
-                        .Where(coin =>
-                            coin.Id.ToString().Contains(searchKey)
-                            || coin.User.Contains(searchKey)
-                            || coin.Type.Contains(searchKey)
-                            || coin.Amount.ToString().Contains(searchKey))
+            List<CoinDto> foundCoinList = _coinList
+                        .Where(coin => coin.ToString().Contains(searchKey))
                         .Select(coin => coin)
+                        .OrderByDescending(coin => coin.Value)
                         .ToList();
-
-            return foundCoins;
+            return foundCoinList;
         }
 
         public string AllCoinsValue
@@ -147,6 +142,7 @@ namespace Data.Services
             {
                 IList<string> typeList = new List<string>();
 
+                typeList.Add("BCH");
                 typeList.Add("BTC");
                 typeList.Add("DASH");
                 typeList.Add("ETC");
@@ -286,17 +282,7 @@ namespace Data.Services
                 return;
             }
 
-            if (!response.Contains("BCH")
-                || !response.Contains("BTC")
-                || !response.Contains("DASH")
-                || !response.Contains("ETC")
-                || !response.Contains("ETH")
-                || !response.Contains("IOTA")
-                || !response.Contains("LTC")
-                || !response.Contains("XMR")
-                || !response.Contains("XRP")
-                || !response.Contains("ZEC")
-                || !response.Contains("EUR"))
+            if (!TypeList.Any(response.Contains) || !response.Contains("EUR"))
             {
                 Logger.Instance.Error(TAG, string.Format("Invalid response {0}", response));
                 publishOnCoinConversionDownloadFinished(_coinConversionList, false, response);

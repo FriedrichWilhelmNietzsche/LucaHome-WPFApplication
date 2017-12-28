@@ -60,31 +60,38 @@ namespace Common.Converter
             {
                 IList<MenuDto> menuList = new List<MenuDto>();
 
-                JObject jsonObject = JObject.Parse(value);
-                JToken jsonObjectData = jsonObject.GetValue("Data");
-
-                int id = 0;
-                foreach (JToken child in jsonObjectData.Children())
+                try
                 {
-                    JToken menuJsonData = child["Menu"];
+                    JObject jsonObject = JObject.Parse(value);
+                    JToken jsonObjectData = jsonObject.GetValue("Data");
 
-                    string title = menuJsonData["Title"].ToString();
-                    string description = menuJsonData["Description"].ToString();
+                    int id = 0;
+                    foreach (JToken child in jsonObjectData.Children())
+                    {
+                        JToken menuJsonData = child["Menu"];
 
-                    string weekday = menuJsonData["Weekday"].ToString();
+                        string title = menuJsonData["Title"].ToString();
+                        string description = menuJsonData["Description"].ToString();
 
-                    JToken dateJsonData = menuJsonData["Date"];
+                        string weekday = menuJsonData["Weekday"].ToString();
 
-                    int day = int.Parse(dateJsonData["Day"].ToString());
-                    int month = int.Parse(dateJsonData["Month"].ToString());
-                    int year = int.Parse(dateJsonData["Year"].ToString());
+                        JToken dateJsonData = menuJsonData["Date"];
 
-                    DateTime date = new DateTime(year, month, day);
+                        int day = int.Parse(dateJsonData["Day"].ToString());
+                        int month = int.Parse(dateJsonData["Month"].ToString());
+                        int year = int.Parse(dateJsonData["Year"].ToString());
 
-                    MenuDto newMenu = new MenuDto(id, title, description, date);
-                    menuList.Add(newMenu);
+                        DateTime date = new DateTime(year, month, day);
 
-                    id++;
+                        MenuDto newMenu = new MenuDto(id, title, description, date);
+                        menuList.Add(newMenu);
+
+                        id++;
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Logger.Instance.Error(TAG, exception.Message);
                 }
 
                 return menuList;

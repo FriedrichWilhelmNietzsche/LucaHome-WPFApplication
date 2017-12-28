@@ -2,13 +2,13 @@
 
 namespace LucaHome.Dialogs
 {
-    public enum Action { NULL, CONFIRM, CANCEL };
+    public enum DialogAction { NULL, CONFIRM, CANCEL };
 
     public partial class SetDialog : Window
     {
         private const string TAG = "SetDialog";
 
-        private Action _setAction = Action.NULL;
+        private DialogAction _setDialogAction = DialogAction.NULL;
 
         public SetDialog(string title, string description, string confirmButtonText, string cancelButtonText)
         {
@@ -24,23 +24,23 @@ namespace LucaHome.Dialogs
         public SetDialog(string title, string description) : this(title, description, "Confirm", "Cancel")
         { }
 
-        public Action SetAction
+        public DialogAction SetDialogAction
         {
             get
             {
-                return _setAction;
+                return _setDialogAction;
             }
         }
 
         private void ConfirmButton_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _setAction = Action.CONFIRM;
+            _setDialogAction = DialogAction.CONFIRM;
             Close();
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs routedEventArgs)
         {
-            _setAction = Action.CANCEL;
+            _setDialogAction = DialogAction.CANCEL;
             Close();
         }
     }

@@ -1,6 +1,7 @@
 ﻿using Common.Dto;
 using Common.Tools;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 
 namespace Common.Converter
@@ -58,32 +59,39 @@ namespace Common.Converter
             {
                 IList<CoinDto> coinList = new List<CoinDto>();
 
-                JObject jsonObject = JObject.Parse(value);
-                JToken jsonObjectData = jsonObject.GetValue("Data");
-
-                foreach (JToken child in jsonObjectData.Children())
+                try
                 {
-                    JToken coinJsonData = child["Coin"];
+                    JObject jsonObject = JObject.Parse(value);
+                    JToken jsonObjectData = jsonObject.GetValue("Data");
 
-                    int id = int.Parse(coinJsonData["ID"].ToString());
-
-                    string user = coinJsonData["User"].ToString();
-                    string type = coinJsonData["Type"].ToString();
-
-                    int amount = int.Parse(coinJsonData["Amount"].ToString());
-
-                    double currentConversion = 0;
-                    foreach (KeyValuePair<string, double> entry in conversionList)
+                    foreach (JToken child in jsonObjectData.Children())
                     {
-                        if (entry.Key.Contains(type))
-                        {
-                            currentConversion = entry.Value;
-                            break;
-                        }
-                    }
+                        JToken coinJsonData = child["Coin"];
 
-                    CoinDto newCoin = new CoinDto(id, user, type, amount, currentConversion, CoinDto.Trend.NULL);
-                    coinList.Add(newCoin);
+                        int id = int.Parse(coinJsonData["Id"].ToString());
+
+                        string user = coinJsonData["User"].ToString();
+                        string type = coinJsonData["Type"].ToString();
+
+                        double amount = double.Parse(coinJsonData["Amount"].ToString());
+
+                        double currentConversion = 0;
+                        foreach (KeyValuePair<string, double> entry in conversionList)
+                        {
+                            if (entry.Key.Contains(type))
+                            {
+                                currentConversion = entry.Value;
+                                break;
+                            }
+                        }
+
+                        CoinDto newCoin = new CoinDto(id, user, type, amount, currentConversion, CoinDto.Trend.NULL);
+                        coinList.Add(newCoin);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Logger.Instance.Error(TAG, exception.Message);
                 }
 
                 return coinList;

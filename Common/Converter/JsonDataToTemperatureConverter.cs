@@ -60,18 +60,25 @@ namespace Common.Converter
             {
                 IList<TemperatureDto> temperatureList = new List<TemperatureDto>();
 
-                JObject jsonObject = JObject.Parse(value);
-                JToken jsonObjectData = jsonObject.GetValue("Temperature");
+                try
+                {
+                    JObject jsonObject = JObject.Parse(value);
+                    JToken jsonObjectData = jsonObject.GetValue("Temperature");
 
-                double temperatureValue = double.Parse(jsonObjectData["Value"].ToString());
+                    double temperatureValue = double.Parse(jsonObjectData["Value"].ToString());
 
-                string area = jsonObjectData["Area"].ToString();
+                    string area = jsonObjectData["Area"].ToString();
 
-                string sensorPath = jsonObjectData["SensorPath"].ToString();
-                string graphPath = jsonObjectData["GraphPath"].ToString();
+                    string sensorPath = jsonObjectData["SensorPath"].ToString();
+                    string graphPath = jsonObjectData["GraphPath"].ToString();
 
-                TemperatureDto security = new TemperatureDto(temperatureValue, area, DateTime.Now, sensorPath, TemperatureDto.TemperatureType.RASPBERRY, graphPath);
-                temperatureList.Add(security);
+                    TemperatureDto security = new TemperatureDto(temperatureValue, area, DateTime.Now, sensorPath, TemperatureDto.TemperatureType.RASPBERRY, graphPath);
+                    temperatureList.Add(security);
+                }
+                catch (Exception exception)
+                {
+                    Logger.Instance.Error(TAG, exception.Message);
+                }
 
                 return temperatureList;
             }

@@ -97,13 +97,11 @@ namespace Data.Services
                 return _bookList;
             }
 
-            List<string> foundBooks = _bookList
-                        .Where(entry =>
-                            entry.Contains(searchKey))
+            List<string> foundBookList = _bookList
+                        .Where(entry => entry.Contains(searchKey))
                         .Select(book => book)
                         .ToList();
-
-            return foundBooks;
+            return foundBookList;
         }
 
         public void StartReading(string title)

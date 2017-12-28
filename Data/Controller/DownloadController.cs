@@ -13,6 +13,7 @@ namespace Data.Controller
         ListedMenu, ListedMenuAdd, ListedMenuUpdate, ListedMenuDelete,
         Menu, MenuUpdate, MenuClear,
         MeterData, MeterDataAdd, MeterDataUpdate, MeterDataDelete,
+        MoneyMeterData, MoneyMeterDataAdd, MoneyMeterDataUpdate, MoneyMeterDataDelete,
         Movie, MovieUpdate,
         Schedule, ScheduleSet, ScheduleAdd, ScheduleUpdate, ScheduleDelete,
         Security, SecurityCamera, SecurityCameraControl,
@@ -43,6 +44,8 @@ namespace Data.Controller
 
         public async void SendCommandToWebsite(string requestUrl, DownloadType downloadType, object additional)
         {
+            Logger.Instance.Debug(TAG, string.Format("RequestUrl: {0}", requestUrl));
+
             try
             {
                 await sendCommandToWebsiteAsync(requestUrl, downloadType, additional);

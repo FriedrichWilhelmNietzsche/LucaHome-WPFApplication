@@ -88,6 +88,7 @@
     <Compile Include="Common\Enables.cs" />
     <Compile Include="Common\Keys.cs" />
     <Compile Include="Common\Timeouts.cs" />
+    <Compile Include="Converter\JsonDataToMoneyMeterDataConverter.cs" />
     <Compile Include="Converter\JsonDataToMeterDataConverter.cs" />
     <Compile Include="Converter\JsonDataToSecurityConverter.cs" />
     <Compile Include="Converter\JsonDataToCoinConversionConverter.cs" />
@@ -110,6 +111,10 @@
     <Compile Include="Dto\CoinDto.cs" />
     <Compile Include="Dto\ChangeDto.cs" />
     <Compile Include="Dto\ListedMenuDto.cs" />
+    <Compile Include="Dto\MeterDto.cs" />
+    <Compile Include="Dto\MoneyDateDto.cs" />
+    <Compile Include="Dto\MoneyMeterDto.cs" />
+    <Compile Include="Dto\MoneyMeterDataDto.cs" />
     <Compile Include="Dto\MeterDataDto.cs" />
     <Compile Include="Dto\NovelDto.cs" />
     <Compile Include="Dto\SeasonDto.cs" />
@@ -126,6 +131,7 @@
     <Compile Include="Dto\UserDto.cs" />
     <Compile Include="Dto\WirelessSwitchDto.cs" />
     <Compile Include="Dto\WirelessSocketDto.cs" />
+    <Compile Include="Enums\EditAction.cs" />
     <Compile Include="Interfaces\IJsonDataConverter.cs" />
     <Compile Include="Converter\JsonDataToCoinTrendConverter.cs" />
     <Compile Include="Tools\Logger.cs" />
@@ -308,6 +314,19 @@
     <Resource Include="Assets\Icons\Sockets\mediaserver_on.png" />
     <Resource Include="Assets\Icons\Sockets\raspberry_off.png" />
     <Resource Include="Assets\Icons\Sockets\raspberry_on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Icons\Others\meter_hd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Icons\Others\money_meter_hd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Icons\Shopping\spices.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Wallpaper\main_image_meter.png" />
+    <Resource Include="Assets\Wallpaper\main_image_money_meter.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

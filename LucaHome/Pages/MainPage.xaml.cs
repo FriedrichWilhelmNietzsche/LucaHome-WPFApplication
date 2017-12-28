@@ -40,6 +40,9 @@ namespace LucaHome.Pages
         private MenuPage _menuPage;
         //private MenuUpdatePage _menuUpdatePage;
 
+        private MeterPage _meterPage;
+        //private MeterUpdatePage _meterUpdatePage;
+
         private MoviePage _moviePage;
         //private MovieUpdatePage _movieUpdatePage;
 
@@ -106,6 +109,8 @@ namespace LucaHome.Pages
             _mapPage = null;
             _menuPage = null;
             //_menuUpdatePage = null;
+            _meterPage = null;
+            //_meterUpdatePage = null;
             _moviePage = null;
             //_movieUpdatePage = null;
             _novelPage = null;
@@ -247,18 +252,6 @@ namespace LucaHome.Pages
             _navigationService.Navigate(_birthdayAddPage);
         }
 
-        private void CoinsCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
-        {
-            _coinPage = new CoinPage(_navigationService);
-            _navigationService.Navigate(_coinPage);
-        }
-
-        private void navigateToCoinAdd()
-        {
-            _coinAddPage = new CoinAddPage(_navigationService);
-            _navigationService.Navigate(_coinAddPage);
-        }
-
         private void MovieCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
             _moviePage = new MoviePage(_navigationService);
@@ -293,6 +286,29 @@ namespace LucaHome.Pages
         {
             _mediaMirrorPage = new MediaMirrorPage(_navigationService);
             _navigationService.Navigate(_mediaMirrorPage);
+        }
+        
+        private void MeterCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        {
+            _meterPage = new MeterPage(_navigationService);
+            _navigationService.Navigate(_meterPage);
+        }
+        
+        private void MoneyMeterCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        {
+            //TODO
+        }
+        
+        private void CoinsCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        {
+            _coinPage = new CoinPage(_navigationService);
+            _navigationService.Navigate(_coinPage);
+        }
+
+        private void navigateToCoinAdd()
+        {
+            _coinAddPage = new CoinAddPage(_navigationService);
+            _navigationService.Navigate(_coinAddPage);
         }
 
         private void SecurityCard_MouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)

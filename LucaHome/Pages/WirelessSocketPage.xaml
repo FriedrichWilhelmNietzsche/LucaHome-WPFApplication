@@ -86,6 +86,9 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
+                    <GridViewColumn Header="ID"
+                                    DisplayMemberBinding="{Binding TypeId, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="75"/>
                     <GridViewColumn Header="Name"
                                     DisplayMemberBinding="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
                                     Width="150"/>
@@ -132,7 +135,7 @@
                                     Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
                                     Margin="5 5 5 5"
                                     ToolTip="Update wireless socket"
-                                    Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
+                                    Tag="{Binding TypeId, UpdateSourceTrigger=PropertyChanged}"
                                     Click="ButtonUpdateWirelessSocket_Click">
                                     <materialDesign:PackIcon 
                                         Kind="Settings" 
@@ -152,7 +155,7 @@
                                     Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
                                     Margin="5 5 5 5"
                                     ToolTip="Delete wireless socket"
-                                    Tag="{Binding Id, UpdateSourceTrigger=PropertyChanged}"
+                                    Tag="{Binding TypeId, UpdateSourceTrigger=PropertyChanged}"
                                     Click="ButtonDeleteWirelessSocket_Click" >
                                     <materialDesign:PackIcon 
                                         Kind="Delete" 

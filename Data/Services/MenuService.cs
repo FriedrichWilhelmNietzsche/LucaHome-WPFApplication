@@ -127,7 +127,6 @@ namespace Data.Services
                         .Where(menu => menu.Id == id)
                         .Select(menu => menu)
                         .FirstOrDefault();
-
             return foundMenu;
         }
 

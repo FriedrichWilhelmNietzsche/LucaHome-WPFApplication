@@ -96,6 +96,9 @@
                     <GridViewColumn Header="Quantity"
                                     DisplayMemberBinding="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}"
                                     Width="100"/>
+                    <GridViewColumn Header="Unit"
+                                    DisplayMemberBinding="{Binding Unit, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="100"/>
                     <GridViewColumn 
                         Width="55" >
                         <GridViewColumn.CellTemplate>

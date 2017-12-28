@@ -12,6 +12,9 @@ namespace Common.UserControls
         private const string TAG = "MapContent";
 
         private string _buttonText;
+        private string _buttonForeground;
+        private string _buttonBackground;
+
         private string _buttonToolTip;
 
         // Help: https://stackoverflow.com/questions/13838884/how-to-bind-a-command-in-wpf
@@ -21,11 +24,15 @@ namespace Common.UserControls
 
         public MapContentControl()
         {
-            _buttonText = "JON";
+            _buttonText = "Jonas";
+            _buttonForeground = "white";
+            _buttonBackground = "darkblue";
+
             _buttonToolTip = "This is a map content";
 
             _buttonCommand = new DelegateCommand(dummyCommand);
             _buttonVisibility = Visibility.Visible;
+            _buttonEnabled = true;
 
             InitializeComponent();
         }
@@ -46,6 +53,32 @@ namespace Common.UserControls
             {
                 _buttonText = value;
                 OnPropertyChanged("ButtonText");
+            }
+        }
+
+        public string ButtonForeground
+        {
+            get
+            {
+                return _buttonForeground;
+            }
+            set
+            {
+                _buttonForeground = value;
+                OnPropertyChanged("ButtonForeground");
+            }
+        }
+
+        public string ButtonBackground
+        {
+            get
+            {
+                return _buttonBackground;
+            }
+            set
+            {
+                _buttonBackground = value;
+                OnPropertyChanged("ButtonBackground");
             }
         }
 

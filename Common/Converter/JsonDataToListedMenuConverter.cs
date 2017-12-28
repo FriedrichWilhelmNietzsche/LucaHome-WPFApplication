@@ -2,6 +2,7 @@
 using Common.Interfaces;
 using Common.Tools;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 
 namespace Common.Converter
@@ -59,23 +60,30 @@ namespace Common.Converter
             {
                 IList<ListedMenuDto> listedMenuList = new List<ListedMenuDto>();
 
-                JObject jsonObject = JObject.Parse(value);
-                JToken jsonObjectData = jsonObject.GetValue("Data");
-
-                foreach (JToken child in jsonObjectData.Children())
+                try
                 {
-                    JToken listedMenuJsonData = child["ListedMenu"];
+                    JObject jsonObject = JObject.Parse(value);
+                    JToken jsonObjectData = jsonObject.GetValue("Data");
 
-                    int id = int.Parse(listedMenuJsonData["ID"].ToString());
+                    foreach (JToken child in jsonObjectData.Children())
+                    {
+                        JToken listedMenuJsonData = child["ListedMenu"];
 
-                    string title = listedMenuJsonData["Title"].ToString();
-                    string description = listedMenuJsonData["Description"].ToString();
+                        int id = int.Parse(listedMenuJsonData["Id"].ToString());
 
-                    int rating = int.Parse(listedMenuJsonData["Rating"].ToString());
-                    int useCounter = int.Parse(listedMenuJsonData["UseCounter"].ToString());
+                        string title = listedMenuJsonData["Title"].ToString();
+                        string description = listedMenuJsonData["Description"].ToString();
 
-                    ListedMenuDto newListedMenu = new ListedMenuDto(id, title, description, rating, useCounter);
-                    listedMenuList.Add(newListedMenu);
+                        int rating = int.Parse(listedMenuJsonData["Rating"].ToString());
+                        int useCounter = int.Parse(listedMenuJsonData["UseCounter"].ToString());
+
+                        ListedMenuDto newListedMenu = new ListedMenuDto(id, title, description, rating, useCounter);
+                        listedMenuList.Add(newListedMenu);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Logger.Instance.Error(TAG, exception.Message);
                 }
 
                 return listedMenuList;

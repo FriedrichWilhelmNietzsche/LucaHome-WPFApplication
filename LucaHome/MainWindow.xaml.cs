@@ -17,14 +17,17 @@ namespace LucaHome
 
         private const string TAG = "MainWindow";
 
+        private readonly NavigationService _navigationService;
+        private readonly UserService _userService;
+
         private readonly BirthdayService _birthdayService;
         private readonly CoinService _coinService;
         private readonly LibraryService _libraryService;
         private readonly MapContentService _mapContentService;
         private readonly MenuService _menuService;
         private readonly MeterDataService _meterDataService;
+        private readonly MoneyMeterDataService _moneyMeterDataService;
         private readonly MovieService _movieService;
-        private readonly NavigationService _navigationService;
         private readonly NovelService _novelService;
         private readonly OpenWeatherService _openWeatherService;
         private readonly ScheduleService _scheduleService;
@@ -33,8 +36,8 @@ namespace LucaHome
         private readonly ShoppingListService _shoppingListService;
         private readonly SpecialicedBookService _specialicedBookService;
         private readonly TemperatureService _temperatureService;
-        private readonly UserService _userService;
         private readonly WirelessSocketService _wirelessSocketService;
+        private readonly WirelessSwitchService _wirelessSwitchService;
 
         private readonly BootPage _bootPage;
         private readonly LoginPage _loginPage;
@@ -45,14 +48,17 @@ namespace LucaHome
 
             _failedUserCheck = 0;
 
+            _navigationService = _mainFrame.NavigationService;
+            _userService = UserService.Instance;
+
             _birthdayService = BirthdayService.Instance;
             _coinService = CoinService.Instance;
             _libraryService = LibraryService.Instance;
             _mapContentService = MapContentService.Instance;
             _menuService = MenuService.Instance;
             _meterDataService = MeterDataService.Instance;
+            _moneyMeterDataService = MoneyMeterDataService.Instance;
             _movieService = MovieService.Instance;
-            _navigationService = _mainFrame.NavigationService;
             _novelService = NovelService.Instance;
             _openWeatherService = OpenWeatherService.Instance;
             _scheduleService = ScheduleService.Instance;
@@ -61,8 +67,8 @@ namespace LucaHome
             _shoppingListService = ShoppingListService.Instance;
             _specialicedBookService = SpecialicedBookService.Instance;
             _temperatureService = TemperatureService.Instance;
-            _userService = UserService.Instance;
             _wirelessSocketService = WirelessSocketService.Instance;
+            _wirelessSwitchService = WirelessSwitchService.Instance;
 
             _openWeatherService.City = _temperatureService.OpenWeatherCity;
             _openWeatherService.SetWallpaperActive = _temperatureService.SetWallpaperActive;
@@ -114,12 +120,15 @@ namespace LucaHome
         {
             _userService.OnUserCheckedFinished -= _onUserCheckedFinished;
 
+            _userService.Dispose();
+
             _birthdayService.Dispose();
             _coinService.Dispose();
             _libraryService.Dispose();
             _mapContentService.Dispose();
             _menuService.Dispose();
             _meterDataService.Dispose();
+            _moneyMeterDataService.Dispose();
             _movieService.Dispose();
             _novelService.Dispose();
             _openWeatherService.Dispose();
@@ -129,8 +138,8 @@ namespace LucaHome
             _shoppingListService.Dispose();
             _specialicedBookService.Dispose();
             _temperatureService.Dispose();
-            _userService.Dispose();
             _wirelessSocketService.Dispose();
+            _wirelessSwitchService.Dispose();
         }
     }
 }

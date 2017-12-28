@@ -29,7 +29,7 @@ namespace LucaHome.Pages
         {
             _navigationService = navigationService;
 
-            _newShoppingEntry = new ShoppingEntryDto(ShoppingListService.Instance.ShoppingList.Count, "", ShoppingEntryGroup.OTHER, 1);
+            _newShoppingEntry = new ShoppingEntryDto(ShoppingListService.Instance.ShoppingList.Count, "", ShoppingEntryGroup.OTHER, 1, "");
 
             InitializeComponent();
             DataContext = this;
@@ -112,6 +112,19 @@ namespace LucaHome.Pages
             {
                 _newShoppingEntry.Quantity = value;
                 OnPropertyChanged("ShoppingEntryQuantity");
+            }
+        }
+
+        public string ShoppingEntryUnit
+        {
+            get
+            {
+                return _newShoppingEntry.Unit;
+            }
+            set
+            {
+                _newShoppingEntry.Unit = value;
+                OnPropertyChanged("ShoppingEntryUnit");
             }
         }
 

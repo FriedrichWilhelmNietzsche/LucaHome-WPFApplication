@@ -1,6 +1,7 @@
 ﻿using Common.Dto;
 using Common.Tools;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 
@@ -83,87 +84,97 @@ namespace Common.Converter
             {
                 IList<MapContentDto> mapContentList = new List<MapContentDto>();
 
-                JObject jsonObject = JObject.Parse(value);
-                JToken jsonObjectData = jsonObject.GetValue("Data");
-
-                foreach (JToken child in jsonObjectData.Children())
+                try
                 {
-                    JToken mapContentJsonData = child["MapContent"];
+                    JObject jsonObject = JObject.Parse(value);
+                    JToken jsonObjectData = jsonObject.GetValue("Data");
 
-                    int id = int.Parse(mapContentJsonData["ID"].ToString());
-
-                    string type = mapContentJsonData["Type"].ToString();
-                    MapContentDto.DrawingType drawingType;
-                    switch (type)
+                    foreach (JToken child in jsonObjectData.Children())
                     {
-                        case "WirelessSocket":
-                            drawingType = MapContentDto.DrawingType.Socket;
-                            break;
-                        case "LAN":
-                            drawingType = MapContentDto.DrawingType.LAN;
-                            break;
-                        case "MediaServer":
-                            drawingType = MapContentDto.DrawingType.MediaServer;
-                            break;
-                        case "RaspberryPi":
-                            drawingType = MapContentDto.DrawingType.RaspberryPi;
-                            break;
-                        case "NAS":
-                            drawingType = MapContentDto.DrawingType.NAS;
-                            break;
-                        case "LightSwitch":
-                            drawingType = MapContentDto.DrawingType.LightSwitch;
-                            break;
-                        case "Temperature":
-                            drawingType = MapContentDto.DrawingType.Temperature;
-                            break;
-                        case "PuckJS":
-                            drawingType = MapContentDto.DrawingType.PuckJS;
-                            break;
-                        case "Menu":
-                            drawingType = MapContentDto.DrawingType.Menu;
-                            break;
-                        case "ShoppingList":
-                            drawingType = MapContentDto.DrawingType.ShoppingList;
-                            break;
-                        case "Camera":
-                            drawingType = MapContentDto.DrawingType.Camera;
-                            break;
-                        default:
-                            drawingType = MapContentDto.DrawingType.Null;
-                            break;
+                        JToken mapContentJsonData = child["MapContent"];
+
+                        int id = int.Parse(mapContentJsonData["Id"].ToString());
+
+                        string type = mapContentJsonData["Type"].ToString();
+                        MapContentDto.DrawingType drawingType;
+                        switch (type)
+                        {
+                            case "WirelessSocket":
+                                drawingType = MapContentDto.DrawingType.Socket;
+                                break;
+                            case "LAN":
+                                drawingType = MapContentDto.DrawingType.LAN;
+                                break;
+                            case "MediaServer":
+                                drawingType = MapContentDto.DrawingType.MediaServer;
+                                break;
+                            case "RaspberryPi":
+                                drawingType = MapContentDto.DrawingType.RaspberryPi;
+                                break;
+                            case "NAS":
+                                drawingType = MapContentDto.DrawingType.NAS;
+                                break;
+                            case "LightSwitch":
+                                drawingType = MapContentDto.DrawingType.LightSwitch;
+                                break;
+                            case "Temperature":
+                                drawingType = MapContentDto.DrawingType.Temperature;
+                                break;
+                            case "PuckJS":
+                                drawingType = MapContentDto.DrawingType.PuckJS;
+                                break;
+                            case "Menu":
+                                drawingType = MapContentDto.DrawingType.Menu;
+                                break;
+                            case "ShoppingList":
+                                drawingType = MapContentDto.DrawingType.ShoppingList;
+                                break;
+                            case "Camera":
+                                drawingType = MapContentDto.DrawingType.Camera;
+                                break;
+                            case "Meter":
+                                drawingType = MapContentDto.DrawingType.Meter;
+                                break;
+                            default:
+                                drawingType = MapContentDto.DrawingType.Null;
+                                break;
+                        }
+                        int typeId = int.Parse(mapContentJsonData["TypeId"].ToString());
+
+                        string name = mapContentJsonData["Name"].ToString();
+                        string shortName = mapContentJsonData["ShortName"].ToString();
+                        string area = mapContentJsonData["Area"].ToString();
+
+                        Visibility visibility = mapContentJsonData["Visibility"].ToString() == "1" ? Visibility.Visible : Visibility.Collapsed;
+
+                        JToken positionJsonData = mapContentJsonData["Position"];
+                        JToken pointJsonData = positionJsonData["Point"];
+
+                        int positionX = int.Parse(pointJsonData["X"].ToString());
+                        int positionY = int.Parse(pointJsonData["Y"].ToString());
+
+                        int[] position = new int[] { positionX, positionY };
+
+                        IList<ListedMenuDto> _listedMenuList = ((name == "ListedMenu" && drawingType == MapContentDto.DrawingType.Menu) ? listedMenuList : null);
+                        IList<MenuDto> _menuList = ((name == "Menu" && drawingType == MapContentDto.DrawingType.Menu) ? menuList : null);
+                        IList<ShoppingEntryDto> _shoppingList = ((name == "ShoppingList" && drawingType == MapContentDto.DrawingType.ShoppingList) ? shoppingList : null);
+
+                        MediaServerDto _mediaServer = drawingType == MapContentDto.DrawingType.MediaServer ? (mediaServerList.Count > 0 ? mediaServerList[typeId] : null) : null;
+                        SecurityDto _security = drawingType == MapContentDto.DrawingType.Camera ? security : null;
+
+                        TemperatureDto _temperature = drawingType == MapContentDto.DrawingType.Temperature ? (temperatureList.Count > 0 ? temperatureList[typeId] : null) : null;
+                        WirelessSocketDto _wirelessSocket = drawingType == MapContentDto.DrawingType.Socket ? (wirelessSocketList.Count > 0 ? wirelessSocketList[typeId] : null) : null;
+                        WirelessSwitchDto _wirelessSwitch = drawingType == MapContentDto.DrawingType.LightSwitch ? (wirelessSwitchList.Count > 0 ? wirelessSwitchList[typeId] : null) : null;
+
+                        MapContentDto newMapContent = new MapContentDto(id, drawingType, typeId, position, name, shortName, area, visibility,
+                            _listedMenuList, _menuList, _shoppingList, _mediaServer, _security, _temperature, _wirelessSocket, _wirelessSwitch);
+
+                        mapContentList.Add(newMapContent);
                     }
-                    int typeId = int.Parse(mapContentJsonData["TypeId"].ToString());
-
-                    string name = mapContentJsonData["Name"].ToString();
-                    string shortName = mapContentJsonData["ShortName"].ToString();
-                    string area = mapContentJsonData["Area"].ToString();
-
-                    Visibility visibility = mapContentJsonData["Visibility"].ToString() == "1" ? Visibility.Visible : Visibility.Collapsed;
-
-                    JToken positionJsonData = mapContentJsonData["Position"];
-                    JToken pointJsonData = positionJsonData["Point"];
-
-                    int positionX = int.Parse(pointJsonData["X"].ToString());
-                    int positionY = int.Parse(pointJsonData["Y"].ToString());
-
-                    int[] position = new int[] { positionX, positionY };
-
-                    IList<ListedMenuDto> _listedMenuList = ((name == "ListedMenu" && drawingType == MapContentDto.DrawingType.Menu) ? listedMenuList : null);
-                    IList<MenuDto> _menuList = ((name == "Menu" && drawingType == MapContentDto.DrawingType.Menu) ? menuList : null);
-                    IList<ShoppingEntryDto> _shoppingList = ((name == "ShoppingList" && drawingType == MapContentDto.DrawingType.ShoppingList) ? shoppingList : null);
-
-                    MediaServerDto _mediaServer = drawingType == MapContentDto.DrawingType.MediaServer ? (mediaServerList.Count > 0 ? mediaServerList[typeId] : null) : null;
-                    SecurityDto _security = drawingType == MapContentDto.DrawingType.Camera ? security : null;
-
-                    TemperatureDto _temperature = drawingType == MapContentDto.DrawingType.Temperature ? (temperatureList.Count > 0 ? temperatureList[typeId] : null) : null;
-                    WirelessSocketDto _wirelessSocket = drawingType == MapContentDto.DrawingType.Socket ? (wirelessSocketList.Count > 0 ? wirelessSocketList[typeId] : null) : null;
-                    WirelessSwitchDto _wirelessSwitch = drawingType == MapContentDto.DrawingType.LightSwitch ? (wirelessSwitchList.Count > 0 ? wirelessSwitchList[typeId] : null) : null;
-
-                    MapContentDto newMapContent = new MapContentDto(id, drawingType, typeId, position, name, shortName, area, visibility,
-                        _listedMenuList, _menuList, _shoppingList, _mediaServer, _security, _temperature, _wirelessSocket, _wirelessSwitch);
-
-                    mapContentList.Add(newMapContent);
+                }
+                catch (Exception exception)
+                {
+                    Logger.Instance.Error(TAG, exception.Message);
                 }
 
                 return mapContentList;

@@ -22,6 +22,7 @@ namespace LucaHome.Pages
 
         private Uri _wallpaperSource = new Uri("/OpenWeather;component/Assets/Images/weather_wallpaper_dummy.png", UriKind.Relative);
         private string _weatherSearchKey = string.Empty;
+        private IList<ForecastPartModel> _weatherList;
 
         public WeatherPage(NavigationService navigationService)
         {
@@ -80,10 +81,11 @@ namespace LucaHome.Pages
         {
             get
             {
-                return OpenWeatherService.Instance.ForecastWeather.List;
+                return _weatherList;
             }
             set
             {
+                _weatherList = value;
                 OnPropertyChanged("WeatherList");
             }
         }

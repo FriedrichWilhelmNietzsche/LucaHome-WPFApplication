@@ -92,17 +92,16 @@ namespace Data.Services
         {
             get
             {
-                return _wirelessSocketList;
+                return _wirelessSocketList.OrderBy(wirelessSocket => wirelessSocket.TypeId).ToList();
             }
         }
 
-        public WirelessSocketDto GetById(int id)
+        public WirelessSocketDto GetByTypeId(int typeId)
         {
             WirelessSocketDto foundWirelessSocket = _wirelessSocketList
-                        .Where(wirelessSocket => wirelessSocket.Id == id)
+                        .Where(wirelessSocket => wirelessSocket.TypeId == typeId)
                         .Select(wirelessSocket => wirelessSocket)
                         .FirstOrDefault();
-
             return foundWirelessSocket;
         }
 
@@ -112,7 +111,6 @@ namespace Data.Services
                         .Where(wirelessSocket => wirelessSocket.Name.Equals(name))
                         .Select(wirelessSocket => wirelessSocket)
                         .FirstOrDefault();
-
             return foundWirelessSocket;
         }
 
@@ -123,18 +121,12 @@ namespace Data.Services
                 return _wirelessSocketList;
             }
 
-            List<WirelessSocketDto> foundWirelessSockets = _wirelessSocketList
-                        .Where(wirelessSocket =>
-                            wirelessSocket.Name.Contains(searchKey)
-                            || wirelessSocket.Area.Contains(searchKey)
-                            || wirelessSocket.Code.Contains(searchKey)
-                            || wirelessSocket.ShortName.Contains(searchKey)
-                            || wirelessSocket.IsActivated.ToString().Contains(searchKey)
-                            || wirelessSocket.ActivationString.Contains(searchKey))
+            List<WirelessSocketDto> foundWirelessSocketList = _wirelessSocketList
+                        .Where(wirelessSocket => wirelessSocket.ToString().Contains(searchKey))
                         .Select(wirelessSocket => wirelessSocket)
+                        .OrderBy(wirelessSocket => wirelessSocket.Area)
                         .ToList();
-
-            return foundWirelessSockets;
+            return foundWirelessSocketList;
         }
 
         public void LoadWirelessSocketList()
@@ -309,7 +301,7 @@ namespace Data.Services
                 return;
             }
 
-            _wirelessSocketList = wirelessSocketList;
+            _wirelessSocketList = wirelessSocketList.OrderBy(wirelessSocket => wirelessSocket.TypeId).ToList();
             publishOnWirelessSocketDownloadFinished(_wirelessSocketList, true, response);
         }
 

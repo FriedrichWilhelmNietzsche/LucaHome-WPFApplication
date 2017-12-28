@@ -115,6 +115,9 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
+                    <GridViewColumn Header="Group"
+                                    DisplayMemberBinding="{Binding Group, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="150"/>
                     <GridViewColumn 
                         Width="65" >
                         <GridViewColumn.CellTemplate>

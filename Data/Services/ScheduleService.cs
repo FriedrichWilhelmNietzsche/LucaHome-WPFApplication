@@ -101,7 +101,6 @@ namespace Data.Services
                         .Where(schedule => schedule.Id == id)
                         .Select(schedule => schedule)
                         .FirstOrDefault();
-
             return foundSchedule;
         }
 
@@ -111,7 +110,6 @@ namespace Data.Services
                         .Where(schedule => schedule.Name.Equals(name))
                         .Select(schedule => schedule)
                         .FirstOrDefault();
-
             return foundSchedule;
         }
 
@@ -122,19 +120,12 @@ namespace Data.Services
                 return _scheduleList;
             }
 
-            List<ScheduleDto> foundSchedules = _scheduleList
-                        .Where(schedule =>
-                            schedule.Name.Contains(searchKey)
-                            || schedule.Socket.ToString().Contains(searchKey)
-                            || schedule.WirelessSwitch.ToString().Contains(searchKey)
-                            || schedule.Time.ToString().Contains(searchKey)
-                            || schedule.Action.ToString().Contains(searchKey)
-                            || schedule.IsActive.ToString().Contains(searchKey)
-                            || schedule.ActiveString.Contains(searchKey))
+            List<ScheduleDto> foundScheduleList = _scheduleList
+                        .Where(schedule => schedule.ToString().Contains(searchKey))
                         .Select(schedule => schedule)
+                        .OrderBy(schedule => schedule.Id)
                         .ToList();
-
-            return foundSchedules;
+            return foundScheduleList;
         }
 
         public void LoadScheduleList()

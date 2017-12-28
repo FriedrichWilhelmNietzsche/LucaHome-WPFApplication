@@ -153,11 +153,19 @@ namespace Common.Dto
             }
         }
 
+        public virtual string CommandSet
+        {
+            get
+            {
+                return string.Format("{0}{1}&isactive={2}", LucaServerAction.SET_SCHEDULE.Action, _id, (_isActive ? "1" : "0"));
+            }
+        }
+
         public virtual string CommandAdd
         {
             get
             {
-                return string.Format("{0}{1}&socket={2}&gpio={3}&switch={4}&weekday={5}&hour={6}&minute={7}&onoff={8}&isTimer={9}", LucaServerAction.ADD_SCHEDULE.Action, _name, _socket.Name, "", _wirelessSwitch.Name, _time.DayOfWeek, _time.Hour, _time.Minute, (_wirelessAction == WirelessAction.Activate ? "1" : "0"), "0");
+                return string.Format("{0}{1}&name={2}&socket={3}&gpio={4}&switch={5}&weekday={6}&hour={7}&minute={8}&$action={9}&isTimer={10}", LucaServerAction.ADD_SCHEDULE.Action, _id, _name, _socket.Name, "", _wirelessSwitch.Name, _time.DayOfWeek, _time.Hour, _time.Minute, (_wirelessAction == WirelessAction.Activate ? "1" : "0"), "0");
             }
         }
 
@@ -165,7 +173,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}&socket={2}&gpio={3}&switch={4}&weekday={5}&hour={6}&minute={7}&onoff={8}&isTimer={9}&isactive={10}", LucaServerAction.UPDATE_SCHEDULE.Action, _name, _socket.Name, "", _wirelessSwitch.Name, _time.DayOfWeek, _time.Hour, _time.Minute, (_wirelessAction == WirelessAction.Activate ? "1" : "0"), "0", (_isActive ? "1" : "0"));
+                return string.Format("{0}{1}&name={2}&socket={3}&gpio={4}&switch={5}&weekday={6}&hour={7}&minute={8}&$action={9}&isTimer={10}&isactive={11}", LucaServerAction.UPDATE_SCHEDULE.Action, _id, _name, _socket.Name, "", _wirelessSwitch.Name, _time.DayOfWeek, _time.Hour, _time.Minute, (_wirelessAction == WirelessAction.Activate ? "1" : "0"), "0", (_isActive ? "1" : "0"));
             }
         }
 
@@ -173,7 +181,7 @@ namespace Common.Dto
         {
             get
             {
-                return string.Format("{0}{1}", LucaServerAction.DELETE_SCHEDULE.Action, _name);
+                return string.Format("{0}{1}", LucaServerAction.DELETE_SCHEDULE.Action, _id);
             }
         }
 
