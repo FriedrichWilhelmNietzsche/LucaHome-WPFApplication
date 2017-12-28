@@ -58,3 +58,5 @@ ___________
 https://github.com/ButchersBoy/MaterialDesignInXamlToolkit
 ## ToastNotifications v2
 https://github.com/raflop/ToastNotifications
+## lvcharts
+https://lvcharts.net/
