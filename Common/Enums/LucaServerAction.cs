@@ -96,10 +96,10 @@ namespace Common.Enums
         public static readonly LucaServerAction DELETE_MONEY_METER_DATA = new LucaServerAction(134, "deletemoneymeterdata&id=");
 
         //TEMPERATURE
-        public static readonly LucaServerAction GET_TEMPERATURES = new LucaServerAction(130, "getcurrenttemperature");
+        public static readonly LucaServerAction GET_TEMPERATURES = new LucaServerAction(140, "getcurrenttemperature");
 
         //USER
-        public static readonly LucaServerAction VALIDATE_USER = new LucaServerAction(140, "validateuser");
+        public static readonly LucaServerAction VALIDATE_USER = new LucaServerAction(150, "validateuser");
 
         public static IEnumerable<LucaServerAction> Values
         {

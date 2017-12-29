@@ -13,8 +13,6 @@ namespace Common.Dto
         private string _description;
         private DateTime _date;
 
-        private bool _needsUpdate;
-
         public MenuDto(int id, string title, string description, DateTime date)
         {
             _id = id;
